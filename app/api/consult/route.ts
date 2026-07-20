@@ -40,31 +40,60 @@ export async function POST(req: Request) {
     });
   }
 
-  const { data, error } = await supabase
-    .from("consultations")
-    .insert({
-      name: body.name,
-      gender: body.gender ?? null,
-      birth_info: body.birthInfo,
-      contact: body.contact,
-      customer_type: body.customerType,
-      application_mode: body.applicationMode,
-      package_key: body.packageKey ?? null,
-      purposes: body.purposes ?? null,
-      addons: body.addons ?? null,
-      concern: body.concern,
-      estimated_price: body.estimatedPrice,
-      status: "received",
-    })
-    .select("id")
-    .single();
+  // 클라이언트에서 id를 미리 생성해 넣어두면, INSERT 후 별도의 SELECT
+  // 권한(RLS)이 없어도 응답을 만들 수 있습니다. (anon 역할은 INSERT만 허용됨)
+  const id = crypto.randomUUID();
 
-  if (error) {
+  const insertPromise = supabase.from("consultations").insert({
+    id,
+    name: body.name,
+    gender: body.gender ?? null,
+    birth_info: body.birthInfo,
+    contact: body.contact,
+    customer_type: body.customerType,
+    application_mode: body.applicationMode,
+    package_key: body.packageKey ?? null,
+    purposes: body.purposes ?? null,
+    addons: body.addons ?? null,
+    concern: body.concern,
+    estimated_price: body.estimatedPrice,
+    status: "received",
+  });
+
+  // Supabase 연결이 응답 없이 멈추는 경우를 대비해 8초 타임아웃을 둡니다.
+  const timeoutPromise = new Promise<{ timedOut: true }>((resolve) =>
+    setTimeout(() => resolve({ timedOut: true }), 8000)
+  );
+
+  try {
+    const result = await Promise.race([insertPromise, timeoutPromise]);
+
+    if ("timedOut" in result) {
+      return NextResponse.json(
+        {
+          saved: false,
+          error: "DB 응답이 지연되고 있습니다. 이메일로 접수된 내용을 확인해 연락드리겠습니다.",
+        },
+        { status: 504 }
+      );
+    }
+
+    const { error } = result;
+    if (error) {
+      return NextResponse.json(
+        { saved: false, error: `DB 저장 중 오류가 발생했습니다: ${error.message}` },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ saved: true, id });
+  } catch (e) {
     return NextResponse.json(
-      { saved: false, error: `DB 저장 중 오류가 발생했습니다: ${error.message}` },
+      {
+        saved: false,
+        error: `DB 연결 중 예외가 발생했습니다: ${e instanceof Error ? e.message : String(e)}`,
+      },
       { status: 500 }
     );
   }
-
-  return NextResponse.json({ saved: true, id: data.id });
 }
