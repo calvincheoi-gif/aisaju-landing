@@ -48,10 +48,9 @@ export function getAiClient(): AiClientResult | null {
         region: gcpRegion,
       });
 
-      // Vertex의 Claude 모델 ID는 "-날짜" 대신 "@버전" 표기를 씁니다.
-      // (예: claude-sonnet-4-5@20250929) — Model Garden에서 실제 활성화된
-      // 모델 ID를 확인해 필요하면 ANTHROPIC_VERTEX_MODEL로 덮어쓰세요.
-      const model = process.env.ANTHROPIC_VERTEX_MODEL || "claude-sonnet-4-5@20250929";
+      // Model Garden에서 확인한 실제 활성화된 모델 ID입니다.
+      // 필요하면 Netlify 환경변수 ANTHROPIC_VERTEX_MODEL로 덮어쓸 수 있습니다.
+      const model = process.env.ANTHROPIC_VERTEX_MODEL || "claude-sonnet-5";
 
       return { client, model, via: "vertex" };
     } catch {
