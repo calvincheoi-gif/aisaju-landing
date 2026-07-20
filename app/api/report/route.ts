@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import Anthropic from "@anthropic-ai/sdk";
 import { calculateSaju } from "@/lib/saju";
 import { buildReportPrompt } from "@/lib/prompt";
+import { getAiClient } from "@/lib/ai-client";
 
 export const runtime = "nodejs";
 
@@ -60,12 +60,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
+  const ai = getAiClient();
+  if (!ai) {
     return NextResponse.json(
       {
         error:
-          "AI 리포트 생성을 위한 API 키가 아직 설정되지 않았습니다. Netlify 환경변수에 ANTHROPIC_API_KEY를 등록해 주세요.",
+          "AI 리포트 생성을 위한 설정이 아직 완료되지 않았습니다. Netlify 환경변수에 ANTHROPIC_API_KEY 또는 (ANTHROPIC_VERTEX_PROJECT_ID, CLOUD_ML_REGION, GCP_SERVICE_ACCOUNT_KEY)를 등록해 주세요.",
         saju,
       },
       { status: 503 }
@@ -80,11 +80,8 @@ export async function POST(req: NextRequest) {
   });
 
   try {
-    const client = new Anthropic({ apiKey });
-    const model = process.env.ANTHROPIC_MODEL || "claude-sonnet-4-5-20250929";
-
-    const message = await client.messages.create({
-      model,
+    const message = await ai.client.messages.create({
+      model: ai.model,
       max_tokens: 1500,
       system,
       messages: [{ role: "user", content: user }],
@@ -99,7 +96,7 @@ export async function POST(req: NextRequest) {
   } catch (e) {
     return NextResponse.json(
       {
-        error: `AI 리포트 생성 중 오류가 발생했습니다. (${e instanceof Error ? e.message : "unknown error"})`,
+        error: `AI 리포트 생성 중 오류가 발생했습니다. [경로: ${ai.via}] (${e instanceof Error ? e.message : "unknown error"})`,
         saju,
       },
       { status: 502 }
