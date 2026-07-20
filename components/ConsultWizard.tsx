@@ -47,6 +47,7 @@ export default function ConsultWizard() {
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
 
   const [submittedSummary, setSubmittedSummary] = useState("");
+  const [saveNotice, setSaveNotice] = useState<string | null>(null);
 
   const total = useMemo(() => {
     if (!customerType) return 0;
@@ -75,7 +76,7 @@ export default function ConsultWizard() {
     setSelectedAddons((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     const typeLabel = customerType === "member" ? "단골(멤버십)" : "일반";
@@ -99,6 +100,35 @@ export default function ConsultWizard() {
       "",
       `고민 내용: ${concern}`,
     ].join("\n");
+
+    // Supabase DB 저장 시도 (연동 전이면 서버가 안내 메시지만 반환)
+    try {
+      const res = await fetch("/api/consult", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          gender,
+          birthInfo: birth,
+          contact,
+          customerType,
+          applicationMode: mode,
+          packageKey: mode === "simple" ? selectedPackage : undefined,
+          purposes: mode === "detail" ? selectedPurposes : undefined,
+          addons: mode === "detail" ? selectedAddons : undefined,
+          concern,
+          estimatedPrice: total,
+        }),
+      });
+      const result = await res.json();
+      setSaveNotice(
+        result.saved
+          ? "신청 내용이 시스템에 정상 저장되었습니다."
+          : result.message || result.error || "저장 중 안내: 이메일로 접수됩니다."
+      );
+    } catch {
+      setSaveNotice("DB 저장 요청에 실패했습니다. 이메일로 접수된 내용을 확인해 연락드리겠습니다.");
+    }
 
     setSubmittedSummary(summary);
     setStep("done");
@@ -186,6 +216,9 @@ export default function ConsultWizard() {
       <div className="mx-auto max-w-xl">
         <div className="card">
           <p className="text-[18px] font-semibold text-ink-900">신청이 접수되었습니다</p>
+          {saveNotice && (
+            <p className="mt-2 text-[13px] font-medium text-indigo-600">{saveNotice}</p>
+          )}
           <p className="mt-2 text-[13px] text-body">
             이메일 클라이언트가 열리지 않았다면 아래 내용을 직접 {siteConfig.contactEmail} 로 보내주세요.
             빠른 시일 내 {siteConfig.org}에서 연락드립니다.
