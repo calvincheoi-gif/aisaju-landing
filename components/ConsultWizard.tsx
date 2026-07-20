@@ -102,9 +102,13 @@ export default function ConsultWizard() {
     ].join("\n");
 
     // Supabase DB 저장 시도 (연동 전이면 서버가 안내 메시지만 반환)
+    // 네트워크가 응답 없이 멈추는 경우를 대비해 10초 후 자동 취소합니다.
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
     try {
       const res = await fetch("/api/consult", {
         method: "POST",
+        signal: controller.signal,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name,
@@ -126,8 +130,14 @@ export default function ConsultWizard() {
           ? "신청 내용이 시스템에 정상 저장되었습니다."
           : result.message || result.error || "저장 중 안내: 이메일로 접수됩니다."
       );
-    } catch {
-      setSaveNotice("DB 저장 요청에 실패했습니다. 이메일로 접수된 내용을 확인해 연락드리겠습니다.");
+    } catch (e) {
+      setSaveNotice(
+        e instanceof DOMException && e.name === "AbortError"
+          ? "DB 응답이 지연되어 자동 저장은 확인되지 않았습니다. 이메일로 접수된 내용을 확인해 연락드리겠습니다."
+          : "DB 저장 요청에 실패했습니다. 이메일로 접수된 내용을 확인해 연락드리겠습니다."
+      );
+    } finally {
+      clearTimeout(timeoutId);
     }
 
     setSubmittedSummary(summary);
