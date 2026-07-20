@@ -1,5 +1,3 @@
-import { siteConfig } from "@/lib/site-config";
-
 const STEPS = [
   { n: "01", title: "상담 종류 선택", desc: "개인사주, 궁합, 사업운 등 필요한 상담을 선택합니다." },
   { n: "02", title: "기본정보 입력", desc: "생년월일시 등 사주 분석에 필요한 정보를 입력합니다." },
@@ -33,12 +31,7 @@ export default function ConsultGuide() {
       </div>
 
       <div className="mt-10 flex justify-center">
-        <a
-          href={siteConfig.consultUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-primary"
-        >
+        <a href="/consult" className="btn-primary">
           지금 상담 신청하기
         </a>
       </div>

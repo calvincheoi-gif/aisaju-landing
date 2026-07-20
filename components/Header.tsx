@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { siteConfig } from "@/lib/site-config";
 
 const NAV = [
   { label: "서비스", href: "#services" },
@@ -30,14 +29,9 @@ export default function Header() {
           ))}
         </nav>
 
-        <a
-          href={siteConfig.consultUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="btn-primary !py-2.5 !px-5 !text-[13px]"
-        >
+        <Link href="/consult" className="btn-primary !py-2.5 !px-5 !text-[13px]">
           상담 신청
-        </a>
+        </Link>
       </div>
     </header>
   );

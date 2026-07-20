@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import MarkdownReport from "./MarkdownReport";
+import { siteConfig } from "@/lib/site-config";
 
 const CONSULT_TYPES = [
   "개인사주",
@@ -90,6 +91,21 @@ export default function ReportForm() {
   }
 
   if (result?.report) {
+    const mailBody = [
+      `이름: ${name}`,
+      `생년월일: ${year}-${month}-${day} (${isLunar ? "음력" : "양력"})`,
+      `상담 종류: ${consultType}`,
+      `연락처: ${contact || "미기재"}`,
+      "",
+      `고민 내용: ${concern}`,
+      "",
+      "--- AI 리포트 원문 ---",
+      result.report,
+    ].join("\n");
+    const mailtoHref = `mailto:${siteConfig.contactEmail}?subject=${encodeURIComponent(
+      `[전문가 확인 요청] ${name}님 AI 리포트`
+    )}&body=${encodeURIComponent(mailBody)}`;
+
     return (
       <div className="mx-auto max-w-2xl">
         <div className="card">
@@ -109,20 +125,38 @@ export default function ReportForm() {
           )}
           <MarkdownReport text={result.report} />
         </div>
-        <button
-          className="btn-ghost mt-6"
-          onClick={() => {
-            setResult(null);
-          }}
-        >
-          다시 작성하기
-        </button>
+
+        <div className="mt-6 rounded-md border border-amber-200 bg-amber-50 p-4 text-[13px] leading-relaxed text-amber-800">
+          ⚠️ 이 리포트는 AI가 자동 생성한 무료 간편분석으로, 드물게 계산 오류나
+          부정확한 해석이 포함될 수 있습니다. 중요한 결정에 참고하시려면
+          전문가 확인을 요청해 주세요.
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-3">
+          <a href={mailtoHref} className="btn-secondary">
+            전문가에게 확인 요청
+          </a>
+          <button
+            className="btn-ghost"
+            onClick={() => {
+              setResult(null);
+            }}
+          >
+            다시 작성하기
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
     <form onSubmit={handleSubmit} className="mx-auto max-w-xl space-y-6">
+      <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-[13px] leading-relaxed text-amber-800">
+        ⚠️ AI 무료 간편분석은 참고용이며, 드물게 오류가 있을 수 있습니다. 정밀한
+        해석이 필요하시면 리포트 확인 후 "전문가에게 확인 요청" 버튼을
+        이용해 주세요.
+      </div>
+
       <div className="grid grid-cols-2 gap-4">
         <div>
           <label className={labelClass}>이름</label>
