@@ -21,6 +21,7 @@ type AiClientResult = {
   client: Anthropic | AnthropicVertex;
   model: string;
   via: "vertex" | "direct";
+  diag?: string;
 };
 
 let cachedKeyPath: string | null = null;
@@ -53,8 +54,17 @@ export function getAiClient(): AiClientResult | null {
       const model = process.env.ANTHROPIC_VERTEX_MODEL || "claude-sonnet-5";
 
       return { client, model, via: "vertex" };
-    } catch {
-      // Vertex 설정에 문제가 있으면 아래 직접 API 경로로 폴백합니다.
+    } catch (e) {
+      // Vertex 설정에 문제가 있으면 아래 직접 API 경로로 폴백하되,
+      // 진단을 위해 에러 메시지를 diag에 담아 반환합니다.
+      const apiKey = process.env.ANTHROPIC_API_KEY;
+      const diag = `vertex-init-failed: ${e instanceof Error ? e.message : String(e)}`;
+      if (apiKey) {
+        const client = new Anthropic({ apiKey });
+        const model = process.env.ANTHROPIC_MODEL || "claude-sonnet-4-5-20250929";
+        return { client, model, via: "direct", diag };
+      }
+      return null;
     }
   }
 
@@ -62,7 +72,8 @@ export function getAiClient(): AiClientResult | null {
   if (apiKey) {
     const client = new Anthropic({ apiKey });
     const model = process.env.ANTHROPIC_MODEL || "claude-sonnet-4-5-20250929";
-    return { client, model, via: "direct" };
+    const diag = `vertex-vars-missing: projectId=${!!gcpProjectId} region=${!!gcpRegion} key=${!!gcpServiceAccountKey}`;
+    return { client, model, via: "direct", diag };
   }
 
   return null;
