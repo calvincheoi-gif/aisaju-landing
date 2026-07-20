@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
   } catch (e) {
     return NextResponse.json(
       {
-        error: `AI 리포트 생성 중 오류가 발생했습니다. [경로: ${ai.via}] (${e instanceof Error ? e.message : "unknown error"})`,
+        error: `AI 리포트 생성 중 오류가 발생했습니다. [경로: ${ai.via}${ai.diag ? `, 진단: ${ai.diag}` : ""}] (${e instanceof Error ? e.message : "unknown error"})`,
         saju,
       },
       { status: 502 }
