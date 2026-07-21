@@ -25,6 +25,16 @@ export const siteConfig = {
     instagram: "#",
     cafe: "#",
   },
+
+  /** 결제 안내 정보 (계좌이체 / 카카오페이 송금) */
+  payment: {
+    bank: {
+      bankName: "카카오뱅크",
+      accountNumber: "3333372825990",
+      accountHolder: "Life_Biz 성장연구소",
+    },
+    kakaopayLink: "https://qr.kakaopay.com/FRQ005kvF",
+  },
 };
 
 /** 첫 화면 언어 선택 옵션 (기본 2개 + "기타" 하위 목록) */
