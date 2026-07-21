@@ -17,13 +17,12 @@ export const siteConfig = {
   // TODO: 실제 운영 이메일로 교체
   contactEmail: "calvincheoi@gmail.com",
 
-  // TODO: 실제 채널 URL로 교체
   channels: {
-    daangn: "#",
-    naverBlog: "#",
-    kakaoChannel: "#",
+    daangn: "https://www.daangn.com/kr/local-profile/yhqzhrhmoopf/?referrer=share",
+    naverBlog: "https://m.blog.naver.com/naming_supporter?tab=1",
+    kakaoChannel: "https://open.kakao.com/o/gj3iUKai",
     instagram: "#",
-    cafe: "#",
+    cafe: "https://cafe.daangn.com/sajupalja-myeon?utm_medium=copy_link",
   },
 
   /** 결제 안내 정보 (계좌이체 / 카카오페이 송금) */
