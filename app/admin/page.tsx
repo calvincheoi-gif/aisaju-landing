@@ -5,14 +5,6 @@ import { useRouter } from "next/navigation";
 import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
 import { formatKrw } from "@/lib/pricing";
 
-/**
- * 관리자 대시보드.
- *
- * - Supabase Auth 세션이 없으면 /admin/login 으로 리다이렉트합니다.
- * - 실제 데이터 접근 권한은 Supabase RLS 정책(calvincheoi@gmail.com 계정 한정)이
- *   최종적으로 강제합니다. 이 페이지의 로그인 체크는 UX용 게이트일 뿐입니다.
- */
-
 type Status = "received" | "in_progress" | "completed";
 type PaymentStatus = "pending" | "confirmed";
 
@@ -32,6 +24,8 @@ interface Consultation {
   status: Status | null;
   payment_method: "bank" | "kakaopay" | null;
   payment_status: PaymentStatus | null;
+  discount_rate: number | null;
+  discount_source: "auto" | "manual" | "admin_adjusted" | "none" | null;
   expert_note: string | null;
   created_at: string;
   completed_at: string | null;
@@ -62,6 +56,13 @@ const PAYMENT_METHOD_LABELS: Record<string, string> = {
   kakaopay: "카카오페이",
 };
 
+const DISCOUNT_SOURCE_LABELS: Record<string, string> = {
+  auto: "자동조회(회원등급)",
+  manual: "고객 직접입력",
+  admin_adjusted: "관리자 조정",
+  none: "미확정",
+};
+
 const FILTERS: { key: "all" | Status; label: string }[] = [
   { key: "all", label: "전체" },
   { key: "received", label: "접수" },
@@ -86,6 +87,7 @@ export default function AdminDashboardPage() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [savingId, setSavingId] = useState<string | null>(null);
   const [draftNotes, setDraftNotes] = useState<Record<string, string>>({});
+  const [draftPricing, setDraftPricing] = useState<Record<string, { rate: string; price: string }>>({});
 
   const [tiers, setTiers] = useState<MembershipTier[]>([]);
   const [phoneQuery, setPhoneQuery] = useState("");
@@ -260,7 +262,6 @@ export default function AdminDashboardPage() {
         </button>
       </div>
 
-      {/* 회원(단골) 등급 관리 */}
       <section className="card mb-8">
         <h2 className="text-[16px] font-semibold text-ink-900">회원 등급 관리</h2>
         <p className="mt-1 text-[13px] text-body">
@@ -326,7 +327,6 @@ export default function AdminDashboardPage() {
         )}
       </section>
 
-      {/* 상담 신청 목록 */}
       <section>
         <div className="mb-4 flex flex-wrap gap-2">
           {FILTERS.map((f) => (
@@ -371,6 +371,9 @@ export default function AdminDashboardPage() {
                     </p>
                     <p className="mt-1 text-[12px] text-body">
                       {c.contact} · {new Date(c.created_at).toLocaleString("ko-KR")}
+                      {c.customer_type === "member" && (c.discount_rate ?? 0) > 0 && (
+                        <> · 할인 {Math.round((c.discount_rate ?? 0) * 100)}%</>
+                      )}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
@@ -443,6 +446,68 @@ export default function AdminDashboardPage() {
                       </div>
 
                       {savingId === c.id && <span className="text-[12px] text-indigo-600">저장 중...</span>}
+                    </div>
+
+                    <div>
+                      <label className="mb-1 block text-[12px] text-body">
+                        할인율 / 최종금액 조정 · 현재 출처:{" "}
+                        {DISCOUNT_SOURCE_LABELS[c.discount_source ?? "none"] ?? "미확정"}
+                      </label>
+                      <div className="flex flex-wrap items-center gap-2">
+                        <input
+                          type="number"
+                          min={0}
+                          max={100}
+                          className={selectClass + " w-20"}
+                          value={draftPricing[c.id]?.rate ?? String(Math.round((c.discount_rate ?? 0) * 100))}
+                          onChange={(e) =>
+                            setDraftPricing((prev) => ({
+                              ...prev,
+                              [c.id]: {
+                                rate: e.target.value,
+                                price: prev[c.id]?.price ?? String(c.estimated_price ?? 0),
+                              },
+                            }))
+                          }
+                        />
+                        <span className="text-[12px] text-body">% 할인</span>
+                        <input
+                          type="number"
+                          min={0}
+                          className={selectClass + " w-28"}
+                          value={draftPricing[c.id]?.price ?? String(c.estimated_price ?? 0)}
+                          onChange={(e) =>
+                            setDraftPricing((prev) => ({
+                              ...prev,
+                              [c.id]: {
+                                rate: prev[c.id]?.rate ?? String(Math.round((c.discount_rate ?? 0) * 100)),
+                                price: e.target.value,
+                              },
+                            }))
+                          }
+                        />
+                        <span className="text-[12px] text-body">원 (최종 확정 금액)</span>
+                        <button
+                          className="btn-secondary text-[12px]"
+                          onClick={() => {
+                            const draft = draftPricing[c.id];
+                            const rate =
+                              Number(draft?.rate ?? Math.round((c.discount_rate ?? 0) * 100)) / 100;
+                            const price = Number(draft?.price ?? c.estimated_price ?? 0);
+                            handleSave(c, {
+                              discount_rate: rate,
+                              discount_source: "admin_adjusted",
+                              estimated_price: price,
+                            });
+                          }}
+                        >
+                          조정 저장
+                        </button>
+                      </div>
+                      <p className="mt-1 text-[11px] text-body">
+                        고객이 신청서에서 자동조회/직접입력한 할인율과 다르게 확정해야 하면 여기서 최종
+                        조정하세요. 저장하면 할인 출처가 &quot;관리자 조정&quot;으로 기록됩니다.
+                      </p>
                     </div>
 
                     <div>
