@@ -16,6 +16,8 @@ interface ConsultBody {
   concern: string;
   estimatedPrice: number;
   paymentMethod?: "bank" | "kakaopay";
+  discountRate?: number;
+  discountSource?: "auto" | "manual" | "none";
 }
 
 export async function POST(req: Request) {
@@ -32,7 +34,6 @@ export async function POST(req: Request) {
 
   const supabase = getSupabaseServerClient();
 
-  // Supabase 연동 전(환경변수 미설정)에는 저장 없이 접수 확인만 반환합니다.
   if (!supabase) {
     return NextResponse.json({
       saved: false,
@@ -41,8 +42,6 @@ export async function POST(req: Request) {
     });
   }
 
-  // 클라이언트에서 id를 미리 생성해 넣어두면, INSERT 후 별도의 SELECT
-  // 권한(RLS)이 없어도 응답을 만들 수 있습니다. (anon 역할은 INSERT만 허용됨)
   const id = crypto.randomUUID();
 
   const insertPromise = supabase.from("consultations").insert({
@@ -61,9 +60,10 @@ export async function POST(req: Request) {
     status: "received",
     payment_method: body.paymentMethod ?? null,
     payment_status: "pending",
+    discount_rate: body.discountRate ?? 0,
+    discount_source: body.discountSource ?? "none",
   });
 
-  // Supabase 연결이 응답 없이 멈추는 경우를 대비해 8초 타임아웃을 둡니다.
   const timeoutPromise = new Promise<{ timedOut: true }>((resolve) =>
     setTimeout(() => resolve({ timedOut: true }), 8000)
   );
