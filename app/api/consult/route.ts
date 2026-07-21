@@ -15,6 +15,7 @@ interface ConsultBody {
   addons?: string[];
   concern: string;
   estimatedPrice: number;
+  paymentMethod?: "bank" | "kakaopay";
 }
 
 export async function POST(req: Request) {
@@ -58,6 +59,8 @@ export async function POST(req: Request) {
     concern: body.concern,
     estimated_price: body.estimatedPrice,
     status: "received",
+    payment_method: body.paymentMethod ?? null,
+    payment_status: "pending",
   });
 
   // Supabase 연결이 응답 없이 멈추는 경우를 대비해 8초 타임아웃을 둡니다.
