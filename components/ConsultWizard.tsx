@@ -18,14 +18,16 @@ import {
  *
  * 가격/할인 로직은 현재 하드코딩(lib/pricing.ts) 상태이며,
  * Supabase 연동 이후 관리자가 설정한 실제 기준가격·등급 배수로 대체됩니다.
- * 신청 접수는 별도 백엔드/DB가 아직 없어 mailto로 연구소에 전달하는 임시 방식입니다.
+ * 신청서 작성 완료 후 결제 방법(계좌이체 / 카카오페이)을 선택하는 단계를 거쳐
+ * 최종 접수되며, 접수 내용은 Supabase 저장 + mailto로 연구소에 전달됩니다.
  */
 
 const inputClass =
   "w-full rounded-sm border border-border bg-white px-3 py-2 text-[14px] text-ink-900 outline-none focus:border-indigo-600";
 const labelClass = "mb-1.5 block text-[13px] font-medium text-ink-700";
 
-type Step = "customerType" | "mode" | "form" | "done";
+type Step = "customerType" | "mode" | "form" | "payment" | "done";
+type PaymentMethod = "bank" | "kakaopay";
 
 export default function ConsultWizard() {
   const [step, setStep] = useState<Step>("customerType");
@@ -45,6 +47,11 @@ export default function ConsultWizard() {
   // 디테일 버전
   const [selectedPurposes, setSelectedPurposes] = useState<string[]>([]);
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
+
+  // 결제
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod | null>(null);
+  const [copyNotice, setCopyNotice] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const [submittedSummary, setSubmittedSummary] = useState("");
   const [saveNotice, setSaveNotice] = useState<string | null>(null);
@@ -76,11 +83,32 @@ export default function ConsultWizard() {
     setSelectedAddons((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
   }
 
-  async function handleSubmit(e: React.FormEvent) {
+  // 신청서 입력 완료 → 결제 단계로 이동 (아직 DB 저장 안 함)
+  function handleGoToPayment(e: React.FormEvent) {
     e.preventDefault();
+    setStep("payment");
+  }
+
+  async function handleCopyAccount() {
+    const { bankName, accountNumber, accountHolder } = siteConfig.payment.bank;
+    const text = `${bankName} ${accountNumber} (예금주: ${accountHolder})`;
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopyNotice("계좌번호를 복사했습니다.");
+    } catch {
+      setCopyNotice(text);
+    }
+    setTimeout(() => setCopyNotice(null), 3000);
+  }
+
+  // 결제 방법 확정 → 실제 접수 (Supabase 저장 + 이메일 전달)
+  async function handleFinalSubmit() {
+    if (!paymentMethod) return;
+    setSubmitting(true);
 
     const typeLabel = customerType === "member" ? "단골(멤버십)" : "일반";
     const modeLabel = mode === "detail" ? "디테일" : "간편";
+    const paymentLabel = paymentMethod === "bank" ? "계좌이체" : "카카오페이 송금";
     const itemLines =
       mode === "simple"
         ? [SIMPLE_PACKAGES.find((p) => p.key === selectedPackage)?.label ?? ""]
@@ -97,6 +125,7 @@ export default function ConsultWizard() {
       `연락처: ${contact}`,
       `신청 항목: ${itemLines.join(", ")}`,
       `예상 금액: ${formatKrw(total)}${customerType === "member" ? ` (단골 ${MEMBER_DISCOUNT_RATE * 100}% 할인 적용)` : ""}`,
+      `결제 방법: ${paymentLabel}`,
       "",
       `고민 내용: ${concern}`,
     ].join("\n");
@@ -122,6 +151,7 @@ export default function ConsultWizard() {
           addons: mode === "detail" ? selectedAddons : undefined,
           concern,
           estimatedPrice: total,
+          paymentMethod,
         }),
       });
       const result = await res.json();
@@ -141,10 +171,11 @@ export default function ConsultWizard() {
     }
 
     setSubmittedSummary(summary);
+    setSubmitting(false);
     setStep("done");
 
     const mailtoHref = `mailto:${siteConfig.contactEmail}?subject=${encodeURIComponent(
-      `[상담 신청] ${name}님 - ${typeLabel}/${modeLabel}`
+      `[상담 신청] ${name}님 - ${typeLabel}/${modeLabel} (${paymentLabel})`
     )}&body=${encodeURIComponent(summary)}`;
     window.open(mailtoHref, "_blank");
   }
@@ -220,7 +251,7 @@ export default function ConsultWizard() {
     );
   }
 
-  // ---- Step 4: 완료 ----
+  // ---- Step 5: 완료 ----
   if (step === "done") {
     return (
       <div className="mx-auto max-w-xl">
@@ -231,7 +262,7 @@ export default function ConsultWizard() {
           )}
           <p className="mt-2 text-[13px] text-body">
             이메일 클라이언트가 열리지 않았다면 아래 내용을 직접 {siteConfig.contactEmail} 로 보내주세요.
-            빠른 시일 내 {siteConfig.org}에서 연락드립니다.
+            입금/송금 확인 후 빠른 시일 내 {siteConfig.org}에서 연락드립니다.
           </p>
           <pre className="mt-4 whitespace-pre-wrap rounded-sm bg-bg-alt p-4 text-[12px] leading-relaxed text-ink-700">
             {submittedSummary}
@@ -241,9 +272,93 @@ export default function ConsultWizard() {
     );
   }
 
+  // ---- Step 4: 결제 방법 선택 ----
+  if (step === "payment") {
+    const { bankName, accountNumber, accountHolder } = siteConfig.payment.bank;
+    return (
+      <div className="mx-auto max-w-xl space-y-6">
+        <button type="button" className="text-[13px] text-body underline" onClick={() => setStep("form")}>
+          ← 신청 내용 다시 확인
+        </button>
+
+        <div className="flex items-center justify-between rounded-md bg-ink-900 px-4 py-3 text-white">
+          <span className="text-[13px]">결제하실 금액</span>
+          <span className="text-[18px] font-bold">{formatKrw(total)}</span>
+        </div>
+
+        <div className="space-y-3">
+          <label className={labelClass}>결제 방법을 선택해 주세요</label>
+
+          <button
+            type="button"
+            className={`w-full rounded-md border p-4 text-left ${
+              paymentMethod === "bank" ? "border-indigo-600 bg-indigo-50" : "border-border"
+            }`}
+            onClick={() => setPaymentMethod("bank")}
+          >
+            <p className="text-[14px] font-semibold text-ink-900">계좌이체</p>
+            <p className="mt-1 text-[12px] text-body">아래 계좌로 입금 후 신청 완료 버튼을 눌러주세요</p>
+            {paymentMethod === "bank" && (
+              <div className="mt-3 rounded-sm bg-white p-3 text-[13px] text-ink-900">
+                <p>
+                  {bankName} {accountNumber}
+                </p>
+                <p className="mt-0.5 text-body">예금주: {accountHolder}</p>
+                <button
+                  type="button"
+                  className="mt-2 rounded-sm border border-border px-3 py-1.5 text-[12px] text-indigo-600 hover:bg-indigo-50"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleCopyAccount();
+                  }}
+                >
+                  계좌번호 복사
+                </button>
+                {copyNotice && <p className="mt-2 text-[12px] text-indigo-600">{copyNotice}</p>}
+              </div>
+            )}
+          </button>
+
+          <button
+            type="button"
+            className={`w-full rounded-md border p-4 text-left ${
+              paymentMethod === "kakaopay" ? "border-indigo-600 bg-indigo-50" : "border-border"
+            }`}
+            onClick={() => setPaymentMethod("kakaopay")}
+          >
+            <p className="text-[14px] font-semibold text-ink-900">카카오페이 송금</p>
+            <p className="mt-1 text-[12px] text-body">아래 링크로 송금 후 신청 완료 버튼을 눌러주세요</p>
+            {paymentMethod === "kakaopay" && (
+              <div className="mt-3">
+                <a
+                  href={siteConfig.payment.kakaopayLink}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block rounded-sm bg-[#FEE500] px-4 py-2 text-[13px] font-semibold text-ink-900"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  카카오페이로 송금하기
+                </a>
+              </div>
+            )}
+          </button>
+        </div>
+
+        <button
+          type="button"
+          className="btn-primary w-full justify-center disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={!paymentMethod || submitting}
+          onClick={handleFinalSubmit}
+        >
+          {submitting ? "접수 중..." : "입금/송금 완료, 신청 완료하기"}
+        </button>
+      </div>
+    );
+  }
+
   // ---- Step 3: 폼 (간편 / 디테일 분기) ----
   return (
-    <form onSubmit={handleSubmit} className="mx-auto max-w-xl space-y-6">
+    <form onSubmit={handleGoToPayment} className="mx-auto max-w-xl space-y-6">
       <button
         type="button"
         className="text-[13px] text-body underline"
@@ -393,7 +508,7 @@ export default function ConsultWizard() {
       </div>
 
       <button type="submit" className="btn-primary w-full justify-center">
-        신청하기
+        결제 방법 선택하기
       </button>
     </form>
   );
