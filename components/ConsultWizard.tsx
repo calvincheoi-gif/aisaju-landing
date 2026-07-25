@@ -5,8 +5,11 @@ import { siteConfig } from "@/lib/site-config";
 import { getSupabaseBrowserClient } from "@/lib/supabase-browser";
 import {
   SIMPLE_PACKAGES,
+  NOBLESSE_OBLIGE,
   DETAIL_PURPOSES,
   DETAIL_ADDONS,
+  DELIVERY_SPEEDS,
+  PROMO_NOTICE,
   applyDiscount,
   formatKrw,
   type CustomerType,
@@ -32,8 +35,10 @@ export default function ConsultWizard() {
   const [contact, setContact] = useState("");
   const [concern, setConcern] = useState("");
   const [selectedPackage, setSelectedPackage] = useState<string>(SIMPLE_PACKAGES[0].key);
+  const [noblesse, setNoblesse] = useState(false);
   const [selectedPurposes, setSelectedPurposes] = useState<string[]>([]);
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
+  const [deliverySpeed, setDeliverySpeed] = useState<string>(DELIVERY_SPEEDS[0].key);
   const [lookupStatus, setLookupStatus] = useState<LookupStatus>("idle");
   const [autoDiscountRate, setAutoDiscountRate] = useState(0);
   const [autoTierName, setAutoTierName] = useState<string | null>(null);
@@ -52,15 +57,18 @@ export default function ConsultWizard() {
     if (!customerType) return 0;
     if (mode === "simple") {
       const pkg = SIMPLE_PACKAGES.find((p) => p.key === selectedPackage);
-      return applyDiscount(pkg?.price ?? 0, effectiveRate);
+      const base = (pkg?.price ?? 0) * (noblesse ? NOBLESSE_OBLIGE.multiplier : 1);
+      return applyDiscount(base, effectiveRate);
     }
     if (mode === "detail") {
       const purposeSum = DETAIL_PURPOSES.filter((p) => selectedPurposes.includes(p.key)).reduce((sum, p) => sum + p.price, 0);
       const addonSum = DETAIL_ADDONS.filter((a) => selectedAddons.includes(a.key)).reduce((sum, a) => sum + a.price, 0);
-      return applyDiscount(purposeSum + addonSum, effectiveRate);
+      const speed = DELIVERY_SPEEDS.find((d) => d.key === deliverySpeed);
+      const base = (purposeSum + addonSum) * (speed?.multiplier ?? 1);
+      return applyDiscount(base, effectiveRate);
     }
     return 0;
-  }, [customerType, mode, selectedPackage, selectedPurposes, selectedAddons, effectiveRate]);
+  }, [customerType, mode, selectedPackage, noblesse, selectedPurposes, selectedAddons, deliverySpeed, effectiveRate]);
 
   function togglePurpose(key: string) {
     setSelectedPurposes((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
@@ -154,15 +162,20 @@ export default function ConsultWizard() {
         ? discountSource === "auto"
           ? `${autoTierName ?? ""} 등급 자동확인 ${Math.round(discountRate * 100)}% 할인`
           : discountSource === "manual"
-            ? `직접입력 ${Math.round(discountRate * 100)}% 할인(상담사 확인 필요)`
-            : "할인 미확정(접수 후 관리자 확인)"
+          ? `직접입력 ${Math.round(discountRate * 100)}% 할인(상담사 확인 필요)`
+          : "할인 미확정(접수 후 관리자 확인)"
         : null;
     const itemLines =
       mode === "simple"
-        ? [SIMPLE_PACKAGES.find((p) => p.key === selectedPackage)?.label ?? ""]
+        ? [
+            `${SIMPLE_PACKAGES.find((p) => p.key === selectedPackage)?.label ?? ""}${
+              noblesse ? ` + ${NOBLESSE_OBLIGE.label}(×${NOBLESSE_OBLIGE.multiplier})` : ""
+            }`,
+          ]
         : [
             ...DETAIL_PURPOSES.filter((p) => selectedPurposes.includes(p.key)).map((p) => p.label),
             ...DETAIL_ADDONS.filter((a) => selectedAddons.includes(a.key)).map((a) => `+ ${a.label}`),
+            `납기: ${DELIVERY_SPEEDS.find((d) => d.key === deliverySpeed)?.label ?? ""}`,
           ];
     const summary = [
       `고객 유형: ${typeLabel} / ${modeLabel} 신청서`,
@@ -210,7 +223,7 @@ export default function ConsultWizard() {
       setSaveNotice(
         e instanceof DOMException && e.name === "AbortError"
           ? "DB 응답이 지연되어 자동 저장은 확인되지 않았습니다. 이메일로 접수된 내용을 확인해 연락드리겠습니다."
-          : "DB 저장 요청에 실패했습니다. 이메일로 접수된 내용을 확인해 연락드리겠습니다."
+          : "DB 저장 요청에 실패했습니다. 이메일로 접수된 내용을 확인해 연락드립니다."
       );
     } finally {
       clearTimeout(timeoutId);
@@ -248,11 +261,11 @@ export default function ConsultWizard() {
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <button className="card text-left hover:border-indigo-600" onClick={() => { setMode("simple"); setStep("form"); }}>
             <p className="text-[17px] font-semibold text-ink-900">간편 신청</p>
-            <p className="mt-2 text-[13px] text-body">3가지 패키지 중 선택 (리포트만 / +톡·전화 / +대면)</p>
+            <p className="mt-2 text-[13px] text-body">3가지 유형 중 선택, 최소 정보로 빠르게 신청해요.</p>
           </button>
           <button className="card text-left hover:border-indigo-600" onClick={() => { setMode("detail"); setStep("form"); }}>
             <p className="text-[17px] font-semibold text-ink-900">디테일 신청</p>
-            <p className="mt-2 text-[13px] text-body">10개 상담 목적 + 옵션을 직접 조합</p>
+            <p className="mt-2 text-[13px] text-body">상담 목적, 방식, 납기까지 꼼꼼하게 직접 선택해요.</p>
           </button>
         </div>
       </div>
@@ -316,7 +329,7 @@ export default function ConsultWizard() {
       <div className="rounded-md bg-indigo-50 px-4 py-2 text-[12px] font-medium text-indigo-600">{customerType === "member" ? "단골(멤버십)" : "일반"} 고객 · {mode === "detail" ? "디테일" : "간편"} 신청서</div>
       {mode === "simple" ? (
         <div className="space-y-3">
-          <label className={labelClass}>패키지 선택</label>
+          <label className={labelClass}>신청 유형 선택</label>
           {SIMPLE_PACKAGES.map((pkg) => (
             <label key={pkg.key} className={`flex cursor-pointer items-start justify-between gap-3 rounded-md border p-4 text-left ${selectedPackage === pkg.key ? "border-indigo-600 bg-indigo-50" : "border-border"}`}>
               <div className="flex gap-3">
@@ -329,6 +342,16 @@ export default function ConsultWizard() {
               <p className="shrink-0 text-[14px] font-semibold text-ink-900">{formatKrw(applyDiscount(pkg.price, effectiveRate))}</p>
             </label>
           ))}
+          <label className={`flex cursor-pointer items-start justify-between gap-3 rounded-md border p-4 text-left ${noblesse ? "border-indigo-600 bg-indigo-50" : "border-border"}`}>
+            <div className="flex gap-3">
+              <input type="checkbox" className="mt-1" checked={noblesse} onChange={(e) => setNoblesse(e.target.checked)} />
+              <div>
+                <p className="text-[14px] font-semibold text-ink-900">{NOBLESSE_OBLIGE.label}</p>
+                <p className="mt-0.5 text-[12px] text-body">{NOBLESSE_OBLIGE.desc}</p>
+              </div>
+            </div>
+            <p className="shrink-0 text-[14px] font-semibold text-ink-900">× {NOBLESSE_OBLIGE.multiplier}</p>
+          </label>
         </div>
       ) : (
         <div className="space-y-4">
@@ -342,6 +365,7 @@ export default function ConsultWizard() {
                 </label>
               ))}
             </div>
+            <p className="mt-2 text-[11px] text-body">{PROMO_NOTICE}</p>
           </div>
           <div>
             <label className={labelClass}>추가 옵션</label>
@@ -351,6 +375,22 @@ export default function ConsultWizard() {
                   <span className="flex items-center gap-2"><input type="checkbox" checked={selectedAddons.includes(a.key)} onChange={() => toggleAddon(a.key)} />{a.label}</span>
                   <span className="text-body">+{formatKrw(a.price)}</span>
                 </label>
+              ))}
+            </div>
+          </div>
+          <div>
+            <label className={labelClass}>리포트 납기</label>
+            <div className="grid grid-cols-3 gap-2">
+              {DELIVERY_SPEEDS.map((d) => (
+                <button
+                  key={d.key}
+                  type="button"
+                  className={`rounded-sm border p-2.5 text-[13px] ${deliverySpeed === d.key ? "border-indigo-600 bg-indigo-50" : "border-border"}`}
+                  onClick={() => setDeliverySpeed(d.key)}
+                >
+                  <p className="font-medium text-ink-900">{d.label}</p>
+                  <p className="text-body">× {d.multiplier}</p>
+                </button>
               ))}
             </div>
           </div>
