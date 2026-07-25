@@ -1,9 +1,32 @@
-# AI사주 Lab
+X_TEST_MARKER_X# AI사주 Lab
 
 Next.js 14 + Tailwind CSS. 랜딩페이지 + AI 사주 리포트 자동 생성 기능.
 
 브랜드: **AI사주 Lab**(플랫폼) — 전문 상담·리포트는 **최형철 사주명리 연구소**가 제공.
 공식 도메인: **aisajulab.com**
+
+## 현재 상태 (2026-07-25 기준)
+
+**시험 운영 중.** 아래 항목은 이번 세션에서 반영 완료:
+
+1. **AI 리포트 생성 경로 전환**: GCP Vertex AI → Anthropic 직접 API(`@anthropic-ai/sdk`)
+   - 이유: GCP 프로젝트 Vertex AI 할당량(quota)이 0으로 막혀 있었고, 콘솔 자동화 시도 중 Google의 봇 차단까지 겹쳐 GCP 경로를 포기
+   - Netlify 환경변수에서 `GCP_SERVICE_ACCOUNT_KEY`를 삭제해 `lib/ai-client.ts`의 폴백 로직이 자동으로 `ANTHROPIC_API_KEY` 경로를 사용하도록 전환 (`ANTHROPIC_VERTEX_PROJECT_ID`, `CLOUD_ML_REGION`은 남아있지만 미사용)
+   - Anthropic Console(platform.claude.com)에서 크레딧 충전 + 월 지출 한도 설정 완료 (금액은 Console에서 직접 확인)
+   - Vertex 경로를 다시 쓰려면 GCP 콘솔에서 Vertex AI 할당량을 재신청하고 `GCP_SERVICE_ACCOUNT_KEY`를 다시 등록하면 됨 (코드는 그대로 지원)
+
+2. **`/api/report` 504 에러 수정**: 응답을 NDJSON 스트리밍 방식으로 전환
+   - 이유: AI 리포트 생성이 오래 걸리는 질문에서 Netlify/AWS 인프라의 inactivity timeout(약 25~29초)에 걸려 504 에러 발생
+   - `ReadableStream` + 저수준 `client.messages.create({ stream: true })`로 텍스트를 실시간으로 흘려보내도록 `app/api/report/route.ts`, `components/ReportForm.tsx` 수정
+
+3. **상담 신청(`/consult`) 가격표·옵션 업데이트**: `lib/pricing.ts`, `components/ConsultWizard.tsx`
+   - 참고 프로토타입(dashing-stardust-84ce73.netlify.app)의 최신 가격표 내용을 반영: 간편 신청에 "노블레스 오블리주"(×2 프리미엄) 옵션 추가, 디테일 신청 상담목적을 10개 항목·새 가격 구조로 교체, "리포트 납기" 속도 배율(표준×1/빠른×1.3/초고속×1.8) 추가
+   - 기존 고객유형(일반/단골) 구분, 회원 할인 자동조회(Supabase), 결제방법 선택, DB 저장(`/api/consult`) 로직은 그대로 유지 — 가격표·문구만 교체
+
+4. **앱 아이콘 / PWA 매니페스트 추가**
+   - `app/icon.png`, `app/apple-icon.png` — 파비콘·iOS 홈 화면 아이콘
+   - `public/icon-192.png`, `public/icon-512.png`, `app/manifest.ts` — Android "홈 화면에 추가" 시 브랜드 아이콘 표시
+   - `app/layout.tsx`의 `openGraph.images`에 아이콘 반영 — 카카오톡/문자로 링크 공유 시 미리보기 카드에도 표시
 
 ## 기능 구성
 
