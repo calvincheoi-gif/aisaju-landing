@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import type Anthropic from "@anthropic-ai/sdk";
 import { calculateSaju } from "@/lib/saju";
 import { buildReportPrompt } from "@/lib/prompt";
 import { getAiClient } from "@/lib/ai-client";
@@ -96,7 +97,11 @@ export async function POST(req: NextRequest) {
       send({ type: "saju", saju });
 
       try {
-        const messageStream = ai.client.messages.stream({
+        // ai.client는 Anthropic | AnthropicVertex 유니온 타입인데,
+        // 두 클라이언트 모두 동일한 messages.stream() 시그니처를 가지고 있어서
+        // 타입 추론이 깨지는 문제를 피하려고 Anthropic 타입으로 캐스팅합니다.
+        const client = ai.client as Anthropic;
+        const messageStream = client.messages.stream({
           model: ai.model,
           max_tokens: 1500,
           system,
