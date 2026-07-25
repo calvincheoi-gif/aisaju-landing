@@ -14,43 +14,62 @@ export type ApplicationMode = "simple" | "detail";
 export const SIMPLE_PACKAGES = [
   {
     key: "reportOnly",
-    label: "개인종합 프리미엄 리포트",
+    label: "리포트 Only (개인종합 프리미엄 기준)",
     desc: "AI 분석 + 전문가 검토 리포트(PDF)",
     price: 20000,
   },
   {
     key: "reportPlusCall",
-    label: "리포트 + 톡/전화 상담",
-    desc: "리포트와 함께 실시간 상담사 대화",
+    label: "리포트 + 톡상담",
+    desc: "리포트와 함께 카카오톡/당근톡 실시간 상담",
     price: 50000,
   },
   {
     key: "reportPlusMeeting",
-    label: "리포트 + 커피톡(대면 상담)",
+    label: "리포트 + 카페・대면 상담",
     desc: "리포트와 함께 오프라인 대면 상담",
     price: 100000,
   },
 ] as const;
 
+/** 간편 버전 전용: 노블레스 오블리주 프리미엄 요금(정가의 2배) */
+export const NOBLESSE_OBLIGE = {
+  key: "noblesse",
+  label: "노블레스 오블리주",
+  desc: "재산 상위 10% · 월수입 1,000만원 이상 — 여유가 있으신 만큼 조금 더 나누는 마음으로 프리미엄 요금(정가의 2배)을 적용합니다.",
+  multiplier: 2,
+} as const;
+
 /** 디테일 버전: 10개 상담 목적, 옵션별 추가 가격 */
 export const DETAIL_PURPOSES = [
-  { key: "personal", label: "개인종합", price: 30000 },
-  { key: "compatibility", label: "궁합", price: 40000 },
-  { key: "career", label: "직업·진로", price: 30000 },
-  { key: "business", label: "사업운", price: 40000 },
-  { key: "wealth", label: "재물운", price: 30000 },
-  { key: "yearly", label: "대운·세운", price: 30000 },
-  { key: "naming", label: "작명", price: 50000 },
-  { key: "children", label: "자녀운", price: 30000 },
+  { key: "personalBasic", label: "개인종합 - 기본", price: 10000 },
+  { key: "personalSpecial", label: "개인종합 - 스페셜", price: 50000 },
+  { key: "personalPremium", label: "개인종합 - 프리미엄", price: 90000 },
   { key: "health", label: "건강운", price: 30000 },
-  { key: "comprehensive", label: "종합 분석", price: 60000 },
+  { key: "wealth", label: "재물운", price: 30000 },
+  { key: "compatibility", label: "궁합", price: 100000 },
+  { key: "career", label: "직업진로", price: 30000 },
+  { key: "business", label: "사업운", price: 100000 },
+  { key: "naming", label: "네이밍", price: 300000 },
+  { key: "etc", label: "기타 (명예운 등)", price: 30000 },
 ] as const;
 
 export const DETAIL_ADDONS = [
-  { key: "call", label: "전화 상담 추가", price: 30000 },
-  { key: "meeting", label: "대면 상담(커피톡) 추가", price: 70000 },
-  { key: "pdfExpress", label: "리포트 익일 발급(일반은 3일)", price: 10000 },
+  { key: "call", label: "톡 상담 추가 (카카오톡/당근톡, 질문 1~2개 포함)", price: 10000 },
+  { key: "phone", label: "전화상담 추가 (10분 단위)", price: 15000 },
+  { key: "meeting", label: "대면상담 추가 (서울・경기, 이동 1시간 이내, ~60분)", price: 100000 },
 ] as const;
+
+/** 디테일 버전 전용: 리포트 납기 속도별 가격 배율 */
+export const DELIVERY_SPEEDS = [
+  { key: "standard", label: "표준 (1주)", multiplier: 1 },
+  { key: "fast", label: "빠른 (3일)", multiplier: 1.3 },
+  { key: "express", label: "초고속 (24시간)", multiplier: 1.8 },
+] as const;
+
+/** 프로모션 안내 문구 — 실제 할인 계산은 기존 회원 할인 로직(자동조회/직접입력/관리자조정)을 그대로 사용합니다 */
+export const PROMO_NOTICE =
+  "~8월까지 오픈 기념, 개인종합(기본 이상) 20% 할인 — 상담사 확인 후 적용됩니다.";
 
 /**
  * 참고용 기본 할인율(단골 등급 미확인 시 안내 문구 등에 사용).
