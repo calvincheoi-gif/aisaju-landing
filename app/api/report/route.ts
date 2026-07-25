@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { calculateSaju } from "@/lib/saju";
 import { buildReportPrompt } from "@/lib/prompt";
 import { getAiClient } from "@/lib/ai-client";
@@ -21,7 +21,10 @@ interface ReportRequestBody {
 }
 
 function badRequest(message: string) {
-  return NextResponse.json({ error: message }, { status: 400 });
+  return new Response(JSON.stringify({ error: message }), {
+    status: 400,
+    headers: { "Content-Type": "application/json" },
+  });
 }
 
 export async function POST(req: NextRequest) {
@@ -62,13 +65,13 @@ export async function POST(req: NextRequest) {
 
   const ai = getAiClient();
   if (!ai) {
-    return NextResponse.json(
-      {
+    return new Response(
+      JSON.stringify({
         error:
           "AI 리포트 생성을 위한 설정이 아직 완료되지 않았습니다. Netlify 환경변수에 ANTHROPIC_API_KEY 또는 (ANTHROPIC_VERTEX_PROJECT_ID, CLOUD_ML_REGION, GCP_SERVICE_ACCOUNT_KEY)를 등록해 주세요.",
         saju,
-      },
-      { status: 503 }
+      }),
+      { status: 503, headers: { "Content-Type": "application/json" } }
     );
   }
 
@@ -79,27 +82,49 @@ export async function POST(req: NextRequest) {
     concern,
   });
 
-  try {
-    const message = await ai.client.messages.create({
-      model: ai.model,
-      max_tokens: 1500,
-      system,
-      messages: [{ role: "user", content: user }],
-    });
+  // 스트리밍 응답: AI가 생성하는 동안 계속 데이터를 흘려보내야
+  // Netlify/AWS 인프라의 inactivity timeout(무응답 타임아웃, 약 25~29초)에
+  // 걸리지 않습니다. 응답 없이 오래 기다리면 프록시가 연결을 강제로 끊어버립니다.
+  const encoder = new TextEncoder();
 
-    const reportText = message.content
-      .filter((block) => block.type === "text")
-      .map((block) => (block.type === "text" ? block.text : ""))
-      .join("\n");
+  const stream = new ReadableStream({
+    async start(controller) {
+      function send(obj: Record<string, unknown>) {
+        controller.enqueue(encoder.encode(JSON.stringify(obj) + "\n"));
+      }
 
-    return NextResponse.json({ saju, report: reportText });
-  } catch (e) {
-    return NextResponse.json(
-      {
-        error: `AI 리포트 생성 중 오류가 발생했습니다. [경로: ${ai.via}${ai.diag ? `, 진단: ${ai.diag}` : ""}] (${e instanceof Error ? e.message : "unknown error"})`,
-        saju,
-      },
-      { status: 502 }
-    );
-  }
+      send({ type: "saju", saju });
+
+      try {
+        const messageStream = ai.client.messages.stream({
+          model: ai.model,
+          max_tokens: 1500,
+          system,
+          messages: [{ role: "user", content: user }],
+        });
+
+        for await (const text of messageStream.textStream) {
+          send({ type: "delta", text });
+        }
+
+        await messageStream.finalMessage();
+        send({ type: "done" });
+      } catch (e) {
+        send({
+          type: "error",
+          error: `AI 리포트 생성 중 오류가 발생했습니다. [경로: ${ai.via}${ai.diag ? `, 진단: ${ai.diag}` : ""}] (${e instanceof Error ? e.message : "unknown error"})`,
+        });
+      } finally {
+        controller.close();
+      }
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "text/plain; charset=utf-8",
+      "Cache-Control": "no-cache, no-transform",
+      "X-Accel-Buffering": "no",
+    },
+  });
 }
