@@ -26,6 +26,13 @@ interface ApiResponse {
   error?: string;
 }
 
+interface StreamEvent {
+  type: "saju" | "delta" | "done" | "error";
+  saju?: SajuDisplay;
+  text?: string;
+  error?: string;
+}
+
 const inputClass =
   "w-full rounded-sm border border-border bg-white px-3 py-2 text-[14px] text-ink-900 outline-none focus:border-indigo-600";
 const labelClass = "mb-1.5 block text-[13px] font-medium text-ink-700";
@@ -81,8 +88,65 @@ export default function ReportForm() {
           contact,
         }),
       });
-      const data: ApiResponse = await res.json();
-      setResult(data);
+
+      if (!res.ok) {
+        let errMsg = "AI 리포트 생성 중 오류가 발생했습니다.";
+        try {
+          const errData = await res.json();
+          if (errData?.error) errMsg = errData.error;
+        } catch {
+          // 응답 본문이 JSON이 아닌 경우 기본 메시지 사용
+        }
+        setResult({ error: errMsg });
+        return;
+      }
+
+      if (!res.body) {
+        setResult({ error: "서버 응답을 읽을 수 없습니다." });
+        return;
+      }
+
+      // 스트리밍 응답(NDJSON)을 순서대로 읽어서 화면에 반영합니다.
+      // 이렇게 하면 생성되는 대로 결과가 조금씩 표시되고,
+      // 연결이 계속 살아있어 프록시 타임아웃도 피할 수 있습니다.
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let sajuData: SajuDisplay | undefined;
+      let reportText = "";
+      let streamError = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n");
+        buffer = lines.pop() ?? "";
+        for (const line of lines) {
+          if (!line.trim()) continue;
+          let evt: StreamEvent;
+          try {
+            evt = JSON.parse(line);
+          } catch {
+            continue;
+          }
+          if (evt.type === "saju" && evt.saju) {
+            sajuData = evt.saju;
+            setResult({ saju: sajuData, report: reportText });
+          } else if (evt.type === "delta" && evt.text) {
+            reportText += evt.text;
+            setResult({ saju: sajuData, report: reportText });
+          } else if (evt.type === "error") {
+            streamError = evt.error || "AI 리포트 생성 중 오류가 발생했습니다.";
+          }
+        }
+      }
+
+      if (streamError) {
+        setResult({ error: streamError, saju: sajuData });
+      } else {
+        setResult({ saju: sajuData, report: reportText });
+      }
     } catch {
       setResult({ error: "네트워크 오류가 발생했습니다. 잠시 후 다시 시도해 주세요." });
     } finally {
