@@ -86,6 +86,11 @@ export async function POST(req: NextRequest) {
   // 스트리밍 응답: AI가 생성하는 동안 계속 데이터를 흘려보내야
   // Netlify/AWS 인프라의 inactivity timeout(무응답 타임아웃, 약 25~29초)에
   // 걸리지 않습니다. 응답 없이 오래 기다리면 프록시가 연결을 강제로 끊어버립니다.
+  //
+  // client.messages.stream() 헬퍼는 model이 리터럴 타입이 아니면(string으로
+  // 넓혀지면) 반환 타입이 MessageStream<null>로 추론되어 textStream 프로퍼티가
+  // 타입 에러를 일으킵니다. 그래서 저수준 create({ stream: true }) API로
+  // 원시 이벤트를 직접 순회하는 방식을 사용합니다.
   const encoder = new TextEncoder();
 
   const stream = new ReadableStream({
@@ -97,22 +102,24 @@ export async function POST(req: NextRequest) {
       send({ type: "saju", saju });
 
       try {
-        // ai.client는 Anthropic | AnthropicVertex 유니온 타입인데,
-        // 두 클라이언트 모두 동일한 messages.stream() 시그니처를 가지고 있어서
-        // 타입 추론이 깨지는 문제를 피하려고 Anthropic 타입으로 캐스팅합니다.
         const client = ai.client as Anthropic;
-        const messageStream = client.messages.stream({
+        const rawStream = await client.messages.create({
           model: ai.model,
           max_tokens: 1500,
           system,
           messages: [{ role: "user", content: user }],
+          stream: true,
         });
 
-        for await (const text of messageStream.textStream) {
-          send({ type: "delta", text });
+        for await (const event of rawStream) {
+          if (
+            event.type === "content_block_delta" &&
+            event.delta.type === "text_delta"
+          ) {
+            send({ type: "delta", text: event.delta.text });
+          }
         }
 
-        await messageStream.finalMessage();
         send({ type: "done" });
       } catch (e) {
         send({
