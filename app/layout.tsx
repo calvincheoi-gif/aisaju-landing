@@ -26,6 +26,14 @@ export const metadata: Metadata = {
     siteName: "AI사주 Lab",
     locale: "ko_KR",
     type: "website",
+    images: [
+      {
+        url: "/icon-512.png",
+        width: 512,
+        height: 512,
+        alt: "AI사주 Lab",
+      },
+    ],
   },
 };
 
