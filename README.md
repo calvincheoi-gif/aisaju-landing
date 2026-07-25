@@ -1,4 +1,4 @@
-X_TEST_MARKER_X# AI사주 Lab
+# AI사주 Lab
 
 Next.js 14 + Tailwind CSS. 랜딩페이지 + AI 사주 리포트 자동 생성 기능.
 
