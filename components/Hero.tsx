@@ -74,7 +74,7 @@ export default function Hero() {
           <a href="/report" className="btn-secondary">
             {copy.cta2}
           </a>
-          <a href="#cases" className="btn-ghost">
+          <a href="/cases" className="btn-ghost">
             {copy.cta3}
           </a>
         </div>
