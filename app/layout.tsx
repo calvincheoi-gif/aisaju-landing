@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import LanguageProvider from "@/components/LanguageProvider";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://aisajulab.com"),
@@ -26,14 +27,6 @@ export const metadata: Metadata = {
     siteName: "AI사주 Lab",
     locale: "ko_KR",
     type: "website",
-    images: [
-      {
-        url: "/icon-512.png",
-        width: 512,
-        height: 512,
-        alt: "AI사주 Lab",
-      },
-    ],
   },
 };
 
@@ -52,7 +45,9 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css"
         />
       </head>
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        <LanguageProvider>{children}</LanguageProvider>
+      </body>
     </html>
   );
 }
