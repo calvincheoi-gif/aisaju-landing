@@ -1,6 +1,11 @@
+"use client";
+
 import { siteConfig } from "@/lib/site-config";
+import { useT } from "./LanguageProvider";
 
 export default function Footer() {
+  const { t } = useT();
+
   return (
     <footer className="border-t border-border">
       <div className="mx-auto flex max-w-content flex-col items-center gap-2 px-6 py-10 text-center">
@@ -13,7 +18,7 @@ export default function Footer() {
           {siteConfig.org} · {siteConfig.orgTagline}
         </p>
         <p className="text-[12px] text-body/70">
-          © {new Date().getFullYear()} {siteConfig.org}. All rights reserved.
+          © {new Date().getFullYear()} {siteConfig.org}. {t.footer.rights}
         </p>
       </div>
     </footer>
