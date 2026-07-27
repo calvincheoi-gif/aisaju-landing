@@ -1,4 +1,7 @@
+"use client";
+
 import { siteConfig } from "@/lib/site-config";
+import { useT } from "./LanguageProvider";
 
 const CHANNELS = [
   { label: "당근 비즈프로필", href: siteConfig.channels.daangn },
@@ -9,13 +12,15 @@ const CHANNELS = [
 ];
 
 export default function Channels() {
+  const { t } = useT();
+
   return (
     <section id="channels" className="bg-bg-alt">
       <div className="section">
         <div className="mb-10 text-center">
-          <span className="eyebrow">Channels</span>
+          <span className="eyebrow">{t.channels.eyebrow}</span>
           <h2 className="mt-3 text-[28px] font-bold tracking-[-0.02em] text-ink-900">
-            기존 채널에서도 만나보세요
+            {t.channels.title}
           </h2>
         </div>
 
