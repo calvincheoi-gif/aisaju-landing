@@ -3,17 +3,7 @@
 import { useState } from "react";
 import MarkdownReport from "./MarkdownReport";
 import { siteConfig } from "@/lib/site-config";
-
-const CONSULT_TYPES = [
-  "개인사주",
-  "궁합",
-  "직업·진로",
-  "사업운",
-  "재물운",
-  "대운·세운",
-  "작명",
-  "종합 분석",
-];
+import { useT } from "./LanguageProvider";
 
 interface SajuDisplay {
   pillars: { year: string; month: string; day: string; hour: string | null };
@@ -38,6 +28,9 @@ const inputClass =
 const labelClass = "mb-1.5 block text-[13px] font-medium text-ink-700";
 
 export default function ReportForm() {
+  const { t } = useT();
+  const CONSULT_TYPES = t.reportForm.consultTypes;
+
   const [name, setName] = useState("");
   const [gender, setGender] = useState<"male" | "female">("female");
   const [year, setYear] = useState("");
@@ -61,7 +54,7 @@ export default function ReportForm() {
     setFormError("");
 
     if (!name || !year || !month || !day || (!timeUnknown && !hour) || !concern) {
-      setFormError("필수 항목을 모두 입력해 주세요.");
+      setFormError(t.reportForm.requiredError);
       return;
     }
 
@@ -107,8 +100,6 @@ export default function ReportForm() {
       }
 
       // 스트리밍 응답(NDJSON)을 순서대로 읽어서 화면에 반영합니다.
-      // 이렇게 하면 생성되는 대로 결과가 조금씩 표시되고,
-      // 연결이 계속 살아있어 프록시 타임아웃도 피할 수 있습니다.
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let buffer = "";
@@ -156,14 +147,14 @@ export default function ReportForm() {
 
   if (result?.report) {
     const mailBody = [
-      `이름: ${name}`,
-      `생년월일: ${year}-${month}-${day} (${isLunar ? "음력" : "양력"})`,
-      `상담 종류: ${consultType}`,
-      `연락처: ${contact || "미기재"}`,
+      `${t.reportForm.nameLabel}: ${name}`,
+      `${t.reportForm.birthLabel}: ${year}-${month}-${day} (${isLunar ? t.reportForm.lunar : ""})`,
+      `${t.reportForm.consultTypeLabel}: ${consultType}`,
+      `${t.reportForm.contactLabel}: ${contact || "-"}`,
       "",
-      `고민 내용: ${concern}`,
+      `${t.reportForm.concernLabel}: ${concern}`,
       "",
-      "--- AI 리포트 원문 ---",
+      "--- AI Report ---",
       result.report,
     ].join("\n");
     const mailtoHref = `mailto:${siteConfig.contactEmail}?subject=${encodeURIComponent(
@@ -178,11 +169,9 @@ export default function ReportForm() {
               {(["year", "month", "day", "hour"] as const).map((key) => (
                 <div key={key} className="rounded-sm bg-white/10 py-3 text-center">
                   <p className="text-[16px] font-bold text-white">
-                    {result.saju!.pillars[key] ?? "미상"}
+                    {result.saju!.pillars[key] ?? t.reportForm.pillars.unknown}
                   </p>
-                  <p className="mt-1 text-[10px] text-white/60">
-                    {{ year: "년주", month: "월주", day: "일주", hour: "시주" }[key]}
-                  </p>
+                  <p className="mt-1 text-[10px] text-white/60">{t.reportForm.pillars[key]}</p>
                 </div>
               ))}
             </div>
@@ -191,14 +180,12 @@ export default function ReportForm() {
         </div>
 
         <div className="mt-6 rounded-md border border-amber-200 bg-amber-50 p-4 text-[13px] leading-relaxed text-amber-800">
-          ⚠️ 이 리포트는 AI가 자동 생성한 무료 간편분석으로, 드물게 계산 오류나
-          부정확한 해석이 포함될 수 있습니다. 중요한 결정에 참고하시려면
-          전문가 확인을 요청해 주세요.
+          ⚠️ {t.reportForm.resultDisclaimer}
         </div>
 
         <div className="mt-4 flex flex-wrap gap-3">
           <a href={mailtoHref} className="btn-secondary">
-            전문가에게 확인 요청
+            {t.reportForm.expertBtn}
           </a>
           <button
             className="btn-ghost"
@@ -206,7 +193,7 @@ export default function ReportForm() {
               setResult(null);
             }}
           >
-            다시 작성하기
+            {t.reportForm.retryBtn}
           </button>
         </div>
       </div>
@@ -216,50 +203,48 @@ export default function ReportForm() {
   return (
     <form onSubmit={handleSubmit} className="mx-auto max-w-xl space-y-6">
       <div className="rounded-md border border-amber-200 bg-amber-50 p-4 text-[13px] leading-relaxed text-amber-800">
-        ⚠️ AI 무료 간편분석은 참고용이며, 드물게 오류가 있을 수 있습니다. 정밀한
-        해석이 필요하시면 리포트 확인 후 "전문가에게 확인 요청" 버튼을
-        이용해 주세요.
+        ⚠️ {t.reportForm.disclaimer}
       </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className={labelClass}>이름</label>
+          <label className={labelClass}>{t.reportForm.nameLabel}</label>
           <input className={inputClass} value={name} onChange={(e) => setName(e.target.value)} />
         </div>
         <div>
-          <label className={labelClass}>성별</label>
+          <label className={labelClass}>{t.reportForm.genderLabel}</label>
           <select
             className={inputClass}
             value={gender}
             onChange={(e) => setGender(e.target.value as "male" | "female")}
           >
-            <option value="female">여성</option>
-            <option value="male">남성</option>
+            <option value="female">{t.reportForm.female}</option>
+            <option value="male">{t.reportForm.male}</option>
           </select>
         </div>
       </div>
 
       <div>
-        <label className={labelClass}>생년월일</label>
+        <label className={labelClass}>{t.reportForm.birthLabel}</label>
         <div className="flex items-center gap-2">
           <input
             className={inputClass}
             type="number"
-            placeholder="년(YYYY)"
+            placeholder={t.reportForm.yearPh}
             value={year}
             onChange={(e) => setYear(e.target.value)}
           />
           <input
             className={inputClass}
             type="number"
-            placeholder="월"
+            placeholder={t.reportForm.monthPh}
             value={month}
             onChange={(e) => setMonth(e.target.value)}
           />
           <input
             className={inputClass}
             type="number"
-            placeholder="일"
+            placeholder={t.reportForm.dayPh}
             value={day}
             onChange={(e) => setDay(e.target.value)}
           />
@@ -267,7 +252,7 @@ export default function ReportForm() {
         <div className="mt-2 flex gap-4 text-[13px] text-body">
           <label className="flex items-center gap-1.5">
             <input type="checkbox" checked={isLunar} onChange={(e) => setIsLunar(e.target.checked)} />
-            음력
+            {t.reportForm.lunar}
           </label>
           {isLunar && (
             <label className="flex items-center gap-1.5">
@@ -276,19 +261,19 @@ export default function ReportForm() {
                 checked={isLeapMonth}
                 onChange={(e) => setIsLeapMonth(e.target.checked)}
               />
-              윤달
+              {t.reportForm.leapMonth}
             </label>
           )}
         </div>
       </div>
 
       <div>
-        <label className={labelClass}>태어난 시간</label>
+        <label className={labelClass}>{t.reportForm.timeLabel}</label>
         <div className="flex items-center gap-2">
           <input
             className={inputClass}
             type="number"
-            placeholder="시(0-23)"
+            placeholder={t.reportForm.hourPh}
             value={hour}
             onChange={(e) => setHour(e.target.value)}
             disabled={timeUnknown}
@@ -296,7 +281,7 @@ export default function ReportForm() {
           <input
             className={inputClass}
             type="number"
-            placeholder="분"
+            placeholder={t.reportForm.minutePh}
             value={minute}
             onChange={(e) => setMinute(e.target.value)}
             disabled={timeUnknown}
@@ -307,29 +292,29 @@ export default function ReportForm() {
               checked={timeUnknown}
               onChange={(e) => setTimeUnknown(e.target.checked)}
             />
-            시간 모름
+            {t.reportForm.timeUnknown}
           </label>
         </div>
       </div>
 
       <div>
-        <label className={labelClass}>상담 종류</label>
+        <label className={labelClass}>{t.reportForm.consultTypeLabel}</label>
         <select className={inputClass} value={consultType} onChange={(e) => setConsultType(e.target.value)}>
-          {CONSULT_TYPES.map((t) => (
-            <option key={t} value={t}>
-              {t}
+          {CONSULT_TYPES.map((tp) => (
+            <option key={tp} value={tp}>
+              {tp}
             </option>
           ))}
         </select>
       </div>
 
       <div>
-        <label className={labelClass}>연락처 (선택)</label>
+        <label className={labelClass}>{t.reportForm.contactLabel}</label>
         <input className={inputClass} value={contact} onChange={(e) => setContact(e.target.value)} />
       </div>
 
       <div>
-        <label className={labelClass}>고민 내용</label>
+        <label className={labelClass}>{t.reportForm.concernLabel}</label>
         <textarea
           className={inputClass}
           rows={4}
@@ -342,7 +327,7 @@ export default function ReportForm() {
       {result?.error && <p className="text-[13px] text-red-600">{result.error}</p>}
 
       <button type="submit" className="btn-primary w-full justify-center" disabled={loading}>
-        {loading ? "AI가 사주를 분석하고 있습니다..." : "AI 리포트 생성하기"}
+        {loading ? t.reportForm.loadingBtn : t.reportForm.submitBtn}
       </button>
     </form>
   );
