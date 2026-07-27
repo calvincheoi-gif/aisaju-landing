@@ -17,22 +17,13 @@ export const siteConfig = {
   // TODO: 실제 운영 이메일로 교체
   contactEmail: "calvincheoi@gmail.com",
 
+  // TODO: 실제 채널 URL로 교체
   channels: {
-    daangn: "https://www.daangn.com/kr/local-profile/yhqzhrhmoopf/?referrer=share",
-    naverBlog: "https://m.blog.naver.com/naming_supporter?tab=1",
-    kakaoChannel: "https://open.kakao.com/o/gj3iUKai",
+    daangn: "#",
+    naverBlog: "#",
+    kakaoChannel: "#",
     instagram: "#",
-    cafe: "https://cafe.daangn.com/sajupalja-myeon?utm_medium=copy_link",
-  },
-
-  /** 결제 안내 정보 (계좌이체 / 카카오페이 송금) */
-  payment: {
-    bank: {
-      bankName: "카카오뱅크",
-      accountNumber: "3333372825990",
-      accountHolder: "Life_Biz 성장연구소",
-    },
-    kakaopayLink: "https://qr.kakaopay.com/FRQ005kvF",
+    cafe: "#",
   },
 };
 
@@ -46,10 +37,4 @@ export const OTHER_LANGUAGES = [
   { code: "zh", label: "中文" },
   { code: "ja", label: "日本語" },
   { code: "fr", label: "Français" },
-  { code: "de", label: "Deutsch" },
-  { code: "es", label: "Español" },
 ] as const;
-
-export type LanguageCode =
-  | (typeof PRIMARY_LANGUAGES)[number]["code"]
-  | (typeof OTHER_LANGUAGES)[number]["code"];
