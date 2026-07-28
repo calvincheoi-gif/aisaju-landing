@@ -21,6 +21,9 @@ export const metadata: Metadata = {
   ],
   verification: {
     google: "RM29hZ0nuU3g-e1MRNlBB8jSrHO7qsWM32ZCZ_rd1bg",
+    other: {
+      "naver-site-verification": "b141b457220f4988533588043233f5c325455b07",
+    },
   },
   openGraph: {
     title: "AI사주 Lab | AI와 명리학으로 완성하는 인생·비즈니스 의사결정",
