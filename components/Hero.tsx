@@ -40,7 +40,10 @@ export default function Hero() {
           <a href="/report" className="btn-secondary">
             {t.hero.cta2}
           </a>
-          <a href="/cases" className="btn-ghost">
+          <a
+            href="/cases"
+            className="btn border-2 border-amber-400 bg-amber-50 font-bold text-amber-700 shadow-[0_0_0_4px_rgba(251,191,36,0.12)] transition-all hover:border-amber-500 hover:bg-amber-100 hover:shadow-[0_0_0_6px_rgba(251,191,36,0.18)]"
+          >
             {t.hero.cta3}
           </a>
         </div>
