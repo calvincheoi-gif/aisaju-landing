@@ -19,6 +19,9 @@ export const metadata: Metadata = {
     "AI 명리 리포트",
     "최형철 사주명리 연구소",
   ],
+  verification: {
+    google: "RM29hZ0nuU3g-e1MRNlBB8jSrHO7qsWM32ZCZ_rd1bg",
+  },
   openGraph: {
     title: "AI사주 Lab | AI와 명리학으로 완성하는 인생·비즈니스 의사결정",
     description:
