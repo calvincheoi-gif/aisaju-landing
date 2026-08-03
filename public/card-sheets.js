@@ -6,6 +6,11 @@
   var SUBT = { "AI": "데이터", "命理": "전통", "최형철 사주명리 연구소": "운영" };
   var cards = {};
 
+  var font = document.createElement("link");
+  font.rel = "stylesheet";
+  font.href = "https://fonts.googleapis.com/css2?family=Do+Hyeon&display=swap";
+  document.head.appendChild(font);
+
   var css = document.createElement("style");
   css.textContent =
     "#scOverlay{position:fixed;inset:0;background:rgba(30,27,75,.55);z-index:99990;display:flex;align-items:flex-end;justify-content:center;}" +
@@ -14,6 +19,12 @@
     "#scSheet .g{width:44px;height:5px;border-radius:3px;background:#E0E7FF;margin:0 auto 14px;}" +
     "#scSheet img{width:100%;border-radius:14px;display:block;}" +
     "#scSheet .t{font-size:20px;font-weight:800;color:#1E1B4B;text-align:center;margin:14px 0 2px;}" +
+    "#scSheet .imgrow{display:flex;align-items:center;gap:10px;}" +
+    "#scSheet .imgrow img{width:52%;min-width:0;}" +
+    "#scSheet .cap{flex:1;font-family:'Do Hyeon',sans-serif;font-size:17px;line-height:1.55;color:#312E81;word-break:keep-all;}" +
+    "#scSheet .cap .ck{color:#F59E0B;margin-right:3px;}" +
+    "#scSheet .capb{font-family:'Do Hyeon',sans-serif;font-size:18px;line-height:1.6;color:#312E81;text-align:center;margin-top:10px;word-break:keep-all;}" +
+    "#scSheet .capb .ck{color:#F59E0B;margin-right:3px;}" +
     "#scSheet .h{font-size:16px;font-weight:800;color:#312E81;margin:18px 0 6px;}" +
     "#scSheet .h:before{content:'✦ ';color:#4338CA;}" +
     "#scSheet .p{font-size:14.5px;color:#374151;line-height:1.75;}" +
@@ -33,14 +44,32 @@
     d.textContent = s == null ? "" : s;
     return d.innerHTML;
   }
+  function capCol(lines) {
+    var h = '<div class="cap">';
+    (lines || []).forEach(function (l) { h += '<div><span class="ck">✔</span>' + esc(l) + "</div>"; });
+    return h + "</div>";
+  }
   function open(title) {
     var c = cards[title];
     if (!c) return;
     close();
+    var tOv = (c.content || []).filter(function (b) { return b.t === "title"; })[0];
     var html = '<div class="g"></div>';
-    html += '<div class="t">' + esc(c.title) + "</div>";
+    html += '<div class="t">' + esc(tOv ? tOv.x : c.title) + "</div>";
     (c.content || []).forEach(function (b) {
-      if (b.t === "img") html += '<img src="' + b.src + '" alt="">';
+      if (b.t === "title") return;
+      if (b.t === "img") {
+        if (b.left || b.right) {
+          html += '<div class="imgrow">' + capCol(b.left) + '<img src="' + b.src + '" alt="">' + capCol(b.right) + "</div>";
+        } else {
+          html += '<img src="' + b.src + '" alt="">';
+        }
+        if (b.below) {
+          html += '<div class="capb">';
+          b.below.forEach(function (l) { html += '<div><span class="ck">✔</span>' + esc(l) + "</div>"; });
+          html += "</div>";
+        }
+      }
       else if (b.t === "h") html += '<div class="h">' + esc(b.x) + "</div>";
       else if (b.t === "p") html += '<div class="p">' + esc(b.x) + "</div>";
       else if (b.t === "tip") html += '<div class="tip">' + esc(b.x) + "</div>";
