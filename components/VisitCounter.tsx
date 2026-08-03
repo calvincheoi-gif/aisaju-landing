@@ -8,7 +8,7 @@ const VISITED_KEY = "aisaju_visited_session";
 /**
  * 방문자 수 카운터. 브라우저 세션(sessionStorage)당 1회만 증가시키고,
  * 그 외에는 현재 누적 방문 수만 조회해 표시합니다.
- * Supabase 미연동 상태(site_stats 테이블 없음)면 조용히 숨겨집니다.
+ * 초기 신뢰 구축을 위해 누적 1,000회 미만일 때는 표시하지 않습니다.
  */
 export default function VisitCounter() {
   const { t } = useT();
@@ -27,7 +27,7 @@ export default function VisitCounter() {
       .catch(() => {});
   }, []);
 
-  if (count === null) return null;
+  if (count === null || count < 1000) return null;
 
   return (
     <p className="mt-0.5 text-[11px] font-medium text-body/70">
