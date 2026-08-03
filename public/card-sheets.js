@@ -2,6 +2,7 @@
   var SUPA = "https://urazdkvkanjnquqhnrvo.supabase.co";
   var ANON = "sb_publishable_fSG-HqZrC9GVTT5FOprPnA_sDiFoiD2";
   var TITLES = ["개인사주", "궁합", "직업·진로", "사업운", "재물운", "대운·세운", "작명", "AI", "命理", "최형철 사주명리 연구소"];
+  var ALIAS = { "Personal chart": "개인사주", "Compatibility": "궁합", "Career": "직업·진로", "Business luck": "사업운", "Wealth luck": "재물운", "Long/short-term luck": "대운·세운", "Naming": "작명" };
   var SUBT = { "AI": "데이터", "命理": "전통", "최형철 사주명리 연구소": "운영" };
   var cards = {};
 
@@ -62,20 +63,21 @@
       if (el.dataset.scDone) continue;
       if (el.children.length > 0) continue;
       var txt = (el.textContent || "").trim();
-      if (TITLES.indexOf(txt) === -1) continue;
+      var key = TITLES.indexOf(txt) !== -1 ? txt : ALIAS[txt];
+      if (!key) continue;
       var target = el.closest("div") || el;
       var ttext = (target.textContent || "").trim();
-      if (ttext.length > 160) continue; // 카드 크기 컨테이너만 (섹션 전체 제외)
-      var need = SUBT[txt];
-      if (need && ttext.indexOf(need) === -1) continue; // 짧은 제목은 부제로 재확인
+      if (ttext.length > 160) continue;
+      var need = SUBT[key];
+      if (need && txt === key && ttext.indexOf(need) === -1) continue;
       el.dataset.scDone = "1";
       target.classList.add("sc-clickable");
-      (function (t) {
+      (function (k) {
         target.addEventListener("click", function (e) {
           if (e.target.closest("a") || e.target.closest("button")) return;
-          open(t);
+          open(k);
         });
-      })(txt);
+      })(key);
     }
   }
 
