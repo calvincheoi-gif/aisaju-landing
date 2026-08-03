@@ -55,6 +55,7 @@ export default function RootLayout({
         <LanguageProvider>{children}</LanguageProvider>
         <script src="/august-event.js" defer></script>
         <script src="/card-sheets.js" defer></script>
+        <script src="/visitor.js" defer></script>
       </body>
     </html>
   );
