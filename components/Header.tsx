@@ -42,9 +42,6 @@ export default function Header() {
           <Link href="/qna" className="btn-ghost !py-2.5 !px-4 !text-[13px]">
             {t.header.qna}
           </Link>
-          <Link href="/admin" className="btn-ghost !py-2.5 !px-4 !text-[13px]">
-            {t.header.admin}
-          </Link>
           <Link href="/consult" className="btn-primary !py-2.5 !px-5 !text-[13px]">
             {t.header.consult}
           </Link>
