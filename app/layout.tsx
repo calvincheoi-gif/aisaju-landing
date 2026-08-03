@@ -53,6 +53,7 @@ export default function RootLayout({
       </head>
       <body className="font-sans">
         <LanguageProvider>{children}</LanguageProvider>
+        <script src="/august-event.js" defer></script>
       </body>
     </html>
   );
