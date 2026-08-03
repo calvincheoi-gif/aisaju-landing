@@ -2,6 +2,7 @@
   var SUPA = "https://urazdkvkanjnquqhnrvo.supabase.co";
   var ANON = "sb_publishable_fSG-HqZrC9GVTT5FOprPnA_sDiFoiD2";
   var TITLES = ["개인사주", "궁합", "직업·진로", "사업운", "재물운", "대운·세운", "작명", "AI", "命理", "최형철 사주명리 연구소"];
+  var SUBT = { "AI": "데이터", "命理": "전통", "최형철 사주명리 연구소": "운영" };
   var cards = {};
 
   var css = document.createElement("style");
@@ -56,21 +57,32 @@
 
   function attach() {
     var els = document.querySelectorAll("h1,h2,h3,h4,h5,strong,b,p,span,div");
-    els.forEach(function (el) {
-      if (el.dataset.scDone) return;
-      if (el.children.length > 0) return;
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      if (el.dataset.scDone) continue;
+      if (el.children.length > 0) continue;
       var txt = (el.textContent || "").trim();
-      if (TITLES.indexOf(txt) === -1) return;
-      var fs = parseFloat(getComputedStyle(el).fontSize || "16");
-      if (fs > 34) return; // 섹션 대제목 제외
-      el.dataset.scDone = "1";
+      if (TITLES.indexOf(txt) === -1) continue;
       var target = el.closest("div") || el;
+      var ttext = (target.textContent || "").trim();
+      if (ttext.length > 160) continue; // 카드 크기 컨테이너만 (섹션 전체 제외)
+      var need = SUBT[txt];
+      if (need && ttext.indexOf(need) === -1) continue; // 짧은 제목은 부제로 재확인
+      el.dataset.scDone = "1";
       target.classList.add("sc-clickable");
-      target.addEventListener("click", function (e) {
-        if (e.target.closest("a") || e.target.closest("button")) return;
-        open(txt);
-      });
-    });
+      (function (t) {
+        target.addEventListener("click", function (e) {
+          if (e.target.closest("a") || e.target.closest("button")) return;
+          open(t);
+        });
+      })(txt);
+    }
+  }
+
+  var pending = null;
+  function attachSoon() {
+    if (pending) return;
+    pending = setTimeout(function () { pending = null; attach(); }, 400);
   }
 
   fetch(SUPA + "/rest/v1/site_cards?select=*&visible=eq.true&order=sort", { headers: { apikey: ANON } })
@@ -78,8 +90,8 @@
     .then(function (rows) {
       (rows || []).forEach(function (r) { cards[r.title] = r; });
       attach();
-      setTimeout(attach, 1200);
-      setTimeout(attach, 3500);
+      new MutationObserver(attachSoon).observe(document.body, { childList: true, subtree: true });
+      window.addEventListener("scroll", attachSoon, { passive: true });
     })
     .catch(function () {});
 })();
