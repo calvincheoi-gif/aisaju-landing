@@ -7,6 +7,9 @@ import type { Review } from "@/lib/reviews";
 const inputClass =
   "w-full rounded-sm border border-border bg-white px-3 py-2 text-[14px] text-ink-900 outline-none focus:border-indigo-600";
 
+/** 후기가 이 개수 이상 쌓이기 전까지는 후기 유도 배너를 노출합니다. */
+const REVIEW_INCENTIVE_THRESHOLD = 10;
+
 export default function ReviewsBoard({ initialReviews }: { initialReviews: Review[] }) {
   const { t } = useT();
   const [reviews, setReviews] = useState(initialReviews);
@@ -87,6 +90,12 @@ export default function ReviewsBoard({ initialReviews }: { initialReviews: Revie
           <p className={`mb-4 text-center text-[13px] ${notice.type === "ok" ? "text-green-600" : "text-red-600"}`}>
             {notice.text}
           </p>
+        )}
+
+        {reviews.length < REVIEW_INCENTIVE_THRESHOLD && (
+          <div className="mb-4 rounded-lg border-2 border-amber-400 bg-amber-50 px-4 py-3 text-center shadow-[0_0_0_4px_rgba(251,191,36,0.12)]">
+            <p className="text-[14px] font-bold leading-relaxed text-amber-700">{t.reviews.incentive}</p>
+          </div>
         )}
 
         {reviews.length === 0 ? (
