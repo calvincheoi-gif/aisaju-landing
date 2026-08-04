@@ -59,6 +59,7 @@ interface Dictionary {
     submitBtn: string;
     submitting: string;
     empty: string;
+    incentive: string;
     successMsg: string;
     errorMsg: string;
   };
@@ -208,6 +209,7 @@ const ko: Dictionary = {
     submitBtn: "등록하기",
     submitting: "등록 중...",
     empty: "아직 등록된 후기가 없습니다.",
+    incentive: "지금 후기를 남겨주시면 다음 상담 시 50% 할인 혜택을 드립니다!",
     successMsg: "소중한 후기 감사합니다.",
     errorMsg: "등록 중 오류가 발생했습니다.",
   },
@@ -371,6 +373,7 @@ const en: Dictionary = {
     submitBtn: "Submit",
     submitting: "Submitting...",
     empty: "No reviews yet.",
+    incentive: "Leave a review now and get 50% off your next consultation!",
     successMsg: "Thank you for your review.",
     errorMsg: "Something went wrong while submitting.",
   },
@@ -534,6 +537,7 @@ const ja: Dictionary = {
     submitBtn: "投稿する",
     submitting: "投稿中...",
     empty: "まだ口コミがありません。",
+    incentive: "今口コミを書いていただくと、次回のご相談が50%割引になります！",
     successMsg: "貴重な口コミありがとうございます。",
     errorMsg: "投稿中にエラーが発生しました。",
   },
@@ -697,6 +701,7 @@ const zh: Dictionary = {
     submitBtn: "提交",
     submitting: "提交中...",
     empty: "暂无评价。",
+    incentive: "现在留下评价，下次咨询即可享受5折优惠！",
     successMsg: "感谢您的宝贵评价。",
     errorMsg: "提交时发生错误。",
   },
@@ -860,6 +865,7 @@ const fr: Dictionary = {
     submitBtn: "Envoyer",
     submitting: "Envoi...",
     empty: "Aucun avis pour le moment.",
+    incentive: "Laissez un avis dès maintenant et bénéficiez de 50% de réduction sur votre prochaine consultation !",
     successMsg: "Merci pour votre avis.",
     errorMsg: "Une erreur est survenue lors de l'envoi.",
   },
