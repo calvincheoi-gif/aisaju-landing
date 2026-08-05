@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getSupabaseServerClient } from "@/lib/supabase";
+import { getSupabaseServerClient, getSupabaseAdminClient } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 
@@ -20,9 +20,9 @@ export async function GET(req: Request) {
   if (!checkPassword(password)) {
     return NextResponse.json({ error: "비밀번호가 올바르지 않습니다." }, { status: 401 });
   }
-  const supabase = getSupabaseServerClient();
+  const supabase = getSupabaseAdminClient();
   if (!supabase) {
-    return NextResponse.json({ error: "Supabase 설정이 완료되지 않았습니다." }, { status: 500 });
+    return NextResponse.json({ error: "Supabase 관리자 설정이 완료되지 않았습니다." }, { status: 500 });
   }
   const { data, error } = await supabase
     .from("reviews")
@@ -45,9 +45,9 @@ export async function DELETE(req: Request) {
   if (!id) {
     return NextResponse.json({ error: "삭제할 후기 id가 필요합니다." }, { status: 400 });
   }
-  const supabase = getSupabaseServerClient();
+  const supabase = getSupabaseAdminClient();
   if (!supabase) {
-    return NextResponse.json({ error: "Supabase 설정이 완료되지 않았습니다." }, { status: 500 });
+    return NextResponse.json({ error: "Supabase 관리자 설정이 완료되지 않았습니다." }, { status: 500 });
   }
   const { error } = await supabase.from("reviews").delete().eq("id", id);
   if (error) {
