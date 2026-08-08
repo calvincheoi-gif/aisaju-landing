@@ -31,6 +31,47 @@ const labelClass = "mb-1.5 block text-[13px] font-medium text-ink-700";
 const HOUR_OPTIONS = Array.from({ length: 24 }, (_, i) => i);
 const BIRTH_INFO_STORAGE_KEY = "aisajulab_birth_info";
 
+const CURRENT_YEAR = new Date().getFullYear();
+const YEAR_OPTIONS = Array.from({ length: 101 }, (_, i) => CURRENT_YEAR - i);
+const MONTH_OPTIONS = Array.from({ length: 12 }, (_, i) => i + 1);
+
+function daysInMonth(year: number, month: number) {
+  return new Date(year, month, 0).getDate();
+}
+
+/** "1990년 5월 15일 15시", "1990-05-15 오후 3시" 같은 자유 서술형 입력에서 연/월/일/시를 최대한 추출합니다. */
+function parseBirthManualText(text: string): {
+  year?: string;
+  month?: string;
+  day?: string;
+  hour?: string;
+  unknown?: boolean;
+} {
+  const result: { year?: string; month?: string; day?: string; hour?: string; unknown?: boolean } = {};
+  if (/시간\s*모름|시간\s*불명|시간\s*미상/.test(text)) {
+    result.unknown = true;
+  }
+  const dateMatch = text.match(/(\d{4})\s*[.\-/년]\s*(\d{1,2})\s*[.\-/월]\s*(\d{1,2})\s*일?/);
+  if (dateMatch) {
+    result.year = dateMatch[1];
+    result.month = dateMatch[2].padStart(2, "0");
+    result.day = dateMatch[3].padStart(2, "0");
+  }
+  const rest = dateMatch ? text.slice((dateMatch.index ?? 0) + dateMatch[0].length) : text;
+  const hourMatch =
+    rest.match(/(오전|오후|AM|PM|am|pm)?\s*(\d{1,2})\s*시(?!간)/) || rest.match(/(\d{1,2})\s*:\s*\d{2}/);
+  if (hourMatch) {
+    const ampm = hourMatch[1] && /시/.test(hourMatch[0]) ? hourMatch[1] : undefined;
+    let hourVal = parseInt(hourMatch[2] ?? hourMatch[1], 10);
+    if (ampm && /오후|PM|pm/.test(ampm) && hourVal < 12) hourVal += 12;
+    if (ampm && /오전|AM|am/.test(ampm) && hourVal === 12) hourVal = 0;
+    if (!Number.isNaN(hourVal) && hourVal >= 0 && hourVal <= 23) {
+      result.hour = String(hourVal);
+    }
+  }
+  return result;
+}
+
 type Step = "customerType" | "mode" | "form" | "done";
 
 export default function ConsultWizard() {
@@ -61,13 +102,53 @@ export default function ConsultWizard() {
   const [name, setName] = useState("");
   const [gender, setGender] = useState<"male" | "female">("female");
 
-  // 생년월일시 입력 (구조화된 필드: 날짜 선택 + 시간 선택/모름 + 음력·양력 + 윤달)
-  const [birthDate, setBirthDate] = useState("");
+  // 생년월일시 입력 (구조화된 필드: 연/월/일 선택 또는 직접 입력 + 시간 선택/모름 + 음력·양력 + 윤달)
+  const [birthYear, setBirthYear] = useState("");
+  const [birthMonthNum, setBirthMonthNum] = useState("");
+  const [birthDayNum, setBirthDayNum] = useState("");
+  const [birthInputMode, setBirthInputMode] = useState<"select" | "manual">("select");
+  const [birthManualText, setBirthManualText] = useState("");
   const [birthHour, setBirthHour] = useState("");
   const [birthTimeUnknown, setBirthTimeUnknown] = useState(false);
   const [calendarType, setCalendarType] = useState<"solar" | "lunar">("solar");
   const [isLeapMonth, setIsLeapMonth] = useState(false);
   const [birthError, setBirthError] = useState<string | null>(null);
+
+  const birthDate = useMemo(() => {
+    if (birthYear && birthMonthNum && birthDayNum) {
+      return `${birthYear}-${birthMonthNum}-${birthDayNum}`;
+    }
+    return "";
+  }, [birthYear, birthMonthNum, birthDayNum]);
+
+  const dayOptions = useMemo(() => {
+    const count =
+      birthYear && birthMonthNum ? daysInMonth(parseInt(birthYear, 10), parseInt(birthMonthNum, 10)) : 31;
+    return Array.from({ length: count }, (_, i) => i + 1);
+  }, [birthYear, birthMonthNum]);
+
+  useEffect(() => {
+    if (birthDayNum && parseInt(birthDayNum, 10) > dayOptions.length) {
+      setBirthDayNum(String(dayOptions.length).padStart(2, "0"));
+    }
+  }, [dayOptions, birthDayNum]);
+
+  function applyManualBirthText(text: string) {
+    setBirthManualText(text);
+    const parsed = parseBirthManualText(text);
+    if (parsed.year && parsed.month && parsed.day) {
+      setBirthYear(parsed.year);
+      setBirthMonthNum(parsed.month);
+      setBirthDayNum(parsed.day);
+    }
+    if (parsed.unknown) {
+      setBirthTimeUnknown(true);
+      setBirthHour("");
+    } else if (parsed.hour !== undefined) {
+      setBirthHour(parsed.hour);
+      setBirthTimeUnknown(false);
+    }
+  }
 
   const [contact, setContact] = useState("");
   const [concern, setConcern] = useState("");
@@ -116,13 +197,17 @@ export default function ConsultWizard() {
       const saved = localStorage.getItem(BIRTH_INFO_STORAGE_KEY);
       if (!saved) return;
       const parsed = JSON.parse(saved) as {
-        birthDate?: string;
+        birthYear?: string;
+        birthMonthNum?: string;
+        birthDayNum?: string;
         birthHour?: string;
         birthTimeUnknown?: boolean;
         calendarType?: "solar" | "lunar";
         isLeapMonth?: boolean;
       };
-      if (parsed.birthDate) setBirthDate(parsed.birthDate);
+      if (parsed.birthYear) setBirthYear(parsed.birthYear);
+      if (parsed.birthMonthNum) setBirthMonthNum(parsed.birthMonthNum);
+      if (parsed.birthDayNum) setBirthDayNum(parsed.birthDayNum);
       if (parsed.birthHour !== undefined) setBirthHour(parsed.birthHour);
       if (parsed.birthTimeUnknown !== undefined) setBirthTimeUnknown(parsed.birthTimeUnknown);
       if (parsed.calendarType) setCalendarType(parsed.calendarType);
@@ -136,12 +221,12 @@ export default function ConsultWizard() {
     try {
       localStorage.setItem(
         BIRTH_INFO_STORAGE_KEY,
-        JSON.stringify({ birthDate, birthHour, birthTimeUnknown, calendarType, isLeapMonth })
+        JSON.stringify({ birthYear, birthMonthNum, birthDayNum, birthHour, birthTimeUnknown, calendarType, isLeapMonth })
       );
     } catch {
       // ignore
     }
-  }, [birthDate, birthHour, birthTimeUnknown, calendarType, isLeapMonth]);
+  }, [birthYear, birthMonthNum, birthDayNum, birthHour, birthTimeUnknown, calendarType, isLeapMonth]);
 
   const total = useMemo(() => {
     if (!customerType) return 0;
@@ -173,6 +258,10 @@ export default function ConsultWizard() {
 
     if (!birthDate) {
       setBirthError(t.consultWizard.birthDateRequired);
+      return;
+    }
+    if (birthDate > todayStr) {
+      setBirthError(t.consultWizard.birthDateFuture);
       return;
     }
     if (!birthTimeUnknown && birthHour === "") {
@@ -451,15 +540,70 @@ export default function ConsultWizard() {
 
       <div className="space-y-3 rounded-md border border-border p-4">
         <div>
-          <label className={labelClass}>{t.consultWizard.birthDateLabel}</label>
-          <input
-            className={inputClass}
-            type="date"
-            value={birthDate}
-            max={todayStr}
-            onChange={(e) => setBirthDate(e.target.value)}
-            required
-          />
+          <div className="mb-1.5 flex items-center justify-between">
+            <label className={`${labelClass} mb-0`}>{t.consultWizard.birthDateLabel}</label>
+            <button
+              type="button"
+              className="text-[12px] font-medium text-indigo-600 underline"
+              onClick={() => setBirthInputMode(birthInputMode === "select" ? "manual" : "select")}
+            >
+              {birthInputMode === "select" ? t.consultWizard.manualEntryToggle : t.consultWizard.manualEntryBack}
+            </button>
+          </div>
+
+          {birthInputMode === "select" ? (
+            <div className="grid grid-cols-3 gap-2">
+              <select
+                className={`${inputClass} text-[15px] font-semibold`}
+                value={birthYear}
+                onChange={(e) => setBirthYear(e.target.value)}
+                required
+              >
+                <option value="">{t.consultWizard.yearPlaceholder}</option>
+                {YEAR_OPTIONS.map((y) => (
+                  <option key={y} value={y}>
+                    {y}
+                  </option>
+                ))}
+              </select>
+              <select
+                className={inputClass}
+                value={birthMonthNum}
+                onChange={(e) => setBirthMonthNum(e.target.value)}
+                required
+              >
+                <option value="">{t.consultWizard.monthPlaceholder}</option>
+                {MONTH_OPTIONS.map((m) => (
+                  <option key={m} value={String(m).padStart(2, "0")}>
+                    {m}
+                  </option>
+                ))}
+              </select>
+              <select
+                className={inputClass}
+                value={birthDayNum}
+                onChange={(e) => setBirthDayNum(e.target.value)}
+                required
+              >
+                <option value="">{t.consultWizard.dayPlaceholder}</option>
+                {dayOptions.map((d) => (
+                  <option key={d} value={String(d).padStart(2, "0")}>
+                    {d}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ) : (
+            <div>
+              <input
+                className={inputClass}
+                value={birthManualText}
+                onChange={(e) => applyManualBirthText(e.target.value)}
+                placeholder={t.consultWizard.manualEntryPlaceholder}
+              />
+              <p className="mt-1 text-[11px] text-body">{t.consultWizard.manualEntryHint}</p>
+            </div>
+          )}
         </div>
 
         <div>
