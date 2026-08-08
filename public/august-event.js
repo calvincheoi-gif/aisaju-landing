@@ -1,8 +1,12 @@
 /**
  * AIsajuLab 이벤트 배너 / 팝업 스크립트
  *
- * 팝업은 반드시 "한 개"만 뜹니다. 이벤트가 여러 개면 아래 slides 배열에 추가해
+ * 팝업은 반드시 "한 개"만 뜹니다. 이벤트가 여러 개면 slides 배열에 추가해
  * 한 창에서 좌우로 넘겨 보는 슬라이드 방식으로 합칩니다.
+ *
+ * 배너 규격: 4:5 세로형(권장 1122x1402)으로 통일.
+ *   → 창이 4:5 고정 비율이라 슬라이드를 넘겨도 크기가 흔들리지 않고 여백이 없습니다.
+ *   → 새 배너(/popup-*.jpg)가 아직 업로드 전이면 기존 배너로 자동 폴백합니다.
  *
  * 구성
  *  - 하단 고정 바(#sjpbar)  : 8월 페스티벌 안내 (2026-09-01 자동 종료)
@@ -16,41 +20,48 @@
 
   /* ══════════ 슬라이드 팝업 부품 ══════════ */
   var POPUP_CSS =
-    '.ajp-dim{position:fixed;inset:0;background:rgba(8,20,40,.62);backdrop-filter:blur(3px);z-index:99999;' +
+    '.ajp-dim{position:fixed;inset:0;background:rgba(8,20,40,.66);backdrop-filter:blur(3px);z-index:99999;' +
     'display:flex;align-items:center;justify-content:center;padding:16px;opacity:0;transition:opacity .28s}' +
     '.ajp-dim.on{opacity:1}' +
-    '.ajp{position:relative;width:100%;max-width:520px;animation:ajpIn .34s cubic-bezier(.24,1,.32,1) both}' +
+    /* 4:5 비율 박스가 화면에 항상 들어오도록 폭을 높이 기준으로도 제한 */
+    '.ajp{position:relative;width:min(100%,460px,calc((88vh - 130px) * 0.8));' +
+    'animation:ajpIn .34s cubic-bezier(.24,1,.32,1) both}' +
     '@keyframes ajpIn{from{opacity:0;transform:translateY(18px) scale(.97)}to{opacity:1;transform:none}}' +
-    '@media(min-width:900px){.ajp{max-width:700px}.ajp-x{top:-19px;right:-19px;width:42px;height:42px}}' +
-    '.ajp-view{position:relative;border-radius:18px;overflow:hidden;background:#fff;box-shadow:0 18px 50px rgba(6,20,45,.42)}' +
-    '.ajp-track{display:flex;width:100%;transition:transform .38s cubic-bezier(.3,1,.4,1)}' +
-    '.ajp-slide{flex:0 0 100%;width:100%;min-width:0;max-width:100%;display:block;cursor:pointer;border:none;padding:0;background:none;font:inherit;overflow:hidden}' +
-    '.ajp-slide img{width:100%;height:auto;max-height:66vh;object-fit:contain;display:block}' +
-    '.ajp-x{position:absolute;top:-15px;right:-10px;width:38px;height:38px;border-radius:50%;border:none;' +
-    'background:#fff;color:#0C1A2E;font-size:19px;font-weight:900;line-height:1;cursor:pointer;' +
-    'box-shadow:0 5px 16px rgba(6,20,45,.35);z-index:3;display:flex;align-items:center;justify-content:center}' +
+    '.ajp-view{position:relative;width:100%;aspect-ratio:4/5;border-radius:18px;overflow:hidden;' +
+    'background:#0E1730;box-shadow:0 18px 50px rgba(6,20,45,.45)}' +
+    '.ajp-track{display:flex;width:100%;height:100%;transition:transform .38s cubic-bezier(.3,1,.4,1)}' +
+    '.ajp-slide{flex:0 0 100%;width:100%;height:100%;min-width:0;display:block;cursor:pointer;' +
+    'border:none;padding:0;background:none;font:inherit;overflow:hidden}' +
+    '.ajp-slide img{width:100%;height:100%;object-fit:contain;display:block}' +
+    /* 닫기 ✕ : 배너 안쪽 우상단 */
+    '.ajp-x{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:50%;border:none;' +
+    'background:rgba(10,20,40,.5);backdrop-filter:blur(4px);color:#fff;font-size:17px;font-weight:800;line-height:1;' +
+    'cursor:pointer;z-index:4;display:flex;align-items:center;justify-content:center;transition:background .15s}' +
+    '.ajp-x:hover{background:rgba(10,20,40,.72)}' +
     '.ajp-x:active{transform:scale(.92)}' +
-    '.ajp-nav{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:52px;border:none;cursor:pointer;' +
-    'background:rgba(255,255,255,.82);color:#0B4FD1;font-size:19px;font-weight:900;z-index:2;display:flex;' +
-    'align-items:center;justify-content:center;transition:.15s}' +
-    '.ajp-nav.p{left:0;border-radius:0 12px 12px 0}' +
-    '.ajp-nav.n{right:0;border-radius:12px 0 0 12px}' +
-    '.ajp-nav:active{background:#fff}' +
-    '.ajp-dots{position:absolute;left:0;right:0;bottom:9px;display:flex;justify-content:center;gap:6px;z-index:2}' +
-    '.ajp-dots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.55);' +
-    'box-shadow:0 1px 3px rgba(0,0,0,.3);transition:.2s;cursor:pointer}' +
-    '.ajp-dots i.on{width:20px;border-radius:100px;background:#fff}' +
-    '.ajp-cta{display:block;width:100%;margin-top:9px;border:none;border-radius:14px;padding:15px;cursor:pointer;' +
+    '.ajp-nav{position:absolute;top:50%;transform:translateY(-50%);width:30px;height:46px;border:none;cursor:pointer;' +
+    'background:rgba(255,255,255,.42);color:#0B2B6B;font-size:17px;font-weight:900;z-index:2;display:flex;' +
+    'align-items:center;justify-content:center;transition:background .15s}' +
+    '.ajp-nav:hover{background:rgba(255,255,255,.78)}' +
+    '.ajp-nav.p{left:0;border-radius:0 10px 10px 0}' +
+    '.ajp-nav.n{right:0;border-radius:10px 0 0 10px}' +
+    /* 점 표시 : 이미지 밖(아래)에 고정 → 슬라이드마다 위치가 바뀌지 않음 */
+    '.ajp-dots{display:flex;justify-content:center;align-items:center;gap:7px;margin-top:11px}' +
+    '.ajp-dots i{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.42);' +
+    'transition:.2s;cursor:pointer}' +
+    '.ajp-dots i.on{width:22px;border-radius:100px;background:#fff}' +
+    '.ajp-cta{display:block;width:100%;margin-top:11px;border:none;border-radius:14px;padding:15px;cursor:pointer;' +
     'font-family:inherit;font-size:16px;font-weight:900;letter-spacing:-.03em;color:#fff;' +
     'background:linear-gradient(135deg,#25B9FF 0%,#058DFB 48%,#0B4FD1 100%);' +
     'box-shadow:0 8px 22px rgba(11,107,238,.42)}' +
     '.ajp-cta:active{transform:scale(.985)}' +
-    '.ajp-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:9px;padding:0 2px}' +
+    '.ajp-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:10px;padding:0 2px}' +
     '.ajp-foot label{display:flex;align-items:center;gap:7px;cursor:pointer;font-size:13.4px;font-weight:700;color:#E4EEFB}' +
     '.ajp-foot input{width:17px;height:17px;accent-color:#25B9FF}' +
     '.ajp-foot button{border:none;background:none;font-family:inherit;font-size:13.4px;font-weight:800;' +
     'color:#E4EEFB;cursor:pointer;padding:6px 2px;opacity:.85}' +
-    '@media(max-width:400px){.ajp-foot label,.ajp-foot button{font-size:12.6px}.ajp-cta{font-size:15px;padding:14px}}';
+    '@media(max-width:400px){.ajp-foot label,.ajp-foot button{font-size:12.6px}' +
+    '.ajp-cta{font-size:15px;padding:14px;margin-top:9px}.ajp-dots{margin-top:9px}}';
 
   var CFG = null, el = null, idx = 0, timer = null;
 
@@ -80,6 +91,8 @@
     el.querySelectorAll('.ajp-dots i').forEach(function (d, j) { d.classList.toggle('on', j === idx) });
     var s = CFG.slides[idx], cta = el.querySelector('.ajp-cta');
     if (cta) cta.textContent = s.cta || CFG.cta || '자세히 보기';
+    var view = el.querySelector('.ajp-view');
+    if (view && s.bg) view.style.background = s.bg;
   }
   function auto() {
     clearInterval(timer);
@@ -109,17 +122,18 @@
     el.setAttribute('aria-modal', 'true');
     el.innerHTML =
       '<div class="ajp">' +
-        '<button class="ajp-x" aria-label="닫기">×</button>' +
         '<div class="ajp-view">' +
           '<div class="ajp-track">' +
             CFG.slides.map(function (s, i) {
               return '<button class="ajp-slide" data-i="' + i + '" aria-label="' + (s.alt || '이벤트 배너') + '">' +
-                '<img src="' + s.img + '" alt="' + (s.alt || '이벤트 배너') + '" loading="eager"></button>';
+                '<img src="' + s.img + '" alt="' + (s.alt || '이벤트 배너') + '" loading="eager"' +
+                (s.fallback ? ' data-fallback="' + s.fallback + '"' : '') + '></button>';
             }).join('') +
           '</div>' +
           (many ? '<button class="ajp-nav p" aria-label="이전">‹</button><button class="ajp-nav n" aria-label="다음">›</button>' : '') +
-          (many ? '<div class="ajp-dots">' + CFG.slides.map(function (_, i) { return '<i data-i="' + i + '"></i>' }).join('') + '</div>' : '') +
+          '<button class="ajp-x" aria-label="닫기">×</button>' +
         '</div>' +
+        (many ? '<div class="ajp-dots">' + CFG.slides.map(function (_, i) { return '<i data-i="' + i + '"></i>' }).join('') + '</div>' : '') +
         (CFG.showCta === false ? '' : '<button class="ajp-cta"></button>') +
         '<div class="ajp-foot">' +
           '<label><input type="checkbox" class="ajp-hide"><span>' + (CFG.hideText || '오늘 하루 보지 않기') + '</span></label>' +
@@ -129,7 +143,15 @@
     document.body.appendChild(el);
     document.documentElement.style.overflow = 'hidden';
 
-    el.querySelector('.ajp-x').onclick = close;
+    /* 새 배너가 아직 없으면 기존 배너로 1회 폴백 */
+    el.querySelectorAll('.ajp-slide img').forEach(function (im) {
+      im.addEventListener('error', function () {
+        var fb = im.getAttribute('data-fallback');
+        if (fb && im.src !== fb) { im.removeAttribute('data-fallback'); im.src = fb; }
+      });
+    });
+
+    el.querySelector('.ajp-x').onclick = function (e) { e.stopPropagation(); close() };
     el.querySelector('.ajp-close2').onclick = close;
     el.onclick = function (e) { if (e.target === el) close() };
     el.querySelectorAll('.ajp-slide').forEach(function (b) {
@@ -141,8 +163,8 @@
       d.onclick = function () { go(+d.dataset.i); auto() };
     });
     var pv = el.querySelector('.ajp-nav.p'), nx = el.querySelector('.ajp-nav.n');
-    if (pv) pv.onclick = function () { go(idx - 1); auto() };
-    if (nx) nx.onclick = function () { go(idx + 1); auto() };
+    if (pv) pv.onclick = function (e) { e.stopPropagation(); go(idx - 1); auto() };
+    if (nx) nx.onclick = function (e) { e.stopPropagation(); go(idx + 1); auto() };
 
     /* 스와이프 */
     var x0 = null, vw = el.querySelector('.ajp-view');
@@ -248,21 +270,25 @@
     document.body.appendChild(b);
   }
 
-  /* ── 팝업 슬라이드 구성 (한 창에 모두 담습니다) ── */
+  /* ── 팝업 슬라이드 (4:5 세로형으로 통일) ── */
   var slides = [
     {
-      img: 'https://aisajulab-ohaeng.netlify.app/popup.jpg',
+      img: '/popup-ohaeng.jpg',
+      fallback: 'https://aisajulab-ohaeng.netlify.app/popup.jpg',
       href: 'https://aisajulab-ohaeng.netlify.app/',
       alt: '그럼, 나의 (자연) 오행 성격은?',
-      cta: '나의 (자연) 오행 성격 테스트 시작하기'
+      cta: '나의 (자연) 오행 성격 테스트 시작하기',
+      bg: '#1746C4'
     }
   ];
   if (festOn) {
     slides.push({
-      img: S + 'img/event-poster.jpg',
+      img: '/popup-festival.jpg',
+      fallback: S + 'img/event-poster.jpg',
       href: S + '?utm=main#mini',
       alt: 'AI 운세 FESTIVAL — 8월 한정 이벤트',
-      cta: '🎡 행운 룰렛 돌리러 가기'
+      cta: '🎡 행운 룰렛 돌리러 가기',
+      bg: '#141A4A'
     });
   }
 
