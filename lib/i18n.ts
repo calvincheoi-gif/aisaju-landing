@@ -105,6 +105,14 @@ interface Dictionary {
     birthPreviewPrefix: string;
     birthDateRequired: string;
     birthTimeRequired: string;
+    birthDateFuture: string;
+    yearPlaceholder: string;
+    monthPlaceholder: string;
+    dayPlaceholder: string;
+    manualEntryToggle: string;
+    manualEntryBack: string;
+    manualEntryPlaceholder: string;
+    manualEntryHint: string;
     contactLabel: string;
     concernLabel: string;
     submitBtn: string;
@@ -270,6 +278,14 @@ const ko: Dictionary = {
     birthPreviewPrefix: "입력하신 생년월일시: ",
     birthDateRequired: "생년월일을 선택해 주세요.",
     birthTimeRequired: "태어난 시간을 선택하거나 '시간 모름'을 체크해 주세요.",
+    birthDateFuture: "생년월일은 오늘 이전 날짜여야 합니다.",
+    yearPlaceholder: "연도",
+    monthPlaceholder: "월",
+    dayPlaceholder: "일",
+    manualEntryToggle: "직접 입력",
+    manualEntryBack: "선택 입력으로",
+    manualEntryPlaceholder: "예: 1990년 5월 15일 15시",
+    manualEntryHint: "연도-월-일 형식 또는 '1990년 5월 15일 15시'처럼 자유롭게 적어주세요. 아래 요약에 자동으로 반영됩니다.",
     contactLabel: "연락처",
     concernLabel: "고민 내용",
     submitBtn: "신청하기",
@@ -445,6 +461,14 @@ const en: Dictionary = {
     birthPreviewPrefix: "You entered: ",
     birthDateRequired: "Please select your date of birth.",
     birthTimeRequired: "Please select a birth time or check 'Unknown birth time'.",
+    birthDateFuture: "Date of birth must be before today.",
+    yearPlaceholder: "Year",
+    monthPlaceholder: "Month",
+    dayPlaceholder: "Day",
+    manualEntryToggle: "Type it in",
+    manualEntryBack: "Back to dropdowns",
+    manualEntryPlaceholder: "e.g. May 15, 1990, 3pm",
+    manualEntryHint: "Use YYYY-MM-DD or write it naturally, e.g. \"1990-05-15 3pm\". It's parsed automatically below.",
     contactLabel: "Contact",
     concernLabel: "Your concern",
     submitBtn: "Submit application",
@@ -620,6 +644,14 @@ const ja: Dictionary = {
     birthPreviewPrefix: "入力内容: ",
     birthDateRequired: "生年月日を選択してください。",
     birthTimeRequired: "生まれた時間を選択するか、「生まれた時間が不明」にチェックしてください。",
+    birthDateFuture: "生年月日は今日より前の日付にしてください。",
+    yearPlaceholder: "年",
+    monthPlaceholder: "月",
+    dayPlaceholder: "日",
+    manualEntryToggle: "直接入力",
+    manualEntryBack: "選択入力に戻る",
+    manualEntryPlaceholder: "例：1990年5月15日15時",
+    manualEntryHint: "年-月-日の形式、または「1990年5月15日15時」のように自由に入力してください。下の要約に自動反映されます。",
     contactLabel: "連絡先",
     concernLabel: "お悩みの内容",
     submitBtn: "申込む",
@@ -795,6 +827,14 @@ const zh: Dictionary = {
     birthPreviewPrefix: "已填写: ",
     birthDateRequired: "请选择出生日期。",
     birthTimeRequired: "请选择出生时间，或勾选“出生时间不详”。",
+    birthDateFuture: "出生日期必须早于今天。",
+    yearPlaceholder: "年",
+    monthPlaceholder: "月",
+    dayPlaceholder: "日",
+    manualEntryToggle: "手动输入",
+    manualEntryBack: "返回选择输入",
+    manualEntryPlaceholder: "例如：1990年5月15日15点",
+    manualEntryHint: "请输入年-月-日格式，或自由填写，如“1990年5月15日15点”。系统会自动解析并显示在下方摘要中。",
     contactLabel: "联系方式",
     concernLabel: "困扰内容",
     submitBtn: "提交申请",
@@ -970,6 +1010,14 @@ const fr: Dictionary = {
     birthPreviewPrefix: "Vous avez saisi : ",
     birthDateRequired: "Veuillez sélectionner votre date de naissance.",
     birthTimeRequired: "Veuillez sélectionner une heure de naissance ou cocher « Heure de naissance inconnue ».",
+    birthDateFuture: "La date de naissance doit être antérieure à aujourd'hui.",
+    yearPlaceholder: "Année",
+    monthPlaceholder: "Mois",
+    dayPlaceholder: "Jour",
+    manualEntryToggle: "Saisie libre",
+    manualEntryBack: "Retour aux listes",
+    manualEntryPlaceholder: "ex. 15 mai 1990, 15h",
+    manualEntryHint: "Utilisez AAAA-MM-JJ ou écrivez librement, ex. « 1990-05-15 15h ». C'est analysé automatiquement ci-dessous.",
     contactLabel: "Contact",
     concernLabel: "Votre préoccupation",
     submitBtn: "Envoyer la demande",
