@@ -127,7 +127,7 @@
             CFG.slides.map(function (s, i) {
               return '<button class="ajp-slide" data-i="' + i + '" aria-label="' + (s.alt || '이벤트 배너') + '">' +
                 '<img src="' + s.img + '" alt="' + (s.alt || '이벤트 배너') + '" loading="eager"' +
-                (s.fallback ? ' data-fallback="' + s.fallback + '"' : '') + '></button>';
+                (s.fallback ? ' data-fallback="' + [].concat(s.fallback).join('|') + '"' : '') + '></button>';
             }).join('') +
           '</div>' +
           (many ? '<button class="ajp-nav p" aria-label="이전">‹</button><button class="ajp-nav n" aria-label="다음">›</button>' : '') +
@@ -143,11 +143,14 @@
     document.body.appendChild(el);
     document.documentElement.style.overflow = 'hidden';
 
-    /* 새 배너가 아직 없으면 기존 배너로 1회 폴백 */
+    /* 이미지가 없으면 대체 주소를 순서대로 시도 (| 로 구분) */
     el.querySelectorAll('.ajp-slide img').forEach(function (im) {
       im.addEventListener('error', function () {
-        var fb = im.getAttribute('data-fallback');
-        if (fb && im.src !== fb) { im.removeAttribute('data-fallback'); im.src = fb; }
+        var fbs = (im.getAttribute('data-fallback') || '').split('|').filter(Boolean);
+        if (!fbs.length) return;
+        var next = fbs.shift();
+        im.setAttribute('data-fallback', fbs.join('|'));
+        im.src = next;
       });
     });
 
@@ -274,7 +277,7 @@
   var slides = [
     {
       img: '/popup-ohaeng.jpg',
-      fallback: 'https://aisajulab-ohaeng.netlify.app/popup.jpg',
+      fallback: ['/POPUP-~2.JPG', 'https://aisajulab-ohaeng.netlify.app/popup.jpg'],
       href: 'https://aisajulab-ohaeng.netlify.app/',
       alt: '그럼, 나의 (자연) 오행 성격은?',
       cta: '나의 (자연) 오행 성격 테스트 시작하기',
@@ -284,7 +287,7 @@
   if (festOn) {
     slides.push({
       img: '/popup-festival.jpg',
-      fallback: S + 'img/event-poster.jpg',
+      fallback: ['/POPUP-~1.JPG', S + 'img/event-poster.jpg'],
       href: S + '?utm=main#mini',
       alt: 'AI 운세 FESTIVAL — 8월 한정 이벤트',
       cta: '🎡 행운 룰렛 돌리러 가기',
