@@ -94,6 +94,17 @@ interface Dictionary {
     female: string;
     birthLabel: string;
     birthPlaceholder: string;
+    birthDateLabel: string;
+    birthHourLabel: string;
+    birthHourPlaceholder: string;
+    birthTimeUnknownLabel: string;
+    calendarTypeLabel: string;
+    solarLabel: string;
+    lunarLabel: string;
+    leapMonthLabel: string;
+    birthPreviewPrefix: string;
+    birthDateRequired: string;
+    birthTimeRequired: string;
     contactLabel: string;
     concernLabel: string;
     submitBtn: string;
@@ -248,6 +259,17 @@ const ko: Dictionary = {
     female: "여성",
     birthLabel: "생년월일시 (예: 1990-05-15 15시, 음력 여부 포함)",
     birthPlaceholder: "1990-05-15 15시 (양력)",
+    birthDateLabel: "생년월일",
+    birthHourLabel: "태어난 시간",
+    birthHourPlaceholder: "시간 선택",
+    birthTimeUnknownLabel: "태어난 시간 모름",
+    calendarTypeLabel: "음력 / 양력",
+    solarLabel: "양력",
+    lunarLabel: "음력",
+    leapMonthLabel: "윤달",
+    birthPreviewPrefix: "입력하신 생년월일시: ",
+    birthDateRequired: "생년월일을 선택해 주세요.",
+    birthTimeRequired: "태어난 시간을 선택하거나 '시간 모름'을 체크해 주세요.",
     contactLabel: "연락처",
     concernLabel: "고민 내용",
     submitBtn: "신청하기",
@@ -412,6 +434,17 @@ const en: Dictionary = {
     female: "Female",
     birthLabel: "Date & time of birth (e.g. 1990-05-15 3pm, note if lunar)",
     birthPlaceholder: "1990-05-15 3pm (solar calendar)",
+    birthDateLabel: "Date of birth",
+    birthHourLabel: "Time of birth",
+    birthHourPlaceholder: "Select time",
+    birthTimeUnknownLabel: "Unknown birth time",
+    calendarTypeLabel: "Calendar type",
+    solarLabel: "Solar",
+    lunarLabel: "Lunar",
+    leapMonthLabel: "Leap month",
+    birthPreviewPrefix: "You entered: ",
+    birthDateRequired: "Please select your date of birth.",
+    birthTimeRequired: "Please select a birth time or check 'Unknown birth time'.",
     contactLabel: "Contact",
     concernLabel: "Your concern",
     submitBtn: "Submit application",
@@ -576,6 +609,17 @@ const ja: Dictionary = {
     female: "女性",
     birthLabel: "生年月日時（例：1990-05-15 15時、旧暦の場合はその旨も）",
     birthPlaceholder: "1990-05-15 15時（新暦）",
+    birthDateLabel: "生年月日",
+    birthHourLabel: "生まれた時間",
+    birthHourPlaceholder: "時間を選択",
+    birthTimeUnknownLabel: "生まれた時間が不明",
+    calendarTypeLabel: "新暦 / 旧暦",
+    solarLabel: "新暦",
+    lunarLabel: "旧暦",
+    leapMonthLabel: "閏月",
+    birthPreviewPrefix: "入力内容: ",
+    birthDateRequired: "生年月日を選択してください。",
+    birthTimeRequired: "生まれた時間を選択するか、「生まれた時間が不明」にチェックしてください。",
     contactLabel: "連絡先",
     concernLabel: "お悩みの内容",
     submitBtn: "申込む",
@@ -740,6 +784,17 @@ const zh: Dictionary = {
     female: "女",
     birthLabel: "出生年月日时（例：1990-05-15 15点，请注明是否为农历）",
     birthPlaceholder: "1990-05-15 15点（阳历）",
+    birthDateLabel: "出生日期",
+    birthHourLabel: "出生时间",
+    birthHourPlaceholder: "选择时间",
+    birthTimeUnknownLabel: "出生时间不详",
+    calendarTypeLabel: "阳历 / 农历",
+    solarLabel: "阳历",
+    lunarLabel: "农历",
+    leapMonthLabel: "闰月",
+    birthPreviewPrefix: "已填写: ",
+    birthDateRequired: "请选择出生日期。",
+    birthTimeRequired: "请选择出生时间，或勾选“出生时间不详”。",
     contactLabel: "联系方式",
     concernLabel: "困扰内容",
     submitBtn: "提交申请",
@@ -904,6 +959,17 @@ const fr: Dictionary = {
     female: "Femme",
     birthLabel: "Date et heure de naissance (ex. 1990-05-15 15h, préciser si calendrier lunaire)",
     birthPlaceholder: "1990-05-15 15h (calendrier solaire)",
+    birthDateLabel: "Date de naissance",
+    birthHourLabel: "Heure de naissance",
+    birthHourPlaceholder: "Choisir l'heure",
+    birthTimeUnknownLabel: "Heure de naissance inconnue",
+    calendarTypeLabel: "Calendrier solaire / lunaire",
+    solarLabel: "Solaire",
+    lunarLabel: "Lunaire",
+    leapMonthLabel: "Mois intercalaire",
+    birthPreviewPrefix: "Vous avez saisi : ",
+    birthDateRequired: "Veuillez sélectionner votre date de naissance.",
+    birthTimeRequired: "Veuillez sélectionner une heure de naissance ou cocher « Heure de naissance inconnue ».",
     contactLabel: "Contact",
     concernLabel: "Votre préoccupation",
     submitBtn: "Envoyer la demande",
