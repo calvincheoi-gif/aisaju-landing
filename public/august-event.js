@@ -272,6 +272,8 @@
       key: 'aisaju_2026_08_ohaeng',
       delay: 700,
       hideDays: 1,
+      start: '2026-08-08',   // 노출 시작일
+      end: '2026-08-31',     // 노출 종료일 — 이 날이 지나면 자동으로 안 뜸
       slides: slides
     });
   }
