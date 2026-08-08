@@ -28,6 +28,9 @@ const inputClass =
   "w-full rounded-sm border border-border bg-white px-3 py-2 text-[14px] text-ink-900 outline-none focus:border-indigo-600";
 const labelClass = "mb-1.5 block text-[13px] font-medium text-ink-700";
 
+const HOUR_OPTIONS = Array.from({ length: 24 }, (_, i) => i);
+const BIRTH_INFO_STORAGE_KEY = "aisajulab_birth_info";
+
 type Step = "customerType" | "mode" | "form" | "done";
 
 export default function ConsultWizard() {
@@ -57,7 +60,15 @@ export default function ConsultWizard() {
   // 공통 입력
   const [name, setName] = useState("");
   const [gender, setGender] = useState<"male" | "female">("female");
-  const [birth, setBirth] = useState("");
+
+  // 생년월일시 입력 (구조화된 필드: 날짜 선택 + 시간 선택/모름 + 음력·양력 + 윤달)
+  const [birthDate, setBirthDate] = useState("");
+  const [birthHour, setBirthHour] = useState("");
+  const [birthTimeUnknown, setBirthTimeUnknown] = useState(false);
+  const [calendarType, setCalendarType] = useState<"solar" | "lunar">("solar");
+  const [isLeapMonth, setIsLeapMonth] = useState(false);
+  const [birthError, setBirthError] = useState<string | null>(null);
+
   const [contact, setContact] = useState("");
   const [concern, setConcern] = useState("");
 
@@ -79,6 +90,58 @@ export default function ConsultWizard() {
   const [saveNotice, setSaveNotice] = useState<string | null>(null);
 
   const fmt = (v: number) => formatPrice(v, lang);
+
+  const todayStr = useMemo(() => new Date().toISOString().slice(0, 10), []);
+
+  // 사람이 읽기 쉬운 생년월일시 요약 (예: "1990-05-15 15:00 (양력)")
+  const birthSummary = useMemo(() => {
+    if (!birthDate) return "";
+    const [y, m, d] = birthDate.split("-");
+    if (!y || !m || !d) return "";
+    const hourText = birthTimeUnknown
+      ? t.consultWizard.birthTimeUnknownLabel
+      : birthHour !== ""
+        ? `${birthHour.padStart(2, "0")}:00`
+        : "";
+    const calendarText =
+      calendarType === "lunar"
+        ? `${t.consultWizard.lunarLabel}${isLeapMonth ? ` · ${t.consultWizard.leapMonthLabel}` : ""}`
+        : t.consultWizard.solarLabel;
+    return `${y}-${m}-${d}${hourText ? ` ${hourText}` : ""} (${calendarText})`;
+  }, [birthDate, birthHour, birthTimeUnknown, calendarType, isLeapMonth, t]);
+
+  // 최근에 입력한 생년월일시를 기억해뒀다가 재방문 시 자동으로 불러옵니다.
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(BIRTH_INFO_STORAGE_KEY);
+      if (!saved) return;
+      const parsed = JSON.parse(saved) as {
+        birthDate?: string;
+        birthHour?: string;
+        birthTimeUnknown?: boolean;
+        calendarType?: "solar" | "lunar";
+        isLeapMonth?: boolean;
+      };
+      if (parsed.birthDate) setBirthDate(parsed.birthDate);
+      if (parsed.birthHour !== undefined) setBirthHour(parsed.birthHour);
+      if (parsed.birthTimeUnknown !== undefined) setBirthTimeUnknown(parsed.birthTimeUnknown);
+      if (parsed.calendarType) setCalendarType(parsed.calendarType);
+      if (parsed.isLeapMonth !== undefined) setIsLeapMonth(parsed.isLeapMonth);
+    } catch {
+      // localStorage 접근 불가(프라이빗 모드 등) 시 조용히 무시
+    }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        BIRTH_INFO_STORAGE_KEY,
+        JSON.stringify({ birthDate, birthHour, birthTimeUnknown, calendarType, isLeapMonth })
+      );
+    } catch {
+      // ignore
+    }
+  }, [birthDate, birthHour, birthTimeUnknown, calendarType, isLeapMonth]);
 
   const total = useMemo(() => {
     if (!customerType) return 0;
@@ -108,6 +171,16 @@ export default function ConsultWizard() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
+    if (!birthDate) {
+      setBirthError(t.consultWizard.birthDateRequired);
+      return;
+    }
+    if (!birthTimeUnknown && birthHour === "") {
+      setBirthError(t.consultWizard.birthTimeRequired);
+      return;
+    }
+    setBirthError(null);
+
     const typeLabel = customerType === "member" ? t.consultWizard.badgeMember : t.consultWizard.badgeGeneral;
     const modeLabel = mode === "detail" ? t.consultWizard.badgeDetail : t.consultWizard.badgeSimple;
     const itemLines =
@@ -122,7 +195,7 @@ export default function ConsultWizard() {
       `${typeLabel} / ${modeLabel}`,
       `${t.consultWizard.nameLabel}: ${name}`,
       `${t.consultWizard.genderLabel}: ${gender === "female" ? t.consultWizard.female : t.consultWizard.male}`,
-      `${t.consultWizard.birthLabel}: ${birth}`,
+      `${t.consultWizard.birthDateLabel}: ${birthSummary}`,
       `${t.consultWizard.contactLabel}: ${contact}`,
       `${itemLines.join(", ")}`,
       `${t.consultWizard.totalLabel}: ${fmt(total)}`,
@@ -140,7 +213,7 @@ export default function ConsultWizard() {
         body: JSON.stringify({
           name,
           gender,
-          birthInfo: birth,
+          birthInfo: birthSummary,
           contact,
           customerType,
           applicationMode: mode,
@@ -376,15 +449,90 @@ export default function ConsultWizard() {
         </div>
       </div>
 
-      <div>
-        <label className={labelClass}>{t.consultWizard.birthLabel}</label>
-        <input
-          className={inputClass}
-          placeholder={t.consultWizard.birthPlaceholder}
-          value={birth}
-          onChange={(e) => setBirth(e.target.value)}
-          required
-        />
+      <div className="space-y-3 rounded-md border border-border p-4">
+        <div>
+          <label className={labelClass}>{t.consultWizard.birthDateLabel}</label>
+          <input
+            className={inputClass}
+            type="date"
+            value={birthDate}
+            max={todayStr}
+            onChange={(e) => setBirthDate(e.target.value)}
+            required
+          />
+        </div>
+
+        <div>
+          <label className={labelClass}>{t.consultWizard.birthHourLabel}</label>
+          <div className="flex flex-wrap items-center gap-2">
+            <select
+              className={`${inputClass} w-auto min-w-[110px]`}
+              value={birthHour}
+              onChange={(e) => setBirthHour(e.target.value)}
+              disabled={birthTimeUnknown}
+            >
+              <option value="">{t.consultWizard.birthHourPlaceholder}</option>
+              {HOUR_OPTIONS.map((h) => (
+                <option key={h} value={h}>
+                  {h}
+                </option>
+              ))}
+            </select>
+            <label className="flex shrink-0 items-center gap-1.5 text-[13px] text-body">
+              <input
+                type="checkbox"
+                checked={birthTimeUnknown}
+                onChange={(e) => {
+                  setBirthTimeUnknown(e.target.checked);
+                  if (e.target.checked) setBirthHour("");
+                }}
+              />
+              {t.consultWizard.birthTimeUnknownLabel}
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label className={labelClass}>{t.consultWizard.calendarTypeLabel}</label>
+          <div className="flex flex-wrap items-center gap-4 text-[13px] text-body">
+            <label className="flex items-center gap-1.5">
+              <input
+                type="radio"
+                name="calendarType"
+                checked={calendarType === "solar"}
+                onChange={() => setCalendarType("solar")}
+              />
+              {t.consultWizard.solarLabel}
+            </label>
+            <label className="flex items-center gap-1.5">
+              <input
+                type="radio"
+                name="calendarType"
+                checked={calendarType === "lunar"}
+                onChange={() => setCalendarType("lunar")}
+              />
+              {t.consultWizard.lunarLabel}
+            </label>
+            {calendarType === "lunar" && (
+              <label className="flex items-center gap-1.5">
+                <input
+                  type="checkbox"
+                  checked={isLeapMonth}
+                  onChange={(e) => setIsLeapMonth(e.target.checked)}
+                />
+                {t.consultWizard.leapMonthLabel}
+              </label>
+            )}
+          </div>
+        </div>
+
+        {birthSummary && (
+          <p className="rounded-sm bg-bg-alt px-3 py-2 text-[12px] text-indigo-600">
+            {t.consultWizard.birthPreviewPrefix}
+            {birthSummary}
+          </p>
+        )}
+        {birthError && <p className="text-[12px] text-red-600">{birthError}</p>}
       </div>
 
       <div>
