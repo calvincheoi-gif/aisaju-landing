@@ -4,6 +4,10 @@ import { getSupabaseServerClient } from "@/lib/supabase";
 export const runtime = "nodejs";
 
 interface ConsultBody {
+  utm?: string | null;
+  deviceCode?: string | null;
+  referrer?: string | null;
+  couponCode?: string | null;
   name: string;
   gender?: string;
   birthInfo: string;
