@@ -38,15 +38,34 @@
   async function run() {
     if (sessionStorage.getItem("sv_done")) return;
     var dc = deviceCode();
+
+    // 채널(utm) 읽기 — URL 파라미터 우선, 없으면 저장된 값
+    var _q = new URLSearchParams(location.search);
+    var _u = _q.get("utm") || _q.get("utm_source");
+    if (_u) { try { localStorage.setItem("sp_utm", _u); } catch (e) {} }
+    if (!_u) { try { _u = localStorage.getItem("sp_utm"); } catch (e) {} }
+
+    // 메인 홈페이지 자체 방문 로그 (main_events) — 통합 KPI용, 실패해도 무시
+    try {
+      var _src = _u || (document.referrer ? new URL(document.referrer).hostname.replace(/^www\./, "") : null);
+      fetch(SUPA + "/rest/v1/main_events", {
+        method: "POST",
+        headers: { apikey: ANON, Authorization: "Bearer " + ANON, "Content-Type": "application/json", Prefer: "return=minimal" },
+        body: JSON.stringify({
+          kind: "visit",
+          device_code: dc,
+          source: _src ? String(_src).slice(0, 60) : null,
+          path: location.pathname.slice(0, 200)
+        }),
+        keepalive: true
+      }).catch(function () {});
+    } catch (e) {}
+
     try {
       var r = await fetch(SUPA + "/rest/v1/rpc/popup_visit", {
         method: "POST",
         headers: { apikey: ANON, Authorization: "Bearer " + ANON, "Content-Type": "application/json" },
-              var _q = new URLSearchParams(location.search);
-      var _u = _q.get("utm");
-      if (_u) { try { localStorage.setItem("sp_utm", _u); } catch (e) {} }
-      if (!_u) { try { _u = localStorage.getItem("sp_utm"); } catch (e) {} }
-      body: JSON.stringify({ p_device_code: dc, p_nickname: null, p_source: _u || "main" }),
+        body: JSON.stringify({ p_device_code: dc, p_nickname: null, p_source: _u || "main" }),
       });
       if (!r.ok) return;
       var v = await r.json();
