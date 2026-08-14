@@ -41,6 +41,8 @@ html,body{height:100%}
 body{background:var(--bg);color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;
   line-height:1.62;letter-spacing:-.015em;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom)}
+/* 옅은 신경망 패턴 — 페이지와 함께 스크롤되는 배경 (fixed 아님) */
+body{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420' viewBox='0 0 420 420'><g stroke='%230B4FD1' stroke-opacity='.068' stroke-width='1.45' stroke-linecap='round' fill='none'><path d='M60 70 L165 38 L262 96 L370 54'/><path d='M165 38 L128 170 L262 96'/><path d='M30 240 L128 170 L236 232 L370 190 M262 96 L236 232'/><path d='M128 170 L60 70 M236 232 L188 356 L330 320 L370 190'/><path d='M30 240 L92 372 L188 356 M330 320 L262 96'/></g><g fill='%230B4FD1' fill-opacity='.095'><circle cx='60' cy='70' r='4.0'/><circle cx='165' cy='38' r='3.1'/><circle cx='262' cy='96' r='4.5'/><circle cx='370' cy='54' r='2.9'/><circle cx='128' cy='170' r='3.7'/><circle cx='236' cy='232' r='4.1'/><circle cx='30' cy='240' r='3.0'/><circle cx='370' cy='190' r='3.5'/><circle cx='188' cy='356' r='3.3'/><circle cx='330' cy='320' r='3.9'/><circle cx='92' cy='372' r='2.9'/></g><g fill='%23FFFFFF' fill-opacity='.85'><circle cx='262' cy='96' r='1.6'/><circle cx='236' cy='232' r='1.5'/><circle cx='128' cy='170' r='1.4'/><circle cx='330' cy='320' r='1.4'/></g></svg>");background-size:420px 420px;background-repeat:repeat}
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 18px}
 .screen{display:none;animation:fade .36s cubic-bezier(.3,1,.4,1) both}
 .screen.on{display:block}
@@ -307,7 +309,7 @@ textarea.ta::placeholder,input.ti::placeholder{color:var(--ink3)}
 .subline{font-size:14.9px;color:var(--ink2);margin-bottom:0;line-height:1.55}
 .btn-cta{margin-top:2px;padding:17px;font-size:18.2px;font-weight:800;border-radius:16px;max-width:340px;margin-left:auto;margin-right:auto}
 h1.big{font-size:41.1px;margin-bottom:6px}
-.heroWrap{max-width:330px;margin:-16px auto 2px}
+.heroWrap{max-width:330px;margin:-4px auto 2px}
 .appname{margin:24px 0 12px;font-size:14.9px}
 .motive{margin:8px 0 21px;padding:10px 14px;font-size:14.3px;line-height:1.6}
 .motive .q{margin-top:3px;font-size:14.9px}
@@ -377,7 +379,7 @@ h1.big{font-size:41.1px;margin-bottom:6px}
   .motive .q{font-size:14.2px;margin-top:2px}
   h1.big{font-size:33px;margin-bottom:2px}
   .subline{font-size:14px}
-  .heroWrap{max-width:268px;margin:-22px auto 0}
+  .heroWrap{max-width:268px;margin:-8px auto 0}
   .btn-cta{padding:13px;font-size:16.6px}
   .freebar{margin:6px 0 0;padding:7px 15px;font-size:13.9px}
   .tdcard{padding:8px 12px;margin:6px 0 0}
@@ -4178,10 +4180,11 @@ addEventListener("resize",()=>{clearTimeout(_rz);_rz=setTimeout(()=>{
 
 /* 인트로 데모 차트 — 결과 카드와 같은 캡슐 칩 (입체 최소화) · 왼쪽은 캐릭터 자리 */
 function drawHeroChips(x,W,H,s,total,e){
-  const n=ORDER.length, gap=W*0.045, cw=(W-gap*(n-1))/n;
-  const labH=cw*0.98;                       // %·한자 라벨 영역
+  const n=ORDER.length, gap=W*0.052, cw=(W-gap*(n-1))/n;
+  const labH=cw*0.94;                       // %·한자 라벨 영역
   const base=H-labH;                        // 캡슐 바닥선
-  const minH=cw*0.95, maxH=base-cw*0.06;    // 캡슐 최소·최대 높이
+  const topPad=cw*0.52;                     // 위 글씨와의 안전 여백
+  const minH=cw*0.95, maxH=base-topPad;     // 캡슐 최소·최대 높이
   const mx=Math.max(...ORDER.map(k=>s[k]/total),0.001);
   x.textAlign="center";
   ORDER.forEach((k,i)=>{
@@ -4204,9 +4207,9 @@ function drawHeroChips(x,W,H,s,total,e){
     x.fillStyle=g;x.beginPath();x.ellipse(bx+cw/2,py,cw*0.335,cw*0.215,0,0,7);x.fill();
     /* % · 한자 — 캡슐 아래 */
     x.font=FONT(800,cw*0.235);x.fillStyle="#93A3BA";
-    x.fillText(Math.round(sh*100)+"%", bx+cw/2, base+cw*0.34);
+    x.fillText(Math.round(sh*100)+"%", bx+cw/2, base+cw*0.32);
     x.font=FONT(900,cw*0.46);x.fillStyle=EE.tc;
-    x.fillText(EE.han, bx+cw/2, base+cw*0.83);
+    x.fillText(EE.han, bx+cw/2, base+cw*0.80);
   });
 }
 function demo(){
