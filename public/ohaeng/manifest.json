@@ -1,0 +1,23 @@
+{
+ "name": "나의 (자연) 오행 성격 자가진단",
+ "short_name": "오행 성격",
+ "description": "혈액형도 MBTI도 아닌, 자연이 말해주는 나의 성격",
+ "start_url": "./",
+ "display": "standalone",
+ "background_color": "#FFFFFF",
+ "theme_color": "#058DFB",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any"
+  }
+ ]
+}
