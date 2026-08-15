@@ -549,6 +549,11 @@ h1.big{font-size:41.1px;margin-bottom:6px}
 .pay-a{display:block;width:100%;margin-top:9px;background:#FEE500;border:0;border-radius:14px;padding:14px;font-size:15.5px;font-weight:900;color:#191919;font-family:inherit;cursor:pointer}
 .pay-b{display:block;width:100%;margin-top:8px;background:#F3F6FB;border:1.5px solid #DCE8F7;border-radius:14px;padding:13px;font-size:14.5px;font-weight:800;color:#33445F;font-family:inherit;cursor:pointer}
 .pay-x{display:block;width:100%;margin-top:10px;background:none;border:0;font-size:13px;color:#9AA7BD;font-family:inherit;cursor:pointer}
+.skiplink{display:block;width:100%;margin-top:9px;padding:9px 0;background:none;border:0;
+  font-family:inherit;font-size:13.4px;font-weight:800;color:#5B8DEF;cursor:pointer;
+  text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px}
+.skiplink:active{opacity:.6}
+
 /* ── 분량 선택 바 주목도 강화 (2026-08-15) ── */
 .repopt{display:block;margin:6px 0 15px;padding:11px 13px;border-radius:13px;
   background:linear-gradient(135deg,#EAF2FF,#F4F8FF);border:1.5px solid #BED4F5;
@@ -723,6 +728,7 @@ h1.big{font-size:41.1px;margin-bottom:6px}
     <div class="ctastep">STEP 2</div>
     <h3 data-i="step2CTA"></h3><p data-i="step2CTAd"></p>
     <button class="btn btn-p" id="go2" data-i="go2"></button>
+    <button class="skiplink" id="skip2" data-i="skipCal"></button>
   </div>
   <div class="row3" style="margin-top:10px"><button class="btn btn-g sm" id="ed1" data-i="editAns"></button><button class="btn btn-g sm" id="tb1" data-i="tableBtn"></button><button class="btn btn-g sm" id="ag1" data-i="again"></button></div>
   <div class="foot"><p data-i="footer"></p></div>
@@ -1120,6 +1126,7 @@ ko:{
   tier1:'간편 · 폰 반 화면', tier2:'보통 · 폰 한 화면', tier3:'디테일 · 폰 두 화면', tier9:'프리미엄 · 990원',
   tierP:'프리미엄 · 990원 — PDF + 배경화면 세트',
   kb1:'기', kb2:'승', kb3:'전', kb4:'결',
+  skipCal:'보정 없이 바로 리포트 만들기 →',
   calibNote:'전문가 상담은 사주팔자의 \'영점 조정\' 과정을 거치나 AI가 제시한 솔루션은 그 과정을 거치지 않으므로, 나에게 맞는 솔루션을 직접 선택·활용해 주세요.',
   lockT:'여기까지 무료입니다', lockBtn:'990원으로 전부 받기',
   lockD:'읽는 것은 무료, <b class="hl">갖는 것</b>은 프리미엄입니다. 정가 2,900원 · 9월 런칭가 990원',
@@ -1250,6 +1257,7 @@ en:{
   tier1:'Brief · half a screen', tier2:'Standard · one screen', tier3:'Detailed · two screens', tier9:'Premium',
   tierP:'Premium — PDF + wallpaper set',
   kb1:'1', kb2:'2', kb3:'3', kb4:'4',
+  skipCal:'Skip and go straight to the report →',
   calibNote:'An expert reading includes a calibration step against your birth chart; an AI-generated solution does not. Please choose what fits you.',
   lockT:'Free ends here', lockBtn:'Unlock everything',
   lockD:'Reading is free. <b class="hl">Keeping</b> is premium.',
@@ -4194,6 +4202,11 @@ $("startBtn").onclick=()=>{window.AJ&&AJ.track("ohaeng_start");renderGender();sh
 $("n1").onclick=next1; $("n2").onclick=()=>finish2(); $("n3").onclick=next3;
 $("go2").onclick=()=>{window.AJ&&AJ.track("ohaeng_calibration_start");render2();show("s2")};
 $("go3").onclick=()=>{p3=0;render3();show("s3")};
+/* 보정을 건너뛰고 바로 4단계로 — 리포트는 A=R2||R1 이므로 보정 없이도 생성된다 */
+{const sk=$("skip2"); if(sk) sk.onclick=()=>{
+  window.AJ&&AJ.track("ohaeng_skip_calibration");
+  p3=0; render3(); show("s3");
+};}
 /* 모든 뒤로가기는 브라우저 히스토리를 그대로 쓴다 (폰 뒤로가기와 동일 동작) */
 document.querySelectorAll("[data-back]").forEach(b=>b.onclick=()=>goBack());
 addEventListener("popstate",e=>{
