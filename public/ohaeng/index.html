@@ -549,6 +549,23 @@ h1.big{font-size:41.1px;margin-bottom:6px}
 .pay-a{display:block;width:100%;margin-top:9px;background:#FEE500;border:0;border-radius:14px;padding:14px;font-size:15.5px;font-weight:900;color:#191919;font-family:inherit;cursor:pointer}
 .pay-b{display:block;width:100%;margin-top:8px;background:#F3F6FB;border:1.5px solid #DCE8F7;border-radius:14px;padding:13px;font-size:14.5px;font-weight:800;color:#33445F;font-family:inherit;cursor:pointer}
 .pay-x{display:block;width:100%;margin-top:10px;background:none;border:0;font-size:13px;color:#9AA7BD;font-family:inherit;cursor:pointer}
+/* ── 분량 선택 바 주목도 강화 (2026-08-15) ── */
+.repopt{display:block;margin:6px 0 15px;padding:11px 13px;border-radius:13px;
+  background:linear-gradient(135deg,#EAF2FF,#F4F8FF);border:1.5px solid #BED4F5;
+  box-shadow:0 2px 8px rgba(45,90,160,.09)}
+.repopt label{display:flex;align-items:center;gap:6px;font-size:12.6px;font-weight:800;
+  color:#3D6FBF;letter-spacing:.02em;margin-bottom:7px}
+.repopt label::before{content:"";width:15px;height:15px;border-radius:5px;
+  background:var(--grad);flex:none}
+.repopt label::after{content:"탭해서 변경";margin-left:auto;font-size:11.4px;font-weight:800;
+  color:#fff;background:#5B8DEF;padding:3px 9px;border-radius:999px;letter-spacing:0}
+.repopt select{width:100%;max-width:none;flex:none;
+  padding:12px 38px 12px 13px;border-radius:10px;border:1.5px solid #9FC0EE;
+  background:#fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233D6FBF' stroke-width='3' stroke-linecap='round'><path d='M6 9l6 6 6-6'/></svg>") no-repeat right 12px center/15px 15px;
+  font-family:inherit;font-size:15.4px;font-weight:800;color:#1D3E75;
+  -webkit-appearance:none;appearance:none;cursor:pointer}
+.repopt select:focus{outline:none;border-color:#5B8DEF;box-shadow:0 0 0 3px rgba(91,141,239,.18)}
+
 /* ── 리포트 3단 구조 (2026-08-15) ── */
 .a4-s h5 .a4kb{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;
   margin-right:7px;border-radius:7px;background:var(--grad);color:#fff;font-size:12.5px;font-weight:800;flex:none}
