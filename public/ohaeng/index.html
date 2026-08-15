@@ -2079,7 +2079,7 @@ function pick1(k){
   if(a.includes(k))a=a.filter(x=>x!==k);else{if(a.length>=2)a.shift();a.push(k)}
   ans[step]=a;render1();
 }
-const next1=()=>{ if(step<Q.length-1){step++;render1();navPush()} else doReveal() };
+const next1=()=>{ window.AJ&&AJ.track("ohaeng_answer",{step:step+1}); if(step<Q.length-1){step++;render1();navPush()} else doReveal() };
 const prev1=()=>goBack();
 
 /* 결과 연출 — 즉시 뜨지 않고 1.4초 '읽는 중' 후 공개 */
@@ -2199,7 +2199,7 @@ const SER2=()=>[{s:R1.s,total:R1.total,color:"#B9CBE2",dash:[5,4],w:.11},
 
 /* ═══════════ 1단계 결과 ═══════════ */
 function finish1(reRender){
-  if(!reRender){R1=analyze(baseScore());bump("d",R1.nameKo)}
+  if(!reRender){R1=analyze(baseScore());bump("d",R1.nameKo);window.AJ&&AJ.track("ohaeng_complete",{props:{type:R1.nameKo,balance:R1.bal}})}
   else R1=analyze(R1.s,true);
   steps4($("sx1"),1);
   const S=EL[R1.strong],W=EL[R1.weak];
@@ -2266,7 +2266,7 @@ function render2(){
 function upd2(){const n=cal.filter(Boolean).length;
   $("p2c").textContent=`${n} / ${CAL.length}`;$("p2f").style.width=(n/CAL.length*100)+"%";$("n2").disabled=n<CAL.length}
 function finish2(reRender){
-  if(!reRender){const c=calibrate(R1.s);R2=analyze(c.s,true);R2.delta=c.delta}
+  if(!reRender){const c=calibrate(R1.s);R2=analyze(c.s,true);R2.delta=c.delta;window.AJ&&AJ.track("ohaeng_calibration_complete",{props:{type:R2.nameKo,balance:R2.bal}})}
   else R2=analyze(R2.s,true);
   steps4($("sx2"),2);
   const S=EL[R2.strong],changed=R2.nameKo!==R1.nameKo;
@@ -2522,12 +2522,12 @@ function saveCard(){
     try{
       const img=canvasToFile(card(CARD_RATIO),cardName(CARD_RATIO.replace(":","x")));
       openImg(img); renderRatioRow();
-      sbLog("card",CARD_RATIO+" · "+((R2||R1)?(R2||R1).nameKo:""));
+      sbLog("card",CARD_RATIO+" · "+((R2||R1)?(R2||R1).nameKo:""));window.AJ&&AJ.track("ohaeng_share",{props:{how:"card"}});
     }catch(e){ hideToast();toast(T("tShareNo")) }
   },30);
 }
 async function shareLink(){
-  const A=R2||R1; sbLog("share","link");
+  const A=R2||R1; sbLog("share","link"); window.AJ&&AJ.track("ohaeng_share",{props:{how:"link"}});
   const url=A?mateLink():baseUrl();
   const txt=A?inviteText():T("shareMsg0");
   if(navigator.share){try{await navigator.share({title:"나의 오행 성격은?",text:txt,url});return}catch(e){}}
@@ -2535,6 +2535,7 @@ async function shareLink(){
 }
 const openKakao=()=>{
   if(!DB.cfg.kakaoChannelUrl||DB.cfg.kakaoChannelUrl.includes("YOUR_CHANNEL")){toast(T("tKk"));return}
+  window.AJ&&AJ.track("consult_open",{props:{from:(typeof CUR!=="undefined"?CUR:"")}});
   window.open(DB.cfg.kakaoChannelUrl,"_blank");
 };
 
@@ -4061,9 +4062,9 @@ function renderRepLen(){
 /* 언어 전환 */
 document.querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
 
-$("startBtn").onclick=()=>{renderGender();show("sg")};
+$("startBtn").onclick=()=>{window.AJ&&AJ.track("ohaeng_start");renderGender();show("sg")};
 $("n1").onclick=next1; $("n2").onclick=()=>finish2(); $("n3").onclick=next3;
-$("go2").onclick=()=>{render2();show("s2")};
+$("go2").onclick=()=>{window.AJ&&AJ.track("ohaeng_calibration_start");render2();show("s2")};
 $("go3").onclick=()=>{p3=0;render3();show("s3")};
 /* 모든 뒤로가기는 브라우저 히스토리를 그대로 쓴다 (폰 뒤로가기와 동일 동작) */
 document.querySelectorAll("[data-back]").forEach(b=>b.onclick=()=>goBack());
@@ -4101,7 +4102,7 @@ const cardTxt=()=>{const A=R2||R1; if(!A)return T("shareMsg0")+"\n"+mateLink();
 $("sh1").onclick=()=>saveCard(); $("sh2").onclick=()=>saveCard();
 $("sh4a").onclick=()=>{CARD_RATIO="9:16";store.set("ohaeng_ratio",CARD_RATIO);saveCard()};
 $("sh4b").onclick=()=>{CARD_RATIO="4:5";store.set("ohaeng_ratio",CARD_RATIO);saveCard()};
-["kk1","kk2","kkShare"].forEach(id=>{const e=$(id);if(e)e.onclick=()=>{sbLog("card",CARD_RATIO+" · share");shareImage(()=>card(CARD_RATIO),"card",cardTxt())}});
+["kk1","kk2","kkShare"].forEach(id=>{const e=$(id);if(e)e.onclick=()=>{sbLog("card",CARD_RATIO+" · share");window.AJ&&AJ.track("ohaeng_share",{props:{how:"image"}});shareImage(()=>card(CARD_RATIO),"card",cardTxt())}});
 $("shareTop").onclick=shareLink;
 ["kkTop","kkTalk"].forEach(id=>{const e=$(id);if(e)e.onclick=openKakao});
 $("imgSh").onclick=()=>{ if(!LASTIMG)return;
@@ -4278,5 +4279,6 @@ if(FRIEND)sbLog("inv","");
 if(charImg.complete)demo(); else charImg.onload=demo;
 setTimeout(demo,60);
 </script>
+<script src="./track.js"></script>
 </body>
 </html>
