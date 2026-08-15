@@ -53,7 +53,6 @@ export default function RootLayout({
       </head>
       <body className="font-sans">
         <LanguageProvider>{children}</LanguageProvider>
-        <script src="/august-event.js" defer></script>
         <script src="/card-sheets.js" defer></script>
         <script src="/visitor.js" defer></script>
       </body>
