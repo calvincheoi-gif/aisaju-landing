@@ -564,6 +564,27 @@ h1.big{font-size:41.1px;margin-bottom:6px}
 .premb1 span{display:block;font-size:11.8px;color:#8A7A52;margin-top:3px}
 .premb1:active{transform:scale(.97)}
 .premb1.busy{opacity:.55}
+.wpfix{margin-top:12px;padding:12px 13px;border-radius:11px;background:#fff;border:1px solid #EBD9A8}
+.wpfix b{display:block;font-size:13.4px;font-weight:900;color:#12305F;margin-bottom:5px}
+.wpfix p{margin:0 0 10px;font-size:12.6px;line-height:1.6;color:#7A6634}
+.wpfl{font-size:12px;font-weight:900;color:#8A7A52;margin:2px 0 6px;letter-spacing:.02em}
+.wpfl span{font-weight:700;color:#B3A47C}
+.wpseg{display:flex;gap:6px;margin-bottom:11px}
+.wpseg button{flex:1;padding:9px 6px;border-radius:9px;border:1.5px solid #E4DCC4;background:#FDFBF5;
+  font-family:inherit;font-size:13.4px;font-weight:900;color:#7A6634;cursor:pointer;line-height:1.25}
+.wpseg button small{display:block;font-size:10.6px;font-weight:700;color:#B3A47C;margin-top:2px}
+.wpseg button.on{border-color:#1D7CF2;background:#EEF5FF;color:#12305F}
+.wpseg button.on small{color:#5B8DEF}
+.wpta{width:100%;box-sizing:border-box;padding:9px 10px;border-radius:9px;border:1.5px solid #E4DCC4;
+  background:#fff;font-family:inherit;font-size:13px;line-height:1.5;color:#33445F;resize:vertical;
+  margin-bottom:11px}
+.wpta:focus{outline:none;border-color:#5B8DEF}
+.wpfixr{display:flex;gap:6px;flex-wrap:wrap}
+.wpfixb{flex:1;min-width:96px;padding:10px 6px;border-radius:9px;border:0;
+  background:linear-gradient(135deg,#1D7CF2,#25B9FF);color:#fff;
+  font-family:inherit;font-size:12.6px;font-weight:800;cursor:pointer}
+.wpfixb.g{background:#EEF4FF;color:#2C5AA8;border:1px solid #CFE0F8}
+.wpfixb:active{transform:scale(.97)}
 .premno{margin-top:11px;font-size:11.6px;color:#A8946A;text-align:center;letter-spacing:.03em}
 .skiplink{display:block;width:100%;margin-top:9px;padding:9px 0;background:none;border:0;
   font-family:inherit;font-size:13.4px;font-weight:800;color:#5B8DEF;cursor:pointer;
@@ -1144,13 +1165,14 @@ ko:{
   kb1:'기', kb2:'승', kb3:'전', kb4:'결',
   skipCal:'보정 없이 바로 리포트 만들기 →',
   premT:'프리미엄이 열렸습니다', premD:'아래에서 받으시면 언제든 다시 보실 수 있습니다. 30일 실천 플랜과 자기점검 워크시트도 아래에 이어집니다.',
-  pdfMaking:'PDF를 만드는 중입니다…', pdfNo:'PDF 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.',
-  wpMaking:'배경화면 3종을 만드는 중입니다…', wpDone:'저장 완료! 사진첩을 확인해 주세요.',
+  pdfMaking:'PDF를 만드는 중입니다… 10초쯤 걸립니다', pdfDone:'PDF 저장 완료!', pdfNo:'PDF 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.',
+  wpMaking:'배경화면을 만드는 중입니다…', wpDone:'저장 완료! 사진첩을 확인해 주세요.',
+  wpFixD:'폰 기종과 화면 비율이 제각각이라 위아래 여백이 생기거나 일부가 잘릴 수 있습니다. 그럴 때는 아래 문구를 복사해 ChatGPT·Gemini 같은 AI에 이미지와 함께 넣으면 내 화면에 맞게 다듬어 줍니다.',
   wpNo:'배경화면 생성에 실패했습니다.',
   calibNote:'전문가 상담은 사주팔자의 \'영점 조정\' 과정을 거치나 AI가 제시한 솔루션은 그 과정을 거치지 않으므로, 나에게 맞는 솔루션을 직접 선택·활용해 주세요.',
   lockT:'여기까지 무료입니다', lockBtn:'990원으로 전부 받기',
   lockD:'읽는 것은 무료, <b class="hl">갖는 것</b>은 프리미엄입니다. 정가 2,900원 · 9월 런칭가 990원',
-  lk1:'PDF 리포트 — 표지·목차 갖춘 정식 조판', lk2:'폰 배경화면 세트 3종 — 잠금·홈·와이드',
+  lk1:'PDF 리포트 — 표지·목차 갖춘 정식 조판', lk2:'내 화면 크기에 맞춘 폰 배경화면',
   lk3:'30일 실천 플랜', lk4:'자기점검 워크시트',
  rp5:'오행 다섯 기운 상세', rp6:'관계와 균형 심화', rp7:'30일 실천 플랜', rp8:'자기점검 워크시트',
  rp8d:'매주 한 번, 아래 다섯 가지를 스스로 확인해 보세요. 정답을 맞히는 것이 아니라 <b>지난 한 주를 언어로 정리</b>하는 것이 목적입니다.',
@@ -1279,13 +1301,14 @@ en:{
   kb1:'1', kb2:'2', kb3:'3', kb4:'4',
   skipCal:'Skip and go straight to the report →',
   premT:'Premium unlocked', premD:'Download below — you can come back any time.',
-  pdfMaking:'Building your PDF…', pdfNo:'Could not create the PDF. Please try again.',
-  wpMaking:'Creating 3 wallpapers…', wpDone:'Saved! Check your gallery.',
+  pdfMaking:'Building your PDF…', pdfDone:'PDF saved!', pdfNo:'Could not create the PDF. Please try again.',
+  wpMaking:'Creating your wallpaper…', wpDone:'Saved! Check your gallery.',
+  wpFixD:'Screen sizes differ by device, so you may see gaps or cropping. Copy the text below and give it to ChatGPT or Gemini with the image.',
   wpNo:'Could not create wallpapers.',
   calibNote:'An expert reading includes a calibration step against your birth chart; an AI-generated solution does not. Please choose what fits you.',
   lockT:'Free ends here', lockBtn:'Unlock everything',
   lockD:'Reading is free. <b class="hl">Keeping</b> is premium.',
-  lk1:'PDF report with cover and contents', lk2:'Wallpaper set — lock, home, wide',
+  lk1:'PDF report with cover and contents', lk2:'Wallpaper sized to your screen',
   lk3:'30-day action plan', lk4:'Weekly self-check sheet',
  rp5:'The five elements in detail', rp6:'Relations and balance', rp7:'30-day action plan', rp8:'Weekly self-check',
  rp8d:'Once a week, run through these five. The point is not to score yourself but to <b>put the week into words</b>.',
@@ -4211,6 +4234,13 @@ function buildReport(){
   const lb=$("repLockBtn"); if(lb) lb.onclick=goPremium;
   const pb=$("pdfBtn"); if(pb) pb.onclick=makePDF;
   const wb=$("wpBtn");  if(wb) wb.onclick=makeWall;
+  const wc=$("wpCopy"); if(wc) wc.onclick=copyWpFix;
+  const wf=$("wpFmt"); if(wf) wf.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{
+    WP_FMT=b.dataset.f;
+    wf.querySelectorAll("[data-f]").forEach(e=>e.classList.toggle("on",e===b));
+  });
+  const wg=$("wpGPT");  if(wg) wg.onclick=()=>window.open("https://chatgpt.com/","_blank");
+  const wm=$("wpGem");  if(wm) wm.onclick=()=>window.open("https://gemini.google.com/","_blank");
   if(!LOCK_SEEN){ LOCK_SEEN=true; window.AJ&&AJ.track("report_premium_view",{props:{tier:REP_LEN}}) }
 }
 
@@ -4241,7 +4271,23 @@ function repPrem(){
     <p class="premd">${T("premD")}</p>
     <div class="premgrid">
       <button class="premb1" id="pdfBtn"><b>PDF 리포트</b><span>표지·목차 포함</span></button>
-      <button class="premb1" id="wpBtn"><b>배경화면 3종</b><span>잠금·홈·와이드</span></button>
+      <button class="premb1" id="wpBtn"><b>폰 배경화면</b><span>내 화면 크기로</span></button>
+    </div>
+    <div class="wpfix" id="wpFix" style="display:none">
+      <b>여백이 생기거나 잘렸나요?</b>
+      <p>${T("wpFixD")}</p>
+      <div class="wpfl">받을 파일 형식</div>
+      <div class="wpseg" id="wpFmt">
+        <button data-f="PNG" class="on">PNG<small>또렷함 · 용량 큼</small></button>
+        <button data-f="JPG">JPG / JPEG<small>가벼움 · 공유 편함</small></button>
+      </div>
+      <div class="wpfl">더 바라시는 점 <span>(선택)</span></div>
+      <textarea class="wpta" id="wpMore" rows="2" placeholder="예: 배경을 조금 더 밝게 / 카드를 화면 가운데로 / 하단에 여백을 더 주세요"></textarea>
+      <div class="wpfixr">
+        <button class="wpfixb" id="wpCopy">보정 문구 복사</button>
+        <button class="wpfixb g" id="wpGPT">ChatGPT 열기</button>
+        <button class="wpfixb g" id="wpGem">Gemini 열기</button>
+      </div>
     </div>
     <div class="premno">발급번호 ${no}</div>
   </div>`+repPlan(C,A)+repSheet(C,A);
@@ -4255,104 +4301,185 @@ function loadLibs(){
     const e=document.createElement("script");e.src=src;e.onload=ok;e.onerror=()=>no(new Error(src));
     document.head.appendChild(e);
   });
-  LIBS=Promise.all([one("./vendor/html2canvas.min.js"),one("./vendor/jspdf.umd.min.js")]);
+  LIBS=Promise.all([one("./vender/html2canvas.min.js"),one("./vender/jspdf.umd.min.js")]);
   return LIBS;
 }
 
 /* ── PDF ──
-   화면을 그대로 찍지 않는다. 화면 밖 794px(A4 96dpi) 컨테이너에 다시 그려서 찍어야
-   기종·화면폭과 무관하게 동일한 결과가 나온다. */
+   폰 브라우저는 캔버스 총 픽셀 상한(대략 1,600만 px)이 있다.
+   긴 리포트를 한 장으로 찍으면 그 상한을 넘어 실패하므로,
+   섹션 단위로 A4 한 장 높이만큼 묶어 여러 번 나눠 찍는다.
+   덤으로 섹션이 페이지 중간에서 잘리지 않는다. */
+const PDF_W=794, PDF_H=1123, PDF_PAD=44;
 async function makePDF(){
   const btn=$("pdfBtn"); if(btn){btn.disabled=true;btn.classList.add("busy")}
   toast(T("pdfMaking"));
+  let host=null;
   try{
     await loadLibs();
-    const A=R2||R1, no=premInfo().no||"";
-    const box=document.createElement("div");
-    box.style.cssText="position:fixed;left:-9999px;top:0;width:794px;background:#fff;padding:38px 44px;box-sizing:border-box";
-    box.innerHTML=`<div style="text-align:center;padding:48px 0 34px;border-bottom:3px solid #1D7CF2;margin-bottom:26px">
-        <div style="font-size:15px;font-weight:800;color:#5B8DEF;letter-spacing:.06em">AI사주랩 · AIsajuLab</div>
-        <div style="font-size:31px;font-weight:900;color:#12305F;margin-top:13px">${CT(CAT[pick3.cat],"name")} 심층 리포트</div>
-        <div style="font-size:16px;color:#5B6B85;margin-top:11px">${A.mod?esc(A.mod)+" ":""}「${esc(A.name)}」 · ${N(A.strong)} ${Math.round(A.share[A.strong]*100)}% · 균형지수 ${A.bal}</div>
-        <div style="font-size:12.5px;color:#9AA7BD;margin-top:17px">발급번호 ${no} · ${new Date().toLocaleDateString("ko-KR")}</div>
-      </div>`+$("rep").innerHTML;
-    box.querySelectorAll(".a4lock,.a4prem,button").forEach(e=>e.remove());
-    document.body.appendChild(box);
-    const cv=await html2canvas(box,{scale:2,backgroundColor:"#fff",useCORS:true,logging:false});
-    document.body.removeChild(box);
-    const {jsPDF}=window.jspdf;
-    const pdf=new jsPDF({unit:"mm",format:"a4"});
-    const pw=210, ph=297, iw=pw, ih=cv.height*pw/cv.width;
-    let left=ih, pos=0;
-    pdf.addImage(cv,"JPEG",0,0,iw,ih,undefined,"FAST");
-    left-=ph;
-    while(left>0){ pos-=ph; pdf.addPage(); pdf.addImage(cv,"JPEG",0,pos,iw,ih,undefined,"FAST"); left-=ph; }
+    if(typeof html2canvas!=="function") throw new Error("html2canvas 로드 실패");
+    const jsPDFctor=(window.jspdf&&window.jspdf.jsPDF)||window.jsPDF;
+    if(!jsPDFctor) throw new Error("jsPDF 로드 실패");
+
+    const A=R2||R1, no=premInfo().no||"", C=CAT[pick3.cat];
+
+    /* 1) 화면 밖 고정폭 컨테이너에 리포트를 다시 그린다 (기종 무관 균일) */
+    host=document.createElement("div");
+    host.style.cssText=`position:fixed;left:-99999px;top:0;width:${PDF_W}px;background:#fff`;
+    document.body.appendChild(host);
+
+    const cover=document.createElement("div");
+    cover.style.cssText=`width:${PDF_W}px;background:#fff;padding:${PDF_PAD}px;box-sizing:border-box`;
+    cover.innerHTML=`<div style="text-align:center;padding:150px 0 40px">
+        <div style="font-size:15px;font-weight:800;color:#5B8DEF;letter-spacing:.08em">AI사주랩 · AIsajuLab</div>
+        <div style="font-size:34px;font-weight:900;color:#12305F;margin-top:18px;line-height:1.35">${CT(C,"name")}<br>심층 리포트</div>
+        <div style="width:56px;height:3px;background:#1D7CF2;margin:26px auto"></div>
+        <div style="font-size:17px;color:#33445F;font-weight:800">${A.mod?esc(A.mod)+" ":""}「${esc(A.name)}」</div>
+        <div style="font-size:14px;color:#5B6B85;margin-top:9px">${N(A.strong)} ${Math.round(A.share[A.strong]*100)}% · 균형지수 ${A.bal}</div>
+        <div style="font-size:12px;color:#9AA7BD;margin-top:38px">발급번호 ${no}<br>${new Date().toLocaleDateString("ko-KR")}</div>
+      </div>`;
+    host.appendChild(cover);
+
+    /* 2) 리포트 섹션을 A4 한 장 높이로 묶는다 */
+    const src=document.createElement("div");
+    src.style.cssText=`position:absolute;left:0;top:0;width:${PDF_W-PDF_PAD*2}px`;
+    src.innerHTML=$("rep").innerHTML;
+    src.querySelectorAll(".a4lock,.a4prem,button,.premgrid").forEach(e=>e.remove());
+    host.appendChild(src);
+    const blocks=Array.from(src.children[0]?src.children[0].children:src.children);
+    const LIMIT=PDF_H-PDF_PAD*2;
+    const pages=[]; let cur=[], curH=0;
+    blocks.forEach(b=>{
+      const h=b.getBoundingClientRect().height+14;
+      if(curH+h>LIMIT && cur.length){ pages.push(cur); cur=[]; curH=0 }
+      cur.push(b.cloneNode(true)); curH+=h;
+    });
+    if(cur.length) pages.push(cur);
+    host.removeChild(src);
+
+    const sheets=[cover];
+    pages.forEach(list=>{
+      const p=document.createElement("div");
+      p.style.cssText=`width:${PDF_W}px;background:#fff;padding:${PDF_PAD}px;box-sizing:border-box`;
+      list.forEach(e=>p.appendChild(e));
+      host.appendChild(p); sheets.push(p);
+    });
+
+    /* 3) 장별로 따로 찍는다 — 각 캔버스가 작아 상한에 걸리지 않는다 */
+    const pdf=new jsPDFctor({unit:"mm",format:"a4"});
+    for(let i=0;i<sheets.length;i++){
+      const cv=await html2canvas(sheets[i],{scale:2,backgroundColor:"#ffffff",useCORS:true,logging:false,imageTimeout:0});
+      const img=cv.toDataURL("image/jpeg",0.92);
+      const h=Math.min(297, cv.height*210/cv.width);
+      if(i>0) pdf.addPage();
+      pdf.addImage(img,"JPEG",0,0,210,h,undefined,"FAST");
+    }
     pdf.save(`AIsajuLab_리포트_${no}.pdf`);
-    window.AJ&&AJ.track("prem_pdf",{props:{no:no,tier:REP_LEN}});
-    hideToast();
-  }catch(e){ hideToast(); toast(T("pdfNo")); }
+    window.AJ&&AJ.track("prem_pdf",{props:{no:no,tier:REP_LEN,pages:sheets.length}});
+    hideToast(); toast(T("pdfDone"));
+  }catch(e){
+    hideToast(); toast(T("pdfNo"));
+    window.AJ&&AJ.track("prem_pdf_fail",{props:{msg:String(e&&e.message||e).slice(0,80)}});
+  }
+  if(host&&host.parentNode) host.parentNode.removeChild(host);
   if(btn){btn.disabled=false;btn.classList.remove("busy")}
 }
 
-/* ── 배경화면 3종 ──
-   같은 카드를 키우는 게 아니라 쓰임에 맞게 다시 짠다.
-   잠금화면은 상단 시계 영역, 홈화면은 아이콘 격자를 피해 배치한다. */
-const WP={
-  lock:{w:1179,h:2556,top:.40,label:"잠금화면"},
-  home:{w:1179,h:2556,top:.14,label:"홈화면"},
-  wide:{w:2560,h:1440,top:.30,label:"와이드"}
-};
-function wallpaper(kind){
-  const o=WP[kind], W=o.w, H=o.h;
+/* ── 배경화면 ──
+   3종을 따로 만들지 않는다. 사용자는 이미 자기 결과 카드를 보고 왔으므로
+   그 카드를 그대로 쓰고, 크기만 지금 쓰는 폰 화면에 맞춰 한 장으로 뽑는다.
+   기종·환경 차이로 여백이나 잘림이 생길 수 있어, 아래에 AI 보정 안내를 함께 둔다. */
+function wpSize(){
+  const dpr=Math.min(3,Math.max(1,window.devicePixelRatio||2));
+  let W=Math.round((screen.width||390)*dpr), H=Math.round((screen.height||844)*dpr);
+  if(W>H){const t=W;W=H;H=t}
+  W=Math.max(720,Math.min(1600,W));
+  H=Math.max(1280,Math.min(3600,H));
+  return {W,H};
+}
+function wallpaper(){
+  const {W,H}=wpSize();
   const c=document.createElement("canvas");c.width=W;c.height=H;
   const x=c.getContext("2d");
   const A=R2||R1, S=EL[A.strong];
-  const g=x.createLinearGradient(0,0,W*.3,H);
-  g.addColorStop(0,"#0B1B33");g.addColorStop(.5,"#12305F");g.addColorStop(1,"#0B1B33");
+  const g=x.createLinearGradient(0,0,W*.2,H);
+  g.addColorStop(0,"#0A3A8F");g.addColorStop(.28,"#1470E8");
+  g.addColorStop(.60,"#8FC4FF");g.addColorStop(1,"#E9F3FF");
   x.fillStyle=g;x.fillRect(0,0,W,H);
-  const rg=x.createRadialGradient(W*.5,H*o.top,0,W*.5,H*o.top,W*.85);
-  rg.addColorStop(0,S.tc+"55");rg.addColorStop(1,"rgba(0,0,0,0)");
+  const rg=x.createRadialGradient(W*.5,H*.09,0,W*.5,H*.09,W*.9);
+  rg.addColorStop(0,"rgba(37,185,255,.40)");rg.addColorStop(1,"rgba(37,185,255,0)");
   x.fillStyle=rg;x.fillRect(0,0,W,H);
-  for(let i=0;i<90;i++){
-    const px=Math.random()*W, py=Math.random()*H, r=Math.random()*2.6+.6;
+  for(let i=0;i<64;i++){
+    const px=Math.random()*W, py=Math.random()*H*.30, r=Math.random()*2.2+.5;
     x.fillStyle=`rgba(255,255,255,${Math.random()*.5+.12})`;
     x.beginPath();x.arc(px,py,r,0,7);x.fill();
   }
-  const u=Math.min(W,H)/1080;
-  x.textAlign="center";
-  let y=H*o.top;
-  x.font=`900 ${Math.round(150*u)}px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif`;
-  x.fillStyle=S.tc; x.fillText(S.han,W/2,y);
-  y+=Math.round(120*u);
-  x.font=`900 ${Math.round(66*u)}px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif`;
-  x.fillStyle="#fff"; x.fillText(A.name,W/2,y);
-  y+=Math.round(58*u);
-  x.font=`700 ${Math.round(31*u)}px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif`;
-  x.fillStyle="rgba(255,255,255,.72)"; x.fillText(A.line||"",W/2,y);
-  x.font=`800 ${Math.round(22*u)}px -apple-system,sans-serif`;
-  x.fillStyle="rgba(255,255,255,.34)";
-  x.fillText("AIsajuLab",W/2,H-Math.round(56*u));
+  const cv=card("9:16"), ar=cv.height/cv.width;
+  const TOP=H*.20, BOT=H*.045;
+  let pw=W*.90, ph=pw*ar;
+  const room=H-TOP-BOT;
+  if(ph>room){ ph=room; pw=ph/ar; }
+  const px=(W-pw)/2, py=TOP+(room-ph)/2, r=Math.round(pw*.055);
+  x.save();
+  x.shadowColor="rgba(6,32,80,.34)";x.shadowBlur=r*1.5;x.shadowOffsetY=r*.34;
+  x.fillStyle="#fff";x.beginPath();x.roundRect(px,py,pw,ph,r);x.fill();
+  x.restore();
+  x.save();x.beginPath();x.roundRect(px,py,pw,ph,r);x.clip();
+  x.drawImage(cv,px,py,pw,ph);x.restore();
+  x.save();x.strokeStyle="rgba(255,255,255,.6)";x.lineWidth=Math.max(2,r*.05);
+  x.beginPath();x.roundRect(px,py,pw,ph,r);x.stroke();x.restore();
   return c;
+}
+/* AI에게 그대로 붙여넣을 보정 요청문 — 화면 크기를 실제 값으로 채워 넣는다 */
+let WP_FMT="PNG";
+function wpFixText(){
+  const {W,H}=wpSize();
+  const more=(($("wpMore")||{}).value||"").trim();
+  const fmt=WP_FMT==="JPG"
+    ? "JPG(=JPEG, 품질 90 이상으로 글자가 뭉개지지 않게)"
+    : "PNG(원본 화질 그대로, 배경 투명 없이)";
+  return [
+    `첨부한 이미지를 제 휴대폰 배경화면으로 쓰려고 합니다.`,
+    `제 화면 해상도는 가로 ${W} × 세로 ${H} 픽셀입니다.`,
+    ``,
+    `요청사항`,
+    `1. 가운데 흰색 카드의 내용과 색감은 그대로 두세요. 글자를 바꾸거나 지우지 마세요.`,
+    `2. 위아래 배경(파란 그라디언트)만 자연스럽게 늘려서 위 해상도에 정확히 맞춰 주세요.`,
+    `3. 화면 위쪽 25%에는 시계와 위젯이 표시되니, 그 부분에는 글자나 중요한 요소가 오지 않게 해주세요.`,
+    `4. 카드가 잘리지 않도록 전체가 다 보이게 배치해 주세요.`,
+    `5. 결과물은 ${fmt} 형식으로 주세요.`,
+    ...(more?[``,`추가 요청`,more]:[])
+  ].join("\n");
+}
+async function copyWpFix(){
+  const t=wpFixText();
+  try{ await navigator.clipboard.writeText(t); toast(T("tCopy")) }
+  catch(e){
+    const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();
+    try{document.execCommand("copy");toast(T("tCopy"))}catch(_){}
+    ta.remove();
+  }
+  window.AJ&&AJ.track("prem_wp_fixcopy",{props:{fmt:WP_FMT,more:(($("wpMore")||{}).value||"").trim()?1:0}});
 }
 async function makeWall(){
   const btn=$("wpBtn"); if(btn){btn.disabled=true;btn.classList.add("busy")}
   toast(T("wpMaking"));
   try{
-    for(const k of ["lock","home","wide"]){
-      const c=wallpaper(k);
-      await new Promise(ok=>c.toBlob(b=>{
-        const a=document.createElement("a");
-        a.href=URL.createObjectURL(b);
-        a.download=`AIsajuLab_배경화면_${WP[k].label}.png`;
-        document.body.appendChild(a);a.click();a.remove();
-        setTimeout(()=>{URL.revokeObjectURL(a.href);ok()},400);
-      },"image/png"));
-    }
-    window.AJ&&AJ.track("prem_wallpaper",{props:{no:premInfo().no||"",tier:REP_LEN}});
+    const c=wallpaper(), {W,H}=wpSize();
+    await new Promise(ok=>c.toBlob(b=>{
+      const a=document.createElement("a");
+      a.href=URL.createObjectURL(b);
+      a.download=`AIsajuLab_배경화면_${W}x${H}.png`;
+      document.body.appendChild(a);a.click();a.remove();
+      setTimeout(()=>{URL.revokeObjectURL(a.href);ok()},400);
+    },"image/png"));
+    window.AJ&&AJ.track("prem_wallpaper",{props:{no:premInfo().no||"",size:`${W}x${H}`}});
     hideToast(); toast(T("wpDone"));
+    const fx=$("wpFix"); if(fx) fx.style.display="";
   }catch(e){ hideToast(); toast(T("wpNo")); }
   if(btn){btn.disabled=false;btn.classList.remove("busy")}
 }
+
 function renderRepLen(){
   const s=$("repLen"); if(!s)return;
   const opt=n=>`<option value="${n}"${n===REP_LEN?" selected":""}>${T("tier"+n)} · ${T("rpSol")} ${SOL_N[n]}${T("repCnt")}</option>`;
