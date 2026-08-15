@@ -1,9 +1,4 @@
 "use client";
-
-/* AIsajuLab 홈 v6 — 2026-08-15 이식
- * 시안: aisajulab-home-v6.html (1순위 벤치마킹 + 확정 지침 반영)
- * 계측: home_view 자동 + 버튼별 consult_open/report_open (Supabase events)
- */
 import { useEffect } from "react";
 
 const KAKAO = "https://open.kakao.com/o/gj3iUKai";
@@ -19,15 +14,15 @@ const CSS = String.raw`
   --pad:18px;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-
-.v6{
+html,body{margin:0;padding:0}
+body{
   background:#E3EDFB;
   font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
   color:var(--ink);display:flex;justify-content:center;-webkit-font-smoothing:antialiased;
 }
 .shell{width:100%;max-width:430px;background:var(--bg);position:relative;overflow:hidden;padding-bottom:100px}
 @media(min-width:900px){
-  .v6{padding:24px 0;background:#D7E5F8}
+  body{padding:24px 0;background:#D7E5F8}
   .shell{border-radius:30px;box-shadow:0 26px 70px rgba(20,50,110,.22)}
 }
 
@@ -131,7 +126,11 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 
 /* ── 섹션 공통 ── */
 section{padding:30px var(--pad)}
-.v6{padding-bottom:86px}
+body{padding-bottom:86px}
+.step-drop{width:100%;margin-top:8px;padding:10px 12px;border:1.5px solid #BFD5F5;border-radius:10px;font-size:14px;font-weight:700;color:#1A4E9E;background:#EEF5FF;font-family:inherit;cursor:pointer}
+.ch-btn{display:inline-block;padding:8px 14px;border:1.5px solid #D0DFF5;border-radius:99px;font-size:13px;font-weight:700;color:#2F7FF0;text-decoration:none;background:#F4F8FF}
+a.need{text-decoration:none;color:inherit;display:flex;align-items:center;gap:10px}
+a.need:hover{background:#EEF5FF}
 .sec-label{font-size:11px;font-weight:800;letter-spacing:.13em;color:var(--blue);margin-bottom:7px}
 h2{margin:0 0 6px;font-size:20px;line-height:1.38;letter-spacing:-.045em;font-weight:800;color:var(--navy)}
 h2 b{color:var(--blue)}
@@ -174,7 +173,9 @@ h2 b{color:var(--blue)}
 .calibnote{background:#fff;border-left:4px solid var(--crim);border-radius:10px;padding:11px 12px;font-size:11.5px;line-height:1.6;color:#6B4A55;font-weight:500}
 .calibnote b{color:var(--crim);font-weight:800}
 
-/* 지금 열려 있는 것 */
+/* 지금 열려 있는 것 — NOW 카드 독립 구조
+ * 각 .slide는 독립 이벤트/콘텐츠 단위
+ * data-id 속성으로 향후 CMS 연동 가능 */
 .slides{display:flex;gap:9px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 0 8px;scrollbar-width:none}
 .slides::-webkit-scrollbar{display:none}
 .slide{flex:0 0 79%;scroll-snap-align:center;border-radius:18px;padding:16px;position:relative;background:#fff;border:1px solid var(--line);box-shadow:0 6px 16px rgba(20,50,110,.07)}
@@ -249,7 +250,7 @@ footer b{color:#fff;font-size:14px;font-weight:800;letter-spacing:-.04em}
 .cb .b1{display:block;font-size:13.5px;font-weight:800;letter-spacing:-.3px}
 .cb .b2{display:block;font-size:11px;margin-top:3px;font-weight:600;opacity:.92}
 .cb-quick{background:linear-gradient(135deg,#2F7FF0,#1D6DE3);border:0;color:#fff;box-shadow:0 6px 14px rgba(29,109,227,.28)}
-.cb-deep{background:transparent;border:1.5px solid #BFD5F5;color:var(--navy-2)}
+.cb-deep{background:linear-gradient(135deg,#EEF5FF,#E0EDFF);border:1.5px solid #93C0F5;color:#1A4E9E;box-shadow:0 2px 8px rgba(29,109,227,.12)}
 .pricenote{margin-top:8px;font-size:10.5px;color:#9AA7BD;font-weight:600}
 /* ═══ v6: 하단 탭바 (기존 dock 대체) ═══ */
 .tabbar{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:430px;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr 1.2fr 1fr 1fr;padding:7px 6px calc(9px + env(safe-area-inset-bottom));z-index:60}
@@ -263,7 +264,6 @@ footer b{color:#fff;font-size:14px;font-weight:800;letter-spacing:-.04em}
 .tb.main{color:var(--blue)}
 .wallchip{display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:#0F2A5C;color:#DCE9FF;font-size:11.5px;font-weight:700;padding:7px 12px;border-radius:99px}
 `;
-
 const HTML = String.raw`
 <div class="shell">
 
@@ -327,12 +327,12 @@ const HTML = String.raw`
     </div>
 
     <div class="cta-pair">
-      <button class="btn btn-free" data-go="ohaeng">
+      <button class="btn btn-free">
         <span class="ico">🤖</span>
         <span class="tx"><span class="t1">무료 오행 진단</span><span class="t2">가입 없이 바로</span></span>
         <span class="go">›</span>
       </button>
-      <button class="btn btn-pro" data-go="kakao" data-from="home_hero">
+      <button class="btn btn-pro">
         <span class="ico">💬</span>
         <span class="tx"><span class="t1">전문가 상담</span><span class="t2">기본 50,000원</span></span>
         <span class="go">›</span>
@@ -353,16 +353,16 @@ const HTML = String.raw`
     <div class="sec-label">SERVICES</div>
     <h2>여기서 할 수 있는 것</h2>
     <div class="svc">
-      <button class="sv" data-go="ohaeng"><span class="tag free">무료</span>
+      <button class="sv"><span class="tag free">무료</span>
         <div class="si">🤖</div><div class="sn">오행 성격 진단</div>
         <div class="sd">14문항 1분 · 가입 없이 바로</div></button>
-      <button class="sv" data-go="ohaeng"><span class="tag day">하루 1회 무료</span>
+      <button class="sv"><span class="tag day">하루 1회 무료</span>
         <div class="si">🌤️</div><div class="sn">오늘의 흐름</div>
         <div class="sd">내 오행으로 보는 오늘 컨디션</div></button>
-      <button class="sv" data-go="ohaeng"><span class="tag free">무료</span>
+      <button class="sv"><span class="tag free">무료</span>
         <div class="si">🤝</div><div class="sn">친구와 오행 궁합</div>
         <div class="sd">링크 보내면 둘의 궁합 공개</div></button>
-      <button class="sv" data-go="ohaeng" data-ev="report_open" data-from="home"><span class="tag pay">990원 · 즉시</span>
+      <button class="sv"><span class="tag pay">990원 · 즉시</span>
         <div class="si">📊</div><div class="sn">AI 심층 리포트</div>
         <div class="sd">고민 반영 맞춤 해석 · 카카오페이</div></button>
     </div>
@@ -372,8 +372,8 @@ const HTML = String.raw`
       <div class="ct">👨‍🏫 전문가 1:1 상담</div>
       <div class="cs">경영지도사 최형철 · 30년 경력이 직접 해석합니다</div>
       <div class="cbtns">
-        <button class="cb cb-quick" data-go="kakao" data-from="home_consult"><span class="b1">기본 상담 · 50,000원</span><span class="b2">리포트 + 전화/카톡 해석 · D+2일</span></button>
-        <button class="cb cb-deep" data-go="consult" data-from="home_consult"><span class="b1">맞춤 상담</span><span class="b2">신청서 작성 · 내용 보고 안내</span></button>
+        <button class="cb cb-quick"><span class="b1">기본 상담 · 50,000원</span><span class="b2">리포트 + 전화/카톡 해석 · D+2일</span></button>
+        <button class="cb cb-deep"><span class="b1">맞춤 상담</span><span class="b2">신청서 작성 · 내용 보고 안내</span></button>
       </div>
       <div class="pricenote">맞춤 상담은 기존 상담 신청서로 접수 후 범위·비용을 안내드립니다</div>
     </div>
@@ -384,7 +384,7 @@ const HTML = String.raw`
     <div class="sec-label">RESULT</div>
     <h2>받게 될 <b>결과 카드</b>는 이런 모습</h2>
     <p class="sec-sub">계절과 상징으로 이름 붙인 나만의 카드. 저장해서 친구에게 바로 보낼 수 있어요.</p>
-    <div style="text-align:center"><span class="wallchip">📱 폰 배경화면으로 저장 가능한 화질</span></div>
+    <div style="text-align:center;margin:10px 0 16px"><span class="wallchip">📱 폰 배경화면으로 저장 가능한 화질</span></div>
 
     <div class="card-lux">
       <div class="card-in">
@@ -428,17 +428,17 @@ const HTML = String.raw`
     <p class="sec-sub">좌우로 넘겨 보세요.</p>
     <div class="slides">
       <div class="slide">
-        <div class="dday">D-17</div>
-        <div class="tag">8월 페스티벌</div>
-        <h3>AI 운세 FESTIVAL</h3>
-        <p>여름 한정 무료 체험 기간입니다. 8월 31일에 문을 닫아요.</p>
-        <a href="#">참여 방법 보기</a>
+        <div class="dday">D-16</div>
+        <div class="tag">9월 오픈 이벤트</div>
+        <h3>AI 심층 리포트<br>런칭가 990원</h3>
+        <p>정가 2,900원 → 9월 한 달만 990원. 진단 후 결과 화면에서 신청.</p>
+        <a href="/ohaeng/">지금 진단하고 신청하기</a>
       </div>
       <div class="slide">
         <div class="tag">신규</div>
         <h3>(자연) 오행 성격 진단</h3>
         <p>질문 14개, 1분. 계절과 상징으로 읽는 나의 기질 카드.</p>
-        <a href="#">바로 진단하기</a>
+        <a href="/ohaeng/">바로 진단하기</a>
       </div>
       <div class="slide warm">
         <div class="tag">읽을거리</div>
@@ -455,11 +455,11 @@ const HTML = String.raw`
     <h2>당신도 이런 고민, <b>해본 적 있나요?</b></h2>
     <p class="sec-sub">진단으로 방향을 잡았다면, 사람이 직접 보는 상담으로 이어집니다.</p>
     <div class="needs">
-      <div class="need"><i>💼</i>지금, 이직해야 할까?</div>
-      <div class="need"><i>💗</i>이 사람과 궁합이 맞을까?</div>
-      <div class="need"><i>📈</i>창업해도 괜찮을까?</div>
-      <div class="need"><i>🏠</i>지금 집을 사도 될까?</div>
-      <div class="need more">개인사주 · 재물운 · 대운/세운 · 작명 더 보기 ▾</div>
+      <a class="need" href="/ohaeng/"><i>💼</i>지금, 이직해야 할까?</a>
+      <a class="need" href="/ohaeng/"><i>💗</i>이 사람과 궁합이 맞을까?</a>
+      <a class="need" href="/ohaeng/"><i>📈</i>창업해도 괜찮을까?</a>
+      <a class="need" href="/ohaeng/"><i>🏠</i>지금 집을 사도 될까?</a>
+      <a class="need more" href="/consult">개인사주 · 재물운 · 대운/세운 · 작명 더 보기 ▾</a>
     </div>
   </section>
 
@@ -468,10 +468,31 @@ const HTML = String.raw`
     <div class="sec-label">HOW</div>
     <h2>상담은 <b>3단계</b>면 충분합니다</h2>
     <div class="steps" style="margin-top:18px">
-      <div class="step"><span class="t">30초</span><h4>상담 종류 선택</h4><p>필요한 주제 하나만 고르면 됩니다.</p></div>
-      <div class="step"><span class="t">1분</span><h4>생년월일시 입력</h4><p>태어난 시간을 모르면 모른다고 체크해도 괜찮아요.</p></div>
-      <div class="step"><span class="t">2분</span><h4>고민 남기기</h4><p>AI가 정리하고 연구소가 해석을 검수합니다.</p></div>
+      <div class="step step-sel">
+        <span class="t">30초</span>
+        <h4>상담 종류 선택</h4>
+        <select class="step-drop" onchange="if(this.value)window.location.href='/consult'">
+          <option value="">▾ 유형 선택하기</option>
+          <option value="1">개인사주 (생년월일시 분석)</option>
+          <option value="2">이직·직업·커리어</option>
+          <option value="3">연애·궁합·결혼</option>
+          <option value="4">창업·사업·재물운</option>
+          <option value="5">부동산·이사·투자</option>
+          <option value="6">대운·세운 흐름</option>
+          <option value="7">작명 (이름 짓기)</option>
+          <option value="8">기타 고민</option>
+        </select>
+      </div>
+      <div class="step" onclick="window.location.href='/consult'" style="cursor:pointer">
+        <span class="t">1분</span><h4>생년월일시 입력</h4>
+        <p>모르면 "모른다"고 체크해도 됩니다 →</p>
+      </div>
+      <div class="step" onclick="window.location.href='/consult'" style="cursor:pointer">
+        <span class="t">2분</span><h4>고민 남기기</h4>
+        <p>AI가 정리하고 연구소가 검수합니다 →</p>
+      </div>
     </div>
+    <a href="/consult" style="display:block;margin-top:16px;background:linear-gradient(135deg,#2F7FF0,#1D6DE3);color:#fff;text-align:center;padding:14px;border-radius:14px;font-weight:800;font-size:15px;text-decoration:none">지금 바로 상담 신청하기 →</a>
   </section>
 
   <!-- 후기 -->
@@ -490,8 +511,12 @@ const HTML = String.raw`
   <section>
     <div class="sec-label">CHANNELS</div>
     <h2>다른 곳에서도 만나요</h2>
-    <div class="channels" style="margin-top:14px">
-      <span>당근 비즈프로필</span><span>네이버 블로그</span><span>카카오톡 채널</span><span>인스타그램</span><span>명리학 Self-study 카페</span>
+    <div class="channels" style="margin-top:14px;text-align:center;display:flex;flex-wrap:wrap;justify-content:center;gap:8px">
+      <a class="ch-btn" href="https://aisajulab.com/ohaeng/?utm=daangn" target="_blank">당근 비즈프로필</a>
+      <a class="ch-btn" href="https://aisajulab.com/ohaeng/?utm=blog" target="_blank">네이버 블로그</a>
+      <a class="ch-btn" href="https://aisajulab.com/ohaeng/?utm=kakao" target="_blank">카카오톡 채널</a>
+      <a class="ch-btn" href="https://aisajulab.com/ohaeng/?utm=insta" target="_blank">인스타그램</a>
+      <a class="ch-btn" href="https://aisajulab.com/ohaeng/?utm=cafe" target="_blank">명리학 Self-study 카페</a>
     </div>
   </section>
 
@@ -504,11 +529,11 @@ const HTML = String.raw`
 </div>
 
 <nav class="tabbar">
-  <button class="tb on" data-go="top"><span class="ti"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/></svg></span>홈</button>
-  <button class="tb" data-go="ohaeng"><span class="ti"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5 5l1.7 1.7M17.3 17.3 19 19M19 5l-1.7 1.7M6.7 17.3 5 19"/></svg></span>오늘</button>
-  <button class="tb main" data-go="ohaeng"><span class="ti"><svg viewBox="0 0 24 24"><path d="M12 3.5 13.8 10 20.5 12 13.8 14 12 20.5 10.2 14 3.5 12 10.2 10Z"/></svg></span>진단</button>
-  <button class="tb" data-go="ohaeng"><span class="ti"><svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-9-9.3C1.9 7.2 4.2 4.5 7.2 4.5c2 0 3.6 1.1 4.8 2.9 1.2-1.8 2.8-2.9 4.8-2.9 3 0 5.3 2.7 4.2 6.2C20.5 15.4 12 20 12 20Z"/></svg></span>궁합</button>
-  <button class="tb" data-go="kakao" data-from="home_tab"><span class="ti"><svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H12l-4.5 4v-4h-1A2.5 2.5 0 0 1 4 13.5Z"/></svg></span>상담</button>
+  <button class="tb on"><span class="ti"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/></svg></span>홈</button>
+  <button class="tb"><span class="ti"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5 5l1.7 1.7M17.3 17.3 19 19M19 5l-1.7 1.7M6.7 17.3 5 19"/></svg></span>오늘</button>
+  <button class="tb main"><span class="ti"><svg viewBox="0 0 24 24"><path d="M12 3.5 13.8 10 20.5 12 13.8 14 12 20.5 10.2 14 3.5 12 10.2 10Z"/></svg></span>진단</button>
+  <button class="tb"><span class="ti"><svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-9-9.3C1.9 7.2 4.2 4.5 7.2 4.5c2 0 3.6 1.1 4.8 2.9 1.2-1.8 2.8-2.9 4.8-2.9 3 0 5.3 2.7 4.2 6.2C20.5 15.4 12 20 12 20Z"/></svg></span>궁합</button>
+  <button class="tb"><span class="ti"><svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H12l-4.5 4v-4h-1A2.5 2.5 0 0 1 4 13.5Z"/></svg></span>상담</button>
 </nav>
 
 `;
@@ -521,29 +546,24 @@ function track(name: string, props: Record<string, unknown> = {}) {
     let vid = ls.getItem("aisaju_vid"); if (!vid) { vid = rid(); ls.setItem("aisaju_vid", vid); }
     const q = new URLSearchParams(window.location.search);
     const now: Record<string, string> = {};
-    ["utm", "utm_source", "utm_medium", "utm_campaign"].forEach(k => { const v = q.get(k); if (v) now[k] = v; });
+    ["utm","utm_source","utm_medium","utm_campaign"].forEach(k => { const v = q.get(k); if (v) now[k] = v; });
     if (Object.keys(now).length) ls.setItem("aisaju_utm", JSON.stringify(now));
     let u: Record<string, string> = {}; try { u = JSON.parse(ls.getItem("aisaju_utm") || "{}"); } catch {}
     const w = window.innerWidth;
     fetch(SB_URL + "/rest/v1/events", {
       method: "POST", keepalive: true,
       headers: { "Content-Type": "application/json", apikey: SB_KEY, Authorization: "Bearer " + SB_KEY, Prefer: "return=minimal" },
-      body: JSON.stringify({
-        session_id: sid, visitor_id: vid, name, step: null, props,
-        utm: u.utm || null, utm_source: u.utm_source || null, utm_medium: u.utm_medium || null, utm_campaign: u.utm_campaign || null,
-        referrer: document.referrer || null, path: window.location.pathname,
-        device: w < 768 ? "mobile" : w < 1024 ? "tablet" : "desktop",
-        lang: document.documentElement.lang || "ko",
-      }),
-    }).catch(() => {});
+      body: JSON.stringify({ session_id: sid, visitor_id: vid, name, step: null, props,
+        utm: u.utm||null, utm_source: u.utm_source||null, utm_medium: u.utm_medium||null, utm_campaign: u.utm_campaign||null,
+        referrer: document.referrer||null, path: window.location.pathname,
+        device: w<768?"mobile":w<1024?"tablet":"desktop", lang: document.documentElement.lang||"ko" }),
+    }).catch(()=>{});
   } catch {}
 }
 
 export default function HomeV6() {
   useEffect(() => {
     track("home_view");
-
-    /* 버튼 라우팅 + 계측 */
     const root = document.querySelector(".v6"); if (!root) return;
     const onClick = (e: Event) => {
       const b = (e.target as HTMLElement).closest("[data-go]") as HTMLElement | null;
@@ -556,8 +576,6 @@ export default function HomeV6() {
       else if (go === "top") { window.scrollTo({ top: 0, behavior: "smooth" }); }
     };
     root.addEventListener("click", onClick);
-
-    /* 오행 순환 스트립 — 카드 탭 시 설명 표시, 3.5초 후 재개 */
     const wrap = document.getElementById("ohwrap");
     const note = document.getElementById("cycnote");
     let timer: ReturnType<typeof setTimeout> | null = null;
