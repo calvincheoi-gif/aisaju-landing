@@ -549,6 +549,22 @@ h1.big{font-size:41.1px;margin-bottom:6px}
 .pay-a{display:block;width:100%;margin-top:9px;background:#FEE500;border:0;border-radius:14px;padding:14px;font-size:15.5px;font-weight:900;color:#191919;font-family:inherit;cursor:pointer}
 .pay-b{display:block;width:100%;margin-top:8px;background:#F3F6FB;border:1.5px solid #DCE8F7;border-radius:14px;padding:13px;font-size:14.5px;font-weight:800;color:#33445F;font-family:inherit;cursor:pointer}
 .pay-x{display:block;width:100%;margin-top:10px;background:none;border:0;font-size:13px;color:#9AA7BD;font-family:inherit;cursor:pointer}
+.pay-done{display:block;width:100%;margin-top:9px;padding:14px 0;border:0;border-radius:12px;
+  background:#D6DEEA;color:#8A99B2;font-family:inherit;font-size:15.6px;font-weight:900;cursor:not-allowed}
+.pay-done.on{background:linear-gradient(135deg,#1D7CF2,#25B9FF);color:#fff;cursor:pointer;
+  box-shadow:0 5px 16px rgba(29,124,242,.34)}
+.pay-hint{margin:8px 0 2px;font-size:12.4px;line-height:1.5;color:#8A99B2;text-align:center}
+.a4prem{background:linear-gradient(135deg,#FFF9E8,#FFF4D6);border:1.5px solid #F0CF84}
+.a4-s h5 .a4kb.premb{background:linear-gradient(135deg,#E8A93C,#F5C765)}
+.a4prem .premd{font-size:13.4px;line-height:1.62;color:#7A6634;margin:0 0 12px}
+.premgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.premb1{padding:14px 10px;border-radius:12px;border:1.5px solid #EBC97E;background:#fff;
+  font-family:inherit;cursor:pointer;text-align:center}
+.premb1 b{display:block;font-size:14.6px;font-weight:900;color:#12305F}
+.premb1 span{display:block;font-size:11.8px;color:#8A7A52;margin-top:3px}
+.premb1:active{transform:scale(.97)}
+.premb1.busy{opacity:.55}
+.premno{margin-top:11px;font-size:11.6px;color:#A8946A;text-align:center;letter-spacing:.03em}
 .skiplink{display:block;width:100%;margin-top:9px;padding:9px 0;background:none;border:0;
   font-family:inherit;font-size:13.4px;font-weight:800;color:#5B8DEF;cursor:pointer;
   text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px}
@@ -1127,6 +1143,10 @@ ko:{
   tierP:'프리미엄 · 990원 — PDF + 배경화면 세트',
   kb1:'기', kb2:'승', kb3:'전', kb4:'결',
   skipCal:'보정 없이 바로 리포트 만들기 →',
+  premT:'프리미엄이 열렸습니다', premD:'아래에서 받으시면 언제든 다시 보실 수 있습니다. 30일 실천 플랜과 자기점검 워크시트도 아래에 이어집니다.',
+  pdfMaking:'PDF를 만드는 중입니다…', pdfNo:'PDF 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.',
+  wpMaking:'배경화면 3종을 만드는 중입니다…', wpDone:'저장 완료! 사진첩을 확인해 주세요.',
+  wpNo:'배경화면 생성에 실패했습니다.',
   calibNote:'전문가 상담은 사주팔자의 \'영점 조정\' 과정을 거치나 AI가 제시한 솔루션은 그 과정을 거치지 않으므로, 나에게 맞는 솔루션을 직접 선택·활용해 주세요.',
   lockT:'여기까지 무료입니다', lockBtn:'990원으로 전부 받기',
   lockD:'읽는 것은 무료, <b class="hl">갖는 것</b>은 프리미엄입니다. 정가 2,900원 · 9월 런칭가 990원',
@@ -1258,6 +1278,10 @@ en:{
   tierP:'Premium — PDF + wallpaper set',
   kb1:'1', kb2:'2', kb3:'3', kb4:'4',
   skipCal:'Skip and go straight to the report →',
+  premT:'Premium unlocked', premD:'Download below — you can come back any time.',
+  pdfMaking:'Building your PDF…', pdfNo:'Could not create the PDF. Please try again.',
+  wpMaking:'Creating 3 wallpapers…', wpDone:'Saved! Check your gallery.',
+  wpNo:'Could not create wallpapers.',
   calibNote:'An expert reading includes a calibration step against your birth chart; an AI-generated solution does not. Please choose what fits you.',
   lockT:'Free ends here', lockBtn:'Unlock everything',
   lockD:'Reading is free. <b class="hl">Keeping</b> is premium.',
@@ -2630,7 +2654,37 @@ function openPay(k){PAYK=k;const o=PAY[k];
   window.AJ&&AJ.track("report_open",{props:{kind:k}});
 }
 function closePay(){$("paym").classList.remove("on")}
-function goPay(){const o=PAY[PAYK];window.AJ&&AJ.track("report_pay_guide",{props:{kind:PAYK}});window.open(o.u,"_blank")}
+function goPay(){
+  const o=PAY[PAYK];window.AJ&&AJ.track("report_pay_guide",{props:{kind:PAYK}});
+  window.open(o.u,"_blank");
+  if(PAYK==="report") armPayDone();     // 송금 버튼을 눌러야 입금완료가 열린다
+}
+/* ── 입금 완료(자기신고) ──
+   실시간 입금 확인이 불가능하므로 사용자 신고로 즉시 해제한다.
+   막지 않고 기록만 남겨 미입금률을 나중에 판단한다. */
+function armPayDone(){
+  const b=$("payDone"); if(!b)return;
+  b.disabled=false; b.classList.add("on");
+  const h=$("payHint"); if(h)h.textContent="송금을 마치셨으면 아래 버튼을 눌러주세요";
+}
+function premNo(){
+  const d=new Date(), p=n=>String(n).padStart(2,"0");
+  const seq=String(Math.floor(Math.random()*9000)+1000);
+  return `AJ-${String(d.getFullYear()).slice(2)}${p(d.getMonth()+1)}${p(d.getDate())}-${seq}`;
+}
+function isPrem(){ return !!(store.get("ohaeng_prem",null)||{}).ok }
+function premInfo(){ return store.get("ohaeng_prem",null)||{} }
+function payDone(){
+  let info=premInfo();
+  if(!info.ok){
+    info={ok:true,no:premNo(),at:new Date().toISOString()};
+    store.set("ohaeng_prem",info);
+  }
+  window.AJ&&AJ.track("pay_claim",{props:{kind:PAYK,no:info.no,tier:REP_LEN}});
+  closePay();
+  buildReport();
+  setTimeout(()=>{const e=$("premBox"); if(e)e.scrollIntoView({behavior:"smooth",block:"center"})},240);
+}
 /* ── 9월 정식 오픈 배너 (9/30까지 자동 표시) ── */
 (function(){const e=$("evb");if(!e)return;
  if(new Date()<=new Date("2026-09-30T23:59:59+09:00")){
@@ -4155,12 +4209,15 @@ function buildReport(){
   h+=`<div class="a4-s" style="background:#F7FBFF"><p class="tiny">${T("repFoot")}</p></div></div>`;
   $("rep").innerHTML=h;
   const lb=$("repLockBtn"); if(lb) lb.onclick=goPremium;
+  const pb=$("pdfBtn"); if(pb) pb.onclick=makePDF;
+  const wb=$("wpBtn");  if(wb) wb.onclick=makeWall;
   if(!LOCK_SEEN){ LOCK_SEEN=true; window.AJ&&AJ.track("report_premium_view",{props:{tier:REP_LEN}}) }
 }
 
 /* 프리미엄 잠금 미리보기 — 무료의 끝에서 전환율이 가장 높다 */
 let LOCK_SEEN=false;
 function repLock(){
+  if(isPrem()) return repPrem();
   const items=[T("lk1"),T("lk2"),T("lk3"),T("lk4")];
   return `<div class="a4-s a4lock">
     <h5><b class="a4kb lockb">＋</b><i>·</i>${T("lockT")}</h5>
@@ -4174,6 +4231,127 @@ function repLock(){
 function goPremium(){
   window.AJ&&AJ.track("report_premium_click",{props:{tier:REP_LEN}});
   if(typeof openPay==="function") openPay("report");
+}
+
+/* ═══════════ 프리미엄 산출물 ═══════════ */
+function repPrem(){
+  const C=CAT[pick3.cat], A=R2||R1, no=premInfo().no||"";
+  return `<div class="a4-s a4prem" id="premBox">
+    <h5><b class="a4kb premb">★</b><i>·</i>${T("premT")}</h5>
+    <p class="premd">${T("premD")}</p>
+    <div class="premgrid">
+      <button class="premb1" id="pdfBtn"><b>PDF 리포트</b><span>표지·목차 포함</span></button>
+      <button class="premb1" id="wpBtn"><b>배경화면 3종</b><span>잠금·홈·와이드</span></button>
+    </div>
+    <div class="premno">발급번호 ${no}</div>
+  </div>`+repPlan(C,A)+repSheet(C,A);
+}
+
+/* 라이브러리는 프리미엄 해제 후에만 내려받는다 (무료 사용자에게 부담 주지 않음) */
+let LIBS=null;
+function loadLibs(){
+  if(LIBS) return LIBS;
+  const one=src=>new Promise((ok,no)=>{
+    const e=document.createElement("script");e.src=src;e.onload=ok;e.onerror=()=>no(new Error(src));
+    document.head.appendChild(e);
+  });
+  LIBS=Promise.all([one("./vendor/html2canvas.min.js"),one("./vendor/jspdf.umd.min.js")]);
+  return LIBS;
+}
+
+/* ── PDF ──
+   화면을 그대로 찍지 않는다. 화면 밖 794px(A4 96dpi) 컨테이너에 다시 그려서 찍어야
+   기종·화면폭과 무관하게 동일한 결과가 나온다. */
+async function makePDF(){
+  const btn=$("pdfBtn"); if(btn){btn.disabled=true;btn.classList.add("busy")}
+  toast(T("pdfMaking"));
+  try{
+    await loadLibs();
+    const A=R2||R1, no=premInfo().no||"";
+    const box=document.createElement("div");
+    box.style.cssText="position:fixed;left:-9999px;top:0;width:794px;background:#fff;padding:38px 44px;box-sizing:border-box";
+    box.innerHTML=`<div style="text-align:center;padding:48px 0 34px;border-bottom:3px solid #1D7CF2;margin-bottom:26px">
+        <div style="font-size:15px;font-weight:800;color:#5B8DEF;letter-spacing:.06em">AI사주랩 · AIsajuLab</div>
+        <div style="font-size:31px;font-weight:900;color:#12305F;margin-top:13px">${CT(CAT[pick3.cat],"name")} 심층 리포트</div>
+        <div style="font-size:16px;color:#5B6B85;margin-top:11px">${A.mod?esc(A.mod)+" ":""}「${esc(A.name)}」 · ${N(A.strong)} ${Math.round(A.share[A.strong]*100)}% · 균형지수 ${A.bal}</div>
+        <div style="font-size:12.5px;color:#9AA7BD;margin-top:17px">발급번호 ${no} · ${new Date().toLocaleDateString("ko-KR")}</div>
+      </div>`+$("rep").innerHTML;
+    box.querySelectorAll(".a4lock,.a4prem,button").forEach(e=>e.remove());
+    document.body.appendChild(box);
+    const cv=await html2canvas(box,{scale:2,backgroundColor:"#fff",useCORS:true,logging:false});
+    document.body.removeChild(box);
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({unit:"mm",format:"a4"});
+    const pw=210, ph=297, iw=pw, ih=cv.height*pw/cv.width;
+    let left=ih, pos=0;
+    pdf.addImage(cv,"JPEG",0,0,iw,ih,undefined,"FAST");
+    left-=ph;
+    while(left>0){ pos-=ph; pdf.addPage(); pdf.addImage(cv,"JPEG",0,pos,iw,ih,undefined,"FAST"); left-=ph; }
+    pdf.save(`AIsajuLab_리포트_${no}.pdf`);
+    window.AJ&&AJ.track("prem_pdf",{props:{no:no,tier:REP_LEN}});
+    hideToast();
+  }catch(e){ hideToast(); toast(T("pdfNo")); }
+  if(btn){btn.disabled=false;btn.classList.remove("busy")}
+}
+
+/* ── 배경화면 3종 ──
+   같은 카드를 키우는 게 아니라 쓰임에 맞게 다시 짠다.
+   잠금화면은 상단 시계 영역, 홈화면은 아이콘 격자를 피해 배치한다. */
+const WP={
+  lock:{w:1179,h:2556,top:.40,label:"잠금화면"},
+  home:{w:1179,h:2556,top:.14,label:"홈화면"},
+  wide:{w:2560,h:1440,top:.30,label:"와이드"}
+};
+function wallpaper(kind){
+  const o=WP[kind], W=o.w, H=o.h;
+  const c=document.createElement("canvas");c.width=W;c.height=H;
+  const x=c.getContext("2d");
+  const A=R2||R1, S=EL[A.strong];
+  const g=x.createLinearGradient(0,0,W*.3,H);
+  g.addColorStop(0,"#0B1B33");g.addColorStop(.5,"#12305F");g.addColorStop(1,"#0B1B33");
+  x.fillStyle=g;x.fillRect(0,0,W,H);
+  const rg=x.createRadialGradient(W*.5,H*o.top,0,W*.5,H*o.top,W*.85);
+  rg.addColorStop(0,S.tc+"55");rg.addColorStop(1,"rgba(0,0,0,0)");
+  x.fillStyle=rg;x.fillRect(0,0,W,H);
+  for(let i=0;i<90;i++){
+    const px=Math.random()*W, py=Math.random()*H, r=Math.random()*2.6+.6;
+    x.fillStyle=`rgba(255,255,255,${Math.random()*.5+.12})`;
+    x.beginPath();x.arc(px,py,r,0,7);x.fill();
+  }
+  const u=Math.min(W,H)/1080;
+  x.textAlign="center";
+  let y=H*o.top;
+  x.font=`900 ${Math.round(150*u)}px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif`;
+  x.fillStyle=S.tc; x.fillText(S.han,W/2,y);
+  y+=Math.round(120*u);
+  x.font=`900 ${Math.round(66*u)}px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif`;
+  x.fillStyle="#fff"; x.fillText(A.name,W/2,y);
+  y+=Math.round(58*u);
+  x.font=`700 ${Math.round(31*u)}px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif`;
+  x.fillStyle="rgba(255,255,255,.72)"; x.fillText(A.line||"",W/2,y);
+  x.font=`800 ${Math.round(22*u)}px -apple-system,sans-serif`;
+  x.fillStyle="rgba(255,255,255,.34)";
+  x.fillText("AIsajuLab",W/2,H-Math.round(56*u));
+  return c;
+}
+async function makeWall(){
+  const btn=$("wpBtn"); if(btn){btn.disabled=true;btn.classList.add("busy")}
+  toast(T("wpMaking"));
+  try{
+    for(const k of ["lock","home","wide"]){
+      const c=wallpaper(k);
+      await new Promise(ok=>c.toBlob(b=>{
+        const a=document.createElement("a");
+        a.href=URL.createObjectURL(b);
+        a.download=`AIsajuLab_배경화면_${WP[k].label}.png`;
+        document.body.appendChild(a);a.click();a.remove();
+        setTimeout(()=>{URL.revokeObjectURL(a.href);ok()},400);
+      },"image/png"));
+    }
+    window.AJ&&AJ.track("prem_wallpaper",{props:{no:premInfo().no||"",tier:REP_LEN}});
+    hideToast(); toast(T("wpDone"));
+  }catch(e){ hideToast(); toast(T("wpNo")); }
+  if(btn){btn.disabled=false;btn.classList.remove("busy")}
 }
 function renderRepLen(){
   const s=$("repLen"); if(!s)return;
@@ -4425,7 +4603,9 @@ setTimeout(demo,60);
   <div class="pay-t" id="payT"></div><div class="pay-p" id="payP"></div>
   <ol class="pay-s" id="payS"></ol>
   <button class="pay-a" onclick="goPay()">카카오페이로 결제하기</button>
-  <button class="pay-b" onclick="closePay();openKakao()">카톡으로 결제 캡처 보내기</button>
+  <button class="pay-done" id="payDone" onclick="payDone()" disabled>입금 완료 · 리포트 받기</button>
+  <p class="pay-hint" id="payHint">위 노란 버튼으로 송금하시면 아래 버튼이 열립니다</p>
+  <button class="pay-b" onclick="closePay();openKakao()">카톡으로 문의하기</button>
   <button class="pay-x" onclick="closePay()">닫기</button>
  </div>
 </div>
