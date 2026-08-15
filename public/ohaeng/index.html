@@ -529,6 +529,26 @@ h1.big{font-size:41.1px;margin-bottom:6px}
 .vchip i{font-style:normal}
 
 .emb{display:block;margin:2px auto 6px}
+
+/* ═══ 9월 수익화 (2026-08-15) ═══ */
+#gback{display:none;position:fixed;top:12px;left:12px;z-index:80;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.93);border:1.5px solid #DCE8F7;box-shadow:0 4px 12px rgba(20,50,110,.14);font-size:20px;line-height:1;color:#33445F;font-family:inherit;cursor:pointer}
+.xsell{margin-top:14px;background:#fff;border:1.5px solid #DCE8F7;border-radius:18px;padding:15px 14px;text-align:left}
+.xs-t{font-size:15.8px;font-weight:900;color:#16233A;letter-spacing:-.02em}
+.xs{display:block;width:100%;text-align:left;border:0;border-radius:14px;padding:13px 14px;margin-top:9px;font-family:inherit;cursor:pointer;background:linear-gradient(135deg,#2F7FF0,#1D6DE3);color:#fff}
+.xs b{display:block;font-size:15.6px;font-weight:900;letter-spacing:-.02em}
+.xs span{display:block;font-size:12.4px;margin-top:3px;opacity:.93;line-height:1.5}
+.xs.deep{background:#fff;border:1.5px solid #BFD5F5;color:#1F3D66}
+.xs.deep span{color:#5B7292;opacity:1}
+.paym{display:none;position:fixed;inset:0;background:rgba(10,25,60,.45);z-index:999;align-items:flex-end;justify-content:center}
+.paym.on{display:flex}
+.pay-in{width:100%;max-width:470px;background:#fff;border-radius:22px 22px 0 0;padding:20px 18px calc(18px + env(safe-area-inset-bottom,0px))}
+.pay-t{font-size:17.5px;font-weight:900;color:#16233A}
+.pay-p{font-size:13.4px;color:#5B7292;margin-top:3px;font-weight:600}
+.pay-s{margin:13px 0 4px;padding-left:20px}
+.pay-s li{font-size:14.3px;line-height:1.7;color:#33445F;margin-bottom:6px}
+.pay-a{display:block;width:100%;margin-top:9px;background:#FEE500;border:0;border-radius:14px;padding:14px;font-size:15.5px;font-weight:900;color:#191919;font-family:inherit;cursor:pointer}
+.pay-b{display:block;width:100%;margin-top:8px;background:#F3F6FB;border:1.5px solid #DCE8F7;border-radius:14px;padding:13px;font-size:14.5px;font-weight:800;color:#33445F;font-family:inherit;cursor:pointer}
+.pay-x{display:block;width:100%;margin-top:10px;background:none;border:0;font-size:13px;color:#9AA7BD;font-family:inherit;cursor:pointer}
 </style>
 </head>
 <body>
@@ -541,6 +561,7 @@ h1.big{font-size:41.1px;margin-bottom:6px}
     <div class="langsw"><button data-lang="ko">한국어</button><button data-lang="en">EN</button></div>
   </div>
   <div class="fbanner" id="fbanner"></div>
+  <div class="fbanner" id="evb"></div>
   <p class="appname" data-i="appName"></p>
   <div class="motive"><span data-i="motive1"></span><span class="q" data-i="motiveQ"></span></div>
   <h1 class="big" data-i="h1"></h1>
@@ -661,6 +682,11 @@ h1.big{font-size:41.1px;margin-bottom:6px}
   <p class="tiny" style="margin-top:9px;text-align:center" data-i="matchNote"></p>
   <div class="sec-t" data-i="sumT"></div>
   <div class="card" id="sum1"></div>
+  <div class="xsell">
+    <div class="xs-t">📌 이 결과, 더 깊게 볼까요?</div>
+    <button class="xs" onclick="openPay('report')"><b>AI 심층 리포트 · 990원</b><span>내 고민 반영 맞춤 해석 · 당일 카톡 발송 · 9월 런칭가(정가 2,900원)</span></button>
+    <button class="xs deep" onclick="openPay('consult')"><b>전문가 기본 상담 · 50,000원</b><span>리포트 + 전화/카톡 해석 · D+2일 · 경영지도사 최형철(30년 경력)</span></button>
+  </div>
   <div class="ctabox">
     <img class="char tiny" id="charB" alt="">
     <div class="ctastep">STEP 2</div>
@@ -703,6 +729,11 @@ h1.big{font-size:41.1px;margin-bottom:6px}
   <div class="card"><div class="bars" id="b2"></div></div>
   <div class="sec-t" data-i="gapT"></div>
   <div class="card" id="gap2"></div>
+  <div class="xsell">
+    <div class="xs-t">📌 이 결과, 더 깊게 볼까요?</div>
+    <button class="xs" onclick="openPay('report')"><b>AI 심층 리포트 · 990원</b><span>내 고민 반영 맞춤 해석 · 당일 카톡 발송 · 9월 런칭가(정가 2,900원)</span></button>
+    <button class="xs deep" onclick="openPay('consult')"><b>전문가 기본 상담 · 50,000원</b><span>리포트 + 전화/카톡 해석 · D+2일 · 경영지도사 최형철(30년 경력)</span></button>
+  </div>
   <div class="ctabox">
     <img class="char tiny" id="charC" alt="">
     <div class="ctastep">STEP 3</div>
@@ -1847,7 +1878,9 @@ let symPick=null, gender="a", chartMode={r1:"bar",r2:"bar"};
 const $=id=>document.getElementById(id);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 let CUR="intro";
-const showRaw=id=>{document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));$(id).classList.add("on");CUR=id;window.scrollTo(0,0)};
+const _BK={sg:1,r1:1,r2:1,r4:1,mate:1,quick:1,today:1,mates:1};
+const showRaw=id=>{document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));$(id).classList.add("on");CUR=id;window.scrollTo(0,0);
+  const gb=document.getElementById("gback"); if(gb)gb.style.display=_BK[id]?"block":"none";};
 /* 브라우저·폰의 뒤로가기로도 앞 단계로 돌아가 수정할 수 있게 한다 */
 const navState=()=>({sc:CUR,step,p3,g:gender});
 function show(id){ showRaw(id); try{history.pushState(navState(),"")}catch(e){} }
@@ -1870,7 +1903,7 @@ function drawBars3D(x,W,H,s,total,opt){
   opt=opt||{};
   const pad=W*0.055, topPad=H*(opt.top||0.24), botPad=H*(opt.bot||0.31);
   const y0=H-botPad, maxH=y0-topPad;
-  const gap=W*0.028, bw=(W-pad*2-gap*4)/5, d=bw*0.26, dy=d*0.55;
+  const gap=W*0.032, bw=(W-pad*2-gap*4)/5, d=0, dy=0;
   const fs=W*0.036;
   // 바닥선
   x.strokeStyle="#E6EEF9";x.lineWidth=1.4;
@@ -1881,21 +1914,11 @@ function drawBars3D(x,W,H,s,total,opt){
     const k=ORDER[i], c=EL[k].color, sh=total?s[k]/total:0;
     const h=Math.max(2,Math.min(1,sh/MAX_SHARE)*maxH*(opt.p===undefined?1:opt.p));
     const bx=pad+i*(bw+gap), by=y0-h;
-    // 그림자
-    x.save();x.globalAlpha=.13;x.fillStyle="#0B4FD1";
-    x.beginPath();x.ellipse(bx+bw/2+d/2,y0+d*.28,bw*.56,d*.30,0,0,7);x.fill();x.restore();
-    // 우측면
-    x.beginPath();x.moveTo(bx+bw,by);x.lineTo(bx+bw+d,by-dy);x.lineTo(bx+bw+d,y0-dy);x.lineTo(bx+bw,y0);x.closePath();
-    x.fillStyle=darken(c,.26);x.fill();
-    // 윗면
-    x.beginPath();x.moveTo(bx,by);x.lineTo(bx+d,by-dy);x.lineTo(bx+bw+d,by-dy);x.lineTo(bx+bw,by);x.closePath();
-    x.fillStyle=lighten(c,.34);x.fill();
-    // 앞면
-    const g=x.createLinearGradient(bx,by,bx+bw,y0);
-    g.addColorStop(0,lighten(c,.20));g.addColorStop(.5,c);g.addColorStop(1,darken(c,.08));
-    x.fillStyle=g;x.beginPath();x.rect(bx,by,bw,h);x.fill();
-    // 하이라이트
-    x.fillStyle="rgba(255,255,255,.26)";x.fillRect(bx+bw*.08,by,bw*.16,h);
+    // 캡슐형 평면 막대 (v6 규격 통일)
+    const r=Math.min(bw*0.38,h/2);
+    const g=x.createLinearGradient(bx,by,bx,y0);
+    g.addColorStop(0,lighten(c,.14));g.addColorStop(1,c);
+    x.fillStyle=g;x.beginPath();x.roundRect(bx,by,bw,h,[r,r,4,4]);x.fill();
     // 점수 배지
     if(opt.p===undefined||opt.p>.92){
       const v=Math.round(s[k]*10)/10, pc=Math.round(sh*100);
@@ -2538,6 +2561,27 @@ const openKakao=()=>{
   window.AJ&&AJ.track("consult_open",{props:{from:(typeof CUR!=="undefined"?CUR:"")}});
   window.open(DB.cfg.kakaoChannelUrl,"_blank");
 };
+/* ── 9월 수익화: 카카오페이 결제 안내 ── */
+const PAY={
+ report:{t:"AI 심층 리포트",p:"990원 · 9월 런칭가 (정가 2,900원)",u:"https://qr.kakaopay.com/2810060111525252010020951ef07460",
+   s:['아래 노란 버튼으로 <b>990원 결제</b> (금액 자동 입력)','송금 완료 화면 캡처 + <b>내 결과 카드</b>를 카톡으로 전송','<b>당일</b> 카톡으로 리포트를 받아보세요']},
+ consult:{t:"전문가 기본 상담",p:"50,000원 · 리포트 + 전화/카톡 해석",u:"https://qr.kakaopay.com/281006011152525201002095",
+   s:['아래 노란 버튼에서 금액 <b>50,000원</b> 입력 후 송금','송금 완료 화면 캡처 + <b>내 결과 카드</b>를 카톡으로 전송','<b>2일 내</b> 리포트와 함께 전화/카톡 상담이 진행됩니다']}};
+let PAYK="report";
+function openPay(k){PAYK=k;const o=PAY[k];
+  $("payT").textContent=o.t;$("payP").textContent=o.p;
+  $("payS").innerHTML=o.s.map(x=>"<li>"+x+"</li>").join("");
+  $("paym").classList.add("on");
+  window.AJ&&AJ.track("report_open",{props:{kind:k}});
+}
+function closePay(){$("paym").classList.remove("on")}
+function goPay(){const o=PAY[PAYK];window.AJ&&AJ.track("report_pay_guide",{props:{kind:PAYK}});window.open(o.u,"_blank")}
+/* ── 9월 정식 오픈 배너 (9/30까지 자동 표시) ── */
+(function(){const e=$("evb");if(!e)return;
+ if(new Date()<=new Date("2026-09-30T23:59:59+09:00")){
+  e.className="fbanner on";
+  e.innerHTML='<b>🎉 9월 정식 오픈 이벤트</b><span>AI 심층 리포트 <em>990원</em> 런칭가 <s style="color:#9AA7BD">2,900원</s> · 진단 후 결과 화면에서 신청 · <em>9/30까지</em></span>';
+ }})();
 
 /* ═══════════ Q&A · 통계 표시 ═══════════ */
 function renderQA(){
@@ -4279,6 +4323,16 @@ if(FRIEND)sbLog("inv","");
 if(charImg.complete)demo(); else charImg.onload=demo;
 setTimeout(demo,60);
 </script>
+<div id="paym" class="paym" onclick="if(event.target===this)closePay()">
+ <div class="pay-in">
+  <div class="pay-t" id="payT"></div><div class="pay-p" id="payP"></div>
+  <ol class="pay-s" id="payS"></ol>
+  <button class="pay-a" onclick="goPay()">카카오페이로 결제하기</button>
+  <button class="pay-b" onclick="closePay();openKakao()">카톡으로 결제 캡처 보내기</button>
+  <button class="pay-x" onclick="closePay()">닫기</button>
+ </div>
+</div>
+<button id="gback" onclick="goBack()" aria-label="뒤로">←</button>
 <script src="./track.js"></script>
 </body>
 </html>
