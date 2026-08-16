@@ -3959,6 +3959,10 @@ function goQuick(goal){
   qPick={el:null,sign:null,sk:null};
   renderQuick(); show("quick");
 }
+function goReport(){
+  if(typeof SAJU!=="undefined" && SAJU){ p3=0; pick3={cat:null,blk:null,goal:null,note:""}; render3(); show("s3"); return }
+  renderBD(); show("bd");
+}
 function afterQuick(){
   saveLast();
   if(qGoal==="today"){ openToday(); return }
@@ -4648,8 +4652,10 @@ document.querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>setLang(b.data
 $("startBtn").onclick=()=>{window.AJ&&AJ.track("ohaeng_start");renderGender();show("sg")};
 $("n1").onclick=next1; $("n2").onclick=()=>finish2(); $("n3").onclick=next3;
 $("go2").onclick=()=>{window.AJ&&AJ.track("ohaeng_calibration_start");render2();show("s2")};
-/* 리포트로 갈 때는 생년월일부터 — 990원 유료 상품이므로 사주를 함께 본다 */
-$("go3").onclick=()=>{ renderBD(); show("bd") };
+/* 리포트로 가는 모든 길은 여기 하나로 모은다.
+   사주를 이미 계산했으면 바로 4단계, 아니면 생년월일부터 받는다.
+   ※ 최상위 함수 선언이어야 afterQuick 등 다른 곳에서도 보인다. */
+$("go3").onclick=()=>goReport();
 {const g=$("bdGo"); if(g) g.onclick=bdSubmit;}
 {const c=$("bdCal"); if(c) c.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{
   BD.cal=b.dataset.c;
