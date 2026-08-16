@@ -570,6 +570,10 @@ h1.big{font-size:41.1px;margin-bottom:6px}
 .premb1 span{display:block;font-size:11.8px;color:#8A7A52;margin-top:3px}
 .premb1:active{transform:scale(.97)}
 .premb1.busy{opacity:.55}
+.aitip{margin-top:12px;padding:12px 13px;border-radius:11px;background:#F4F8FF;border:1px solid #D5E4F8;text-align:left}
+.aitip b{display:block;font-size:13.2px;font-weight:900;color:#12305F;margin-bottom:5px}
+.aitip p{margin:0 0 10px;font-size:12.4px;line-height:1.6;color:#5B6B85}
+.aitipr{display:flex;gap:6px;flex-wrap:wrap}
 .wpfix{margin-top:12px;padding:12px 13px;border-radius:11px;background:#fff;border:1px solid #EBD9A8}
 .wpfix b{display:block;font-size:13.4px;font-weight:900;color:#12305F;margin-bottom:5px}
 .wpfix p{margin:0 0 10px;font-size:12.6px;line-height:1.6;color:#7A6634}
@@ -596,6 +600,31 @@ h1.big{font-size:41.1px;margin-bottom:6px}
   font-family:inherit;font-size:13.4px;font-weight:800;color:#5B8DEF;cursor:pointer;
   text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1.5px}
 .skiplink:active{opacity:.6}
+
+/* ── 생년월일 입력 (2026-08-16) ── */
+.bd-head{text-align:center;padding:18px 4px 14px}
+.bd-head h2{font-size:22px;font-weight:900;color:var(--ink);margin:0 0 8px;letter-spacing:-.02em}
+.bd-head p{font-size:14px;line-height:1.7;color:var(--ink2);margin:0}
+.bd-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 15px;
+  box-shadow:0 3px 14px rgba(20,60,120,.07)}
+.bd-l{font-size:12px;font-weight:900;color:#7688A3;margin:2px 0 7px;letter-spacing:.02em}
+.bd-seg{display:flex;gap:7px;margin-bottom:12px}
+.bd-seg button{flex:1;padding:11px 0;border-radius:10px;border:1.5px solid #E4EBF6;background:#F8FBFF;
+  font-family:inherit;font-size:14.6px;font-weight:900;color:#5B6B85;cursor:pointer}
+.bd-seg button.on{border-color:#1D7CF2;background:#EEF5FF;color:#12305F}
+.bd-leap{display:flex;align-items:center;gap:8px;margin:-4px 0 13px;padding:9px 11px;
+  border-radius:10px;background:#FFF8E8;border:1px solid #F0DDB0;font-size:13.4px;
+  font-weight:800;color:#7A6634;cursor:pointer}
+.bd-leap input{width:17px;height:17px;accent-color:#1D7CF2}
+.bd-row{display:flex;gap:7px;margin-bottom:13px}
+.bd-row select{flex:1;min-width:0;padding:12px 8px;border-radius:10px;border:1.5px solid #D5E1F2;
+  background:#fff;font-family:inherit;font-size:15px;font-weight:800;color:#1D3E75;
+  -webkit-appearance:none;appearance:none;text-align:center}
+.bd-note{font-size:12.4px;line-height:1.65;color:var(--ink3);margin:0 0 13px;text-align:center}
+.bd-note a{color:#1D7CF2;font-weight:800}
+.bd-src{margin:0 0 11px;padding:9px 11px;border-radius:9px;background:#F2F7FD;
+  border:1px solid #DCE6F4;font-size:12.2px;line-height:1.6;color:#5B6B85}
+.bd-src b{color:#12305F}
 
 /* ── 분량 선택 바 주목도 강화 (2026-08-15) ── */
 .repopt{display:block;margin:6px 0 15px;padding:11px 13px;border-radius:13px;
@@ -825,6 +854,42 @@ h1.big{font-size:41.1px;margin-bottom:6px}
 </div></div>
 
 <!-- ═══════ 3단계 ═══════ -->
+<!-- ═══════ 생년월일 입력 (990원 리포트 · 만세력) ═══════ -->
+<div id="bd" class="screen">
+  <div class="appbar"><div class="appbar-in"><button class="back" data-back="r1">‹</button>
+    <div class="prog"><div class="prog-t"><span>생년월일</span><span>사주 보정</span></div>
+    <div class="prog-bar"><div class="prog-fill" style="width:50%"></div></div></div>
+  </div></div>
+  <div class="wrap">
+    <div class="bd-head">
+      <h2>태어난 날을 알려주세요</h2>
+      <p>사주 삼주(연·월·일)로 <b>타고난 기질</b>을 계산하고,<br>방금 하신 진단으로 <b>지금의 나</b>를 보정합니다.</p>
+    </div>
+
+    <div class="bd-card">
+      <div class="bd-l">달력</div>
+      <div class="bd-seg" id="bdCal">
+        <button data-c="solar" class="on">양력</button>
+        <button data-c="lunar">음력</button>
+      </div>
+      <label class="bd-leap" id="bdLeapWrap" style="display:none">
+        <input type="checkbox" id="bdLeap"><span>윤달입니다</span>
+      </label>
+
+      <div class="bd-l">생년월일</div>
+      <div class="bd-row">
+        <select id="bdY"></select>
+        <select id="bdM"></select>
+        <select id="bdD"></select>
+      </div>
+
+      <p class="bd-note">태어난 <b>시각</b>은 받지 않습니다. 시각까지 반영한 정밀 해석은
+        <a href="#" id="bdConsult">전문가 상담</a>에서 도와드립니다.</p>
+      <button class="btn btn-p" id="bdGo" style="width:100%">사주 보정하고 리포트 만들기</button>
+    </div>
+  </div>
+</div>
+
 <div id="s3" class="screen">
   <div class="appbar"><div class="appbar-in"><button class="back" data-back="r2">‹</button>
     <div class="prog"><div class="prog-t"><span data-i="st3"></span><span id="p3c">1 / 4</span></div><div class="prog-bar"><div class="prog-fill" id="p3f"></div></div></div>
@@ -990,7 +1055,16 @@ h1.big{font-size:41.1px;margin-bottom:6px}
   <img id="imgv" class="imgv" alt="">
   <button class="btn btn-k sm" id="imgSh" style="margin-top:11px" data-i="imgShare"></button>
   <button class="btn btn-p sm" id="imgSv" style="margin-top:8px" data-i="imgSave"></button>
-  <button class="btn btn-g sm" id="imgC" style="margin-top:8px" data-i="close"></button></div></div>
+  <div class="aitip" id="aiTip">
+  <b>내 취향대로 더 다듬고 싶다면</b>
+  <p data-i="aiTipD"></p>
+  <div class="aitipr">
+    <button class="wpfixb" id="aiCopy">보정 문구 복사</button>
+    <button class="wpfixb g" id="aiGPT">ChatGPT</button>
+    <button class="wpfixb g" id="aiGem">Gemini</button>
+  </div>
+</div>
+<button class="btn btn-g sm" id="imgC" style="margin-top:8px" data-i="close"></button></div></div>
 
 <div class="modal" id="instm"><div class="sheet"><div class="grab"></div>
   <h3 data-i="instT"></h3><p data-i="instD"></p>
@@ -1170,6 +1244,8 @@ ko:{
   tierP:'프리미엄 · 990원 — PDF + 배경화면 세트',
   kb1:'기', kb2:'승', kb3:'전', kb4:'결',
   skipCal:'보정 없이 바로 리포트 만들기 →',
+  bdCalc:'사주를 계산하는 중입니다…', bdNo:'계산에 실패했습니다. 날짜를 확인해 주세요.',
+  aiTipD:'디자인은 취향이 갈립니다. 저장한 카드를 ChatGPT·Gemini 같은 AI에 넣고 아래 문구를 함께 주시면, 내 취향에 맞게 다시 다듬어 줍니다.',
   premT:'프리미엄이 열렸습니다', premD:'아래에서 받으시면 언제든 다시 보실 수 있습니다. 30일 실천 플랜과 자기점검 워크시트도 아래에 이어집니다.',
   pdfMaking:'PDF를 만드는 중입니다… 10초쯤 걸립니다', pdfDone:'PDF 저장 완료!', pdfNo:'PDF 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.',
   wpMaking:'배경화면을 만드는 중입니다…', wpDone:'저장 완료! 사진첩을 확인해 주세요.',
@@ -1306,6 +1382,8 @@ en:{
   tierP:'Premium — PDF + wallpaper set',
   kb1:'1', kb2:'2', kb3:'3', kb4:'4',
   skipCal:'Skip and go straight to the report →',
+  bdCalc:'Calculating your chart…', bdNo:'Calculation failed. Please check the date.',
+  aiTipD:'Taste differs. Drop the saved card into ChatGPT or Gemini with the text below and it will restyle it for you.',
   premT:'Premium unlocked', premD:'Download below — you can come back any time.',
   pdfMaking:'Building your PDF…', pdfDone:'PDF saved!', pdfNo:'Could not create the PDF. Please try again.',
   wpMaking:'Creating your wallpaper…', wpDone:'Saved! Check your gallery.',
@@ -4214,6 +4292,7 @@ function buildReport(){
       <div class="k">${T("repK")} · ${T("tier"+REP_LEN)}</div>
       <h3>${CT(C,"name")}${T("repSuffix")}</h3>
       <p>${A.mod?esc(A.mod)+" ":""}${isEN()?A.name:"「"+esc(A.name)+"」"} · ${N(M)} ${Math.round(A.share[M]*100)}% (${stateOf(M)}) · ${T("balance")} ${A.bal}</p></div>
+    ${sajuNote()}
     <div class="a4-s"><h5><b class="a4kb">${T("kb1")}</b><i>1</i>${T("rp1")}</h5>
       <div class="a4r"><b>${T("rTopic")}</b><span>${CT(C,"name")}</span></div>
       <div class="a4r"><b>${T("rBlock")}</b><span>${CT(C,"blockers")[pick3.blk].t}</span></div>
@@ -4241,6 +4320,9 @@ function buildReport(){
   const pb=$("pdfBtn"); if(pb) pb.onclick=makePDF;
   const wb=$("wpBtn");  if(wb) wb.onclick=makeWall;
   const wc=$("wpCopy"); if(wc) wc.onclick=copyWpFix;
+  const ac=$("aiCopy"); if(ac) ac.onclick=copyCardFix;
+  const ag=$("aiGPT");  if(ag) ag.onclick=()=>window.open("https://chatgpt.com/","_blank");
+  const am=$("aiGem");  if(am) am.onclick=()=>window.open("https://gemini.google.com/","_blank");
   const wf=$("wpFmt"); if(wf) wf.querySelectorAll("[data-f]").forEach(b=>b.onclick=()=>{
     WP_FMT=b.dataset.f;
     wf.querySelectorAll("[data-f]").forEach(e=>e.classList.toggle("on",e===b));
@@ -4248,6 +4330,21 @@ function buildReport(){
   const wg=$("wpGPT");  if(wg) wg.onclick=()=>window.open("https://chatgpt.com/","_blank");
   const wm=$("wpGem");  if(wm) wm.onclick=()=>window.open("https://gemini.google.com/","_blank");
   if(!LOCK_SEEN){ LOCK_SEEN=true; window.AJ&&AJ.track("report_premium_view",{props:{tier:REP_LEN}}) }
+}
+
+/* 사주 보정이 적용됐을 때만 출처를 밝힌다 — 무엇을 근거로 한 해석인지 */
+function sajuNote(){
+  const B=reportBase();
+  if(!B) return "";
+  const P=B.pillars, g=B.topGap, NM=k=>N(k);
+  const dir=g&&g.gap>0?"강하게":"약하게";
+  return `<div class="bd-src">
+    <b>사주 삼주</b> ${P.y} · ${P.m} · ${P.d}
+    ${B.solar?`(양력 ${B.solar.y}.${B.solar.m}.${B.solar.d})`:""}
+    ${B.boundary?' · <b style="color:#B4791E">절기가 바뀌는 날</b>이라 태어난 시각에 따라 달라질 수 있습니다':""}
+    <br>타고난 기질 60% + 지금의 나 40%로 보정했습니다.
+    ${g?`가장 차이가 큰 기운은 <b>${NM(g.el)}</b> — 타고난 것보다 ${dir} 쓰고 계십니다.`:""}
+  </div>`;
 }
 
 /* 프리미엄 잠금 미리보기 — 무료의 끝에서 전환율이 가장 높다 */
@@ -4300,6 +4397,20 @@ function repPrem(){
 }
 
 /* 라이브러리는 프리미엄 해제 후에만 내려받는다 (무료 사용자에게 부담 주지 않음) */
+/* 만세력 엔진 — 필요할 때만 내려받는다 (합계 약 740KB) */
+let MANSE=null;
+function loadManse(){
+  if(MANSE) return MANSE;
+  const one=src=>new Promise((ok,no)=>{
+    const e=document.createElement("script");e.src=src;e.onload=ok;e.onerror=()=>no(new Error(src));
+    document.head.appendChild(e);
+  });
+  MANSE=one("./vender/manseryeok.min.js")
+    .then(()=>one("./vender/lunar.min.js"))
+    .then(()=>one("./vender/saju.js"));
+  return MANSE;
+}
+
 let LIBS=null;
 function loadLibs(){
   if(LIBS) return LIBS;
@@ -4436,6 +4547,31 @@ function wallpaper(){
   x.beginPath();x.roundRect(px,py,pw,ph,r);x.stroke();x.restore();
   return c;
 }
+/* 결과 카드용 — 저장한 카드를 AI로 다듬을 때 쓰는 요청문 */
+function cardFixText(){
+  const A=R2||R1;
+  return [
+    `첨부한 이미지는 제 「${A.name}」 오행 성격 결과 카드입니다.`,
+    `이 카드를 제 취향에 맞게 더 보기 좋게 다듬어 주세요.`,
+    ``,
+    `요청사항`,
+    `1. 카드에 적힌 글자와 숫자는 그대로 두세요. 내용을 바꾸거나 지우지 마세요.`,
+    `2. 여백과 배치를 정돈하고, 색감을 조화롭게 다듬어 주세요.`,
+    `3. 인스타그램에 올릴 것이라 4:5 비율이면 좋습니다.`,
+    `4. 결과물은 PNG(배경 투명 없이)로 주세요.`
+  ].join("\n");
+}
+async function copyCardFix(){
+  const t=cardFixText();
+  try{ await navigator.clipboard.writeText(t); toast(T("tCopy")) }
+  catch(e){
+    const ta=document.createElement("textarea");ta.value=t;document.body.appendChild(ta);ta.select();
+    try{document.execCommand("copy");toast(T("tCopy"))}catch(_){}
+    ta.remove();
+  }
+  window.AJ&&AJ.track("card_ai_fixcopy");
+}
+
 /* AI에게 그대로 붙여넣을 보정 요청문 — 화면 크기를 실제 값으로 채워 넣는다 */
 let WP_FMT="PNG";
 function wpFixText(){
@@ -4512,7 +4648,65 @@ document.querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>setLang(b.data
 $("startBtn").onclick=()=>{window.AJ&&AJ.track("ohaeng_start");renderGender();show("sg")};
 $("n1").onclick=next1; $("n2").onclick=()=>finish2(); $("n3").onclick=next3;
 $("go2").onclick=()=>{window.AJ&&AJ.track("ohaeng_calibration_start");render2();show("s2")};
-$("go3").onclick=()=>{p3=0;render3();show("s3")};
+/* 리포트로 갈 때는 생년월일부터 — 990원 유료 상품이므로 사주를 함께 본다 */
+$("go3").onclick=()=>{ renderBD(); show("bd") };
+{const g=$("bdGo"); if(g) g.onclick=bdSubmit;}
+{const c=$("bdCal"); if(c) c.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{
+  BD.cal=b.dataset.c;
+  c.querySelectorAll("[data-c]").forEach(e=>e.classList.toggle("on",e===b));
+  const w=$("bdLeapWrap"); if(w) w.style.display = BD.cal==="lunar" ? "" : "none";
+});}
+{const k=$("bdConsult"); if(k) k.onclick=(e)=>{e.preventDefault();
+  window.AJ&&AJ.track("consult_open",{props:{from:"birthdate"}}); openKakao();};}
+/* ═══════════ 만세력 생년월일 입력 ═══════════ */
+let BD={cal:"solar", leap:false, y:null, m:null, d:null};
+let SAJU=null;                       // 만세력 계산 결과
+function renderBD(){
+  const now=new Date().getFullYear();
+  const fill=(el,from,to,suffix,sel)=>{
+    const e=$(el); if(!e)return;
+    let h="";
+    for(let v=from;v<=to;v++) h+=`<option value="${v}"${v===sel?" selected":""}>${v}${suffix}</option>`;
+    e.innerHTML=h;
+  };
+  fill("bdY",1930,now,"년", BD.y||1990);
+  fill("bdM",1,12,"월", BD.m||1);
+  fill("bdD",1,31,"일", BD.d||1);
+}
+function bdSync(){
+  BD.y=+$("bdY").value; BD.m=+$("bdM").value; BD.d=+$("bdD").value;
+  BD.leap=!!($("bdLeap")||{}).checked;
+}
+async function bdSubmit(){
+  bdSync();
+  const btn=$("bdGo"); if(btn){btn.disabled=true}
+  toast(T("bdCalc"));
+  try{
+    await loadManse();
+    if(!window.AJSaju) throw new Error("saju engine");
+    const r=window.AJSaju.compute(BD.y,BD.m,BD.d,{calendar:BD.cal,leap:BD.leap});
+    if(!r||!r.ok) throw new Error(r&&r.reason||"compute");
+    SAJU=r;
+    window.AJ&&AJ.track("saju_compute",{props:{cal:BD.cal,leap:BD.leap?1:0,
+      agree:r.engines.agree?1:0,boundary:r.boundary?1:0}});
+    hideToast();
+    p3=0; pick3={cat:null,blk:null,goal:null,note:""}; render3(); show("s3");
+  }catch(e){
+    hideToast(); toast(T("bdNo"));
+    window.AJ&&AJ.track("saju_fail",{props:{msg:String(e&&e.message||e).slice(0,60)}});
+  }
+  if(btn){btn.disabled=false}
+}
+/* 리포트가 쓸 최종 분포 — 사주가 있으면 6:4 보정, 없으면 기존 그대로 */
+function reportBase(){
+  const A=R2||R1;
+  if(SAJU&&window.AJSaju&&window.AJSaju.blend){
+    const b=window.AJSaju.blend(SAJU,A.s);
+    if(b) return b;
+  }
+  return null;
+}
+
 /* 보정을 건너뛰고 바로 4단계로 — 리포트는 A=R2||R1 이므로 보정 없이도 생성된다 */
 {const sk=$("skip2"); if(sk) sk.onclick=()=>{
   window.AJ&&AJ.track("ohaeng_skip_calibration");
@@ -4560,6 +4754,9 @@ $("shareTop").onclick=shareLink;
 $("imgSh").onclick=()=>{ if(!LASTIMG)return;
   navigator.share({files:[LASTIMG.file],title:"AI사주랩",text:cardTxt()}).catch(()=>{}) };
 $("imgSv").onclick=saveImage;
+{const ac=$("aiCopy"); if(ac) ac.onclick=copyCardFix;
+ const ag=$("aiGPT");  if(ag) ag.onclick=()=>window.open("https://chatgpt.com/","_blank");
+ const am=$("aiGem");  if(am) am.onclick=()=>window.open("https://gemini.google.com/","_blank");}
 $("imgC").onclick=()=>$("imgm").classList.remove("on");
 const restart=()=>{step=0;ans=DB.Q.map(()=>[]);cal=CAL.map(()=>0);symPick=null;
   $("lik").innerHTML="";delete $("lik").dataset.built;
