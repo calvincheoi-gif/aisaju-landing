@@ -215,6 +215,9 @@ h2 b{color:var(--blue)}
 
 footer{padding:22px var(--pad) 28px;background:var(--navy);color:rgba(255,255,255,.72);font-size:11px;line-height:1.75;font-weight:500}
 footer b{color:#fff;font-size:14px;font-weight:800;letter-spacing:-.04em}
+footer .biz{display:inline-block;color:rgba(255,255,255,.55);font-size:10.6px;line-height:1.85}
+footer .lg{display:inline-block;margin:6px 12px 0 0;color:rgba(255,255,255,.85);
+  font-size:11.6px;font-weight:800;text-decoration:underline;text-underline-offset:3px}
 
 /* 하단 고정 */
 .dock{position:fixed;bottom:0;left:0;right:0;z-index:50;max-width:430px;margin:0 auto;
@@ -353,16 +356,16 @@ const HTML = String.raw`
     <div class="sec-label">SERVICES</div>
     <h2>여기서 할 수 있는 것</h2>
     <div class="svc">
-      <button class="sv"><span class="tag free">무료</span>
+      <button class="sv" data-go="ohaeng" data-from="svc"><span class="tag free">무료</span>
         <div class="si">🤖</div><div class="sn">오행 성격 진단</div>
         <div class="sd">14문항 1분 · 가입 없이 바로</div></button>
-      <button class="sv"><span class="tag day">하루 1회 무료</span>
+      <button class="sv" data-go="today" data-from="svc"><span class="tag day">하루 1회 무료</span>
         <div class="si">🌤️</div><div class="sn">오늘의 흐름</div>
         <div class="sd">내 오행으로 보는 오늘 컨디션</div></button>
-      <button class="sv"><span class="tag free">무료</span>
+      <button class="sv" data-go="match" data-from="svc"><span class="tag free">무료</span>
         <div class="si">🤝</div><div class="sn">친구와 오행 궁합</div>
         <div class="sd">링크 보내면 둘의 궁합 공개</div></button>
-      <button class="sv"><span class="tag pay">990원 · 즉시</span>
+      <button class="sv" data-go="report" data-from="svc" data-ev="report_open"><span class="tag pay">990원 · 즉시</span>
         <div class="si">📊</div><div class="sn">AI 심층 리포트</div>
         <div class="sd">고민 반영 맞춤 해석 · 카카오페이</div></button>
     </div>
@@ -455,10 +458,10 @@ const HTML = String.raw`
     <h2>당신도 이런 고민, <b>해본 적 있나요?</b></h2>
     <p class="sec-sub">진단으로 방향을 잡았다면, 사람이 직접 보는 상담으로 이어집니다.</p>
     <div class="needs">
-      <a class="need" href="/ohaeng/"><i>💼</i>지금, 이직해야 할까?</a>
-      <a class="need" href="/ohaeng/"><i>💗</i>이 사람과 궁합이 맞을까?</a>
-      <a class="need" href="/ohaeng/"><i>📈</i>창업해도 괜찮을까?</a>
-      <a class="need" href="/ohaeng/"><i>🏠</i>지금 집을 사도 될까?</a>
+      <a class="need" href="/ohaeng/#report"><i>💼</i>지금, 이직해야 할까?</a>
+      <a class="need" href="/ohaeng/#match"><i>💗</i>이 사람과 궁합이 맞을까?</a>
+      <a class="need" href="/ohaeng/#report"><i>📈</i>창업해도 괜찮을까?</a>
+      <a class="need" href="/ohaeng/#report"><i>🏠</i>지금 집을 사도 될까?</a>
       <a class="need more" href="/consult">개인사주 · 재물운 · 대운/세운 · 작명 더 보기 ▾</a>
     </div>
   </section>
@@ -523,7 +526,18 @@ const HTML = String.raw`
   <footer>
     <b>AI사주랩.com</b><br>
     AI는 분석하고, 명리학은 방향을 찾습니다<br>
-    최형철 사주명리 연구소 · 전문 상담 및 AI 명리 리포트<br>
+    진단 결과는 명리학에 기반한 AI 생성 콘텐츠이며, 과학적 사실이나 미래를 보장하지 않습니다.<br><br>
+    <span class="biz">
+      상호 라이프앤비즈(Life &amp; Biz) 성장연구소 · 대표 최형철<br>
+      사업자등록번호 688-13-03146 · 통신판매업신고 신고 예정<br>
+      사업장 소재지 서울특별시 강동구 올림픽로78길 60, 103동 602호 (천호동, 강동밀레니얼중흥S클래스)<br>
+      전화 010-4686-1341 · 이메일 calvincheoi@gmail.com<br>
+      호스팅 제공자 Netlify, Inc.
+    </span><br>
+    <a class="lg" href="/legal/#t1">이용약관</a>
+    <a class="lg" href="/legal/#t2">개인정보처리방침</a>
+    <a class="lg" href="/legal/#t3">환불·청약철회</a>
+    <a class="lg" href="/legal/#t4">사업자정보</a><br><br>
     © 2026 최형철 사주명리 연구소
   </footer>
 </div>
@@ -573,6 +587,10 @@ export default function HomeV6() {
       if (go === "kakao") { track("consult_open", { from }); window.open(KAKAO, "_blank"); }
       else if (go === "consult") { track("consult_open", { from, kind: "custom" }); window.location.href = "/consult"; }
       else if (go === "ohaeng") { window.location.href = "/ohaeng/"; }
+      /* 서비스별 직접 진입 — 앱이 결과 보유 여부를 판단해 알아서 분기한다 */
+      else if (go === "today")  { track("svc_click", { to: "today", from });  window.location.href = "/ohaeng/#today"; }
+      else if (go === "match")  { track("svc_click", { to: "match", from });  window.location.href = "/ohaeng/#match"; }
+      else if (go === "report") { track("svc_click", { to: "report", from }); window.location.href = "/ohaeng/#report"; }
       else if (go === "top") { window.scrollTo({ top: 0, behavior: "smooth" }); }
     };
     root.addEventListener("click", onClick);
