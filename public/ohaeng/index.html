@@ -87,7 +87,7 @@ h1.big{font-size:44.5px;font-weight:900;letter-spacing:-.05em;line-height:1.16;m
 h1.big em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .appname{font-size:16.1px;color:var(--ink2);font-weight:700;margin-bottom:4px}
 .appname b{color:var(--b700)}
-.heroWrap{position:relative;max-width:380px;margin:2px auto -10px}
+.heroWrap{position:relative;max-width:344px;margin:0 auto -18px}
 .heroWrap canvas{width:100%;display:block}
 .char{position:absolute;left:0;bottom:14%;width:25%;max-width:106px;
   animation:float 3.4s ease-in-out infinite;filter:drop-shadow(0 8px 14px rgba(11,79,209,.16))}
@@ -200,12 +200,12 @@ canvas.cv{width:100%;display:block}
 .chartTabs{display:flex;gap:6px;justify-content:center;margin:8px 0 2px}
 .chartTabs button{padding:7px 15px;border-radius:100px;border:1.5px solid var(--line);background:#fff;font-family:inherit;font-size:14.3px;font-weight:700;color:var(--ink3);cursor:pointer}
 .chartTabs button.on{background:var(--grad);border-color:transparent;color:#fff}
-.bars{display:flex;flex-direction:column;gap:12px}
+.bars{display:flex;flex-direction:column;gap:14px}
 .bar{display:flex;align-items:center;gap:10px}
-.bar-n{width:78px;white-space:nowrap;font-size:15.2px;font-weight:800;flex-shrink:0}
-.bar-t{flex:1;height:12px;background:#EFF4FB;border-radius:12px;overflow:hidden;position:relative}
+.bar-n{width:74px;white-space:nowrap;font-size:15.8px;font-weight:800;flex-shrink:0}
+.bar-t{flex:1;height:18px;background:#EFF4FB;border-radius:12px;overflow:hidden;position:relative}
 .bar-f{height:100%;border-radius:12px;width:0;transition:width .85s cubic-bezier(.3,1,.4,1)}
-.bar-v{width:104px;white-space:nowrap;text-align:right;font-size:14.3px;color:var(--ink2);flex-shrink:0;font-variant-numeric:tabular-nums;font-weight:700}
+.bar-v{width:98px;white-space:nowrap;text-align:right;font-size:14.8px;color:var(--ink2);flex-shrink:0;font-variant-numeric:tabular-nums;font-weight:800}
 .bal{display:flex;align-items:baseline;gap:9px;margin-bottom:9px}
 .bal b{font-size:35.7px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .bal span{font-size:14.8px;color:var(--ink2);font-weight:600}
@@ -307,7 +307,7 @@ textarea.ta::placeholder,input.ti::placeholder{color:var(--ink3)}
 .langsw button.on{background:var(--grad);color:#fff}
 .langsw.sm button{font-size:12.4px;padding:6px 10px}
 .subline{font-size:14.9px;color:var(--ink2);margin-bottom:0;line-height:1.55}
-.btn-cta{margin-top:2px;padding:17px;font-size:18.2px;font-weight:800;border-radius:16px;max-width:340px;margin-left:auto;margin-right:auto}
+.btn-cta{margin-top:2px;padding:14px;font-size:17.4px;font-weight:800;border-radius:15px;max-width:340px;margin-left:auto;margin-right:auto}
 h1.big{font-size:41.1px;margin-bottom:6px}
 .heroWrap{max-width:330px;margin:-4px auto 2px}
 .appname{margin:24px 0 12px;font-size:14.9px}
@@ -1180,7 +1180,7 @@ ko:{
  cardBtn:'결과 카드 저장', shareBtn:'카톡 공유', tableBtn:'원본 표',
  imgT:'결과 카드', imgD:'아래 <b>카카오톡으로 보내기</b>를 누르면 이미지가 바로 전송됩니다. 저장이 막히는 폰에서는 <b>이미지를 꾹 눌러</b> 저장할 수도 있어요.',
  imgShare:'카카오톡으로 보내기', imgSave:'이미지 저장',
- rAuto:'내 폰 맞춤', rAutoD:'잘림 없음', rStory:'스토리', rStoryD:'9:16', rFeed:'피드', rFeedD:'4:5',
+ rAuto:'내 폰 맞춤', rAutoD:'배경화면·공유 겸용', rStory:'스토리·카톡', rStoryD:'9:16', rFeed:'인스타 피드', rFeedD:'4:5',
  imgD2:'<b>이미지를 꾹 눌러</b> 저장하거나, 아래 <b>이미지 저장</b>을 눌러 주세요.',
  calT:'실제로 나는 어떤가요?',
  calHint:'1단계는 <b>끌리는 것</b>을 물었고, 여기서는 <b>실제 행동</b>을 묻습니다. 두 결과의 차이가 곧 <b>영점조정</b>입니다.',
@@ -2105,7 +2105,7 @@ function drawBars3D(x,W,H,s,total,opt){
   opt=opt||{};
   const pad=W*0.055, topPad=H*(opt.top||0.24), botPad=H*(opt.bot||0.31);
   const y0=H-botPad, maxH=y0-topPad;
-  const gap=W*0.032, bw=(W-pad*2-gap*4)/5, d=0, dy=0;
+  const gap=W*0.052, bw=(W-pad*2-gap*4)/5, d=0, dy=0;   /* 폭 축소·간격 확대 */
   const fs=W*0.036;
   // 바닥선
   x.strokeStyle="#E6EEF9";x.lineWidth=1.4;
@@ -2114,7 +2114,9 @@ function drawBars3D(x,W,H,s,total,opt){
   // 막대 (오른쪽부터 그려 겹침 자연스럽게)
   for(let i=4;i>=0;i--){
     const k=ORDER[i], c=EL[k].color, sh=total?s[k]/total:0;
-    const h=Math.max(2,Math.min(1,sh/MAX_SHARE)*maxH*(opt.p===undefined?1:opt.p));
+    /* 수치에 비례하되 상한(50%)에서 멈춘다. 0점도 납작한 흔적은 남긴다. */
+    const ratio=Math.min(1, sh/MAX_SHARE);
+    const h=Math.max(maxH*0.045, ratio*maxH*(opt.p===undefined?1:opt.p));
     const bx=pad+i*(bw+gap), by=y0-h;
     // 캡슐형 평면 막대 (v6 규격 통일)
     const r=Math.min(bw*0.38,h/2);
@@ -2154,21 +2156,37 @@ function drawBars3D(x,W,H,s,total,opt){
 const pent=(cx,cy,r)=>ORDER.map((_,i)=>{const a=-Math.PI/2+i*2*Math.PI/5;return[cx+r*Math.cos(a),cy+r*Math.sin(a)]});
 const poly=(x,p)=>{p.forEach((q,i)=>i?x.lineTo(q[0],q[1]):x.moveTo(q[0],q[1]));x.closePath()};
 function drawRadar(x,cx,cy,R,series,fs,labelSeries){
+  /* 사진 5·6 참조 — 격자는 옅은 점선 하나로 정리하고,
+     평균·최대 라벨 박스를 축 위에서 걷어내 도형이 주인공이 되게 한다. */
   x.save();
+  /* ① 바깥 테두리 오각형 (실선, 은은하게) */
+  x.beginPath(); poly(x,pent(cx,cy,MAX_R*R));
+  x.setLineDash([]); x.strokeStyle="#CBD8EA"; x.lineWidth=1.4; x.stroke();
+
+  /* ② 안쪽 격자 — 전부 같은 톤의 옅은 점선 */
   RINGS.forEach(sh=>{
-    const A=Math.abs(sh-AVG_SHARE)<1e-6, M=Math.abs(sh-MAX_SHARE)<1e-6;
-    x.beginPath();poly(x,pent(cx,cy,rGrid(sh)*R));
-    x.setLineDash(A||M?[]:[3,4]);x.strokeStyle=A?"#EF8B14":M?"#B9CBE2":"#E6EEF9";x.lineWidth=A?2.4:M?1.6:1;x.stroke();
+    if(Math.abs(sh-MAX_SHARE)<1e-6) return;
+    const A=Math.abs(sh-AVG_SHARE)<1e-6;
+    x.beginPath(); poly(x,pent(cx,cy,rGrid(sh)*R));
+    x.setLineDash(A?[5,4]:[2,5]);
+    x.strokeStyle=A?"#F0C489":"#E4EBF6";
+    x.lineWidth=A?1.5:1;
+    x.stroke();
   });
   x.setLineDash([]);
-  pent(cx,cy,MAX_R*R).forEach(p=>{x.beginPath();x.moveTo(cx,cy);x.lineTo(p[0],p[1]);x.strokeStyle="#E6EEF9";x.lineWidth=1;x.stroke()});
-  x.textAlign="left";x.textBaseline="middle";
-  [[AVG_SHARE,T("avg"),"#EF8B14",-fs*.80],[MAX_SHARE,T("maxL"),"#8FA4BF",fs*1.02]].forEach(([sh,lab,col,dy])=>{
-    const px=cx+rGrid(sh)*R+fs*.20, py=cy+dy;
-    x.font=FONT(800,fs*.92);const w=x.measureText(lab).width+fs*.6;
-    x.fillStyle="rgba(255,255,255,.95)";x.beginPath();x.roundRect(px-fs*.3,py-fs*.66,w,fs*1.32,fs*.32);x.fill();
-    x.strokeStyle=col+"55";x.lineWidth=1.2;x.stroke();x.fillStyle=col;x.fillText(lab,px,py);
+
+  /* ③ 축 — 아주 옅게 */
+  pent(cx,cy,MAX_R*R).forEach(p=>{
+    x.beginPath();x.moveTo(cx,cy);x.lineTo(p[0],p[1]);
+    x.strokeStyle="#EDF2F9";x.lineWidth=1;x.stroke();
   });
+
+  /* ④ 평균 눈금만 작게 — 박스 없이 축 바깥에 */
+  x.textAlign="left";x.textBaseline="middle";
+  x.font=FONT(700,fs*.78);
+  x.fillStyle="#D9A75A";
+  x.fillText(T("avg"), cx+rGrid(AVG_SHARE)*R+fs*.22, cy-fs*.62);
+
   series.forEach(se=>{
     const dp=ORDER.map((k,i)=>{const a=-Math.PI/2+i*2*Math.PI/5,r=rMap(se.s[k]/se.total)*R;return[cx+r*Math.cos(a),cy+r*Math.sin(a)]});
     x.beginPath();poly(x,dp);
@@ -2624,8 +2642,28 @@ Note: this is a self-assessment, not a birth chart calculated from my exact date
 }
 
 /* ═══════════ 결과 카드 이미지 ═══════════ */
+/* ── 결과 카드 ──
+   auto = 접속한 폰의 화면 비율에 맞춘다. 단 SNS에서 잘리지 않도록
+   세로비를 4:5(1.25) ~ 9:16(1.778) 사이로 가둔다.
+   인스타 피드는 4:5보다 길면 잘리고, 스토리는 9:16보다 길면 잘린다. */
+function cardSize(ratio){
+  const W=1080;
+  if(ratio==="9:16") return {W,H:1920};
+  if(ratio==="4:5")  return {W,H:1350};
+  let r=1.6;                                   // 기본값(대다수 폰)
+  try{
+    const sw=screen.width||390, sh=screen.height||844;
+    r=Math.max(sw,sh)/Math.min(sw,sh);
+  }catch(e){}
+  r=Math.max(1.25, Math.min(1.778, r));        // SNS 안전 구간
+  return {W, H:Math.round(W*r)};
+}
 function card(ratio){
-  const W=1080,H=ratio==="9:16"?1920:1350,tall=ratio==="9:16";
+  const sz=cardSize(ratio), W=sz.W, H=sz.H;
+  /* 높이에 따라 간격·차트를 연속적으로 보간한다 (4:5 기준 → 9:16 기준) */
+  const t=Math.max(0,Math.min(1,(H-1350)/(1920-1350)));
+  const LP=(a,b)=>Math.round(a+(b-a)*t);       // a=4:5값, b=9:16값
+  const tall=H>=1650;
   const c=document.createElement("canvas");c.width=W;c.height=H;const x=c.getContext("2d");
   const A=R2||R1,S=EL[A.strong];
   const g=x.createLinearGradient(0,0,0,H);
@@ -2635,7 +2673,7 @@ function card(ratio){
   rg.addColorStop(0,"rgba(37,185,255,.18)");rg.addColorStop(1,"rgba(37,185,255,0)");
   x.fillStyle=rg;x.fillRect(0,0,W,H);
   x.textAlign="center";
-  let y=tall?170:118;
+  let y=LP(125,170);
   // 브랜드
   x.font=FONT(900,44);
   const bt=T("labFull"), bw=x.measureText(bt).width;
@@ -2644,26 +2682,26 @@ function card(ratio){
   const lg=x.createLinearGradient(W/2-bw/2,0,W/2+bw/2,0);
   lg.addColorStop(0,"#25B9FF");lg.addColorStop(1,"#0B4FD1");
   x.font=FONT(900,44);x.fillStyle=lg;x.fillText(bt,W/2+22,y);
-  y+=tall?66:54;
-  x.font=FONT(700,28);x.fillStyle="#7D90AB";x.fillText(T("appNamePlain")||(isEN()?"Five-Element Nature Self-Check":"나의 (자연)오행 성격 자가진단"),W/2,y);
-  y+=tall?96:78;
-  x.font=FONT(800,38);x.fillStyle="#54657F";x.fillText(isEN()?"What is my Element?":"나의 오행 성격은?",W/2,y);
-  y+=tall?110:96;
+  y+=LP(56,66);
+  x.font=FONT(700,31);x.fillStyle="#7D90AB";x.fillText(T("appNamePlain")||(isEN()?"Five-Element Nature Self-Check":"나의 (자연)오행 성격 자가진단"),W/2,y);
+  y+=LP(81,96);
+  x.font=FONT(800,43);x.fillStyle="#54657F";x.fillText(isEN()?"What is my Element?":"나의 오행 성격은?",W/2,y);
+  y+=LP(98,110);
   let nf=96;const nt=isEN()?A.name:`「${A.name}」`;x.font=FONT(900,nf);
   while(x.measureText(nt).width>W-120&&nf>42){nf-=4;x.font=FONT(900,nf)}
   x.fillStyle=S.tc;x.fillText(nt,W/2,y);
-  y+=tall?66:58;
-  x.font=FONT(700,34);x.fillStyle="#54657F";x.fillText(A.line,W/2,y);
-  y+=tall?76:64;
+  y+=LP(59,66);
+  x.font=FONT(700,38);x.fillStyle="#54657F";x.fillText(A.line,W/2,y);
+  y+=LP(66,76);
   // 뱃지
   const yang=A.yy.sign==="yang", bt2=`${A.sym.gan} ${yang?(isEN()?"Yang":"양(陽)"):(isEN()?"Yin":"음(陰)")} · ${N(A.strong)} ${Math.round(A.share[A.strong]*100)}%`;
-  x.font=FONT(800,32);const b2=x.measureText(bt2).width+62;
+  x.font=FONT(800,35);const b2=x.measureText(bt2).width+62;
   x.fillStyle=S.soft;x.beginPath();x.roundRect(W/2-b2/2,y-36,b2,62,31);x.fill();
   x.strokeStyle=S.tc+"66";x.lineWidth=2;x.stroke();
   x.fillStyle=S.tc;x.fillText(bt2,W/2,y);
   // 막대 그래프 — 캐릭터가 설 자리를 오른쪽에 비워둔다
-  const chY=y+(tall?80:52), chH=tall?840:560;
-  const cw=tall?230:180, ch=cw*(charImg.naturalHeight||187)/(charImg.naturalWidth||120);
+  const chY=y+(LP(56,80)), chH=LP(574,840);
+  const cw=LP(180,230), ch=cw*(charImg.naturalHeight||187)/(charImg.naturalWidth||120);
   const useChar=charImg.complete&&charImg.naturalWidth;
   const chW=(W-110)-(useChar?cw*0.82:0);
   x.save();x.translate(55,chY);
@@ -2672,13 +2710,13 @@ function card(ratio){
   // 캐릭터 — 막대 바닥선에 발을 맞춰 옆에 세운다
   if(useChar) x.drawImage(charImg,W-cw-26,chY+chH*0.81-ch+chH*0.06,cw,ch);
   // 푸터
-  const fy=chY+chH+(tall?150:96);
+  const fy=chY+chH+(LP(104,150));
   x.strokeStyle="rgba(11,107,238,.16)";x.lineWidth=1;
   x.beginPath();x.moveTo(150,fy-56);x.lineTo(W-150,fy-56);x.stroke();
-  x.textAlign="center";x.font=FONT(700,29);x.fillStyle="#54657F";
+  x.textAlign="center";x.font=FONT(700,32);x.fillStyle="#54657F";
   x.fillText(`${T("balance")} ${A.bal}  ·  ${T("needEl")} ${N(A.weak)}`,W/2,fy);
-  x.font=FONT(700,26);x.fillStyle="#0B6BEE";x.fillText(DB.cfg.shareUrl.replace(/^https?:\/\//,""),W/2,fy+52);
-  x.font=FONT(500,22);x.fillStyle="#93A3BA";x.fillText(isEN()?"Choi Hyungchul Saju Institute":"최형철 사주명리 연구소",W/2,fy+92);
+  x.font=FONT(700,28);x.fillStyle="#0B6BEE";x.fillText(DB.cfg.shareUrl.replace(/^https?:\/\//,""),W/2,fy+52);
+  x.font=FONT(600,24);x.fillStyle="#93A3BA";x.fillText(isEN()?"Choi Hyungchul Saju Institute":"최형철 사주명리 연구소",W/2,fy+92);
   return c;
 }
 /* ═══════════ 이미지 공유 · 저장 ═══════════
@@ -4947,11 +4985,14 @@ function drawHeroChips(x,W,H,s,total,e){
     /* 숫자 — 캡슐 안 위쪽 */
     x.font=FONT(900,cw*0.44);x.fillStyle=EE.tc;
     x.fillText(String(Math.round(s[k]*10)/10), bx+cw/2, by+cw*0.62);
-    /* 알약 — 캡슐 안 아래쪽 */
-    const py=base-cw*0.42;
-    const g=x.createLinearGradient(0,py-cw*0.22,0,py+cw*0.22);
-    g.addColorStop(0,lighten(EE.color,.22));g.addColorStop(1,EE.color);
-    x.fillStyle=g;x.beginPath();x.ellipse(bx+cw/2,py,cw*0.335,cw*0.215,0,0,7);x.fill();
+    /* 안쪽 막대 — 점수에 비례해 높이가 달라진다 (10점에서 상한)
+         납작한 원형이 모두 같아 보이던 문제를 없앤다 */
+      const vRatio=Math.max(0.12, Math.min(1, (s[k]||0)/10));
+      const iw=cw*0.60, ih=Math.max(cw*0.20, (chH-cw*0.86)*vRatio);
+      const ix=bx+(cw-iw)/2, iy=base-cw*0.20-ih;
+      const g=x.createLinearGradient(0,iy,0,iy+ih);
+      g.addColorStop(0,lighten(EE.color,.24));g.addColorStop(1,EE.color);
+      x.fillStyle=g;x.beginPath();x.roundRect(ix,iy,iw,ih,iw*0.34);x.fill();
     /* % · 한자 — 캡슐 아래 */
     x.font=FONT(800,cw*0.235);x.fillStyle="#93A3BA";
     x.fillText(Math.round(sh*100)+"%", bx+cw/2, base+cw*0.32);
