@@ -129,6 +129,13 @@ section{padding:30px var(--pad)}
 body{padding-bottom:86px}
 .step-drop{width:100%;margin-top:8px;padding:10px 12px;border:1.5px solid #BFD5F5;border-radius:10px;font-size:14px;font-weight:700;color:#1A4E9E;background:#EEF5FF;font-family:inherit;cursor:pointer}
 .ch-btn{display:inline-block;padding:8px 14px;border:1.5px solid #D0DFF5;border-radius:99px;font-size:13px;font-weight:700;color:#2F7FF0;text-decoration:none;background:#F4F8FF}
+/* 주력 채널 2곳은 색·테두리·그림자로 눌러보고 싶게 */
+.ch-btn.hot{color:#fff;border:0;font-weight:800;font-size:13.4px;padding:10px 18px;
+  box-shadow:0 3px 10px rgba(20,60,120,.22);transform:translateY(-1px)}
+.ch-btn.hot::after{content:" →";font-weight:900}
+.ch-btn.naver{background:linear-gradient(135deg,#03C75A,#02A94B);box-shadow:0 3px 10px rgba(3,199,90,.32)}
+.ch-btn.insta{background:linear-gradient(135deg,#F58529,#DD2A7B 55%,#8134AF);box-shadow:0 3px 10px rgba(221,42,123,.30)}
+.ch-btn.hot:active{transform:translateY(0);box-shadow:0 1px 4px rgba(20,60,120,.2)}
 a.need{text-decoration:none;color:inherit;display:flex;align-items:center;gap:10px}
 a.need:hover{background:#EEF5FF}
 .sec-label{font-size:11px;font-weight:800;letter-spacing:.13em;color:var(--blue);margin-bottom:7px}
@@ -516,9 +523,9 @@ const HTML = String.raw`
     <h2>다른 곳에서도 만나요</h2>
     <div class="channels" style="margin-top:14px;text-align:center;display:flex;flex-wrap:wrap;justify-content:center;gap:8px">
       <a class="ch-btn" href="https://aisajulab.com/ohaeng/?utm=daangn" target="_blank">당근 비즈프로필</a>
-      <a class="ch-btn" href="https://aisajulab.com/ohaeng/?utm=blog" target="_blank">네이버 블로그</a>
+      <a class="ch-btn hot naver" href="https://aisajulab.com/ohaeng/?utm=blog" target="_blank">네이버 블로그</a>
       <a class="ch-btn" href="https://aisajulab.com/ohaeng/?utm=kakao" target="_blank">카카오톡 채널</a>
-      <a class="ch-btn" href="https://aisajulab.com/ohaeng/?utm=insta" target="_blank">인스타그램</a>
+      <a class="ch-btn hot insta" href="https://aisajulab.com/ohaeng/?utm=insta" target="_blank">인스타그램</a>
       <a class="ch-btn" href="https://aisajulab.com/ohaeng/?utm=cafe" target="_blank">명리학 Self-study 카페</a>
     </div>
   </section>
@@ -531,7 +538,7 @@ const HTML = String.raw`
       상호 라이프앤비즈(Life &amp; Biz) 성장연구소 · 대표 최형철<br>
       사업자등록번호 688-13-03146 · 통신판매업신고 신고 예정<br>
       사업장 소재지 서울특별시 강동구 올림픽로78길 60, 103동 602호 (천호동, 강동밀레니얼중흥S클래스)<br>
-      전화 010-4686-1341 · 이메일 calvincheoi@gmail.com<br>
+      전화 010-6789-1341 · 이메일 calvincheoi@gmail.com<br>
       호스팅 제공자 Netlify, Inc.
     </span><br>
     <a class="lg" href="/legal/#t1">이용약관</a>
@@ -543,11 +550,11 @@ const HTML = String.raw`
 </div>
 
 <nav class="tabbar">
-  <button class="tb on"><span class="ti"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/></svg></span>홈</button>
-  <button class="tb"><span class="ti"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5 5l1.7 1.7M17.3 17.3 19 19M19 5l-1.7 1.7M6.7 17.3 5 19"/></svg></span>오늘</button>
-  <button class="tb main"><span class="ti"><svg viewBox="0 0 24 24"><path d="M12 3.5 13.8 10 20.5 12 13.8 14 12 20.5 10.2 14 3.5 12 10.2 10Z"/></svg></span>진단</button>
-  <button class="tb"><span class="ti"><svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-9-9.3C1.9 7.2 4.2 4.5 7.2 4.5c2 0 3.6 1.1 4.8 2.9 1.2-1.8 2.8-2.9 4.8-2.9 3 0 5.3 2.7 4.2 6.2C20.5 15.4 12 20 12 20Z"/></svg></span>궁합</button>
-  <button class="tb"><span class="ti"><svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H12l-4.5 4v-4h-1A2.5 2.5 0 0 1 4 13.5Z"/></svg></span>상담</button>
+  <button class="tb on" data-go="top" data-from="tab"><span class="ti"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/></svg></span>홈</button>
+  <button data-go="today" data-from="tab" class="tb"><span class="ti"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5 5l1.7 1.7M17.3 17.3 19 19M19 5l-1.7 1.7M6.7 17.3 5 19"/></svg></span>오늘</button>
+  <button data-go="ohaeng" data-from="tab" class="tb main"><span class="ti"><svg viewBox="0 0 24 24"><path d="M12 3.5 13.8 10 20.5 12 13.8 14 12 20.5 10.2 14 3.5 12 10.2 10Z"/></svg></span>진단</button>
+  <button data-go="match" data-from="tab" class="tb"><span class="ti"><svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-9-9.3C1.9 7.2 4.2 4.5 7.2 4.5c2 0 3.6 1.1 4.8 2.9 1.2-1.8 2.8-2.9 4.8-2.9 3 0 5.3 2.7 4.2 6.2C20.5 15.4 12 20 12 20Z"/></svg></span>궁합</button>
+  <button data-go="kakao" data-from="tab" class="tb"><span class="ti"><svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H12l-4.5 4v-4h-1A2.5 2.5 0 0 1 4 13.5Z"/></svg></span>상담</button>
 </nav>
 
 `;
