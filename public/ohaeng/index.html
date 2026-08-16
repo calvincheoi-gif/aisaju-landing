@@ -1319,7 +1319,13 @@ h1.big{font-size:41.1px;margin-bottom:6px}
   function isSignedIn() { return !!(state().auth && state().auth.uid); }
 
   function signIn(provider, redirectTo) {
+    /* 카카오는 앱에서 허용된 동의항목만 요청해야 한다.
+       기본값(이메일·프로필사진)을 그대로 두면 권한 없는 항목을 요구해
+       카카오가 KOE205로 거부한다. 닉네임만 명시적으로 요청한다. */
+    var scopes = provider === "kakao" ? "profile_nickname"
+               : provider === "google" ? "email profile" : "";
     var url = CFG.url + "/auth/v1/authorize?provider=" + encodeURIComponent(provider) +
+      (scopes ? "&scopes=" + encodeURIComponent(scopes) : "") +
       "&redirect_to=" + encodeURIComponent(redirectTo || location.href.split("#")[0]);
     location.href = url;
   }
