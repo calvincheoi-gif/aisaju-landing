@@ -1361,6 +1361,7 @@ h1.big{font-size:41.1px;margin-bottom:6px}
       /* 소셜에서 받은 이름을 프로필 기본값으로 (기존 값이 없을 때만) */
       if (d.auth.name && !d.profile.name) d.profile.name = d.auth.name;
       save(d);
+      syncUp();                                // 로그인 즉시 이 기기 정보를 계정에 올린다
       return d.auth;
     }).catch(function () { return null; });
   }
@@ -1385,8 +1386,9 @@ h1.big{font-size:41.1px;margin-bottom:6px}
         Prefer: "resolution=merge-duplicates"
       },
       body: JSON.stringify({
-        uid: d.auth.uid,
+        id: d.auth.uid,                       // profiles.id = auth.users.id
         email: d.auth.email || null,
+        name: d.profile.name || null,
         profile: d.profile,
         prem: d.prem,
         updated_at: new Date().toISOString()
