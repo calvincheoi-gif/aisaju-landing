@@ -622,6 +622,27 @@ h1.big{font-size:41.1px;margin-bottom:6px}
   -webkit-appearance:none;appearance:none;text-align:center}
 .bd-note{font-size:12.4px;line-height:1.65;color:var(--ink3);margin:0 0 13px;text-align:center}
 .bd-note a{color:#1D7CF2;font-weight:800}
+.me-sec{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 14px;margin-bottom:12px}
+.me-sec h4{margin:0 0 9px;font-size:14.6px;font-weight:900;color:var(--ink)}
+.me-kv{display:grid;grid-template-columns:88px 1fr;gap:5px 10px;font-size:13.6px;line-height:1.6}
+.me-kv dt{color:var(--ink3);font-weight:800}
+.me-kv dd{margin:0;color:var(--ink2);font-weight:700}
+.me-empty{font-size:13.2px;color:var(--ink3);line-height:1.7}
+.me-h{display:flex;gap:9px;align-items:flex-start;padding:9px 0;border-top:1px solid #F0F5FB}
+.me-h:first-of-type{border-top:0}
+.me-h .ic{width:26px;height:26px;border-radius:8px;flex:none;display:flex;align-items:center;
+  justify-content:center;font-size:13px;background:#EEF5FF;color:#1D4FA8;font-weight:900}
+.me-h .tx{flex:1;min-width:0}
+.me-h b{display:block;font-size:13.6px;font-weight:800;color:var(--ink)}
+.me-h span{font-size:12px;color:var(--ink3)}
+.me-login{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.me-btn{width:100%;padding:13px 0;border-radius:11px;border:0;font-family:inherit;font-size:15px;
+  font-weight:900;cursor:pointer}
+.me-btn.kakao{background:#FEE500;color:#191600}
+.me-btn.google{background:#fff;color:#3C4043;border:1.5px solid #DADCE0}
+.me-note{font-size:12.2px;line-height:1.65;color:var(--ink3);margin:10px 0 0}
+.me-danger{background:none;border:0;color:#C0392B;font-size:12.6px;font-weight:800;
+  text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:9px 0;width:100%}
 .bd-l .opt{font-weight:700;color:#B3A47C;font-size:11px;margin-left:4px}
 .cs-in{width:100%;box-sizing:border-box;padding:12px 12px;border-radius:10px;border:1.5px solid #D5E1F2;
   background:#fff;font-family:inherit;font-size:15px;font-weight:700;color:#1D3E75;margin-bottom:12px;
@@ -880,6 +901,15 @@ h1.big{font-size:41.1px;margin-bottom:6px}
 </div></div>
 
 <!-- ═══════ 3단계 ═══════ -->
+<!-- ═══════ 마이페이지 ═══════ -->
+<div id="me" class="screen">
+  <div class="appbar"><div class="appbar-in"><button class="back" data-back="intro">‹</button>
+    <div class="prog"><div class="prog-t"><span>마이페이지</span><span id="meAuth"></span></div>
+    <div class="prog-bar"><div class="prog-fill" style="width:100%"></div></div></div>
+  </div></div>
+  <div class="wrap" id="meBody"></div>
+</div>
+
 <!-- ═══════ 상담 신청 ═══════ -->
 <div id="cs" class="screen">
   <div class="appbar"><div class="appbar-in"><button class="back" data-back="intro">‹</button>
@@ -1153,6 +1183,253 @@ h1.big{font-size:41.1px;margin-bottom:6px}
 
 <button class="scrolldn" id="scdn" aria-label="scroll"><span data-i="scrollMore"></span><i>▾</i></button>
 <div class="toast" id="toast"></div>
+<script>
+/* ══════ 사용자 모듈 (프로필·이력·로그인) — 별도 파일 없이 내장 ══════ */
+/* ═══════════════════════════════════════════════════════════
+   AIsajuLab · 사용자 모듈 (프로필 · 이력 · 로그인)  v1.0  2026-08-16
+   ───────────────────────────────────────────────────────────
+   설계 원칙
+   ① 로컬 우선(local-first) — 로그인 없이도 모든 기능이 동작한다.
+      로그인은 "기기를 옮겨도 유지되게 하는 스위치"일 뿐이다.
+   ② 한 번 받은 정보는 다시 묻지 않는다.
+      리포트에서 받은 생년월일이 상담 신청서의 기본값이 된다.
+   ③ 화면과 분리 — 이 파일은 데이터만 다룬다. 그려주는 일은 앱이 한다.
+      덕분에 홈·앱·향후 다른 화면이 같은 모듈을 공유할 수 있다.
+   ═══════════════════════════════════════════════════════════ */
+(function (root) {
+  "use strict";
+
+  var KEY = "aj_user_v1";
+  var MAX_HISTORY = 60;
+
+  var CFG = {
+    url: "https://urazdkvkanjnquqhnrvo.supabase.co",
+    key: "sb_publishable_fSG-HqZrC9GVTT5FOprPnA_sDiFoiD2"
+  };
+
+  /* ── 저장소 (로컬) ───────────────────────────────────── */
+  var MEM = {};
+  function load() {
+    try {
+      var v = localStorage.getItem(KEY);
+      if (v) return JSON.parse(v);
+    } catch (e) {}
+    return MEM[KEY] || null;
+  }
+  function save(d) {
+    MEM[KEY] = d;
+    try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {}
+    return d;
+  }
+  function blank() {
+    return {
+      v: 1,
+      profile: { name: "", contact: "", birth: null },  // birth: {y,m,d,cal,leap,time}
+      history: [],
+      prem: null,                                       // {no, at}
+      auth: null,                                       // {provider, email, uid}
+      updated: null
+    };
+  }
+  function state() {
+    var d = load();
+    if (!d || d.v !== 1) d = save(blank());
+    return d;
+  }
+
+  /* ── 프로필 ──────────────────────────────────────────
+     빈 값으로 기존 값을 덮어쓰지 않는다.
+     리포트에서 생년월일만 받고, 상담에서 이름을 받아도 둘 다 남는다. */
+  function getProfile() { return state().profile; }
+  function setProfile(patch) {
+    var d = state(), p = d.profile;
+    if (!patch) return p;
+    ["name", "contact"].forEach(function (k) {
+      if (patch[k] !== undefined && String(patch[k]).trim() !== "") p[k] = String(patch[k]).trim();
+    });
+    if (patch.birth) {
+      p.birth = Object.assign({}, p.birth || {}, patch.birth);
+    }
+    d.updated = new Date().toISOString();
+    save(d);
+    return p;
+  }
+  /* 화면이 기본값으로 바로 쓸 수 있는 형태 */
+  function birthDefaults(fallback) {
+    var b = (getProfile().birth) || {};
+    return {
+      y: b.y || (fallback && fallback.y) || 1990,
+      m: b.m || (fallback && fallback.m) || 1,
+      d: b.d || (fallback && fallback.d) || 1,
+      cal: b.cal || "solar",
+      leap: !!b.leap,
+      time: (b.time === undefined ? "" : b.time)
+    };
+  }
+  function hasBirth() { var b = getProfile().birth; return !!(b && b.y && b.m && b.d); }
+
+  /* ── 이력 ────────────────────────────────────────────
+     type: ohaeng | saju | report | premium | consult | wallpaper */
+  function addHistory(type, data, label) {
+    var d = state();
+    d.history.unshift({
+      t: new Date().toISOString(),
+      type: type,
+      label: label || "",
+      data: data || {}
+    });
+    if (d.history.length > MAX_HISTORY) d.history.length = MAX_HISTORY;
+    d.updated = new Date().toISOString();
+    save(d);
+    return d.history;
+  }
+  function history(type) {
+    var h = state().history;
+    return type ? h.filter(function (o) { return o.type === type; }) : h;
+  }
+  function lastOf(type) { return history(type)[0] || null; }
+
+  /* ── 프리미엄 ────────────────────────────────────────
+     기존 저장소(ohaeng_prem)에 남아 있던 구매 이력을 흡수한다.
+     로그인 도입 전에 결제한 분이 손해 보지 않도록. */
+  function migrateLegacyPrem() {
+    var d = state();
+    if (d.prem) return d.prem;
+    try {
+      var raw = localStorage.getItem("ohaeng_prem");
+      if (raw) {
+        var o = JSON.parse(raw);
+        if (o && o.ok) { d.prem = { no: o.no, at: o.at }; save(d); }
+      }
+    } catch (e) {}
+    return d.prem;
+  }
+  function getPrem() { return state().prem || migrateLegacyPrem(); }
+  function setPrem(no) {
+    var d = state();
+    if (!d.prem) { d.prem = { no: no, at: new Date().toISOString() }; save(d); }
+    return d.prem;
+  }
+  function isPrem() { return !!getPrem(); }
+
+  /* ── 인증 (선택) ─────────────────────────────────────
+     Supabase Auth의 OAuth 리다이렉트를 사용한다.
+     제공자(카카오·구글)가 아직 설정되지 않았으면 friendly 오류를 던진다. */
+  function authState() { return state().auth; }
+  function isSignedIn() { return !!(state().auth && state().auth.uid); }
+
+  function signIn(provider, redirectTo) {
+    var url = CFG.url + "/auth/v1/authorize?provider=" + encodeURIComponent(provider) +
+      "&redirect_to=" + encodeURIComponent(redirectTo || location.href.split("#")[0]);
+    location.href = url;
+  }
+
+  /* 로그인 후 돌아왔을 때 URL 조각에서 토큰을 거둬들인다 */
+  function captureSession() {
+    var h = location.hash || "";
+    if (h.indexOf("access_token=") < 0) return null;
+    var p = {};
+    h.replace(/^#/, "").split("&").forEach(function (kv) {
+      var i = kv.indexOf("=");
+      if (i > 0) p[decodeURIComponent(kv.slice(0, i))] = decodeURIComponent(kv.slice(i + 1));
+    });
+    if (!p.access_token) return null;
+    var d = state();
+    d.auth = { token: p.access_token, provider: p.provider_token ? "oauth" : "oauth", uid: null, email: null };
+    save(d);
+    history_replace();
+    fetchUser(p.access_token);
+    return d.auth;
+  }
+  function history_replace() {
+    try { history_native().replaceState(null, "", location.pathname + location.search); } catch (e) {}
+  }
+  function history_native() { return root.history; }
+
+  function fetchUser(token) {
+    return fetch(CFG.url + "/auth/v1/user", {
+      headers: { apikey: CFG.key, Authorization: "Bearer " + token }
+    }).then(function (r) { return r.json(); }).then(function (u) {
+      if (!u || !u.id) return null;
+      var d = state();
+      d.auth = Object.assign({}, d.auth, {
+        uid: u.id,
+        email: u.email || "",
+        provider: (u.app_metadata && u.app_metadata.provider) || "oauth",
+        name: (u.user_metadata && (u.user_metadata.name || u.user_metadata.full_name)) || ""
+      });
+      /* 소셜에서 받은 이름을 프로필 기본값으로 (기존 값이 없을 때만) */
+      if (d.auth.name && !d.profile.name) d.profile.name = d.auth.name;
+      save(d);
+      return d.auth;
+    }).catch(function () { return null; });
+  }
+
+  function signOut() {
+    var d = state();
+    d.auth = null;
+    save(d);
+    return true;
+  }
+
+  /* 계정 연결 시 서버에 프로필·이력을 올린다 (테이블 준비 후 활성) */
+  function syncUp() {
+    var d = state();
+    if (!d.auth || !d.auth.uid || !d.auth.token) return Promise.resolve(false);
+    return fetch(CFG.url + "/rest/v1/profiles", {
+      method: "POST",
+      headers: {
+        apikey: CFG.key,
+        Authorization: "Bearer " + d.auth.token,
+        "Content-Type": "application/json",
+        Prefer: "resolution=merge-duplicates"
+      },
+      body: JSON.stringify({
+        uid: d.auth.uid,
+        email: d.auth.email || null,
+        profile: d.profile,
+        prem: d.prem,
+        updated_at: new Date().toISOString()
+      })
+    }).then(function (r) { return r.ok; }).catch(function () { return false; });
+  }
+
+  /* ── 전체 삭제 (개인정보 권리 행사) ─────────────────── */
+  function wipe() {
+    try {
+      localStorage.removeItem(KEY);
+      localStorage.removeItem("ohaeng_prem");
+    } catch (e) {}
+    MEM = {};
+    return true;
+  }
+
+  root.AJUser = {
+    getProfile: getProfile,
+    setProfile: setProfile,
+    birthDefaults: birthDefaults,
+    hasBirth: hasBirth,
+    addHistory: addHistory,
+    history: history,
+    lastOf: lastOf,
+    getPrem: getPrem,
+    setPrem: setPrem,
+    isPrem: isPrem,
+    authState: authState,
+    isSignedIn: isSignedIn,
+    signIn: signIn,
+    signOut: signOut,
+    captureSession: captureSession,
+    syncUp: syncUp,
+    wipe: wipe,
+    version: "1.0"
+  };
+
+  /* 페이지 로드 시 1회 — 로그인 복귀 처리와 옛 구매이력 흡수 */
+  try { captureSession(); migrateLegacyPrem(); } catch (e) {}
+})(typeof window !== "undefined" ? window : globalThis);
+
+</script>
 <script>
 /* ═══════════════════════════════════════════════════════════
    AI사주랩 · 나의 오행 성격 자가진단 v3.0
@@ -2907,6 +3184,7 @@ function payDone(){
     store.set("ohaeng_prem",info);
   }
   window.AJ&&AJ.track("pay_claim",{props:{kind:PAYK,no:info.no,tier:REP_LEN}});
+  if(U()){ U().setPrem(info.no); U().addHistory("premium",{no:info.no},info.no); }
   closePay();
   buildReport();
   setTimeout(()=>{const e=$("premBox"); if(e)e.scrollIntoView({behavior:"smooth",block:"center"})},240);
@@ -4870,6 +5148,66 @@ $("go3").onclick=()=>goReport();
   c.querySelectorAll("[data-c]").forEach(e=>e.classList.toggle("on",e===b));
   const w=$("csLeapWrap"); if(w) w.style.display = b.dataset.c==="lunar" ? "" : "none";
 });}
+/* ═══════════ 마이페이지 ═══════════ */
+const U=()=>window.AJUser||null;
+const TYPE_ICON={ohaeng:"오",saju:"사",report:"리",premium:"★",consult:"상",wallpaper:"배"};
+const TYPE_NAME={ohaeng:"오행 진단",saju:"사주 계산",report:"리포트",premium:"프리미엄",consult:"상담 신청",wallpaper:"배경화면"};
+function fmtT(iso){ try{const d=new Date(iso);
+  return `${d.getFullYear()}.${d.getMonth()+1}.${d.getDate()} ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;
+}catch(e){return ""} }
+function renderMe(){
+  const box=$("meBody"); if(!box||!U()) return;
+  const u=U(), p=u.getProfile(), b=p.birth||{}, prem=u.getPrem(), auth=u.authState(), hist=u.history();
+  const tag=$("meAuth"); if(tag) tag.textContent = u.isSignedIn() ? (auth.email||"로그인됨") : "비회원";
+  box.innerHTML=`
+    <div class="me-sec">
+      <h4>내 기본 정보</h4>
+      ${(p.name||p.contact||b.y)?`<dl class="me-kv">
+        ${p.name?`<dt>이름</dt><dd>${esc(p.name)}</dd>`:""}
+        ${p.contact?`<dt>연락처</dt><dd>${esc(p.contact)}</dd>`:""}
+        ${b.y?`<dt>생년월일</dt><dd>${b.cal==="lunar"?"음력":"양력"} ${b.y}.${b.m}.${b.d}${b.leap?" (윤달)":""}${b.time!==""&&b.time!==undefined?` · ${b.time}시`:""}</dd>`:""}
+      </dl>
+      <p class="me-note">한 번 입력하신 정보는 리포트·상담 신청서에 자동으로 채워집니다.</p>`
+      :`<p class="me-empty">아직 저장된 정보가 없습니다.<br>진단이나 상담 신청을 하시면 여기에 모입니다.</p>`}
+    </div>
+
+    <div class="me-sec">
+      <h4>프리미엄</h4>
+      ${prem?`<dl class="me-kv"><dt>발급번호</dt><dd>${esc(prem.no||"")}</dd>
+        <dt>구매일</dt><dd>${fmtT(prem.at)}</dd></dl>
+        <p class="me-note">리포트 화면에서 PDF와 배경화면을 다시 받으실 수 있습니다.</p>`
+        :`<p class="me-empty">아직 프리미엄 이용 내역이 없습니다.</p>`}
+    </div>
+
+    <div class="me-sec">
+      <h4>내 활동 (${hist.length})</h4>
+      ${hist.length? hist.slice(0,12).map(h=>`<div class="me-h">
+          <div class="ic">${TYPE_ICON[h.type]||"·"}</div>
+          <div class="tx"><b>${TYPE_NAME[h.type]||h.type}${h.label?` · ${esc(h.label)}`:""}</b>
+          <span>${fmtT(h.t)}</span></div></div>`).join("")
+        :`<p class="me-empty">활동 기록이 아직 없습니다.</p>`}
+    </div>
+
+    <div class="me-sec">
+      <h4>${u.isSignedIn()?"계정":"기기를 옮겨도 유지하려면"}</h4>
+      ${u.isSignedIn()
+        ? `<dl class="me-kv"><dt>로그인</dt><dd>${esc(auth.email||auth.provider||"")}</dd></dl>
+           <button class="me-btn google" id="meOut" style="margin-top:10px">로그아웃</button>`
+        : `<p class="me-empty">지금 정보는 이 브라우저에만 있습니다. 로그인하시면 폰을 바꿔도
+           결과와 프리미엄 이용 내역이 그대로 따라옵니다. 가입 절차는 없습니다.</p>
+           <div class="me-login">
+             <button class="me-btn kakao" id="meKakao">카카오로 계속하기</button>
+             <button class="me-btn google" id="meGoogle">Google로 계속하기</button>
+           </div>`}
+      <button class="me-danger" id="meWipe">내 정보 모두 삭제</button>
+    </div>`;
+  const k=$("meKakao"); if(k) k.onclick=()=>{ window.AJ&&AJ.track("login_click",{props:{p:"kakao"}}); u.signIn("kakao") };
+  const g=$("meGoogle"); if(g) g.onclick=()=>{ window.AJ&&AJ.track("login_click",{props:{p:"google"}}); u.signIn("google") };
+  const o=$("meOut"); if(o) o.onclick=()=>{ u.signOut(); renderMe() };
+  const w=$("meWipe"); if(w) w.onclick=()=>{ if(confirm("저장된 정보와 활동 기록을 모두 지웁니다. 계속할까요?")){ u.wipe(); renderMe() } };
+}
+function goMe(){ renderMe(); show("me"); window.AJ&&AJ.track("mypage_open"); }
+
 /* ═══════════ 상담 신청 ═══════════
    별도 테이블 없이 기존 계측 파이프(events)로 보낸다.
    name="consult_submit" 이벤트의 props 에 신청 내용을 담으므로
@@ -4880,7 +5218,16 @@ function renderCS(){
   const now=new Date().getFullYear();
   const fill=(id,from,to,suf,sel)=>{const e=$(id);if(!e)return;let h="";
     for(let v=from;v<=to;v++)h+=`<option value="${v}"${v===sel?" selected":""}>${v}${suf}</option>`;e.innerHTML=h};
-  fill("csY",1930,now,"년",1990); fill("csM",1,12,"월",1); fill("csD",1,31,"일",1);
+  const df=(U()?U().birthDefaults():null)||{};
+  fill("csY",1930,now,"년",df.y||1990); fill("csM",1,12,"월",df.m||1); fill("csD",1,31,"일",df.d||1);
+  const pf=U()?U().getProfile():{name:"",contact:""};
+  if($("csName")&&pf.name) $("csName").value=pf.name;
+  if($("csContact")&&pf.contact) $("csContact").value=pf.contact;
+  if(df.cal==="lunar"){
+    const c=$("csCal"); if(c) c.querySelectorAll("[data-c]").forEach(b=>b.classList.toggle("on",b.dataset.c==="lunar"));
+    const w=$("csLeapWrap"); if(w) w.style.display="";
+    const lk=$("csLeap"); if(lk) lk.checked=!!df.leap;
+  }
   const t=$("csTime");
   if(t){ let h='<option value="">모름 / 확실하지 않음</option>';
     for(let i=0;i<24;i++) h+=`<option value="${i}">${String(i).padStart(2,"0")}시</option>`;
@@ -4912,6 +5259,9 @@ async function csSubmit(){
   };
   try{
     window.AJ&&AJ.track("consult_submit",{props:payload});
+    if(U()){ U().setProfile({name:payload.name,contact:payload.contact,
+        birth:{y:+$("csY").value,m:+$("csM").value,d:+$("csD").value,cal:payload.cal,leap:payload.leap,time:payload.time}});
+      U().addHistory("consult",{topic:payload.topic},payload.topic); }
     const done=$("csDone");
     if(done){
       done.innerHTML=`<b>신청이 접수되었습니다.</b><br>
@@ -4942,9 +5292,16 @@ function renderBD(){
     for(let v=from;v<=to;v++) h+=`<option value="${v}"${v===sel?" selected":""}>${v}${suffix}</option>`;
     e.innerHTML=h;
   };
-  fill("bdY",1930,now,"년", BD.y||1990);
-  fill("bdM",1,12,"월", BD.m||1);
-  fill("bdD",1,31,"일", BD.d||1);
+  const df=(U()?U().birthDefaults():null)||{};
+  fill("bdY",1930,now,"년", BD.y||df.y||1990);
+  fill("bdM",1,12,"월", BD.m||df.m||1);
+  fill("bdD",1,31,"일", BD.d||df.d||1);
+  /* 이전에 받은 달력·윤달을 그대로 이어 쓴다 — 두 번 묻지 않는다 */
+  if(!BD.y && df.cal){ BD.cal=df.cal; BD.leap=!!df.leap;
+    const c=$("bdCal"); if(c) c.querySelectorAll("[data-c]").forEach(b=>b.classList.toggle("on",b.dataset.c===BD.cal));
+    const lw=$("bdLeapWrap"); if(lw) lw.style.display = BD.cal==="lunar" ? "" : "none";
+    const lk=$("bdLeap"); if(lk) lk.checked=!!df.leap;
+  }
 }
 function bdSync(){
   BD.y=+$("bdY").value; BD.m=+$("bdM").value; BD.d=+$("bdD").value;
@@ -4960,6 +5317,8 @@ async function bdSubmit(){
     const r=window.AJSaju.compute(BD.y,BD.m,BD.d,{calendar:BD.cal,leap:BD.leap});
     if(!r||!r.ok) throw new Error(r&&r.reason||"compute");
     SAJU=r;
+    if(U()){ U().setProfile({birth:{y:BD.y,m:BD.m,d:BD.d,cal:BD.cal,leap:BD.leap}});
+             U().addHistory("saju",{p:r.pillars},`${r.pillars.y} ${r.pillars.m} ${r.pillars.d}`); }
     window.AJ&&AJ.track("saju_compute",{props:{cal:BD.cal,leap:BD.leap?1:0,
       agree:r.engines.agree?1:0,boundary:r.boundary?1:0}});
     hideToast();
@@ -5125,6 +5484,7 @@ function routeHash(first){
   if(h.indexOf("#match")===0||h.indexOf("#mate")===0) return go("mate", ()=>goQuick("mate")), true;
   if(h.indexOf("#report")===0) return go("report",()=>goQuick("sol")),  true;
   if(h.indexOf("#consult")===0) return go("consult",goConsult), true;
+  if(h.indexOf("#me")===0 || h.indexOf("#mypage")===0) return go("me",goMe), true;
   return false;
 }
 setTimeout(()=>routeHash(true),260);
