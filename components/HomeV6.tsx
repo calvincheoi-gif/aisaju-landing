@@ -133,8 +133,10 @@ body{padding-bottom:86px}
 .ch-btn.hot{color:#fff;border:0;font-weight:800;font-size:13.4px;padding:10px 18px;
   box-shadow:0 3px 10px rgba(20,60,120,.22);transform:translateY(-1px)}
 .ch-btn.hot::after{content:" →";font-weight:900}
-.ch-btn.naver{background:linear-gradient(135deg,#03C75A,#02A94B);box-shadow:0 3px 10px rgba(3,199,90,.32)}
-.ch-btn.insta{background:linear-gradient(135deg,#F58529,#DD2A7B 55%,#8134AF);box-shadow:0 3px 10px rgba(221,42,123,.30)}
+.ch-btn.naver{background:linear-gradient(135deg,rgba(56,150,255,.92),rgba(29,110,225,.92));
+  box-shadow:0 3px 11px rgba(29,124,242,.28)}
+.ch-btn.insta{background:linear-gradient(135deg,rgba(96,196,255,.92),rgba(45,160,240,.92));
+  box-shadow:0 3px 11px rgba(45,160,240,.26)}
 .ch-btn.hot:active{transform:translateY(0);box-shadow:0 1px 4px rgba(20,60,120,.2)}
 a.need{text-decoration:none;color:inherit;display:flex;align-items:center;gap:10px}
 a.need:hover{background:#EEF5FF}
@@ -222,6 +224,12 @@ h2 b{color:var(--blue)}
 
 footer{padding:22px var(--pad) 28px;background:var(--navy);color:rgba(255,255,255,.72);font-size:11px;line-height:1.75;font-weight:500}
 footer b{color:#fff;font-size:14px;font-weight:800;letter-spacing:-.04em}
+.util .ver{font-size:10.6px;font-weight:800;color:#9AA7BD;letter-spacing:.02em;margin-right:2px}
+.util .chip{cursor:pointer}
+.util .burger{cursor:pointer}
+.voc{font-size:11px;line-height:1.65;color:#7A8AA3;text-align:center;padding:9px var(--pad);
+  background:#F4F8FD;border-top:1px solid #E9F0F9;border-bottom:1px solid #E9F0F9}
+.voc.bot{background:none;border:0;color:#8C9AAF;padding:16px var(--pad) 2px}
 footer .biz{display:inline-block;color:rgba(255,255,255,.55);font-size:10.6px;line-height:1.85}
 footer .lg{display:inline-block;margin:6px 12px 0 0;color:rgba(255,255,255,.85);
   font-size:11.6px;font-weight:800;text-decoration:underline;text-underline-offset:3px}
@@ -280,10 +288,13 @@ const HTML = String.raw`
   <div class="topbar">
     <div class="brand">AI<span>사주랩</span>.com <small>AI × 명리학</small></div>
     <div class="util">
-      <span class="chip">한국어 ▾</span>
-      <div class="burger"><i></i><i></i><i></i></div>
+      <span class="ver">v1.0.0</span>
+      <span class="chip" data-go="lang" data-from="top">한국어 ▾</span>
+      <div class="burger" data-go="menu" data-from="top"><i></i><i></i><i></i></div>
     </div>
   </div>
+
+  <div class="voc top">AI사주랩.com은 항상 고객님의 VOC와 지속적인 분석, 리포트 Quality 개선을 통해 고객 만족도, 삶의 질 향상에 최선을 다하겠습니다.</div>
 
   <!-- 히어로 : 여기까지가 첫 화면 -->
   <div class="hero">
@@ -522,13 +533,15 @@ const HTML = String.raw`
     <div class="sec-label">CHANNELS</div>
     <h2>다른 곳에서도 만나요</h2>
     <div class="channels" style="margin-top:14px;text-align:center;display:flex;flex-wrap:wrap;justify-content:center;gap:8px">
-      <a class="ch-btn" href="https://aisajulab.com/ohaeng/?utm=daangn" target="_blank">당근 비즈프로필</a>
-      <a class="ch-btn hot naver" href="https://aisajulab.com/ohaeng/?utm=blog" target="_blank">네이버 블로그</a>
-      <a class="ch-btn" href="https://aisajulab.com/ohaeng/?utm=kakao" target="_blank">카카오톡 채널</a>
-      <a class="ch-btn hot insta" href="https://aisajulab.com/ohaeng/?utm=insta" target="_blank">인스타그램</a>
-      <a class="ch-btn" href="https://aisajulab.com/ohaeng/?utm=cafe" target="_blank">명리학 Self-study 카페</a>
+      <a class="ch-btn" href="https://www.daangn.com/kr/local-profile/yhqzhrhmoopf/?referrer=share" target="_blank" rel="noopener">당근 비즈프로필</a>
+      <a class="ch-btn hot naver" href="https://m.blog.naver.com/naming_supporter" target="_blank" rel="noopener">네이버 블로그</a>
+      <a class="ch-btn" href="https://open.kakao.com/o/gj3iUKai" target="_blank" rel="noopener">카카오톡 채널</a>
+      <a class="ch-btn hot insta" href="https://www.instagram.com/choi_calvin" target="_blank" rel="noopener">인스타그램</a>
+      <a class="ch-btn" href="https://cafe.daangn.com/sajupalja-myeon?utm_medium=copy_link" target="_blank" rel="noopener">명리학 Self-study 카페</a>
     </div>
   </section>
+
+  <div class="voc bot">AI사주랩.com은 항상 고객님의 VOC와 지속적인 분석, 리포트 Quality 개선을 통해 고객 만족도, 삶의 질 향상에 최선을 다하겠습니다.</div>
 
   <footer>
     <b>AI사주랩.com</b><br>
@@ -594,6 +607,9 @@ export default function HomeV6() {
       if (go === "kakao") { track("consult_open", { from }); window.open(KAKAO, "_blank"); }
       else if (go === "consult") { track("consult_open", { from, kind: "custom" }); window.location.href = "/consult"; }
       else if (go === "ohaeng") { window.location.href = "/ohaeng/"; }
+      /* 언어는 오행 앱이 KO/EN 전환을 갖고 있으므로 그쪽으로 넘긴다 */
+      else if (go === "lang") { track("lang_click", { from }); window.location.href = "/ohaeng/#lang"; }
+      else if (go === "menu") { track("menu_click", { from }); window.location.href = "/legal/"; }
       /* 서비스별 직접 진입 — 앱이 결과 보유 여부를 판단해 알아서 분기한다 */
       else if (go === "today")  { track("svc_click", { to: "today", from });  window.location.href = "/ohaeng/#today"; }
       else if (go === "match")  { track("svc_click", { to: "match", from });  window.location.href = "/ohaeng/#match"; }
