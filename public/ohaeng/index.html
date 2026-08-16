@@ -622,6 +622,18 @@ h1.big{font-size:41.1px;margin-bottom:6px}
   -webkit-appearance:none;appearance:none;text-align:center}
 .bd-note{font-size:12.4px;line-height:1.65;color:var(--ink3);margin:0 0 13px;text-align:center}
 .bd-note a{color:#1D7CF2;font-weight:800}
+.bd-l .opt{font-weight:700;color:#B3A47C;font-size:11px;margin-left:4px}
+.cs-in{width:100%;box-sizing:border-box;padding:12px 12px;border-radius:10px;border:1.5px solid #D5E1F2;
+  background:#fff;font-family:inherit;font-size:15px;font-weight:700;color:#1D3E75;margin-bottom:12px;
+  -webkit-appearance:none;appearance:none;resize:vertical}
+.cs-in:focus{outline:none;border-color:#5B8DEF}
+.cs-agree{display:flex;gap:9px;align-items:flex-start;margin:2px 0 13px;padding:11px 12px;border-radius:10px;
+  background:#F6FAFF;border:1px solid #DCE6F4;font-size:12.6px;line-height:1.6;color:#5B6B85;cursor:pointer}
+.cs-agree input{width:18px;height:18px;flex:none;margin-top:1px;accent-color:#1D7CF2}
+.cs-agree a{color:#1D7CF2;font-weight:800}
+.cs-done{margin-top:14px;padding:14px 13px;border-radius:12px;background:#EEF7EE;border:1.5px solid #BFE0C2;
+  font-size:14px;line-height:1.7;color:#2A5A32}
+.cs-done b{color:#1B4523}
 .bd-res{margin-top:14px;padding:14px 13px;border-radius:13px;background:#F6FAFF;border:1.5px solid #CFE0F8}
 .bdr-h{font-size:12px;font-weight:900;color:#1D7CF2;letter-spacing:.03em;margin-bottom:6px}
 .bdr-p{font-size:15.4px;font-weight:800;color:#12305F;margin-bottom:10px}
@@ -868,6 +880,57 @@ h1.big{font-size:41.1px;margin-bottom:6px}
 </div></div>
 
 <!-- ═══════ 3단계 ═══════ -->
+<!-- ═══════ 상담 신청 ═══════ -->
+<div id="cs" class="screen">
+  <div class="appbar"><div class="appbar-in"><button class="back" data-back="intro">‹</button>
+    <div class="prog"><div class="prog-t"><span>전문가 상담</span><span>신청서</span></div>
+    <div class="prog-bar"><div class="prog-fill" style="width:100%"></div></div></div>
+  </div></div>
+  <div class="wrap">
+    <div class="bd-head">
+      <h2>전문가 상담 신청</h2>
+      <p>경영지도사가 사주 원국을 직접 대조해 해석합니다.<br>기본 상담 <b>50,000원</b> · 접수 후 영업일 2일 내 연락드립니다.</p>
+    </div>
+    <div class="bd-card">
+      <div class="bd-l">이름 또는 별명 <span class="opt">필수</span></div>
+      <input class="cs-in" id="csName" placeholder="예: 홍길동 / 길동님">
+
+      <div class="bd-l">연락받을 곳 <span class="opt">필수</span></div>
+      <input class="cs-in" id="csContact" placeholder="카카오톡 ID · 이메일 · 휴대폰 중 하나">
+
+      <div class="bd-l">달력</div>
+      <div class="bd-seg" id="csCal">
+        <button data-c="solar" class="on">양력</button>
+        <button data-c="lunar">음력</button>
+      </div>
+      <label class="bd-leap" id="csLeapWrap" style="display:none">
+        <input type="checkbox" id="csLeap"><span>윤달입니다</span>
+      </label>
+
+      <div class="bd-l">생년월일</div>
+      <div class="bd-row">
+        <select id="csY"></select><select id="csM"></select><select id="csD"></select>
+      </div>
+
+      <div class="bd-l">태어난 시각 <span class="opt">알면 더 정확합니다</span></div>
+      <select class="cs-in" id="csTime"></select>
+
+      <div class="bd-l">상담 주제</div>
+      <select class="cs-in" id="csTopic"></select>
+
+      <div class="bd-l">더 알려주실 내용 <span class="opt">선택</span></div>
+      <textarea class="cs-in" id="csNote" rows="3" placeholder="지금 가장 궁금한 점, 상황을 적어주시면 상담이 깊어집니다."></textarea>
+
+      <label class="cs-agree"><input type="checkbox" id="csOk">
+        <span>상담 진행을 위해 위 정보를 수집·이용하는 데 동의합니다.
+        (보유기간 상담 종료 후 3개월 · <a href="/legal/#t2" target="_blank">개인정보처리방침</a>)</span></label>
+
+      <button class="btn btn-p" id="csGo" style="width:100%" disabled>상담 신청하기</button>
+      <div class="cs-done" id="csDone" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
 <!-- ═══════ 생년월일 입력 (990원 리포트 · 만세력) ═══════ -->
 <div id="bd" class="screen">
   <div class="appbar"><div class="appbar-in"><button class="back" data-back="r1">‹</button>
@@ -1260,6 +1323,7 @@ ko:{
   tierP:'프리미엄 · 990원 — PDF + 배경화면 세트',
   kb1:'기', kb2:'승', kb3:'전', kb4:'결',
   skipCal:'보정 없이 바로 리포트 만들기 →',
+  csNo:'접수에 실패했습니다. 잠시 후 다시 시도해 주세요.',
   bdCalc:'사주를 계산하는 중입니다…', bdNo:'계산에 실패했습니다. 날짜를 확인해 주세요.',
   aiTipD:'디자인은 취향이 갈립니다. 저장한 카드를 ChatGPT·Gemini 같은 AI에 넣고 아래 문구를 함께 주시면, 내 취향에 맞게 다시 다듬어 줍니다.',
   premT:'프리미엄이 열렸습니다', premD:'아래에서 받으시면 언제든 다시 보실 수 있습니다. 30일 실천 플랜과 자기점검 워크시트도 아래에 이어집니다.',
@@ -1398,6 +1462,7 @@ en:{
   tierP:'Premium — PDF + wallpaper set',
   kb1:'1', kb2:'2', kb3:'3', kb4:'4',
   skipCal:'Skip and go straight to the report →',
+  csNo:'Submission failed. Please try again.',
   bdCalc:'Calculating your chart…', bdNo:'Calculation failed. Please check the date.',
   aiTipD:'Taste differs. Drop the saved card into ChatGPT or Gemini with the text below and it will restyle it for you.',
   premT:'Premium unlocked', premD:'Download below — you can come back any time.',
@@ -4614,8 +4679,11 @@ function wallpaper(){
     x.fillStyle=`rgba(255,255,255,${Math.random()*.5+.12})`;
     x.beginPath();x.arc(px,py,r,0,7);x.fill();
   }
+  /* 실행 키워드 — 매일 보는 화면이므로 "예쁜 카드"를 넘어 쓰임새를 준다.
+     리포트 솔루션 제목을 짧은 실행어로 압축해 카드 아래 여백에 얹는다. */
+  const KW=wpKeywords();
   const cv=card("9:16"), ar=cv.height/cv.width;
-  const TOP=H*.20, BOT=H*.045;
+  const TOP=H*.155, BOT=H*(KW.length?.155:.045);
   let pw=W*.90, ph=pw*ar;
   const room=H-TOP-BOT;
   if(ph>room){ ph=room; pw=ph/ar; }
@@ -4628,7 +4696,61 @@ function wallpaper(){
   x.drawImage(cv,px,py,pw,ph);x.restore();
   x.save();x.strokeStyle="rgba(255,255,255,.6)";x.lineWidth=Math.max(2,r*.05);
   x.beginPath();x.roundRect(px,py,pw,ph,r);x.stroke();x.restore();
+
+  /* 카드 아래 여백에 실행 키워드 */
+  if(KW.length){
+    const u=W/1080;
+    let ky=py+ph+H*.045;
+    x.textAlign="center"; x.textBaseline="middle";
+    x.font=`800 ${Math.round(21*u)}px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif`;
+    x.fillStyle="rgba(255,255,255,.72)";
+    x.fillText("오늘 이것만", W/2, ky);
+    ky+=H*.030;
+    /* 키워드 칩 — 한 줄에 최대 3개 */
+    const fs=Math.round(28*u), padX=Math.round(20*u), gap=Math.round(12*u), hgt=Math.round(58*u);
+    x.font=`900 ${fs}px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif`;
+    const rows=[]; let row=[], rw=0;
+    KW.forEach(k=>{
+      const w=x.measureText(k).width+padX*2;
+      if(row.length>=3 || rw+w+gap>W*.92){ rows.push({row,rw}); row=[]; rw=0 }
+      row.push({k,w}); rw+=w+gap;
+    });
+    if(row.length) rows.push({row,rw});
+    rows.slice(0,2).forEach(({row,rw})=>{
+      let cx2=(W-(rw-gap))/2;
+      row.forEach(({k,w})=>{
+        x.fillStyle="rgba(255,255,255,.16)";
+        x.beginPath();x.roundRect(cx2,ky-hgt/2,w,hgt,hgt/2);x.fill();
+        x.strokeStyle="rgba(255,255,255,.30)";x.lineWidth=Math.max(1,1.6*u);
+        x.beginPath();x.roundRect(cx2,ky-hgt/2,w,hgt,hgt/2);x.stroke();
+        x.fillStyle="#fff"; x.fillText(k, cx2+w/2, ky+1);
+        cx2+=w+gap;
+      });
+      ky+=hgt+gap;
+    });
+    x.textBaseline="alphabetic";
+  }
   return c;
+}
+
+/* 솔루션 제목을 배경화면용 짧은 실행어로 압축 */
+function wpKeywords(){
+  try{
+    const A=R2||R1; if(!A||!pick3||!pick3.cat) return [];
+    const C=CAT[pick3.cat]; if(!C) return [];
+    const mS=A.share[C.main]>=AVG_SHARE;
+    const sol=solPool(C,mS,A).slice(0,4);
+    const out=[];
+    sol.forEach(o=>{
+      let t=String(o.t||"").trim();
+      t=t.replace(/[「」『』()]/g,"").replace(/\s*[·,]\s*/g," ");
+      const w=t.split(/\s+/);
+      if(w.length>3) t=w.slice(0,3).join(" ");
+      if(t.length>12) t=t.slice(0,12);
+      if(t) out.push(t);
+    });
+    return out.slice(0,4);
+  }catch(e){ return [] }
 }
 /* 결과 카드용 — 저장한 카드를 AI로 다듬을 때 쓰는 요청문 */
 function cardFixText(){
@@ -4742,8 +4864,73 @@ $("go3").onclick=()=>goReport();
   c.querySelectorAll("[data-c]").forEach(e=>e.classList.toggle("on",e===b));
   const w=$("bdLeapWrap"); if(w) w.style.display = BD.cal==="lunar" ? "" : "none";
 });}
-{const k=$("bdConsult"); if(k) k.onclick=(e)=>{e.preventDefault();
-  window.AJ&&AJ.track("consult_open",{props:{from:"birthdate"}}); openKakao();};}
+{const k=$("bdConsult"); if(k) k.onclick=(e)=>{e.preventDefault(); goConsult();};}
+{const g=$("csGo"); if(g) g.onclick=csSubmit;}
+{const c=$("csCal"); if(c) c.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{
+  c.querySelectorAll("[data-c]").forEach(e=>e.classList.toggle("on",e===b));
+  const w=$("csLeapWrap"); if(w) w.style.display = b.dataset.c==="lunar" ? "" : "none";
+});}
+/* ═══════════ 상담 신청 ═══════════
+   별도 테이블 없이 기존 계측 파이프(events)로 보낸다.
+   name="consult_submit" 이벤트의 props 에 신청 내용을 담으므로
+   관리자 화면·Supabase에서 그대로 조회할 수 있다. */
+const CS_TOPICS=["이직·커리어 전환","창업·사업 방향","금전·투자 판단","인간관계·궁합",
+                 "결혼·인연","자녀·학업","건강·생활 리듬","올해 전체 흐름","기타"];
+function renderCS(){
+  const now=new Date().getFullYear();
+  const fill=(id,from,to,suf,sel)=>{const e=$(id);if(!e)return;let h="";
+    for(let v=from;v<=to;v++)h+=`<option value="${v}"${v===sel?" selected":""}>${v}${suf}</option>`;e.innerHTML=h};
+  fill("csY",1930,now,"년",1990); fill("csM",1,12,"월",1); fill("csD",1,31,"일",1);
+  const t=$("csTime");
+  if(t){ let h='<option value="">모름 / 확실하지 않음</option>';
+    for(let i=0;i<24;i++) h+=`<option value="${i}">${String(i).padStart(2,"0")}시</option>`;
+    t.innerHTML=h; }
+  const tp=$("csTopic");
+  if(tp) tp.innerHTML=CS_TOPICS.map(v=>`<option value="${v}">${v}</option>`).join("");
+  const ok=$("csOk"), go=$("csGo"), done=$("csDone");
+  if(done){done.style.display="none"; done.innerHTML=""}
+  if(go) go.style.display="";
+  const check=()=>{ if(go) go.disabled = !( ($("csName").value||"").trim() &&
+      ($("csContact").value||"").trim() && ok && ok.checked ) };
+  ["csName","csContact"].forEach(id=>{const e=$(id); if(e) e.oninput=check});
+  if(ok) ok.onchange=check;
+  check();
+}
+async function csSubmit(){
+  const go=$("csGo"); if(go) go.disabled=true;
+  const cal=(($("csCal")||{}).querySelector? ($("csCal").querySelector("[data-c].on")||{}).dataset : null);
+  const payload={
+    name:($("csName").value||"").trim(),
+    contact:($("csContact").value||"").trim(),
+    cal:(cal&&cal.c)||"solar",
+    leap: !!($("csLeap")||{}).checked,
+    birth:`${$("csY").value}-${String($("csM").value).padStart(2,"0")}-${String($("csD").value).padStart(2,"0")}`,
+    time:$("csTime").value||"",
+    topic:$("csTopic").value||"",
+    note:($("csNote").value||"").trim().slice(0,500),
+    consent:true
+  };
+  try{
+    window.AJ&&AJ.track("consult_submit",{props:payload});
+    const done=$("csDone");
+    if(done){
+      done.innerHTML=`<b>신청이 접수되었습니다.</b><br>
+        ${esc(payload.name)}님 · ${payload.cal==="lunar"?"음력":"양력"} ${payload.birth}${payload.leap?" (윤달)":""}
+        ${payload.time!==""?` · ${payload.time}시`:""}<br>${esc(payload.topic)}<br>
+        <span style="font-size:12.6px;color:#4A7A52">영업일 기준 2일 이내에 적어주신 곳으로 연락드립니다.
+        급하시면 아래 카카오톡으로도 문의하실 수 있습니다.</span>
+        <button class="btn btn-k sm" id="csKakao" style="width:100%;margin-top:11px">카카오톡으로 문의하기</button>`;
+      done.style.display="";
+      const kk=$("csKakao"); if(kk) kk.onclick=openKakao;
+      done.scrollIntoView({behavior:"smooth",block:"nearest"});
+    }
+    if(go) go.style.display="none";
+  }catch(e){
+    toast(T("csNo")); if(go) go.disabled=false;
+  }
+}
+function goConsult(){ renderCS(); show("cs"); window.AJ&&AJ.track("consult_open",{props:{from:"form"}}); }
+
 /* ═══════════ 만세력 생년월일 입력 ═══════════ */
 let BD={cal:"solar", leap:false, y:null, m:null, d:null};
 let SAJU=null;                       // 만세력 계산 결과
@@ -4937,6 +5124,7 @@ function routeHash(first){
   if(h.indexOf("#today")===0)  return go("today", ()=>goQuick("today")), true;
   if(h.indexOf("#match")===0||h.indexOf("#mate")===0) return go("mate", ()=>goQuick("mate")), true;
   if(h.indexOf("#report")===0) return go("report",()=>goQuick("sol")),  true;
+  if(h.indexOf("#consult")===0) return go("consult",goConsult), true;
   return false;
 }
 setTimeout(()=>routeHash(true),260);
