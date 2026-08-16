@@ -337,12 +337,12 @@ const HTML = String.raw`
     </div>
 
     <div class="cta-pair">
-      <button class="btn btn-free">
+      <button class="btn btn-free" data-go="ohaeng" data-from="hero">
         <span class="ico">🤖</span>
         <span class="tx"><span class="t1">무료 오행 진단</span><span class="t2">가입 없이 바로</span></span>
         <span class="go">›</span>
       </button>
-      <button class="btn btn-pro">
+      <button class="btn btn-pro" data-go="consult" data-from="hero">
         <span class="ico">💬</span>
         <span class="tx"><span class="t1">전문가 상담</span><span class="t2">기본 50,000원</span></span>
         <span class="go">›</span>
