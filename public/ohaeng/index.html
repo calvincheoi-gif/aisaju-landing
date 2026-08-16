@@ -3966,7 +3966,7 @@ function afterQuick(){
     if(FRIEND){ openMate(); return }
     show("r1"); finish1(true); setTimeout(shareMate,260); return;
   }
-  p3=0; pick3={cat:null,blk:null,goal:null,note:""}; render3(); show("s3");
+  goReport();
 }
 function renderQuick(){
   const box=$("qGan"); if(!box)return;
@@ -4710,7 +4710,7 @@ function reportBase(){
 /* 보정을 건너뛰고 바로 4단계로 — 리포트는 A=R2||R1 이므로 보정 없이도 생성된다 */
 {const sk=$("skip2"); if(sk) sk.onclick=()=>{
   window.AJ&&AJ.track("ohaeng_skip_calibration");
-  p3=0; render3(); show("s3");
+  goReport();
 };}
 /* 모든 뒤로가기는 브라우저 히스토리를 그대로 쓴다 (폰 뒤로가기와 동일 동작) */
 document.querySelectorAll("[data-back]").forEach(b=>b.onclick=()=>goBack());
@@ -4908,7 +4908,7 @@ document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{
 });
 $("mlAdd").onclick=()=>{ if(R2||R1)shareMate(); else goQuick("mate") };
 $("tdBack").onclick=()=>show("intro");
-$("tdSol").onclick=()=>{ p3=0;pick3={cat:null,blk:null,goal:null,note:""};render3();show("s3") };
+$("tdSol").onclick=goReport;
 
 let DEFER=null;
 addEventListener("beforeinstallprompt",e=>{e.preventDefault();DEFER=e;renderKnown()});
