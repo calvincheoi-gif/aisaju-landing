@@ -567,7 +567,7 @@ const HTML = String.raw`
   <button data-go="today" data-from="tab" class="tb"><span class="ti"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.4M12 19.1v2.4M2.5 12h2.4M19.1 12h2.4M5 5l1.7 1.7M17.3 17.3 19 19M19 5l-1.7 1.7M6.7 17.3 5 19"/></svg></span>오늘</button>
   <button data-go="ohaeng" data-from="tab" class="tb main"><span class="ti"><svg viewBox="0 0 24 24"><path d="M12 3.5 13.8 10 20.5 12 13.8 14 12 20.5 10.2 14 3.5 12 10.2 10Z"/></svg></span>진단</button>
   <button data-go="match" data-from="tab" class="tb"><span class="ti"><svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-9-9.3C1.9 7.2 4.2 4.5 7.2 4.5c2 0 3.6 1.1 4.8 2.9 1.2-1.8 2.8-2.9 4.8-2.9 3 0 5.3 2.7 4.2 6.2C20.5 15.4 12 20 12 20Z"/></svg></span>궁합</button>
-  <button data-go="kakao" data-from="tab" class="tb"><span class="ti"><svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H12l-4.5 4v-4h-1A2.5 2.5 0 0 1 4 13.5Z"/></svg></span>상담</button>
+  <button data-go="consult" data-from="tab" class="tb"><span class="ti"><svg viewBox="0 0 24 24"><path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h11A2.5 2.5 0 0 1 20 6.5v7a2.5 2.5 0 0 1-2.5 2.5H12l-4.5 4v-4h-1A2.5 2.5 0 0 1 4 13.5Z"/></svg></span>상담</button>
 </nav>
 
 `;
