@@ -609,7 +609,7 @@ export default function HomeV6() {
       else if (go === "ohaeng") { window.location.href = "/ohaeng/"; }
       /* 언어는 오행 앱이 KO/EN 전환을 갖고 있으므로 그쪽으로 넘긴다 */
       else if (go === "lang") { track("lang_click", { from }); window.location.href = "/ohaeng/#lang"; }
-      else if (go === "menu") { track("menu_click", { from }); window.location.href = "/legal/"; }
+      else if (go === "menu") { track("menu_click", { from }); window.location.href = "/ohaeng/#me"; }
       /* 서비스별 직접 진입 — 앱이 결과 보유 여부를 판단해 알아서 분기한다 */
       else if (go === "today")  { track("svc_click", { to: "today", from });  window.location.href = "/ohaeng/#today"; }
       else if (go === "match")  { track("svc_click", { to: "match", from });  window.location.href = "/ohaeng/#match"; }
