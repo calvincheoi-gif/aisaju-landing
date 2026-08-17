@@ -5600,7 +5600,7 @@ function drawHeroChips(x,W,H,s,total,e){
   const labH=cw*0.94;                       // %·한자 라벨 영역
   const base=H-labH;                        // 캡슐 바닥선
   const topPad=cw*0.52;                     // 위 글씨와의 안전 여백
-  const minH=cw*0.95, maxH=base-topPad;     // 캡슐 최소·최대 높이
+  const minH=cw*1.20, maxH=base-topPad;     // 캡슐 최소·최대 높이
   const mx=Math.max(...ORDER.map(k=>s[k]/total),0.001);
   x.textAlign="center";
   ORDER.forEach((k,i)=>{
@@ -5618,8 +5618,15 @@ function drawHeroChips(x,W,H,s,total,e){
     x.fillText(String(Math.round(s[k]*10)/10), bx+cw/2, by+cw*0.62);
     /* 안쪽 막대 — 점수에 비례해 높이가 달라진다 (10점에서 상한)
          납작한 원형이 모두 같아 보이던 문제를 없앤다 */
-      const vRatio=Math.max(0.12, Math.min(1, (s[k]||0)/10));
-      const iw=cw*0.60, ih=Math.max(cw*0.20, (chH-cw*0.86)*vRatio);
+      /* 안쪽 막대 — 비례 원칙 + 가시성 하한 + 화면 상한
+         캡슐 높이가 이미 비례를 담고 있으므로, 안쪽 막대까지 점수로 한 번 더
+         줄이면 낮은 오행이 이중으로 눌려 대시처럼 보인다.
+         점수 10 이상 = 캡슐 안쪽의 90%(상한), 아래로는 45%까지만 내려가게 하여
+         작은 값도 막대로 읽히도록 [0.45 ~ 0.90] 구간에 비례 배치한다. */
+      const vRaw=Math.min(1, Math.max(0, (s[k]||0)/10));
+      const vRatio=0.45+0.45*vRaw;                 // 10점→0.90, 0점→0.45
+      const avail=chH-cw*0.75;                     // 캡슐 안쪽 여유 (숫자 아래)
+      const iw=cw*0.60, ih=Math.max(cw*0.22, avail*vRatio);
       const ix=bx+(cw-iw)/2, iy=base-cw*0.20-ih;
       const g=x.createLinearGradient(0,iy,0,iy+ih);
       g.addColorStop(0,lighten(EE.color,.24));g.addColorStop(1,EE.color);
