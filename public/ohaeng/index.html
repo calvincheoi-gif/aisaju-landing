@@ -1386,7 +1386,12 @@ h1.big{font-size:41.1px;margin-bottom:6px}
       /* 소셜에서 받은 이름을 프로필 기본값으로 (기존 값이 없을 때만) */
       if (d.auth.name && !d.profile.name) d.profile.name = d.auth.name;
       save(d);
-      syncUp();                                // 로그인 즉시 이 기기 정보를 계정에 올린다
+      /* 계정 데이터를 먼저 내려받아 합친 뒤, 합쳐진 결과를 다시 올린다.
+         끝나면 화면이 다시 그려지도록 신호를 보낸다. */
+      syncDown().then(function () {
+        syncUp();
+        try { root.dispatchEvent(new Event("aj:sync")); } catch (e) {}
+      });
       return d.auth;
     }).catch(function () { return null; });
   }
@@ -1396,6 +1401,51 @@ h1.big{font-size:41.1px;margin-bottom:6px}
     d.auth = null;
     save(d);
     return true;
+  }
+
+  /* ── 내려받기 동기화 ───────────────────────────────
+     로그인 직후 계정에 저장된 내용을 이 기기로 가져온다.
+     로컬 우선 설계를 깨지 않도록 "덮어쓰기"가 아니라 "합치기"만 한다.
+       · 프로필 : 이 기기에 비어 있는 항목만 채운다
+       · 프리미엄: 서버에 있고 이 기기에 없을 때만 가져온다 (구매 보호)
+       · 이력   : 시각 기준 합집합 후 최신순 정렬 */
+  function syncDown() {
+    var d = state();
+    if (!d.auth || !d.auth.uid || !d.auth.token) return Promise.resolve(false);
+    var q = CFG.url + "/rest/v1/profiles?id=eq." + encodeURIComponent(d.auth.uid) +
+            "&select=profile,prem,history";
+    return fetch(q, { headers: { apikey: CFG.key, Authorization: "Bearer " + d.auth.token } })
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (rows) {
+        if (!rows || !rows.length) return false;
+        var s = rows[0], x = state(), changed = false;
+
+        var sp = s.profile || {};
+        if (sp.name && !x.profile.name) { x.profile.name = sp.name; changed = true; }
+        if (sp.contact && !x.profile.contact) { x.profile.contact = sp.contact; changed = true; }
+        if (sp.birth && sp.birth.y && !(x.profile.birth && x.profile.birth.y)) { x.profile.birth = sp.birth; changed = true; }
+
+        if (s.prem && s.prem.no && !x.prem) { x.prem = { no: s.prem.no, at: s.prem.at }; changed = true; }
+
+        var sh = Array.isArray(s.history) ? s.history : [];
+        if (sh.length) {
+          var seen = {}, merged = [], before = x.history.length;
+          x.history.concat(sh).forEach(function (o) {
+            if (!o || !o.t) return;
+            var k = o.t + "|" + (o.type || "");
+            if (seen[k]) return;
+            seen[k] = 1; merged.push(o);
+          });
+          merged.sort(function (a, b) { return a.t < b.t ? 1 : -1; });
+          if (merged.length > MAX_HISTORY) merged.length = MAX_HISTORY;
+          x.history = merged;
+          if (merged.length !== before) changed = true;
+        }
+
+        if (changed) { x.updated = new Date().toISOString(); save(x); }
+        return changed;
+      })
+      .catch(function () { return false; });
   }
 
   /* 계정 연결 시 서버에 프로필·이력을 올린다 (테이블 준비 후 활성) */
@@ -1416,6 +1466,7 @@ h1.big{font-size:41.1px;margin-bottom:6px}
         name: d.profile.name || null,
         profile: d.profile,
         prem: d.prem,
+        history: d.history || [],
         updated_at: new Date().toISOString()
       })
     }).then(function (r) { return r.ok; }).catch(function () { return false; });
@@ -1448,6 +1499,7 @@ h1.big{font-size:41.1px;margin-bottom:6px}
     signOut: signOut,
     captureSession: captureSession,
     syncUp: syncUp,
+    syncDown: syncDown,
     wipe: wipe,
     version: "1.0"
   };
@@ -5517,6 +5569,9 @@ function routeHash(first){
 }
 setTimeout(()=>routeHash(true),260);
 window.addEventListener("hashchange",()=>routeHash(false));
+
+/* 계정 동기화가 끝나면(다른 기기에서 만든 결과가 내려오면) 마이페이지를 다시 그린다 */
+window.addEventListener("aj:sync",()=>{ try{ if(CUR==="me" && typeof renderMe==="function") renderMe(); }catch(e){} });
 
 /* 아래로 스크롤 유도 화살표 */
 function scdnCheck(){
