@@ -1328,8 +1328,9 @@ h1.big{font-size:41.1px;margin-bottom:6px}
        Supabase 는 redirect_to 뒤에 #access_token 을 붙이므로 redirect_to 에는 해시를 담을 수 없다. */
     try {
       var curHash = location.hash || "";
+      /* routeHash 가 화면을 연 직후 해시를 지우므로 클릭 시점엔 비어 있을 수 있다.
+         비어 있으면 호출한 화면이 미리 넣어 둔 값을 그대로 살린다. */
       if (curHash && curHash.indexOf("access_token") < 0) sessionStorage.setItem("aj_back_hash", curHash);
-      else sessionStorage.removeItem("aj_back_hash");
     } catch (e) {}
     var url = CFG.url + "/auth/v1/authorize?provider=" + encodeURIComponent(provider) +
       (scopes ? "&scopes=" + encodeURIComponent(scopes) : "") +
@@ -5227,8 +5228,9 @@ function renderMe(){
            </div>`}
       <button class="me-danger" id="meWipe">내 정보 모두 삭제</button>
     </div>`;
-  const k=$("meKakao"); if(k) k.onclick=()=>{ window.AJ&&AJ.track("login_click",{props:{p:"kakao"}}); u.signIn("kakao") };
-  const g=$("meGoogle"); if(g) g.onclick=()=>{ window.AJ&&AJ.track("login_click",{props:{p:"google"}}); u.signIn("google") };
+  const backMe=()=>{ try{ sessionStorage.setItem("aj_back_hash","#me") }catch(e){} };
+      const k=$("meKakao"); if(k) k.onclick=()=>{ window.AJ&&AJ.track("login_click",{props:{p:"kakao"}}); backMe(); u.signIn("kakao") };
+      const g=$("meGoogle"); if(g) g.onclick=()=>{ window.AJ&&AJ.track("login_click",{props:{p:"google"}}); backMe(); u.signIn("google") };
   const o=$("meOut"); if(o) o.onclick=()=>{ u.signOut(); renderMe() };
   const w=$("meWipe"); if(w) w.onclick=()=>{ if(confirm("저장된 정보와 활동 기록을 모두 지웁니다. 계속할까요?")){ u.wipe(); renderMe() } };
 }
