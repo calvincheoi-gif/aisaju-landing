@@ -1324,6 +1324,13 @@ h1.big{font-size:41.1px;margin-bottom:6px}
        카카오가 KOE205로 거부한다. 닉네임만 명시적으로 요청한다. */
     var scopes = provider === "kakao" ? "profile_nickname"
                : provider === "google" ? "email profile" : "";
+    /* 로그인 후 원래 보던 화면(#me 등)으로 되돌아가기 위해 현재 해시를 보관한다.
+       Supabase 는 redirect_to 뒤에 #access_token 을 붙이므로 redirect_to 에는 해시를 담을 수 없다. */
+    try {
+      var curHash = location.hash || "";
+      if (curHash && curHash.indexOf("access_token") < 0) sessionStorage.setItem("aj_back_hash", curHash);
+      else sessionStorage.removeItem("aj_back_hash");
+    } catch (e) {}
     var url = CFG.url + "/auth/v1/authorize?provider=" + encodeURIComponent(provider) +
       (scopes ? "&scopes=" + encodeURIComponent(scopes) : "") +
       "&redirect_to=" + encodeURIComponent(redirectTo || location.href.split("#")[0]);
@@ -1348,7 +1355,18 @@ h1.big{font-size:41.1px;margin-bottom:6px}
     return d.auth;
   }
   function history_replace() {
+    var back = "";
+    try {
+      back = sessionStorage.getItem("aj_back_hash") || "";
+      sessionStorage.removeItem("aj_back_hash");
+    } catch (e) {}
     try { history_native().replaceState(null, "", location.pathname + location.search); } catch (e) {}
+    /* 앱 초기 라우팅(routeHash)이 끝난 뒤 해시를 되돌려 hashchange 로 해당 화면을 연다 */
+    if (back && back.length > 1) {
+      setTimeout(function () {
+        try { location.hash = back.replace(/^#/, ""); } catch (e) {}
+      }, 420);
+    }
   }
   function history_native() { return root.history; }
 
