@@ -1632,7 +1632,7 @@ ko:{
  repK:'AI사주랩 · 의사결정 리포트', repSuffix:'에 대한 답',
  rp1:'질문', rp2:'나의 오행', rp3:'Insights', rp4:'솔루션 제안',
  rTopic:'주제', rBlock:'걸림돌', rGoal:'목표', rSit:'상황',
- mainEl:'주관 오행', subEl:'보조 오행',
+ mainEl:'주 오행', subEl:'보조 오행', harmEl:'조화 오행', balEl:'균형 오행',
  repFoot:'이 리포트는 <b style="color:var(--b700)">지금 느끼는 기운</b> 기준입니다. 생년월일시로 계산한 사주 원국과 대조하면 타고난 기운과의 <b style="color:var(--b700)">차이(영점조정)</b>가 드러나며, 그때 정확도가 한 단계 더 올라갑니다.',
  deepT:'더 깊이 물어보기',
  deepD:'아래 문장을 복사해 <b class="hl">ChatGPT · Claude · Gemini</b> 어디든 붙여넣으시면, 지금까지의 진단·보정 결과를 그대로 이어받아 대화를 계속할 수 있습니다.',
@@ -1771,7 +1771,7 @@ en:{
  repK:'AIsajuLab · DECISION REPORT', repSuffix:'',
  rp1:'Your question', rp2:'Your elements', rp3:'Insights', rp4:'What to do',
  rTopic:'Topic', rBlock:'Obstacle', rGoal:'Goal', rSit:'Context',
- mainEl:'Primary element', subEl:'Supporting element',
+ mainEl:'Primary element', subEl:'Supporting element', harmEl:'Harmony element', balEl:'Balance element',
  repFoot:'This report reads the <b style="color:var(--b700)">energy you feel now</b>. Compared against a full birth chart, the <b style="color:var(--b700)">gap</b> between your innate and current energy appears — and accuracy rises another level.',
  deepT:'Go deeper with AI',
  deepD:'Copy the text below into <b class="hl">ChatGPT · Claude · Gemini</b> — any of them will pick up your full result and continue the conversation.',
@@ -4807,6 +4807,11 @@ function buildReport(){
   const ins=CT(C,mS?"insS":"insW");
   const sol=solPool(C,mS,A).slice(0,SOL_N[REP_LEN]||4);
   const eM=EL[M], eU=EL[U];
+  /* 내 점수 순위 — 주제가 주관하는 오행(M·U)과 별개로,
+     실제 내 분포에서 가장 강한 둘과 가장 약한 둘을 뽑는다.
+       RK[0] 주 오행   · RK[1] 보조 오행
+       RK[3] 조화 오행 · RK[4] 균형 오행 (가장 약해 채워야 할 기운) */
+  const RK=[...ORDER].sort((a,b)=>A.s[b]-A.s[a]||ORDER.indexOf(a)-ORDER.indexOf(b));
   const lv=k=>`${Math.round(A.s[k]*10)/10}${T("pt")} · ${Math.round(A.share[k]*100)}% (${stateOf(k)})`;
   const one=t=>String(t).split(". ")[0].replace(/\.$/,"")+".";
   const full=t=>String(t);
@@ -4825,10 +4830,15 @@ function buildReport(){
       ${pick3.note.trim()?`<div class="a4r"><b>${T("rSit")}</b><span style="white-space:pre-wrap">${esc(pick3.note)}</span></div>`:""}</div>
     <div class="a4-s"><h5><b class="a4kb">${T("kb2")}</b><i>2</i>${T("rp2")}</h5>
       <div class="a4e">
-        <div class="c" style="background:${eM.soft}"><div class="t">${T("mainEl")}</div>
-          <div class="n" style="color:${eM.tc}">${N(M)}</div><div class="v">${lv(M)}</div></div>
-        <div class="c" style="background:${eU.soft}"><div class="t">${T("subEl")}</div>
-          <div class="n" style="color:${eU.tc}">${N(U)}</div><div class="v">${lv(U)}</div></div></div>
+ <div class="c" style="background:${EL[RK[0]].soft}"><div class="t">${T("mainEl")}</div>
+ <div class="n" style="color:${EL[RK[0]].tc}">${N(RK[0])}</div><div class="v">${lv(RK[0])}</div></div>
+ <div class="c" style="background:${EL[RK[1]].soft}"><div class="t">${T("subEl")}</div>
+ <div class="n" style="color:${EL[RK[1]].tc}">${N(RK[1])}</div><div class="v">${lv(RK[1])}</div></div></div>
+ <div class="a4e">
+ <div class="c" style="background:${EL[RK[3]].soft}"><div class="t">${T("harmEl")}</div>
+ <div class="n" style="color:${EL[RK[3]].tc}">${N(RK[3])}</div><div class="v">${lv(RK[3])}</div></div>
+ <div class="c" style="background:${EL[RK[4]].soft}"><div class="t">${T("balEl")}</div>
+ <div class="n" style="color:${EL[RK[4]].tc}">${N(RK[4])}</div><div class="v">${lv(RK[4])}</div></div></div>
       <p style="font-size:14.8px;line-height:1.62">${CT(C,mS?"strong":"weak")}</p>
       <p style="font-size:14.3px;line-height:1.6;color:var(--ink2);margin-top:6px">${CT(C,uS?"subS":"subW")}</p></div>
     <div class="a4-s"><h5><b class="a4kb">${T("kb3")}</b><i>3</i>${T("rp4")} <span style="color:var(--ink3);font-weight:700">· ${sol.length}${T("repCnt")}</span></h5>
@@ -5061,6 +5071,20 @@ function wallpaper(){
     rg.addColorStop(1,`rgba(${rr},${gg},${bb},0)`);
     x.fillStyle=rg;x.fillRect(0,0,W,H);
   }catch(e){}
+  /* 신경망 선 — 결과 카드와 같은 결을 배경에도 아주 옅게 깐다 */
+  try{ x.save(); x.globalAlpha=.16; drawNeuralBg(x,W,H); x.restore(); }catch(e){}
+  /* 물결 — 위아래를 밋밋하게 두지 않고 결을 준다.
+     밝기만 살짝 다른 남색 곡선을 겹쳐 층이 생기게 한다. */
+  const wave=(yBase,amp,alpha,dir)=>{
+    x.save(); x.globalAlpha=alpha; x.fillStyle="#7FB4FF";
+    x.beginPath(); x.moveTo(0,yBase);
+    x.bezierCurveTo(W*.28,yBase-amp*dir, W*.62,yBase+amp*dir, W,yBase-amp*.45*dir);
+    x.lineTo(W, dir>0?0:H); x.lineTo(0, dir>0?0:H); x.closePath(); x.fill(); x.restore();
+  };
+  wave(H*.085, H*.030, .10,  1);
+  wave(H*.125, H*.022, .07,  1);
+  wave(H*.915, H*.030, .10, -1);
+  wave(H*.878, H*.022, .07, -1);
   /* 솔루션 제목을 짧은 실행어로 압축한다 — 카드 아래 여백에 얹는다 */
   const KW=wpKeywords();
   /* ── 안전 구간 설계 ───────────────────────────────
@@ -5072,7 +5096,7 @@ function wallpaper(){
        86  ~ 100%  : 하단 여백 (독 · 잠금화면 버튼)
      카드는 남는 폭을 최대한 채우도록 비율을 여백에 맞춰 계산한다.
      그래야 옆으로 남는 파란 여백이 줄어든다. */
-  const TOP=H*.135, BOT=H*(KW.length?.245:.10);
+  const TOP=H*.130, BOT=H*(KW.length?.265:.10);
   const room=H-TOP-BOT;
   let pw=W*.92;
   const cv=card(room/pw), ar=cv.height/cv.width;   // 여백에 맞춘 비율로 카드 생성
@@ -5099,8 +5123,8 @@ function wallpaper(){
   x.textAlign="center"; x.textBaseline="middle";
 
   if(KW.length){
-    x.font=`700 ${Math.round(25*u)}px ${FF}`;
-    x.fillStyle="rgba(255,255,255,.58)";
+    x.font=`700 ${Math.round(34*u)}px ${FF}`;
+    x.fillStyle="rgba(255,255,255,.80)";
     const SEP="   ·   ";
     const top3=KW.slice(0,3);
     let lines=[top3.join(SEP)];
@@ -5110,13 +5134,13 @@ function wallpaper(){
     if(lines[0] && x.measureText(lines[0]).width>LIM){
       lines=top3.map(String);                        // 그래도 길면 한 줄에 하나씩
     }
-    lines.slice(0,3).forEach(L=>{ x.fillText(L, W/2, ky); ky+=H*.028; });
+    lines.slice(0,3).forEach(L=>{ x.fillText(L, W/2, ky); ky+=H*.034; });
     ky+=H*.006;
   }
 
   if(A && A.weak){
-    x.font=`600 ${Math.round(20*u)}px ${FF}`;
-    x.fillStyle="rgba(255,255,255,.38)";
+    x.font=`600 ${Math.round(28*u)}px ${FF}`;
+    x.fillStyle="rgba(255,255,255,.60)";
     x.fillText(`${T("needEl")} ${N(A.weak)}`, W/2, ky);
   }
   x.textBaseline="alphabetic";
