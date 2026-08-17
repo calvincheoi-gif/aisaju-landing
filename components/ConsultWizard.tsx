@@ -365,13 +365,16 @@ export default function ConsultWizard() {
         <h2 className="text-[20px] font-semibold text-ink-900">{t.consultWizard.step1Title}</h2>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <button
-            className="card text-left hover:border-indigo-600"
+            className="card text-left relative border-2 border-indigo-500 bg-indigo-50/70 shadow-[0_6px_18px_-6px_rgba(79,70,229,.45)] transition hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-6px_rgba(79,70,229,.5)] hover:bg-indigo-50"
             onClick={() => {
               setCustomerType("general");
               setStep("mode");
             }}
           >
-            <p className="text-[17px] font-semibold text-ink-900">{t.consultWizard.generalTitle}</p>
+            <span className="absolute -top-2.5 left-4 rounded-full bg-indigo-600 px-2.5 py-0.5 text-[11px] font-semibold text-white">
+              대부분 여기
+            </span>
+            <p className="text-[17px] font-semibold text-indigo-600">{t.consultWizard.generalTitle}</p>
             <p className="mt-2 text-[13px] text-body">{t.consultWizard.generalDesc}</p>
           </button>
           <button
@@ -401,13 +404,16 @@ export default function ConsultWizard() {
         </h2>
         <div className="mt-6 grid gap-4 md:grid-cols-2">
           <button
-            className="card text-left hover:border-indigo-600"
+            className="card text-left relative border-2 border-indigo-500 bg-indigo-50/70 shadow-[0_6px_18px_-6px_rgba(79,70,229,.45)] transition hover:-translate-y-0.5 hover:shadow-[0_10px_24px_-6px_rgba(79,70,229,.5)] hover:bg-indigo-50"
             onClick={() => {
               setMode("simple");
               setStep("form");
             }}
           >
-            <p className="text-[17px] font-semibold text-ink-900">{t.consultWizard.simpleTitle}</p>
+            <span className="absolute -top-2.5 left-4 rounded-full bg-indigo-600 px-2.5 py-0.5 text-[11px] font-semibold text-white">
+              가장 빠른 방법
+            </span>
+            <p className="text-[17px] font-semibold text-indigo-600">{t.consultWizard.simpleTitle}</p>
             <p className="mt-2 text-[13px] text-body">{t.consultWizard.simpleDesc}</p>
           </button>
           <button
