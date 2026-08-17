@@ -640,6 +640,11 @@ h1.big{font-size:41.1px;margin-bottom:6px}
   font-weight:900;cursor:pointer}
 .me-btn.kakao{background:#FEE500;color:#191600}
 .me-btn.google{background:#fff;color:#3C4043;border:1.5px solid #DADCE0}
+.homebtn{display:inline-flex;align-items:center;gap:4px;margin-left:6px;padding:5px 10px;
+  border-radius:999px;border:1px solid #D6E6FF;background:#EEF5FF;color:#1D4FA8;
+  font-size:12px;font-weight:800;text-decoration:none;flex-shrink:0}
+.homebtn:active{background:#DDEBFF}
+.brandtop{text-decoration:none;color:inherit}
 .me-go{display:flex;gap:8px;margin-top:2px}
 .me-btn.go{flex:1;width:auto;padding:12px 4px;font-size:13.4px;font-weight:800;
   background:#EEF5FF;color:#1D4FA8;border:1px solid #D6E6FF}
@@ -716,7 +721,8 @@ h1.big{font-size:41.1px;margin-bottom:6px}
 <div id="intro" class="screen on"><div class="wrap">
   <div class="topline">
     <button class="shbtn" data-sh="1" aria-label="share"></button>
-    <div class="brandtop"><span class="ck">✓</span><b id="brandT">AI사주랩<i>.com</i></b></div>
+    <a class="brandtop" href="/" aria-label="AIsajuLab.com 홈으로"><span class="ck">✓</span><b id="brandT">AI사주랩<i>.com</i></b></a>
+        <a class="homebtn" href="/" aria-label="홈으로">홈 ⌂</a>
     <div class="langsw"><button data-lang="ko">한국어</button><button data-lang="en">EN</button></div>
   </div>
   <div class="fbanner" id="fbanner"></div>
@@ -3114,6 +3120,8 @@ function card(ratio){
   const g=x.createLinearGradient(0,0,0,H);
   g.addColorStop(0,"#FFFFFF");g.addColorStop(.55,"#F6FBFF");g.addColorStop(1,"#E9F3FF");
   x.fillStyle=g;x.fillRect(0,0,W,H);
+  /* 앱 화면과 같은 신경망 결을 카드에도 은은하게 — 밋밋함을 없애되 글자를 방해하지 않는 세기 */
+  try{ x.save(); x.globalAlpha=.22; drawNeuralBg(x,W,H); x.restore(); }catch(e){}
   const rg=x.createRadialGradient(W/2,H*.08,0,W/2,H*.08,W*.8);
   rg.addColorStop(0,"rgba(37,185,255,.18)");rg.addColorStop(1,"rgba(37,185,255,0)");
   x.fillStyle=rg;x.fillRect(0,0,W,H);
@@ -5059,14 +5067,14 @@ function wpSkyArt(x,W,H){
     x.bezierCurveTo(W*.30,yb-amp, W*.68,yb+amp*.8, W,yb-amp*.5);
     x.lineTo(W,0); x.lineTo(0,0); x.closePath(); x.fill(); x.restore();
   };
-  layer(H*.150, H*.038, .10, "#8FC0FF");
-  layer(H*.108, H*.030, .09, "#B7D6FF");
-  layer(H*.062, H*.020, .07, "#DCEBFF");
+  layer(H*.150, H*.040, .16, "#CFE3FF");
+  layer(H*.108, H*.032, .14, "#DDEDFF");
+  layer(H*.062, H*.022, .12, "#EAF4FF");
   /* 별 — 아주 성기게 */
   x.save();
   for(let i=0;i<26;i++){
     const px=wpRnd(i+7)*W, py=wpRnd(i+91)*H*.14, rr=wpRnd(i+13)*1.8+0.6;
-    x.globalAlpha=.18+wpRnd(i+29)*.34; x.fillStyle="#FFFFFF";
+    x.globalAlpha=.10+wpRnd(i+29)*.18; x.fillStyle="#7FA8DE";
     x.beginPath(); x.arc(px,py,rr*(W/1080),0,7); x.fill();
   }
   x.restore();
@@ -5090,13 +5098,13 @@ function wpCityArt(x,W,H){
     }
     x.restore();
   };
-  city(.16,"#7FB4FF",1.00,101);
-  city(.26,"#3E6FC0",0.72,211);
+  city(.18,"#BBD5F5",1.00,101);
+  city(.30,"#8FB6E8",0.72,211);
   /* 창문 불빛 */
   x.save();
   for(let i=0;i<48;i++){
     const px=wpRnd(i+301)*W, py=base-H*(0.004+wpRnd(i+331)*0.024);
-    x.globalAlpha=.16+wpRnd(i+361)*.30; x.fillStyle="#DDEBFF";
+    x.globalAlpha=.14+wpRnd(i+361)*.24; x.fillStyle="#5A87C8";
     x.fillRect(px, py, 2.2*(W/1080), 2.6*(W/1080));
   }
   x.restore();
@@ -5107,9 +5115,9 @@ function wpCityArt(x,W,H){
     x.bezierCurveTo(W*.26,yb+amp*shift, W*.60,yb-amp*shift, W,yb+amp*.55*shift);
     x.lineTo(W,H); x.lineTo(0,H); x.closePath(); x.fill(); x.restore();
   };
-  wave(H*.947, H*.020, .22, "#2F5FAE",  1);
-  wave(H*.965, H*.016, .30, "#1E4A93", -1);
-  wave(H*.980, H*.012, .40, "#12356E",  1);
+  wave(H*.947, H*.020, .20, "#BCD8F8",  1);
+  wave(H*.965, H*.016, .26, "#9DC4F0", -1);
+  wave(H*.980, H*.012, .32, "#7FADE6",  1);
 }
 
 function wpSize(){
@@ -5128,22 +5136,24 @@ function wallpaper(){
   /* 배경 — 카드가 주인공이 되도록 조용하게 둔다.
      흩뿌린 흰 점과 방사형 광선은 카드와 경쟁해서 걷어냈고,
      아래쪽을 다시 어둡게 해 여백의 흰 글씨가 판(scrim) 없이도 읽히게 한다. */
+  /* 여백은 흰색 계열로 — 짙은 남색은 카드보다 먼저 눈에 들어와 무거웠다.
+     카드가 흰 바탕이므로 여백도 같은 결로 두면 카드가 자연스럽게 이어진다. */
   const g=x.createLinearGradient(0,0,0,H);
-  g.addColorStop(0,"#071F4A");
-  g.addColorStop(.42,"#10428E");
-  g.addColorStop(1,"#06183A");
+  g.addColorStop(0,"#FFFFFF");
+  g.addColorStop(.45,"#F7FBFF");
+  g.addColorStop(1,"#EDF4FE");
   x.fillStyle=g;x.fillRect(0,0,W,H);
   /* 내 오행 색을 아주 옅게 한 겹 — 사람마다 다른 결이 난다 */
   try{
     const hx=String(S.color||"#1470E8").replace("#","");
     const rr=parseInt(hx.substr(0,2),16), gg=parseInt(hx.substr(2,2),16), bb=parseInt(hx.substr(4,2),16);
     const rg=x.createRadialGradient(W*.5,H*.42,0,W*.5,H*.42,W*1.05);
-    rg.addColorStop(0,`rgba(${rr},${gg},${bb},.20)`);
+    rg.addColorStop(0,`rgba(${rr},${gg},${bb},.10)`);
     rg.addColorStop(1,`rgba(${rr},${gg},${bb},0)`);
     x.fillStyle=rg;x.fillRect(0,0,W,H);
   }catch(e){}
   /* 신경망 선 — 결과 카드와 같은 결을 배경에도 아주 옅게 깐다 */
-  try{ x.save(); x.globalAlpha=.16; drawNeuralBg(x,W,H); x.restore(); }catch(e){}
+  try{ x.save(); x.globalAlpha=.30; drawNeuralBg(x,W,H); x.restore(); }catch(e){}
   wpSkyArt(x,W,H);     // 상단 — 겹친 곡선
   wpCityArt(x,W,H);    // 하단 — 파도 + 도시 실루엣
   /* 솔루션 제목을 짧은 실행어로 압축한다 — 카드 아래 여백에 얹는다 */
@@ -5157,7 +5167,10 @@ function wallpaper(){
        89 ~ 100% : 하단 여백 — 파도 · 도시 실루엣
      카드는 남는 폭을 최대한 채우도록 비율을 여백에 맞춰 계산한다.
      그래야 옆으로 남는 파란 여백이 줄어든다. */
-  const TOP=H*.090, BOT=H*(KW.length?.210:.075);
+  /* 세로가 짧은 기기(폴드 펼침·태블릿)에서는 위아래 여백을 줄여
+     카드가 잘리거나 지나치게 작아지지 않게 한다. */
+  const slim = (H/W) < 1.70;
+  const TOP=H*(slim?.055:.090), BOT=H*(KW.length?(slim?.150:.210):.075);
   const room=H-TOP-BOT;
   /* 카드는 앱이 만드는 원본 비율을 그대로 쓴다.
      여백에 맞춰 비율을 바꾸면 카드가 정사각형처럼 찌그러진다.
@@ -5167,12 +5180,12 @@ function wallpaper(){
   let pw=ph/ar;
   const px=(W-pw)/2, py=TOP+(room-ph)/2, r=Math.round(pw*.055);
   x.save();
-  x.shadowColor="rgba(6,32,80,.34)";x.shadowBlur=r*1.5;x.shadowOffsetY=r*.34;
+  x.shadowColor="rgba(28,70,140,.20)";x.shadowBlur=r*1.6;x.shadowOffsetY=r*.30;
   x.fillStyle="#fff";x.beginPath();x.roundRect(px,py,pw,ph,r);x.fill();
   x.restore();
   x.save();x.beginPath();x.roundRect(px,py,pw,ph,r);x.clip();
   x.drawImage(cv,px,py,pw,ph);x.restore();
-  x.save();x.strokeStyle="rgba(255,255,255,.6)";x.lineWidth=Math.max(2,r*.05);
+  x.save();x.strokeStyle="rgba(150,185,232,.55)";x.lineWidth=Math.max(2,r*.04);
   x.beginPath();x.roundRect(px,py,pw,ph,r);x.stroke();x.restore();
 
   /* ── 카드 아래 여백 — 배경 장식을 대신하는 자리 ──────────
@@ -5182,12 +5195,12 @@ function wallpaper(){
        2행 : 보완이 필요한 기운 (흰색 38%) */
   const FF=`-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif`;
   const u=W/1080, LIM=W*.86;
-  let ky=py+ph+H*.034;
+  let ky=py+ph+H*(slim?.026:.034);
   x.textAlign="center"; x.textBaseline="middle";
 
   if(KW.length){
     x.font=`700 ${Math.round(34*u)}px ${FF}`;
-    x.fillStyle="rgba(255,255,255,.80)";
+    x.fillStyle="rgba(31,64,116,.82)";
     const SEP="   ·   ";
     const top3=KW.slice(0,3);
     let lines=[top3.join(SEP)];
@@ -5197,13 +5210,13 @@ function wallpaper(){
     if(lines[0] && x.measureText(lines[0]).width>LIM){
       lines=top3.map(String);                        // 그래도 길면 한 줄에 하나씩
     }
-    lines.slice(0,3).forEach(L=>{ x.fillText(L, W/2, ky); ky+=H*.032; });
+    lines.slice(0,3).forEach(L=>{ x.fillText(L, W/2, ky); ky+=H*(slim?.026:.032); });
     ky+=H*.006;
   }
 
   if(A && A.weak){
     x.font=`600 ${Math.round(28*u)}px ${FF}`;
-    x.fillStyle="rgba(255,255,255,.60)";
+    x.fillStyle="rgba(90,116,152,.78)";
     x.fillText(`${T("needEl")} ${N(A.weak)}`, W/2, ky);
   }
   x.textBaseline="alphabetic";
