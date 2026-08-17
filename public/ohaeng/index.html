@@ -1219,7 +1219,21 @@ h1.big{font-size:41.1px;margin-bottom:6px}
   function save(d) {
     MEM[KEY] = d;
     try { localStorage.setItem(KEY, JSON.stringify(d)); } catch (e) {}
+    queueSync();          // 바뀐 내용은 잠시 뒤 계정에 자동으로 올라간다
     return d;
+  }
+
+  /* ── 자동 올리기 ───────────────────────────────────
+     프리미엄 발급·진단 완료·프로필 입력은 모두 save() 를 거친다.
+     저장할 때마다 곧바로 통신하면 낭비이므로 1.2초 모아서 한 번만 올린다.
+     로그인 상태가 아니면 syncUp 이 스스로 아무것도 하지 않는다. */
+  var _syncT = null;
+  function queueSync() {
+    if (_syncT) { clearTimeout(_syncT); }
+    _syncT = setTimeout(function () {
+      _syncT = null;
+      try { syncUp(); } catch (e) {}
+    }, 1200);
   }
   function blank() {
     return {
@@ -1500,6 +1514,7 @@ h1.big{font-size:41.1px;margin-bottom:6px}
     captureSession: captureSession,
     syncUp: syncUp,
     syncDown: syncDown,
+    queueSync: queueSync,
     wipe: wipe,
     version: "1.0"
   };
@@ -3071,6 +3086,11 @@ function cardSize(ratio){
   const W=1080;
   if(ratio==="9:16") return {W,H:1920};
   if(ratio==="4:5")  return {W,H:1350};
+  /* 숫자로 비율(H/W)을 직접 지정할 수 있다 — 배경화면이 화면 여백에 맞춰 계산해 넘긴다 */
+  if(typeof ratio==="number" && isFinite(ratio)){
+    const rr=Math.max(1.25, Math.min(1.778, ratio));
+    return {W, H:Math.round(W*rr)};
+  }
   let r=1.6;                                   // 기본값(대다수 폰)
   try{
     const sw=screen.width||390, sh=screen.height||844;
@@ -5024,25 +5044,39 @@ function wallpaper(){
   const c=document.createElement("canvas");c.width=W;c.height=H;
   const x=c.getContext("2d");
   const A=R2||R1, S=EL[A.strong];
-  const g=x.createLinearGradient(0,0,W*.2,H);
-  g.addColorStop(0,"#0A3A8F");g.addColorStop(.28,"#1470E8");
-  g.addColorStop(.60,"#8FC4FF");g.addColorStop(1,"#E9F3FF");
+  /* 배경 — 카드가 주인공이 되도록 조용하게 둔다.
+     흩뿌린 흰 점과 방사형 광선은 카드와 경쟁해서 걷어냈고,
+     아래쪽을 다시 어둡게 해 여백의 흰 글씨가 판(scrim) 없이도 읽히게 한다. */
+  const g=x.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,"#071F4A");
+  g.addColorStop(.42,"#10428E");
+  g.addColorStop(1,"#06183A");
   x.fillStyle=g;x.fillRect(0,0,W,H);
-  const rg=x.createRadialGradient(W*.5,H*.09,0,W*.5,H*.09,W*.9);
-  rg.addColorStop(0,"rgba(37,185,255,.40)");rg.addColorStop(1,"rgba(37,185,255,0)");
-  x.fillStyle=rg;x.fillRect(0,0,W,H);
-  for(let i=0;i<64;i++){
-    const px=Math.random()*W, py=Math.random()*H*.30, r=Math.random()*2.2+.5;
-    x.fillStyle=`rgba(255,255,255,${Math.random()*.5+.12})`;
-    x.beginPath();x.arc(px,py,r,0,7);x.fill();
-  }
-  /* 실행 키워드 — 매일 보는 화면이므로 "예쁜 카드"를 넘어 쓰임새를 준다.
-     리포트 솔루션 제목을 짧은 실행어로 압축해 카드 아래 여백에 얹는다. */
+  /* 내 오행 색을 아주 옅게 한 겹 — 사람마다 다른 결이 난다 */
+  try{
+    const hx=String(S.color||"#1470E8").replace("#","");
+    const rr=parseInt(hx.substr(0,2),16), gg=parseInt(hx.substr(2,2),16), bb=parseInt(hx.substr(4,2),16);
+    const rg=x.createRadialGradient(W*.5,H*.42,0,W*.5,H*.42,W*1.05);
+    rg.addColorStop(0,`rgba(${rr},${gg},${bb},.20)`);
+    rg.addColorStop(1,`rgba(${rr},${gg},${bb},0)`);
+    x.fillStyle=rg;x.fillRect(0,0,W,H);
+  }catch(e){}
+  /* 솔루션 제목을 짧은 실행어로 압축한다 — 카드 아래 여백에 얹는다 */
   const KW=wpKeywords();
-  const cv=card("9:16"), ar=cv.height/cv.width;
-  const TOP=H*.155, BOT=H*(KW.length?.155:.045);
-  let pw=W*.90, ph=pw*ar;
+  /* ── 안전 구간 설계 ───────────────────────────────
+     잠금화면은 위쪽에 시계·날짜가, 홈화면은 아래쪽에 독·아이콘이 겹친다.
+     두 용도에서 모두 가려지지 않도록 위아래를 비우고 그 사이만 쓴다.
+        0 ~ 13.5%  : 상단 여백 (잠금화면 시계)
+       13.5~75.5% : 카드
+       75.5~86%   : 솔루션 키워드 · 보완 기운 (얇은 글씨)
+       86  ~ 100%  : 하단 여백 (독 · 잠금화면 버튼)
+     카드는 남는 폭을 최대한 채우도록 비율을 여백에 맞춰 계산한다.
+     그래야 옆으로 남는 파란 여백이 줄어든다. */
+  const TOP=H*.135, BOT=H*(KW.length?.245:.10);
   const room=H-TOP-BOT;
+  let pw=W*.92;
+  const cv=card(room/pw), ar=cv.height/cv.width;   // 여백에 맞춘 비율로 카드 생성
+  let ph=pw*ar;
   if(ph>room){ ph=room; pw=ph/ar; }
   const px=(W-pw)/2, py=TOP+(room-ph)/2, r=Math.round(pw*.055);
   x.save();
@@ -5054,39 +5088,38 @@ function wallpaper(){
   x.save();x.strokeStyle="rgba(255,255,255,.6)";x.lineWidth=Math.max(2,r*.05);
   x.beginPath();x.roundRect(px,py,pw,ph,r);x.stroke();x.restore();
 
-  /* 카드 아래 여백에 실행 키워드 */
+  /* ── 카드 아래 여백 — 배경 장식을 대신하는 자리 ──────────
+     칩·판을 두면 앱 스크린샷처럼 보인다. 얇은 글씨 두 줄로만 얹어
+     카드의 조화를 해치지 않으면서 매일 쓸모가 남게 한다.
+       1행 : 솔루션 3개 (흰색 58%)
+       2행 : 보완이 필요한 기운 (흰색 38%) */
+  const FF=`-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif`;
+  const u=W/1080, LIM=W*.86;
+  let ky=py+ph+H*.048;
+  x.textAlign="center"; x.textBaseline="middle";
+
   if(KW.length){
-    const u=W/1080;
-    let ky=py+ph+H*.045;
-    x.textAlign="center"; x.textBaseline="middle";
-    x.font=`800 ${Math.round(21*u)}px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif`;
-    x.fillStyle="rgba(255,255,255,.72)";
-    x.fillText("오늘 이것만", W/2, ky);
-    ky+=H*.030;
-    /* 키워드 칩 — 한 줄에 최대 3개 */
-    const fs=Math.round(28*u), padX=Math.round(20*u), gap=Math.round(12*u), hgt=Math.round(58*u);
-    x.font=`900 ${fs}px -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif`;
-    const rows=[]; let row=[], rw=0;
-    KW.forEach(k=>{
-      const w=x.measureText(k).width+padX*2;
-      if(row.length>=3 || rw+w+gap>W*.92){ rows.push({row,rw}); row=[]; rw=0 }
-      row.push({k,w}); rw+=w+gap;
-    });
-    if(row.length) rows.push({row,rw});
-    rows.slice(0,2).forEach(({row,rw})=>{
-      let cx2=(W-(rw-gap))/2;
-      row.forEach(({k,w})=>{
-        x.fillStyle="rgba(255,255,255,.16)";
-        x.beginPath();x.roundRect(cx2,ky-hgt/2,w,hgt,hgt/2);x.fill();
-        x.strokeStyle="rgba(255,255,255,.30)";x.lineWidth=Math.max(1,1.6*u);
-        x.beginPath();x.roundRect(cx2,ky-hgt/2,w,hgt,hgt/2);x.stroke();
-        x.fillStyle="#fff"; x.fillText(k, cx2+w/2, ky+1);
-        cx2+=w+gap;
-      });
-      ky+=hgt+gap;
-    });
-    x.textBaseline="alphabetic";
+    x.font=`700 ${Math.round(25*u)}px ${FF}`;
+    x.fillStyle="rgba(255,255,255,.58)";
+    const SEP="   ·   ";
+    const top3=KW.slice(0,3);
+    let lines=[top3.join(SEP)];
+    if(x.measureText(lines[0]).width>LIM){          // 한 줄에 안 들어가면 2+1 로 나눈다
+      lines=[top3.slice(0,2).join(SEP), top3.slice(2).join(SEP)].filter(Boolean);
+    }
+    if(lines[0] && x.measureText(lines[0]).width>LIM){
+      lines=top3.map(String);                        // 그래도 길면 한 줄에 하나씩
+    }
+    lines.slice(0,3).forEach(L=>{ x.fillText(L, W/2, ky); ky+=H*.028; });
+    ky+=H*.006;
   }
+
+  if(A && A.weak){
+    x.font=`600 ${Math.round(20*u)}px ${FF}`;
+    x.fillStyle="rgba(255,255,255,.38)";
+    x.fillText(`${T("needEl")} ${N(A.weak)}`, W/2, ky);
+  }
+  x.textBaseline="alphabetic";
   return c;
 }
 
