@@ -3176,7 +3176,7 @@ function goPay(){
 function armPayDone(){
   const b=$("payDone"); if(!b)return;
   b.disabled=false; b.classList.add("on");
-  const h=$("payHint"); if(h)h.textContent="송금을 마치셨으면 아래 버튼을 눌러주세요";
+  const h=$("payHint"); if(h)h.textContent="② 송금을 마치셨으면 바로 아래 「입금 완료 · 리포트 받기」 버튼을 눌러주세요";
 }
 function premNo(){
   const d=new Date(), p=n=>String(n).padStart(2,"0");
@@ -5627,8 +5627,8 @@ setTimeout(demo,60);
   <div class="pay-t" id="payT"></div><div class="pay-p" id="payP"></div>
   <ol class="pay-s" id="payS"></ol>
   <button class="pay-a" onclick="goPay()">카카오페이로 결제하기</button>
+  <p class="pay-hint" id="payHint">① 위 노란 버튼으로 송금하시면 아래 「입금 완료」 버튼이 열립니다</p>
   <button class="pay-done" id="payDone" onclick="payDone()" disabled>입금 완료 · 리포트 받기</button>
-  <p class="pay-hint" id="payHint">위 노란 버튼으로 송금하시면 아래 버튼이 열립니다</p>
   <p class="pay-law">「입금 완료」를 누르면 PDF·배경화면이 <b>즉시 제공</b>되며, 제공이 개시된 이후에는
     전자상거래법 제17조 제2항 제5호에 따라 <b>청약철회가 제한</b>됩니다.
     제공 전에는 언제든 전액 환불됩니다. <a href="/legal/#t3" target="_blank">환불규정 보기</a></p>
