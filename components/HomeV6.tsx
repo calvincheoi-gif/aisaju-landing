@@ -393,8 +393,8 @@ const HTML = String.raw`
       <div class="ct">👨‍🏫 전문가 1:1 상담</div>
       <div class="cs">경영지도사 최형철 · 30년 경력이 직접 해석합니다</div>
       <div class="cbtns">
-        <button class="cb cb-quick"><span class="b1">기본 상담 · 50,000원</span><span class="b2">리포트 + 전화/카톡 해석 · D+2일</span></button>
-        <button class="cb cb-deep"><span class="b1">맞춤 상담</span><span class="b2">신청서 작성 · 내용 보고 안내</span></button>
+        <button class="cb cb-quick" data-go="consult" data-from="svc_quick"><span class="b1">기본 상담 · 50,000원</span><span class="b2">리포트 + 전화/카톡 해석 · D+2일</span></button>
+            <button class="cb cb-deep" data-go="consult" data-from="svc_deep"><span class="b1">맞춤 상담</span><span class="b2">신청서 작성 · 내용 보고 안내</span></button>
       </div>
       <div class="pricenote">맞춤 상담은 기존 상담 신청서로 접수 후 범위·비용을 안내드립니다</div>
     </div>
