@@ -1952,7 +1952,7 @@ const EF=(k,f)=>isEN()&&EL[k].en&&EL[k].en[f]!==undefined?EL[k].en[f]:EL[k][f];
 const SEASON={
  wood :{n:"봄",  d:"시작의 계절", en:{n:"Spring",     d:"the season of beginnings"}},
  fire :{n:"여름",d:"펼치는 계절", en:{n:"Summer",     d:"the season of unfolding"}},
- earth:{n:"늦여름",d:"무르익는 계절",en:{n:"Late Summer", d:"the season of ripening"}},
+ earth:{n:"여름",  d:"무르익는 계절",en:{n:"Summer",      d:"the season of ripening"}},
  metal:{n:"가을",d:"거두는 계절", en:{n:"Autumn",     d:"the season of gathering"}},
  water:{n:"겨울",d:"품는 계절",   en:{n:"Winter",     d:"the season of keeping"}}};
 
@@ -2063,10 +2063,10 @@ const DEFAULT_Q=[
 
  {t:"태어난 계절은?",w:3,pick:1,yy:1,yv:[1,2,0,-1,-2],
   hint:"이 문항은 <b>3점</b>으로 계산합니다 — 태어난 달(月支)이 기운의 강약을 가장 크게 좌우합니다. 성격 이름의 <b>계절</b>도 여기서 정해집니다.",
-  o:[["봄","2~4월경"],["여름","5~7월경"],["늦여름·환절기","계절이 바뀌던 무렵"],["가을","8~10월경"],["겨울","11~1월경"]],
+  o:[["봄","2~4월경"],["여름","5~7월경"],["환절기","계절이 바뀌던 무렵"],["가을","8~10월경"],["겨울","11~1월경"]],
   en:{t:"Which season were you born in?",
    hint:"This one counts <b>3 points</b> — the birth month governs elemental strength more than anything else. Your <b>season name</b> also comes from here.",
-   o:[["Spring","around Feb–Apr"],["Summer","around May–Jul"],["Late summer / turning","when seasons changed"],["Autumn","around Aug–Oct"],["Winter","around Nov–Jan"]]}},
+   o:[["Spring","around Feb–Apr"],["Summer","around May–Jul"],["Turning of seasons","when seasons changed"],["Autumn","around Aug–Oct"],["Winter","around Nov–Jan"]]}},
 
  {t:"태어난 시간은?",w:2,pick:1,yy:1,yv:[1,2,0,-1,-2],hint:"이 문항은 <b>2점</b>으로 계산합니다",
   o:[["아침","새벽~오전"],["점심","한낮 무렵"],["오후","해가 기울 무렵"],["밤","저녁~늦은 밤"],["자정 전후",""]],
@@ -2078,7 +2078,7 @@ const DEFAULT_Q=[
   en:{t:"Where were you born?",skip:"Outside Korea, or not sure (skip)",
    o:[["Gangwon · east coast","East"],["Gyeongsang · Busan · Jeju","South"],["Seoul · Gyeonggi · Chungcheong","Center"],["Jeolla · Incheon · Gwangju","West"],["North of the border · far north","North"]]}},
 
- {t:"내가 좋아하는 덕(德)은?",w:1,pick:2,yy:0,hint:"마음이 가는 것으로 <b>2개</b>를 골라주세요",
+ {t:"내가 좋아하는 덕(德)은?",w:1,pick:2,yy:0,ord:[0,3,1,4,2],hint:"마음이 가는 것으로 <b>2개</b>를 골라주세요",
   o:[["인(仁)","어질고 측은히 여기는 마음"],["예(禮)","예의와 격식을 지키는 마음"],["신(信)","믿음과 약속을 지키는 마음"],["의(義)","의리와 정의를 지키는 마음"],["지(智)","지혜롭게 헤아리는 마음"]],
   en:{t:"Which virtue speaks to you?",hint:"Choose <b>2</b> that feel closest",
    o:[["Benevolence","kindness and compassion"],["Propriety","grace and good manners"],["Faith","keeping trust and promises"],["Righteousness","loyalty and justice"],["Wisdom","seeing things clearly"]]}},
@@ -2748,8 +2748,15 @@ function render1(){
   $("q1t").textContent=QT(q,"t");
   const h=$("q1h"), hint=QT(q,"hint"); if(hint){h.innerHTML=hint;h.style.display="block"}else h.style.display="none";
   const box=$("q1o");box.innerHTML="";
-  ORDER.forEach((k,i)=>{
-    const o=QO(q,i), on=ans[step].includes(k);
+  /* 선택지는 ORDER(목·화·토·금·수) 순서에 1:1 대응한다.
+     화면에 다른 순서로 보이고 싶을 때만 문항에 ord 를 둔다.
+       ord:[0,3,1,4,2] → 화면은 목·금·화·수·토 순서로 보이지만
+       각 항목이 가리키는 오행은 그대로다. 매핑이 깨지지 않는다. */
+  const SEQ = (Array.isArray(q.ord) && q.ord.length===ORDER.length)
+    ? q.ord.map(ix=>ORDER[ix]) : ORDER;
+  SEQ.forEach(k=>{
+    const i=ORDER.indexOf(k), on=ans[step].includes(k);
+    const o=QO(q,i);
     const b=document.createElement("button");b.className="opt"+(on?" sel":"");
     b.innerHTML=`<span class="dot" style="background:${EL[k].color}"></span><span class="txt">${esc(o[0])}${o[1]?`<small>${esc(o[1])}</small>`:""}</span><span class="chk">${on?"✓":""}</span>`;
     b.onclick=()=>pick1(k);box.appendChild(b);
@@ -2826,11 +2833,23 @@ function analyze(s,keepSym,ov){
   const strong=sorted[0];
   const yy=(ov&&ov.sign)?{score:0,used:0,sign:ov.sign}:yinYang();
   const sk=(ov&&ov.seasonKey&&SEASON[ov.seasonKey])?ov.seasonKey:seasonKeyOf();
-  const se=SEASON[sk];
+  /* ── 표기용 계절 (dsk) ────────────────────────────────
+     카드 이름의 계절은 봄·여름·가을·겨울 네 가지만 쓴다.
+     환절기(토)를 고른 경우, 토와 주 오행을 뺀 나머지 중
+     가장 강한 오행의 계절을 앞에 붙인다.
+       예) 목>화>토>금>수 · 주 오행 목  →  계절 화(여름)  →  「여름 소나무」
+     태어난 계절(sk)은 토 그대로 남긴다 — 공유 링크·결과 복원이
+     이 값으로 왕복하므로 바꾸면 옛 링크가 깨진다. */
+  let dsk = sk;
+  if (sk === "earth") {
+    const pool = sorted.filter(k => k !== "earth" && k !== strong);
+    dsk = pool[0] || sorted.find(k => k !== "earth") || "fire";
+  }
+  const se=SEASON[dsk];
   symPick=Object.assign({el:strong,sign:yy.sign},pickSymbol(strong,yy.sign));
   const sym=symPick.sym;
   const modKo=sym.m||"", modEn=sym.mEn||"";
-  const nameKo=makeName(sk,sym,"ko"), nameEn=makeName(sk,sym,"en");
+  const nameKo=makeName(dsk,sym,"ko"), nameEn=makeName(dsk,sym,"en");
   return {s,total,sorted,strong,second:sorted[1],weak:sorted[4],bal,yy,seasonKey:sk,
     season:{n:isEN()?se.en.n:se.n, d:isEN()?se.en.d:se.d},
     sym:symPick, nameKo, nameEn, name:isEN()?nameEn:nameKo,
