@@ -640,6 +640,10 @@ h1.big{font-size:41.1px;margin-bottom:6px}
   font-weight:900;cursor:pointer}
 .me-btn.kakao{background:#FEE500;color:#191600}
 .me-btn.google{background:#fff;color:#3C4043;border:1.5px solid #DADCE0}
+.me-go{display:flex;gap:8px;margin-top:2px}
+.me-btn.go{flex:1;width:auto;padding:12px 4px;font-size:13.4px;font-weight:800;
+  background:#EEF5FF;color:#1D4FA8;border:1px solid #D6E6FF}
+.me-btn.go:active{background:#DDEBFF}
 .me-note{font-size:12.2px;line-height:1.65;color:var(--ink3);margin:10px 0 0}
 .me-danger{background:none;border:0;color:#C0392B;font-size:12.6px;font-weight:800;
   text-decoration:underline;text-underline-offset:3px;cursor:pointer;padding:9px 0;width:100%}
@@ -5041,6 +5045,73 @@ async function makePDF(){
    3종을 따로 만들지 않는다. 사용자는 이미 자기 결과 카드를 보고 왔으므로
    그 카드를 그대로 쓰고, 크기만 지금 쓰는 폰 화면에 맞춰 한 장으로 뽑는다.
    기종·환경 차이로 여백이나 잘림이 생길 수 있어, 아래에 AI 보정 안내를 함께 둔다. */
+/* ═══════════ 배경화면 장식 ═══════════
+   상단·하단의 남색 공백을 밋밋하게 두지 않는다.
+   위는 겹친 곡선으로 하늘의 결을, 아래는 파도와 도시 실루엣으로
+   "멀리 내다보는 자리"를 만든다. 모두 배경색보다 밝은 남색 계열
+   반투명이라 카드와 경쟁하지 않는다. */
+function wpRnd(i){ const v=Math.sin(i*127.1+i*i*0.017)*43758.5453; return v-Math.floor(v); }
+
+function wpSkyArt(x,W,H){
+  const layer=(yb,amp,alpha,tone)=>{
+    x.save(); x.globalAlpha=alpha; x.fillStyle=tone;
+    x.beginPath(); x.moveTo(0,yb);
+    x.bezierCurveTo(W*.30,yb-amp, W*.68,yb+amp*.8, W,yb-amp*.5);
+    x.lineTo(W,0); x.lineTo(0,0); x.closePath(); x.fill(); x.restore();
+  };
+  layer(H*.150, H*.038, .10, "#8FC0FF");
+  layer(H*.108, H*.030, .09, "#B7D6FF");
+  layer(H*.062, H*.020, .07, "#DCEBFF");
+  /* 별 — 아주 성기게 */
+  x.save();
+  for(let i=0;i<26;i++){
+    const px=wpRnd(i+7)*W, py=wpRnd(i+91)*H*.14, rr=wpRnd(i+13)*1.8+0.6;
+    x.globalAlpha=.18+wpRnd(i+29)*.34; x.fillStyle="#FFFFFF";
+    x.beginPath(); x.arc(px,py,rr*(W/1080),0,7); x.fill();
+  }
+  x.restore();
+}
+
+function wpCityArt(x,W,H){
+  const base=H*.988;
+  /* 도시 실루엣 — 뒤쪽 흐린 층, 앞쪽 진한 층 */
+  const city=(alpha,tone,scale,seed)=>{
+    x.save(); x.globalAlpha=alpha; x.fillStyle=tone;
+    let bx=-W*.02, i=seed;
+    while(bx<W*1.02){
+      const bw=W*(0.028+wpRnd(i)*0.030);
+      const bh=H*(0.010+wpRnd(i+40)*0.032)*scale;
+      x.fillRect(bx, base-bh, bw*0.88, bh);
+      if(wpRnd(i+80)>0.62){                        // 뾰족한 옥탑
+        const tw=bw*0.22, th=bh*0.30;
+        x.fillRect(bx+bw*0.33, base-bh-th, tw, th);
+      }
+      bx+=bw; i++;
+    }
+    x.restore();
+  };
+  city(.16,"#7FB4FF",1.00,101);
+  city(.26,"#3E6FC0",0.72,211);
+  /* 창문 불빛 */
+  x.save();
+  for(let i=0;i<48;i++){
+    const px=wpRnd(i+301)*W, py=base-H*(0.004+wpRnd(i+331)*0.024);
+    x.globalAlpha=.16+wpRnd(i+361)*.30; x.fillStyle="#DDEBFF";
+    x.fillRect(px, py, 2.2*(W/1080), 2.6*(W/1080));
+  }
+  x.restore();
+  /* 파도 — 도시 앞으로 세 겹 */
+  const wave=(yb,amp,alpha,tone,shift)=>{
+    x.save(); x.globalAlpha=alpha; x.fillStyle=tone;
+    x.beginPath(); x.moveTo(0,yb);
+    x.bezierCurveTo(W*.26,yb+amp*shift, W*.60,yb-amp*shift, W,yb+amp*.55*shift);
+    x.lineTo(W,H); x.lineTo(0,H); x.closePath(); x.fill(); x.restore();
+  };
+  wave(H*.947, H*.020, .22, "#2F5FAE",  1);
+  wave(H*.965, H*.016, .30, "#1E4A93", -1);
+  wave(H*.980, H*.012, .40, "#12356E",  1);
+}
+
 function wpSize(){
   const dpr=Math.min(3,Math.max(1,window.devicePixelRatio||2));
   let W=Math.round((screen.width||390)*dpr), H=Math.round((screen.height||844)*dpr);
@@ -5073,35 +5144,27 @@ function wallpaper(){
   }catch(e){}
   /* 신경망 선 — 결과 카드와 같은 결을 배경에도 아주 옅게 깐다 */
   try{ x.save(); x.globalAlpha=.16; drawNeuralBg(x,W,H); x.restore(); }catch(e){}
-  /* 물결 — 위아래를 밋밋하게 두지 않고 결을 준다.
-     밝기만 살짝 다른 남색 곡선을 겹쳐 층이 생기게 한다. */
-  const wave=(yBase,amp,alpha,dir)=>{
-    x.save(); x.globalAlpha=alpha; x.fillStyle="#7FB4FF";
-    x.beginPath(); x.moveTo(0,yBase);
-    x.bezierCurveTo(W*.28,yBase-amp*dir, W*.62,yBase+amp*dir, W,yBase-amp*.45*dir);
-    x.lineTo(W, dir>0?0:H); x.lineTo(0, dir>0?0:H); x.closePath(); x.fill(); x.restore();
-  };
-  wave(H*.085, H*.030, .10,  1);
-  wave(H*.125, H*.022, .07,  1);
-  wave(H*.915, H*.030, .10, -1);
-  wave(H*.878, H*.022, .07, -1);
+  wpSkyArt(x,W,H);     // 상단 — 겹친 곡선
+  wpCityArt(x,W,H);    // 하단 — 파도 + 도시 실루엣
   /* 솔루션 제목을 짧은 실행어로 압축한다 — 카드 아래 여백에 얹는다 */
   const KW=wpKeywords();
   /* ── 안전 구간 설계 ───────────────────────────────
      잠금화면은 위쪽에 시계·날짜가, 홈화면은 아래쪽에 독·아이콘이 겹친다.
      두 용도에서 모두 가려지지 않도록 위아래를 비우고 그 사이만 쓴다.
-        0 ~ 13.5%  : 상단 여백 (잠금화면 시계)
-       13.5~75.5% : 카드
-       75.5~86%   : 솔루션 키워드 · 보완 기운 (얇은 글씨)
-       86  ~ 100%  : 하단 여백 (독 · 잠금화면 버튼)
+        0 ~ 9%   : 상단 여백 (잠금화면 시계) + 하늘 곡선
+        9 ~ 79%  : 카드 — 앱 원본 비율 그대로
+       79 ~ 89%  : 솔루션 키워드 · 보완 기운
+       89 ~ 100% : 하단 여백 — 파도 · 도시 실루엣
      카드는 남는 폭을 최대한 채우도록 비율을 여백에 맞춰 계산한다.
      그래야 옆으로 남는 파란 여백이 줄어든다. */
-  const TOP=H*.130, BOT=H*(KW.length?.265:.10);
+  const TOP=H*.090, BOT=H*(KW.length?.210:.075);
   const room=H-TOP-BOT;
-  let pw=W*.92;
-  const cv=card(room/pw), ar=cv.height/cv.width;   // 여백에 맞춘 비율로 카드 생성
-  let ph=pw*ar;
-  if(ph>room){ ph=room; pw=ph/ar; }
+  /* 카드는 앱이 만드는 원본 비율을 그대로 쓴다.
+     여백에 맞춰 비율을 바꾸면 카드가 정사각형처럼 찌그러진다.
+     세로가 모자라면 높이를 기준으로 줄이고, 남는 좌우는 여백으로 둔다. */
+  const cv=card(), ar=cv.height/cv.width;
+  let ph=Math.min(room, W*.92*ar);
+  let pw=ph/ar;
   const px=(W-pw)/2, py=TOP+(room-ph)/2, r=Math.round(pw*.055);
   x.save();
   x.shadowColor="rgba(6,32,80,.34)";x.shadowBlur=r*1.5;x.shadowOffsetY=r*.34;
@@ -5119,7 +5182,7 @@ function wallpaper(){
        2행 : 보완이 필요한 기운 (흰색 38%) */
   const FF=`-apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif`;
   const u=W/1080, LIM=W*.86;
-  let ky=py+ph+H*.048;
+  let ky=py+ph+H*.034;
   x.textAlign="center"; x.textBaseline="middle";
 
   if(KW.length){
@@ -5134,7 +5197,7 @@ function wallpaper(){
     if(lines[0] && x.measureText(lines[0]).width>LIM){
       lines=top3.map(String);                        // 그래도 길면 한 줄에 하나씩
     }
-    lines.slice(0,3).forEach(L=>{ x.fillText(L, W/2, ky); ky+=H*.034; });
+    lines.slice(0,3).forEach(L=>{ x.fillText(L, W/2, ky); ky+=H*.032; });
     ky+=H*.006;
   }
 
@@ -5336,8 +5399,19 @@ function renderMe(){
              <button class="me-btn google" id="meGoogle">Google로 계속하기</button>
            </div>`}
       <button class="me-danger" id="meWipe">내 정보 모두 삭제</button>
+    </div>
+    <div class="me-sec">
+      <h4>이어서 보기</h4>
+      <div class="me-go">
+        <button class="me-btn go" id="meHome">홈으로</button>
+        <button class="me-btn go" id="meToday">오늘의 기운</button>
+        <button class="me-btn go" id="meSol">고민 정리하기</button>
+      </div>
     </div>`;
   const backMe=()=>{ try{ sessionStorage.setItem("aj_back_hash","#me") }catch(e){} };
+      const goHome=$("meHome"); if(goHome) goHome.onclick=()=>{ show("intro"); };
+      const goTd=$("meToday"); if(goTd) goTd.onclick=()=>{ goQuick("today"); };
+      const goSl=$("meSol"); if(goSl) goSl.onclick=()=>{ goQuick("sol"); };
       const k=$("meKakao"); if(k) k.onclick=()=>{ window.AJ&&AJ.track("login_click",{props:{p:"kakao"}}); backMe(); u.signIn("kakao") };
       const g=$("meGoogle"); if(g) g.onclick=()=>{ window.AJ&&AJ.track("login_click",{props:{p:"google"}}); backMe(); u.signIn("google") };
   const o=$("meOut"); if(o) o.onclick=()=>{ u.signOut(); renderMe() };
@@ -5614,7 +5688,10 @@ function routeHash(first){
   const h=(location.hash||"").toLowerCase();
   const go=(name,fn)=>{
     window.AJ&&AJ.track("deeplink",{props:{to:name,first:first?1:0}});
-    history.replaceState(null,"",location.pathname+location.search);
+    /* 주소로 바로 들어온 경우에도 현재 화면을 히스토리에 남긴다.
+       null 로 두면 뒤로가기가 아무 일도 하지 않아 갇힌 것처럼 느껴진다. */
+    try{ history.replaceState(navState(),"",location.pathname+location.search); }
+    catch(e){ history.replaceState(null,"",location.pathname+location.search); }
     fn();
   };
   if(h.indexOf("#today")===0)  return go("today", ()=>goQuick("today")), true;
