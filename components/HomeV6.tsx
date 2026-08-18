@@ -1010,6 +1010,8 @@ export default function HomeV6() {
       try {
         const raw = localStorage.getItem(LS_KEY);
         if (raw) { const v = JSON.parse(raw); if ((LANGS as readonly string[]).includes(v)) return v as Lang; }
+        const a = localStorage.getItem("aisaju_lang");
+        if (a && (LANGS as readonly string[]).includes(a)) return a as Lang;
       } catch {}
       const n = (navigator.language || "ko").toLowerCase();
       if (n.startsWith("ko")) return "ko";
@@ -1052,7 +1054,8 @@ export default function HomeV6() {
 
     const setLang = (l: Lang) => {
       LANG = l;
-      try { localStorage.setItem(LS_KEY, JSON.stringify(l)); } catch {}
+      /* Next.js 쪽(LanguageProvider)은 raw 문자열 aisaju_lang 을 쓰므로 함께 기록한다 */
+      try { localStorage.setItem(LS_KEY, JSON.stringify(l)); localStorage.setItem("aisaju_lang", l); } catch {}
       applyLang();
       track("lang_change", { lang: l });
     };
