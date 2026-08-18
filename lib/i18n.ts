@@ -119,6 +119,10 @@ interface Dictionary {
     doneTitle: string;
     doneDesc: string;
     priceUnit: string;
+    mostBadge: string;
+    fastestBadge: string;
+    saveDelayed: string;
+    saveFailed: string;
   };
   reportPage: { eyebrow: string; title: string; desc: string };
   reportForm: {
@@ -292,6 +296,10 @@ const ko: Dictionary = {
     doneTitle: "신청이 접수되었습니다",
     doneDesc: "이메일 클라이언트가 열리지 않았다면 아래 내용을 직접 보내주세요. 빠른 시일 내 연락드립니다.",
     priceUnit: "원",
+    mostBadge: "대부분 여기",
+    fastestBadge: "가장 빠른 방법",
+    saveDelayed: "DB 응답이 지연되어 자동 저장은 확인되지 않았습니다. 이메일로 접수된 내용을 확인해 연락드리겠습니다.",
+    saveFailed: "DB 저장 요청에 실패했습니다. 이메일로 접수된 내용을 확인해 연락드리겠습니다.",
   },
   reportPage: {
     eyebrow: "AI 명리 리포트",
@@ -475,6 +483,10 @@ const en: Dictionary = {
     doneTitle: "Your application has been received",
     doneDesc: "If your email client didn't open, please send the details below directly. We'll contact you shortly.",
     priceUnit: "KRW",
+    mostBadge: "Most people",
+    fastestBadge: "Fastest way",
+    saveDelayed: "The database was slow to respond, so we could not confirm the automatic save. We will check what came in by email and get back to you.",
+    saveFailed: "The save request failed. We will check what came in by email and get back to you.",
   },
   reportPage: {
     eyebrow: "AI Saju Report",
@@ -658,6 +670,10 @@ const ja: Dictionary = {
     doneTitle: "お申込みを受け付けました",
     doneDesc: "メールクライアントが開かなかった場合は、以下の内容を直接お送りください。近日中にご連絡いたします。",
     priceUnit: "ウォン",
+    mostBadge: "ほとんどの方はこちら",
+    fastestBadge: "いちばん早い方法",
+    saveDelayed: "データベースの応答が遅れたため、自動保存を確認できませんでした。メールで受け付けた内容を確認のうえご連絡します。",
+    saveFailed: "保存の要求に失敗しました。メールで受け付けた内容を確認のうえご連絡します。",
   },
   reportPage: {
     eyebrow: "AI四柱レポート",
@@ -841,6 +857,10 @@ const zh: Dictionary = {
     doneTitle: "申请已受理",
     doneDesc: "如果邮件客户端未打开，请直接发送以下内容。我们会尽快与您联系。",
     priceUnit: "韩元",
+    mostBadge: "大多数人选这个",
+    fastestBadge: "最快的方式",
+    saveDelayed: "数据库响应延迟，未能确认自动保存。我们会核对通过邮件收到的内容后与你联系。",
+    saveFailed: "保存请求失败。我们会核对通过邮件收到的内容后与你联系。",
   },
   reportPage: {
     eyebrow: "AI命理报告",
@@ -1024,6 +1044,10 @@ const fr: Dictionary = {
     doneTitle: "Votre demande a été reçue",
     doneDesc: "Si votre client de messagerie ne s'est pas ouvert, veuillez envoyer directement les informations ci-dessous. Nous vous contacterons rapidement.",
     priceUnit: "KRW",
+    mostBadge: "La plupart des gens",
+    fastestBadge: "Le plus rapide",
+    saveDelayed: "La base de données a mis trop de temps à répondre : l'enregistrement automatique n'a pas pu être confirmé. Nous vérifierons ce qui nous est parvenu par e-mail et vous recontacterons.",
+    saveFailed: "L'enregistrement a échoué. Nous vérifierons ce qui nous est parvenu par e-mail et vous recontacterons.",
   },
   reportPage: {
     eyebrow: "Rapport IA Saju",
