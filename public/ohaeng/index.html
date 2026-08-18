@@ -1588,6 +1588,7 @@ const LANGLABEL={ko:"KO",en:"EN",ja:"日",zh:"中",fr:"FR"};
 function detectLang(){
   const saved=store.get("ohaeng_lang",null);
   if(saved&&LANGS.indexOf(saved)>=0) return saved;
+  try{ const a=localStorage.getItem("aisaju_lang"); if(a&&LANGS.indexOf(a)>=0) return a }catch(e){}
   const n=(navigator.language||"ko").toLowerCase();
   if(n.startsWith("ko")) return "ko";
   if(n.startsWith("ja")) return "ja";
@@ -3461,7 +3462,10 @@ function applyLang(){
     if($("mate").classList.contains("on")) renderMate(); }
   if(typeof renderRepLen==="function"&&$("r4").classList.contains("on")){ renderRepLen(); buildReport() }
 }
-function setLang(l){ LANG=l; store.set("ohaeng_lang",l); applyLang() }
+function setLang(l){ LANG=l; store.set("ohaeng_lang",l);
+  /* Next.js 쪽(홈·상담·법적)은 raw 문자열 aisaju_lang 을 쓰므로 함께 기록한다 */
+  try{ localStorage.setItem("aisaju_lang", l) }catch(e){}
+  applyLang() }
 
 /* ═══════════ 성별 선택 ═══════════ */
 const GICON={f:"🌸",m:"🗻",a:"◇"};
