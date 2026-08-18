@@ -724,7 +724,7 @@ h1.big{font-size:41.1px;margin-bottom:6px}
   <div class="topline">
     <button class="shbtn" data-sh="1" aria-label="share"></button>
     <a class="brandtop" href="/" aria-label="AIsajuLab.com 홈으로"><span class="ck">✓</span><b id="brandT">AI사주랩<i>.com</i></b></a>
-        <a class="homebtn" href="/" aria-label="홈으로">홈 ⌂</a>
+        <a class="homebtn" href="/" aria-label="Home" data-i="navHome"></a>
     <div class="langsw sm"><button data-lang="ko">KO</button><button data-lang="en">EN</button><button data-lang="ja">日</button><button data-lang="zh">中</button><button data-lang="fr">FR</button></div>
   </div>
   <div class="fbanner" id="fbanner"></div>
@@ -850,9 +850,9 @@ h1.big{font-size:41.1px;margin-bottom:6px}
   <div class="sec-t" data-i="sumT"></div>
   <div class="card" id="sum1"></div>
   <div class="xsell">
-    <div class="xs-t">📌 이 결과, 더 깊게 볼까요?</div>
-    <button class="xs" onclick="openPay('report')"><b>AI 심층 리포트 · 990원</b><span>내 고민 반영 맞춤 해석 · 당일 카톡 발송 · 9월 런칭가(정가 2,900원)</span></button>
-    <button class="xs deep" onclick="openPay('consult')"><b>전문가 기본 상담 · 50,000원</b><span>리포트 + 전화/카톡 해석 · D+2일 · 경영지도사 최형철(30년 경력)</span></button>
+    <div class="xs-t" data-i="xsT"></div>
+    <button class="xs" onclick="openPay('report')"><b data-i="xsRep"></b><span data-i="xsRepD"></span></button>
+    <button class="xs deep" onclick="openPay('consult')"><b data-i="xsCon"></b><span data-i="xsConD"></span></button>
   </div>
   <div class="ctabox">
     <img class="char tiny" id="charB" alt="">
@@ -898,9 +898,9 @@ h1.big{font-size:41.1px;margin-bottom:6px}
   <div class="sec-t" data-i="gapT"></div>
   <div class="card" id="gap2"></div>
   <div class="xsell">
-    <div class="xs-t">📌 이 결과, 더 깊게 볼까요?</div>
-    <button class="xs" onclick="openPay('report')"><b>AI 심층 리포트 · 990원</b><span>내 고민 반영 맞춤 해석 · 당일 카톡 발송 · 9월 런칭가(정가 2,900원)</span></button>
-    <button class="xs deep" onclick="openPay('consult')"><b>전문가 기본 상담 · 50,000원</b><span>리포트 + 전화/카톡 해석 · D+2일 · 경영지도사 최형철(30년 경력)</span></button>
+    <div class="xs-t" data-i="xsT"></div>
+    <button class="xs" onclick="openPay('report')"><b data-i="xsRep"></b><span data-i="xsRepD"></span></button>
+    <button class="xs deep" onclick="openPay('consult')"><b data-i="xsCon"></b><span data-i="xsConD"></span></button>
   </div>
   <div class="ctabox">
     <img class="char tiny" id="charC" alt="">
@@ -916,7 +916,7 @@ h1.big{font-size:41.1px;margin-bottom:6px}
 <!-- ═══════ 마이페이지 ═══════ -->
 <div id="me" class="screen">
   <div class="appbar"><div class="appbar-in"><button class="back" data-back="intro">‹</button>
-    <div class="prog"><div class="prog-t"><span>마이페이지</span><span id="meAuth"></span></div>
+    <div class="prog"><div class="prog-t"><span data-i="navMe"></span><span id="meAuth"></span></div>
     <div class="prog-bar"><div class="prog-fill" style="width:100%"></div></div></div>
   </div></div>
   <div class="wrap" id="meBody"></div>
@@ -925,49 +925,49 @@ h1.big{font-size:41.1px;margin-bottom:6px}
 <!-- ═══════ 상담 신청 ═══════ -->
 <div id="cs" class="screen">
   <div class="appbar"><div class="appbar-in"><button class="back" data-back="intro">‹</button>
-    <div class="prog"><div class="prog-t"><span>전문가 상담</span><span>신청서</span></div>
+    <div class="prog"><div class="prog-t"><span data-i="navCs"></span><span data-i="navCsSub"></span></div>
     <div class="prog-bar"><div class="prog-fill" style="width:100%"></div></div></div>
   </div></div>
   <div class="wrap">
     <div class="bd-head">
-      <h2>전문가 상담 신청</h2>
-      <p>경영지도사가 사주 원국을 직접 대조해 해석합니다.<br>기본 상담 <b>50,000원</b> · 접수 후 영업일 2일 내 연락드립니다.</p>
+      <h2 data-i="csT"></h2>
+      <p data-i="csD"></p>
     </div>
     <div class="bd-card">
-      <div class="bd-l">이름 또는 별명 <span class="opt">필수</span></div>
+      <div class="bd-l"><span data-i="csName"></span> <span class="opt" data-i="csReq"></span></div>
       <input class="cs-in" id="csName" placeholder="예: 홍길동 / 길동님">
 
-      <div class="bd-l">연락받을 곳 <span class="opt">필수</span></div>
+      <div class="bd-l"><span data-i="csContact"></span> <span class="opt" data-i="csReq"></span></div>
       <input class="cs-in" id="csContact" placeholder="카카오톡 ID · 이메일 · 휴대폰 중 하나">
 
-      <div class="bd-l">달력</div>
+      <div class="bd-l" data-i="bdCalL"></div>
       <div class="bd-seg" id="csCal">
-        <button data-c="solar" class="on">양력</button>
-        <button data-c="lunar">음력</button>
+        <button data-c="solar" class="on" data-i="bdSolar"></button>
+        <button data-c="lunar" data-i="bdLunar"></button>
       </div>
       <label class="bd-leap" id="csLeapWrap" style="display:none">
-        <input type="checkbox" id="csLeap"><span>윤달입니다</span>
+        <input type="checkbox" id="csLeap"><span data-i="bdLeapL"></span>
       </label>
 
-      <div class="bd-l">생년월일</div>
+      <div class="bd-l" data-i="bdDateL"></div>
       <div class="bd-row">
         <select id="csY"></select><select id="csM"></select><select id="csD"></select>
       </div>
 
-      <div class="bd-l">태어난 시각 <span class="opt">알면 더 정확합니다</span></div>
+      <div class="bd-l"><span data-i="csHour"></span> <span class="opt" data-i="csHourOpt"></span></div>
       <select class="cs-in" id="csTime"></select>
 
-      <div class="bd-l">상담 주제</div>
+      <div class="bd-l" data-i="csTopic"></div>
       <select class="cs-in" id="csTopic"></select>
 
-      <div class="bd-l">더 알려주실 내용 <span class="opt">선택</span></div>
-      <textarea class="cs-in" id="csNote" rows="3" placeholder="지금 가장 궁금한 점, 상황을 적어주시면 상담이 깊어집니다."></textarea>
+      <div class="bd-l"><span data-i="csMore"></span> <span class="opt" data-i="csOpt"></span></div>
+      <textarea class="cs-in" id="csNote" rows="3" placeholder="" data-ph="csNotePH"></textarea>
 
       <label class="cs-agree"><input type="checkbox" id="csOk">
-        <span>상담 진행을 위해 위 정보를 수집·이용하는 데 동의합니다.
-        (보유기간 상담 종료 후 3개월 · <a href="/legal/#t2" target="_blank">개인정보처리방침</a>)</span></label>
+        <span><span data-i="csAgree"></span>
+        <span data-i="csAgree2"></span> <a href="/legal/#t2" target="_blank" data-i="csPriv"></a><span data-i="csAgree3"></span></span></label>
 
-      <button class="btn btn-p" id="csGo" style="width:100%" disabled>상담 신청하기</button>
+      <button class="btn btn-p" id="csGo" style="width:100%" disabled data-i="csGoBtn"></button>
       <div class="cs-done" id="csDone" style="display:none"></div>
     </div>
   </div>
@@ -976,35 +976,35 @@ h1.big{font-size:41.1px;margin-bottom:6px}
 <!-- ═══════ 생년월일 입력 (990원 리포트 · 만세력) ═══════ -->
 <div id="bd" class="screen">
   <div class="appbar"><div class="appbar-in"><button class="back" data-back="r1">‹</button>
-    <div class="prog"><div class="prog-t"><span>생년월일</span><span>사주 보정</span></div>
+    <div class="prog"><div class="prog-t"><span data-i="bdDateL"></span><span data-i="navSaju"></span></div>
     <div class="prog-bar"><div class="prog-fill" style="width:50%"></div></div></div>
   </div></div>
   <div class="wrap">
     <div class="bd-head">
-      <h2>태어난 날을 알려주세요</h2>
-      <p>사주 삼주(연·월·일)로 <b>타고난 기질</b>을 계산하고,<br>방금 하신 진단으로 <b>지금의 나</b>를 보정합니다.</p>
+      <h2 data-i="bdT"></h2>
+      <p data-i="bdD"></p>
     </div>
 
     <div class="bd-card">
-      <div class="bd-l">달력</div>
+      <div class="bd-l" data-i="bdCalL"></div>
       <div class="bd-seg" id="bdCal">
-        <button data-c="solar" class="on">양력</button>
-        <button data-c="lunar">음력</button>
+        <button data-c="solar" class="on" data-i="bdSolar"></button>
+        <button data-c="lunar" data-i="bdLunar"></button>
       </div>
       <label class="bd-leap" id="bdLeapWrap" style="display:none">
-        <input type="checkbox" id="bdLeap"><span>윤달입니다</span>
+        <input type="checkbox" id="bdLeap"><span data-i="bdLeapL"></span>
       </label>
 
-      <div class="bd-l">생년월일</div>
+      <div class="bd-l" data-i="bdDateL"></div>
       <div class="bd-row">
         <select id="bdY"></select>
         <select id="bdM"></select>
         <select id="bdD"></select>
       </div>
 
-      <p class="bd-note">태어난 <b>시각</b>은 받지 않습니다. 시각까지 반영한 정밀 해석은
-        <a href="#" id="bdConsult">전문가 상담</a>에서 도와드립니다.</p>
-      <button class="btn btn-p" id="bdGo" style="width:100%">사주 보정하고 리포트 만들기</button>
+      <p class="bd-note"><span data-i="bdNote"></span>
+        <a href="#" id="bdConsult" data-i="bdConsultA"></a><span data-i="bdNote2"></span></p>
+      <button class="btn btn-p" id="bdGo" style="width:100%" data-i="bdGoBtn"></button>
       <div class="bd-res" id="bdRes" style="display:none"></div>
     </div>
   </div>
@@ -1176,11 +1176,11 @@ h1.big{font-size:41.1px;margin-bottom:6px}
   <button class="btn btn-k sm" id="imgSh" style="margin-top:11px" data-i="imgShare"></button>
   <button class="btn btn-p sm" id="imgSv" style="margin-top:8px" data-i="imgSave"></button>
   <div class="aitip" id="aiTip">
-  <b>내 취향대로 더 다듬고 싶다면</b>
+  <b data-i="aiTipT"></b>
   <p data-i="aiTipD"></p>
-  <textarea class="wpta" id="aiMore" rows="2" placeholder="기타 원하시는 점 (예: 배경을 더 밝게 / 글씨를 더 크게 / 파스텔 톤으로)"></textarea>
+  <textarea class="wpta" id="aiMore" rows="2" placeholder="" data-ph="aiMorePH"></textarea>
   <div class="aitipr">
-    <button class="wpfixb" id="aiCopy">보정 문구 복사</button>
+    <button class="wpfixb" id="aiCopy" data-i="aiCopyB"></button>
     <button class="wpfixb g" id="aiGPT">ChatGPT</button>
     <button class="wpfixb g" id="aiGem">Gemini</button>
   </div>
@@ -2473,6 +2473,274 @@ Object.assign(L.fr, {
  barTab:'Barres', radarTab:'Vue radar', repCnt:'',
  shareMsg0:"Alors, quelles sont mes Cinq Phases ?  →  Le TOP 4 des solutions"
 });
+/* ═══ 다국어 사전 — 5차 배치 : 결제 · 사주보정 · 프리미엄 · 이벤트 ═══
+   이 영역은 사전에 키 자체가 없어 언어와 무관하게 한국어로 나오던 곳이다.
+   결제가 일어나는 화면이라 우선순위를 가장 높게 두었다.                */
+Object.assign(L.ko, {
+ xsT:'📌 이 결과, 더 깊게 볼까요?',
+ xsRep:'AI 심층 리포트 · 990원', xsRepD:'내 고민 반영 맞춤 해석 · 당일 카톡 발송 · 9월 런칭가(정가 2,900원)',
+ xsCon:'전문가 기본 상담 · 50,000원', xsConD:'리포트 + 전화/카톡 해석 · D+2일 · 경영지도사 최형철(30년 경력)',
+ payRepT:'AI 심층 리포트', payRepP:'990원 · 9월 런칭가 (정가 2,900원)',
+ payRep1:'아래 노란 버튼으로 <b>990원 결제</b> (금액 자동 입력)',
+ payRep2:'송금 완료 화면 캡처 + <b>내 결과 카드</b>를 카톡으로 전송',
+ payRep3:'<b>당일</b> 카톡으로 리포트를 받아보세요',
+ payConT:'전문가 기본 상담', payConP:'50,000원 · 리포트 + 전화/카톡 해석',
+ payCon1:'아래 노란 버튼에서 금액 <b>50,000원</b> 입력 후 송금',
+ payCon2:'송금 완료 화면 캡처 + <b>내 결과 카드</b>를 카톡으로 전송',
+ payCon3:'<b>2일 내</b> 리포트와 함께 전화/카톡 상담이 진행됩니다',
+ bdT:'태어난 날을 알려주세요',
+ bdD:'사주 삼주(연·월·일)로 <b>타고난 기질</b>을 계산하고,<br>방금 하신 진단으로 <b>지금의 나</b>를 보정합니다.',
+ bdCalL:'달력', bdSolar:'양력', bdLunar:'음력', bdLeapL:'윤달입니다', bdDateL:'생년월일',
+ bdNote:'태어난 <b>시각</b>은 받지 않습니다. 시각까지 반영한 정밀 해석은',
+ bdNote2:'에서 도와드립니다.', bdConsultA:'전문가 상담',
+ bdGoBtn:'사주 보정하고 리포트 만들기',
+ bdDone:'계산 완료', bdNative:'타고난 기질 (사주 삼주)',
+ bdMix:'보정 결과 (타고난 것 60% + 지금의 나 40%)',
+ bdMake:'이 결과로 리포트 만들기 →', bdRedo:'생년월일 다시 입력',
+ bdSrc:'사주 삼주', bdBoundary:'절기가 바뀌는 날이라 태어난 시각에 따라 달라질 수 있습니다',
+ bdMixNote:'타고난 기질 60% + 지금의 나 40%로 보정했습니다.',
+ bdGapPre:'가장 차이가 큰 기운은', bdGapStrong:'강하게', bdGapWeak:'약하게',
+ bdGapPost:'— 타고난 것보다 %D 쓰고 계십니다.',
+ premPdf:'PDF 리포트', premPdfD:'표지·목차 포함',
+ premWp:'폰 배경화면', premWpD:'내 화면 크기로', premNo:'발급번호',
+ wpFixT:'여백이 생기거나 잘렸나요?', wpFmtL:'받을 파일 형식',
+ wpPng:'또렷함 · 용량 큼', wpJpg:'가벼움 · 공유 편함',
+ wpMoreL:'더 바라시는 점', wpMoreOpt:'(선택)',
+ wpMorePH:'예: 배경을 조금 더 밝게 / 카드를 화면 가운데로 / 하단에 여백을 더 주세요',
+ wpCopyB:'보정 문구 복사', wpGPT:'ChatGPT 열기', wpGem:'Gemini 열기',
+ evT:'🎉 9월 정식 오픈 이벤트',
+ evD:'AI 심층 리포트 <em>990원</em> 런칭가 <s>2,900원</s> · 진단 후 결과 화면에서 신청 · <em>9/30까지</em>',
+ repCover:'심층 리포트'
+});
+
+Object.assign(L.en, {
+ xsT:'📌 Want to go deeper?',
+ xsRep:'AI in-depth report · 990 KRW', xsRepD:'Tailored to your question · sent same day by KakaoTalk · September launch price (list 2,900 KRW)',
+ xsCon:'Standard expert consultation · 50,000 KRW', xsConD:'Report + phone/KakaoTalk reading · within 2 days · Choi Hyungchul, 30 years',
+ payRepT:'AI in-depth report', payRepP:'990 KRW · September launch price (list 2,900 KRW)',
+ payRep1:'Tap the yellow button below to <b>pay 990 KRW</b> (amount filled in automatically)',
+ payRep2:'Send a screenshot of the completed transfer plus <b>your result card</b> by KakaoTalk',
+ payRep3:'Your report arrives by KakaoTalk <b>the same day</b>',
+ payConT:'Standard expert consultation', payConP:'50,000 KRW · report + phone/KakaoTalk reading',
+ payCon1:'Tap the yellow button below, enter <b>50,000 KRW</b> and send',
+ payCon2:'Send a screenshot of the completed transfer plus <b>your result card</b> by KakaoTalk',
+ payCon3:'<b>Within 2 days</b> you receive the report and the phone or KakaoTalk consultation',
+ bdT:'When were you born?',
+ bdD:'We calculate your <b>innate temperament</b> from the three pillars (year · month · day),<br>then correct it with the diagnosis you just took.',
+ bdCalL:'Calendar', bdSolar:'Solar', bdLunar:'Lunar', bdLeapL:'Leap month', bdDateL:'Date of birth',
+ bdNote:'We do not ask for the <b>hour</b> of birth. For a precise reading that includes it,',
+ bdNote2:'can help.', bdConsultA:'an expert consultation',
+ bdGoBtn:'Correct and build my report',
+ bdDone:'Calculation complete', bdNative:'Innate temperament (three pillars)',
+ bdMix:'Corrected result (innate 60% + you today 40%)',
+ bdMake:'Build the report from this →', bdRedo:'Enter the date again',
+ bdSrc:'Three pillars', bdBoundary:'This day falls on a solar-term boundary, so the result can shift with the hour of birth',
+ bdMixNote:'Corrected as innate temperament 60% + you today 40%.',
+ bdGapPre:'The largest gap is in', bdGapStrong:'more strongly', bdGapWeak:'more weakly',
+ bdGapPost:'— you are using it %D than you were born with.',
+ premPdf:'PDF report', premPdfD:'with cover and contents',
+ premWp:'Phone wallpaper', premWpD:'sized to your screen', premNo:'Issue no.',
+ wpFixT:'Margins or cropping?', wpFmtL:'File format',
+ wpPng:'sharper · larger file', wpJpg:'lighter · easier to share',
+ wpMoreL:'Anything else', wpMoreOpt:'(optional)',
+ wpMorePH:'e.g. brighten the background a little / centre the card / leave more space at the bottom',
+ wpCopyB:'Copy the fix prompt', wpGPT:'Open ChatGPT', wpGem:'Open Gemini',
+ evT:'🎉 September launch event',
+ evD:'AI in-depth report <em>990 KRW</em> launch price <s>2,900 KRW</s> · order from the result screen · <em>until 30 Sept</em>',
+ repCover:'In-depth report'
+});
+
+Object.assign(L.ja, {
+ xsT:'📌 この結果、もっと深く見てみますか?',
+ xsRep:'AI詳細レポート · 990ウォン', xsRepD:'悩みを反映した個別解釈 · 当日カカオトークで送付 · 9月ローンチ価格(通常2,900ウォン)',
+ xsCon:'専門家 基本相談 · 50,000ウォン', xsConD:'レポート + 電話/カカオトークでの解釈 · 2日以内 · 経営指導士 崔炯哲(30年の経験)',
+ payRepT:'AI詳細レポート', payRepP:'990ウォン · 9月ローンチ価格 (通常2,900ウォン)',
+ payRep1:'下の黄色いボタンから<b>990ウォンを決済</b>(金額は自動入力)',
+ payRep2:'送金完了画面のスクリーンショットと<b>結果カード</b>をカカオトークで送信',
+ payRep3:'<b>当日</b>カカオトークでレポートをお受け取りください',
+ payConT:'専門家 基本相談', payConP:'50,000ウォン · レポート + 電話/カカオトークでの解釈',
+ payCon1:'下の黄色いボタンで金額<b>50,000ウォン</b>を入力して送金',
+ payCon2:'送金完了画面のスクリーンショットと<b>結果カード</b>をカカオトークで送信',
+ payCon3:'<b>2日以内</b>にレポートとともに電話/カカオトークでの相談を行います',
+ bdT:'生まれた日を教えてください',
+ bdD:'四柱の三柱(年・月・日)から<b>生まれ持った気質</b>を計算し、<br>いま行った診断で<b>今の自分</b>を補正します。',
+ bdCalL:'暦', bdSolar:'新暦', bdLunar:'旧暦', bdLeapL:'閏月です', bdDateL:'生年月日',
+ bdNote:'生まれた<b>時刻</b>はお伺いしません。時刻まで反映した精密な解釈は',
+ bdNote2:'でお手伝いします。', bdConsultA:'専門家の相談',
+ bdGoBtn:'四柱で補正してレポートを作る',
+ bdDone:'計算完了', bdNative:'生まれ持った気質 (四柱三柱)',
+ bdMix:'補正結果 (生まれ持ったもの60% + 今の自分40%)',
+ bdMake:'この結果でレポートを作る →', bdRedo:'生年月日を入力し直す',
+ bdSrc:'四柱三柱', bdBoundary:'節気が変わる日のため、生まれた時刻によって変わることがあります',
+ bdMixNote:'生まれ持った気質60% + 今の自分40%で補正しました。',
+ bdGapPre:'最も差が大きい気は', bdGapStrong:'強く', bdGapWeak:'弱く',
+ bdGapPost:'— 生まれ持ったものより%D使っていらっしゃいます。',
+ premPdf:'PDFレポート', premPdfD:'表紙・目次つき',
+ premWp:'スマホ壁紙', premWpD:'ご自身の画面サイズで', premNo:'発行番号',
+ wpFixT:'余白ができたり切れたりしましたか?', wpFmtL:'受け取るファイル形式',
+ wpPng:'くっきり · 容量大', wpJpg:'軽い · 共有しやすい',
+ wpMoreL:'ご希望があれば', wpMoreOpt:'(任意)',
+ wpMorePH:'例: 背景をもう少し明るく / カードを画面の中央に / 下に余白をもう少し',
+ wpCopyB:'補正の文章をコピー', wpGPT:'ChatGPTを開く', wpGem:'Geminiを開く',
+ evT:'🎉 9月 正式オープン記念',
+ evD:'AI詳細レポート <em>990ウォン</em> ローンチ価格 <s>2,900ウォン</s> · 診断後、結果画面からお申し込み · <em>9/30まで</em>',
+ repCover:'詳細レポート'
+});
+
+Object.assign(L.zh, {
+ xsT:'📌 想把这个结果看得更深一些吗?',
+ xsRep:'AI 深度报告 · 990韩元', xsRepD:'结合你的困惑定制解读 · 当天用 KakaoTalk 发送 · 9月上线价(原价2,900韩元)',
+ xsCon:'专家基础咨询 · 50,000韩元', xsConD:'报告 + 电话/KakaoTalk 解读 · 2天内 · 经营指导师 崔炯哲(30年经验)',
+ payRepT:'AI 深度报告', payRepP:'990韩元 · 9月上线价 (原价2,900韩元)',
+ payRep1:'点击下方黄色按钮<b>支付990韩元</b>(金额自动填入)',
+ payRep2:'把转账完成的截图和<b>你的结果卡</b>用 KakaoTalk 发过来',
+ payRep3:'<b>当天</b>就能在 KakaoTalk 收到报告',
+ payConT:'专家基础咨询', payConP:'50,000韩元 · 报告 + 电话/KakaoTalk 解读',
+ payCon1:'点击下方黄色按钮，输入金额<b>50,000韩元</b>后转账',
+ payCon2:'把转账完成的截图和<b>你的结果卡</b>用 KakaoTalk 发过来',
+ payCon3:'<b>2天内</b>连同报告一起进行电话或 KakaoTalk 咨询',
+ bdT:'请告诉我们你的出生日期',
+ bdD:'用八字三柱(年·月·日)推算<b>天生的气质</b>，<br>再用你刚做的测试校正出<b>此刻的你</b>。',
+ bdCalL:'历法', bdSolar:'阳历', bdLunar:'农历', bdLeapL:'是闰月', bdDateL:'出生日期',
+ bdNote:'我们不询问出生<b>时辰</b>。包含时辰的精细解读，可由',
+ bdNote2:'为你提供。', bdConsultA:'专家咨询',
+ bdGoBtn:'用八字校正并生成报告',
+ bdDone:'计算完成', bdNative:'天生的气质 (八字三柱)',
+ bdMix:'校正结果 (天生60% + 此刻的你40%)',
+ bdMake:'用这个结果生成报告 →', bdRedo:'重新填写出生日期',
+ bdSrc:'八字三柱', bdBoundary:'这天正逢节气交替，结果可能随出生时辰而变化',
+ bdMixNote:'按天生气质60% + 此刻的你40%进行了校正。',
+ bdGapPre:'差距最大的气是', bdGapStrong:'更强', bdGapWeak:'更弱',
+ bdGapPost:'— 你用得比天生的%D。',
+ premPdf:'PDF 报告', premPdfD:'含封面与目录',
+ premWp:'手机壁纸', premWpD:'按你的屏幕尺寸', premNo:'发放编号',
+ wpFixT:'出现留白或被裁掉了吗?', wpFmtL:'要接收的文件格式',
+ wpPng:'清晰 · 体积大', wpJpg:'轻便 · 便于分享',
+ wpMoreL:'还有什么想调整的', wpMoreOpt:'(选填)',
+ wpMorePH:'例：背景再亮一点 / 把卡片放到画面正中 / 下方多留些空白',
+ wpCopyB:'复制调整用文字', wpGPT:'打开 ChatGPT', wpGem:'打开 Gemini',
+ evT:'🎉 9月正式上线活动',
+ evD:'AI 深度报告 <em>990韩元</em> 上线价 <s>2,900韩元</s> · 测试后在结果页面申请 · <em>至9/30</em>',
+ repCover:'深度报告'
+});
+
+Object.assign(L.fr, {
+ xsT:"📌 Envie d'aller plus loin ?",
+ xsRep:'Rapport IA approfondi · 990 KRW', xsRepD:"Lecture adaptée à votre question · envoyée le jour même par KakaoTalk · prix de lancement de septembre (tarif normal 2 900 KRW)",
+ xsCon:"Consultation d'expert · 50 000 KRW", xsConD:'Rapport + lecture par téléphone ou KakaoTalk · sous 2 jours · Choi Hyungchul, 30 ans de métier',
+ payRepT:'Rapport IA approfondi', payRepP:'990 KRW · prix de lancement de septembre (tarif normal 2 900 KRW)',
+ payRep1:'Appuyez sur le bouton jaune ci-dessous pour <b>payer 990 KRW</b> (montant pré-rempli)',
+ payRep2:"Envoyez par KakaoTalk la capture du transfert et <b>votre carte de résultat</b>",
+ payRep3:'Vous recevez le rapport par KakaoTalk <b>le jour même</b>',
+ payConT:"Consultation d'expert", payConP:'50 000 KRW · rapport + lecture par téléphone ou KakaoTalk',
+ payCon1:'Sur le bouton jaune ci-dessous, saisissez <b>50 000 KRW</b> puis envoyez',
+ payCon2:"Envoyez par KakaoTalk la capture du transfert et <b>votre carte de résultat</b>",
+ payCon3:'<b>Sous 2 jours</b>, vous recevez le rapport et la consultation par téléphone ou KakaoTalk',
+ bdT:'Quelle est votre date de naissance ?',
+ bdD:"Nous calculons votre <b>tempérament inné</b> à partir des trois piliers (année · mois · jour),<br>puis nous le corrigeons avec le diagnostic que vous venez de faire.",
+ bdCalL:'Calendrier', bdSolar:'Solaire', bdLunar:'Lunaire', bdLeapL:'Mois intercalaire', bdDateL:'Date de naissance',
+ bdNote:"Nous ne demandons pas l'<b>heure</b> de naissance. Pour une lecture précise qui l'inclut,",
+ bdNote2:'peut vous aider.', bdConsultA:"une consultation d'expert",
+ bdGoBtn:'Corriger et générer mon rapport',
+ bdDone:'Calcul terminé', bdNative:'Tempérament inné (trois piliers)',
+ bdMix:"Résultat corrigé (inné 60 % + vous aujourd'hui 40 %)",
+ bdMake:'Générer le rapport →', bdRedo:'Saisir à nouveau la date',
+ bdSrc:'Trois piliers', bdBoundary:"Ce jour tombe à un changement de terme solaire : le résultat peut varier selon l'heure de naissance",
+ bdMixNote:"Correction appliquée : tempérament inné 60 % + vous aujourd'hui 40 %.",
+ bdGapPre:"Le plus grand écart porte sur", bdGapStrong:'plus fortement', bdGapWeak:'plus faiblement',
+ bdGapPost:"— vous l'utilisez %D que ce avec quoi vous êtes né.",
+ premPdf:'Rapport PDF', premPdfD:'couverture et sommaire inclus',
+ premWp:"Fond d'écran", premWpD:'à la taille de votre écran', premNo:"N° d'émission",
+ wpFixT:'Des marges ou une image rognée ?', wpFmtL:'Format du fichier',
+ wpPng:'plus net · fichier lourd', wpJpg:'plus léger · facile à partager',
+ wpMoreL:'Autre souhait', wpMoreOpt:'(facultatif)',
+ wpMorePH:"ex. : éclaircir un peu le fond / centrer la carte / laisser plus d'espace en bas",
+ wpCopyB:'Copier le texte de retouche', wpGPT:'Ouvrir ChatGPT', wpGem:'Ouvrir Gemini',
+ evT:'🎉 Ouverture officielle en septembre',
+ evD:"Rapport IA approfondi <em>990 KRW</em> au lieu de <s>2 900 KRW</s> · à commander depuis l'écran de résultat · <em>jusqu'au 30 sept.</em>",
+ repCover:'Rapport approfondi'
+});
+/* ═══ 다국어 사전 — 6차 배치 : 상담 신청 폼 · 마이페이지 · 상단바 ═══ */
+Object.assign(L.ko, {
+ navSaju:"사주 보정",
+ navHome:'홈 ⌂', navMe:'마이페이지', navCs:'전문가 상담', navCsSub:'신청서',
+ csT:'전문가 상담 신청',
+ csD:'경영지도사가 사주 원국을 직접 대조해 해석합니다.<br>기본 상담 <b>50,000원</b> · 접수 후 영업일 2일 내 연락드립니다.',
+ csName:'이름 또는 별명', csReq:'필수', csContact:'연락받을 곳',
+ csHour:'태어난 시각', csHourOpt:'알면 더 정확합니다',
+ csTopic:'상담 주제', csMore:'더 알려주실 내용', csOpt:'선택',
+ csNotePH:'지금 가장 궁금한 점, 상황을 적어주시면 상담이 깊어집니다.',
+ csAgree:'상담 진행을 위해 위 정보를 수집·이용하는 데 동의합니다.',
+ csAgree2:'(보유기간 상담 종료 후 3개월 ·', csPriv:'개인정보처리방침', csAgree3:')',
+ csGoBtn:'상담 신청하기',
+ aiTipT:'내 취향대로 더 다듬고 싶다면',
+ aiMorePH:'기타 원하시는 점 (예: 배경을 더 밝게 / 글씨를 더 크게 / 파스텔 톤으로)',
+ aiCopyB:'보정 문구 복사'
+});
+Object.assign(L.en, {
+ navSaju:"Chart correction",
+ navHome:'Home ⌂', navMe:'My page', navCs:'Expert consultation', navCsSub:'Request form',
+ csT:'Request an expert consultation',
+ csD:'A certified management consultant reads your chart against your birth data himself.<br>Standard consultation <b>50,000 KRW</b> · we reply within 2 business days.',
+ csName:'Name or nickname', csReq:'required', csContact:'How to reach you',
+ csHour:'Hour of birth', csHourOpt:'more precise if you know it',
+ csTopic:'Topic', csMore:'Anything else you want to tell us', csOpt:'optional',
+ csNotePH:'Tell us what you are most curious about and what your situation is — it makes the reading deeper.',
+ csAgree:'I consent to the collection and use of the information above for this consultation.',
+ csAgree2:'(retained for 3 months after the consultation ·', csPriv:'Privacy policy', csAgree3:')',
+ csGoBtn:'Send my request',
+ aiTipT:'Want to tune it to your own taste?',
+ aiMorePH:'Anything else (e.g. brighter background / larger text / pastel tones)',
+ aiCopyB:'Copy the fix prompt'
+});
+Object.assign(L.ja, {
+ navSaju:"四柱で補正",
+ navHome:'ホーム ⌂', navMe:'マイページ', navCs:'専門家の相談', navCsSub:'申込書',
+ csT:'専門家への相談申込み',
+ csD:'経営指導士が四柱の命式を直接照らし合わせて解釈します。<br>基本相談 <b>50,000ウォン</b> · 受付後、営業日2日以内にご連絡します。',
+ csName:'お名前またはニックネーム', csReq:'必須', csContact:'ご連絡先',
+ csHour:'生まれた時刻', csHourOpt:'わかるとより正確です',
+ csTopic:'相談のテーマ', csMore:'ほかにお伝えいただきたいこと', csOpt:'任意',
+ csNotePH:'いま一番気になっていることや状況を書いていただくと、相談が深まります。',
+ csAgree:'相談の実施のため、上記の情報を収集・利用することに同意します。',
+ csAgree2:'(保有期間は相談終了後3か月 ·', csPriv:'プライバシーポリシー', csAgree3:')',
+ csGoBtn:'相談を申し込む',
+ aiTipT:'自分の好みに合わせてもっと整えたいときは',
+ aiMorePH:'その他のご希望 (例: 背景をもっと明るく / 文字をもっと大きく / パステル調に)',
+ aiCopyB:'補正の文章をコピー'
+});
+Object.assign(L.zh, {
+ navSaju:"八字校正",
+ navHome:'首页 ⌂', navMe:'我的页面', navCs:'专家咨询', navCsSub:'申请表',
+ csT:'申请专家咨询',
+ csD:'由经营指导师亲自对照八字原局进行解读。<br>基础咨询 <b>50,000韩元</b> · 受理后2个工作日内与你联系。',
+ csName:'姓名或昵称', csReq:'必填', csContact:'联系方式',
+ csHour:'出生时辰', csHourOpt:'知道的话会更准确',
+ csTopic:'咨询主题', csMore:'还想告诉我们的内容', csOpt:'选填',
+ csNotePH:'写下你现在最想知道的事和所处的状况，咨询会更深入。',
+ csAgree:'我同意为进行本次咨询收集并使用上述信息。',
+ csAgree2:'(保存期限为咨询结束后3个月 ·', csPriv:'隐私政策', csAgree3:')',
+ csGoBtn:'提交咨询申请',
+ aiTipT:'想按自己的口味再调整一下?',
+ aiMorePH:'其他希望 (例：背景更亮一些 / 字更大一些 / 换成粉彩色调)',
+ aiCopyB:'复制调整用文字'
+});
+Object.assign(L.fr, {
+ navSaju:"Correction du thème",
+ navHome:'Accueil ⌂', navMe:'Mon espace', navCs:"Consultation d'expert", navCsSub:'Formulaire',
+ csT:"Demander une consultation d'expert",
+ csD:"Un consultant en gestion agréé confronte lui-même votre thème à vos données de naissance.<br>Consultation standard <b>50 000 KRW</b> · réponse sous 2 jours ouvrés.",
+ csName:'Nom ou pseudonyme', csReq:'obligatoire', csContact:'Comment vous joindre',
+ csHour:'Heure de naissance', csHourOpt:'plus précis si vous la connaissez',
+ csTopic:'Sujet', csMore:'Ce que vous souhaitez ajouter', csOpt:'facultatif',
+ csNotePH:"Dites-nous ce qui vous préoccupe le plus et dans quelle situation vous êtes : la lecture y gagnera en profondeur.",
+ csAgree:"J'accepte la collecte et l'utilisation des informations ci-dessus pour cette consultation.",
+ csAgree2:'(conservation 3 mois après la consultation ·', csPriv:'Politique de confidentialité', csAgree3:')',
+ csGoBtn:'Envoyer ma demande',
+ aiTipT:"Envie de l'ajuster à votre goût ?",
+ aiMorePH:'Autre souhait (ex. : fond plus clair / texte plus grand / tons pastel)',
+ aiCopyB:'Copier le texte de retouche'
+});
 const ORDER=["wood","fire","earth","metal","water"];
 const EL={
  wood:{name:"목",han:"木",full:"목(木)",color:"#12B76A",soft:"#EAEFFD",tc:"#2E4FD0",jong:true,
@@ -3441,6 +3709,7 @@ function bars(el,A,prev){
 function applyLang(){
   document.documentElement.lang = LANG;
   document.querySelectorAll("[data-i]").forEach(el=>{ el.innerHTML=T(el.dataset.i) });
+  document.querySelectorAll("[data-ph]").forEach(el=>{ el.placeholder=T(el.dataset.ph) });
   document.querySelectorAll("[data-lang]").forEach(b=>b.classList.toggle("on",b.dataset.lang===LANG));
   const ph={pwIn:"pwPH",askIn:"askPH"}; Object.keys(ph).forEach(id=>{const e=$(id);if(e)e.placeholder=T(ph[id])});
   $("brandT").innerHTML = isEN()? 'AIsajuLab<i>.com</i>' : 'AI사주랩<i>.com</i>';
@@ -4020,14 +4289,14 @@ const openKakao=()=>{
 };
 /* ── 9월 수익화: 카카오페이 결제 안내 ── */
 const PAY={
- report:{t:"AI 심층 리포트",p:"990원 · 9월 런칭가 (정가 2,900원)",u:"https://qr.kakaopay.com/2810060111525252010020951ef07460",
-   s:['아래 노란 버튼으로 <b>990원 결제</b> (금액 자동 입력)','송금 완료 화면 캡처 + <b>내 결과 카드</b>를 카톡으로 전송','<b>당일</b> 카톡으로 리포트를 받아보세요']},
- consult:{t:"전문가 기본 상담",p:"50,000원 · 리포트 + 전화/카톡 해석",u:"https://qr.kakaopay.com/281006011152525201002095",
-   s:['아래 노란 버튼에서 금액 <b>50,000원</b> 입력 후 송금','송금 완료 화면 캡처 + <b>내 결과 카드</b>를 카톡으로 전송','<b>2일 내</b> 리포트와 함께 전화/카톡 상담이 진행됩니다']}};
+ report:{tk:"payRepT",pk:"payRepP",u:"https://qr.kakaopay.com/2810060111525252010020951ef07460",
+   sk:["payRep1","payRep2","payRep3"]},
+ consult:{tk:"payConT",pk:"payConP",u:"https://qr.kakaopay.com/281006011152525201002095",
+   sk:["payCon1","payCon2","payCon3"]}};
 let PAYK="report";
 function openPay(k){PAYK=k;const o=PAY[k];
-  $("payT").textContent=o.t;$("payP").textContent=o.p;
-  $("payS").innerHTML=o.s.map(x=>"<li>"+x+"</li>").join("");
+  $("payT").textContent=o.tk?T(o.tk):o.t;$("payP").textContent=o.pk?T(o.pk):o.p;
+  $("payS").innerHTML=(o.sk?o.sk.map(k=>T(k)):o.s).map(x=>"<li>"+x+"</li>").join("");
   $("paym").classList.add("on");
   window.AJ&&AJ.track("report_open",{props:{kind:k}});
 }
@@ -4068,7 +4337,7 @@ function payDone(){
 (function(){const e=$("evb");if(!e)return;
  if(new Date()<=new Date("2026-09-30T23:59:59+09:00")){
   e.className="fbanner on";
-  e.innerHTML='<b>🎉 9월 정식 오픈 이벤트</b><span>AI 심층 리포트 <em>990원</em> 런칭가 <s style="color:#9AA7BD">2,900원</s> · 진단 후 결과 화면에서 신청 · <em>9/30까지</em></span>';
+  e.innerHTML='<b>'+T("evT")+'</b><span>'+T("evD").replace("<s>",'<s style="color:#9AA7BD">')+'</span>';
  }})();
 
 /* ═══════════ Q&A · 통계 표시 ═══════════ */
@@ -5999,13 +6268,13 @@ function sajuNote(){
   const B=reportBase();
   if(!B) return "";
   const P=B.pillars, g=B.topGap, NM=k=>N(k);
-  const dir=g&&g.gap>0?"강하게":"약하게";
+  const dir=g&&g.gap>0?T("bdGapStrong"):T("bdGapWeak");
   return `<div class="bd-src">
-    <b>사주 삼주</b> ${P.y} · ${P.m} · ${P.d}
+    <b>${T("bdSrc")}</b> ${P.y} · ${P.m} · ${P.d}
     ${B.solar?`(양력 ${B.solar.y}.${B.solar.m}.${B.solar.d})`:""}
-    ${B.boundary?' · <b style="color:#B4791E">절기가 바뀌는 날</b>이라 태어난 시각에 따라 달라질 수 있습니다':""}
-    <br>타고난 기질 60% + 지금의 나 40%로 보정했습니다.
-    ${g?`가장 차이가 큰 기운은 <b>${NM(g.el)}</b> — 타고난 것보다 ${dir} 쓰고 계십니다.`:""}
+    ${B.boundary?` · <b style="color:#B4791E">${T("bdBoundary")}</b>`:""}
+    <br>${T("bdMixNote")}
+    ${g?`${T("bdGapPre")} <b>${NM(g.el)}</b> ${T("bdGapPost").replace("%D",dir)}`:""}
   </div>`;
 }
 
@@ -6035,26 +6304,26 @@ function repPrem(){
     <h5><b class="a4kb premb">★</b><i>·</i>${T("premT")}</h5>
     <p class="premd">${T("premD")}</p>
     <div class="premgrid">
-      <button class="premb1" id="pdfBtn"><b>PDF 리포트</b><span>표지·목차 포함</span></button>
-      <button class="premb1" id="wpBtn"><b>폰 배경화면</b><span>내 화면 크기로</span></button>
+      <button class="premb1" id="pdfBtn"><b>${T("premPdf")}</b><span>${T("premPdfD")}</span></button>
+      <button class="premb1" id="wpBtn"><b>${T("premWp")}</b><span>${T("premWpD")}</span></button>
     </div>
     <div class="wpfix" id="wpFix" style="display:none">
-      <b>여백이 생기거나 잘렸나요?</b>
+      <b>${T("wpFixT")}</b>
       <p>${T("wpFixD")}</p>
-      <div class="wpfl">받을 파일 형식</div>
+      <div class="wpfl">${T("wpFmtL")}</div>
       <div class="wpseg" id="wpFmt">
-        <button data-f="PNG" class="on">PNG<small>또렷함 · 용량 큼</small></button>
-        <button data-f="JPG">JPG / JPEG<small>가벼움 · 공유 편함</small></button>
+        <button data-f="PNG" class="on">PNG<small>${T("wpPng")}</small></button>
+        <button data-f="JPG">JPG / JPEG<small>${T("wpJpg")}</small></button>
       </div>
-      <div class="wpfl">더 바라시는 점 <span>(선택)</span></div>
-      <textarea class="wpta" id="wpMore" rows="2" placeholder="예: 배경을 조금 더 밝게 / 카드를 화면 가운데로 / 하단에 여백을 더 주세요"></textarea>
+      <div class="wpfl">${T("wpMoreL")} <span>${T("wpMoreOpt")}</span></div>
+      <textarea class="wpta" id="wpMore" rows="2" placeholder="${T("wpMorePH")}"></textarea>
       <div class="wpfixr">
-        <button class="wpfixb" id="wpCopy">보정 문구 복사</button>
-        <button class="wpfixb g" id="wpGPT">ChatGPT 열기</button>
-        <button class="wpfixb g" id="wpGem">Gemini 열기</button>
+        <button class="wpfixb" id="wpCopy">${T("wpCopyB")}</button>
+        <button class="wpfixb g" id="wpGPT">${T("wpGPT")}</button>
+        <button class="wpfixb g" id="wpGem">${T("wpGem")}</button>
       </div>
     </div>
-    <div class="premno">발급번호 ${no}</div>
+    <div class="premno">${T("premNo")} ${no}</div>
   </div>`+repPlan(C,A)+repSheet(C,A);
 }
 
@@ -6111,7 +6380,7 @@ async function makePDF(){
     cover.style.cssText=`width:${PDF_W}px;background:#fff;padding:${PDF_PAD}px;box-sizing:border-box`;
     cover.innerHTML=`<div style="text-align:center;padding:150px 0 40px">
         <div style="font-size:22px;font-weight:800;color:#5B8DEF;letter-spacing:.10em">AI사주랩 · AIsajuLab</div>
-        <div style="font-size:62px;font-weight:900;color:#12305F;margin-top:26px;line-height:1.28;letter-spacing:-.02em">${CT(C,"name")}<br>심층 리포트</div>
+        <div style="font-size:62px;font-weight:900;color:#12305F;margin-top:26px;line-height:1.28;letter-spacing:-.02em">${CT(C,"name")}<br>${T("repCover")}</div>
         <div style="width:96px;height:5px;background:#1D7CF2;margin:34px auto"></div>
         <div style="font-size:31px;color:#12305F;font-weight:900">${A.mod?esc(A.mod)+" ":""}「${esc(A.name)}」</div>
         <div style="font-size:21px;color:#5B6B85;margin-top:15px;font-weight:700">${N(A.strong)} ${Math.round(A.share[A.strong]*100)}% · 균형지수 ${A.bal}</div>
@@ -6678,19 +6947,17 @@ function showSajuResult(r){
   const mx=Math.max(...ORDER.map(k=>Math.max(r.score[k], B.score?B.score[k]:0)))||1;
   const g=B.topGap;
   box.innerHTML=`
-    <div class="bdr-h">계산 완료</div>
-    <div class="bdr-p">삼주 <b>${r.pillars.y} · ${r.pillars.m} · ${r.pillars.d}</b>
+    <div class="bdr-h">${T("bdDone")}</div>
+    <div class="bdr-p">${T("bdSrc")} <b>${r.pillars.y} · ${r.pillars.m} · ${r.pillars.d}</b>
       ${r.solar?`<span class="s">(양력 ${r.solar.y}.${r.solar.m}.${r.solar.d})</span>`:""}</div>
-    ${r.boundary?`<div class="bdr-w">이 날은 절기가 바뀌는 날이라, 태어난 시각에 따라 결과가 달라질 수 있습니다.
-      정확한 해석은 전문가 상담을 권합니다.</div>`:""}
-    <div class="bdr-l">타고난 기질 (사주 삼주)</div>
+    ${r.boundary?`<div class="bdr-w">${T("bdBoundary")}</div>`:""}
+    <div class="bdr-l">${T("bdNative")}</div>
     ${ORDER.map(k=>bar(k,r.score[k],mx)).join("")}
-    ${B.score&&B!==r?`<div class="bdr-l">보정 결과 (타고난 것 60% + 지금의 나 40%)</div>
+    ${B.score&&B!==r?`<div class="bdr-l">${T("bdMix")}</div>
       ${ORDER.map(k=>bar(k,B.score[k],mx)).join("")}`:""}
-    ${g?`<div class="bdr-g">가장 차이가 큰 기운은 <b>${N(g.el)}</b> —
-      타고난 것보다 ${g.gap>0?"강하게":"약하게"} 쓰고 계십니다.</div>`:""}
-    <button class="btn btn-p" id="bdNext" style="width:100%;margin-top:12px">이 결과로 리포트 만들기 →</button>
-    <button class="skiplink" id="bdRe">생년월일 다시 입력</button>`;
+    ${g?`<div class="bdr-g">${T("bdGapPre")} <b>${N(g.el)}</b> ${T("bdGapPost").replace("%D", g.gap>0?T("bdGapStrong"):T("bdGapWeak"))}</div>`:""}
+    <button class="btn btn-p" id="bdNext" style="width:100%;margin-top:12px">${T("bdMake")}</button>
+    <button class="skiplink" id="bdRe">${T("bdRedo")}</button>`;
   box.style.display="";
   const g1=$("bdGo"); if(g1) g1.style.display="none";
   $("bdNext").onclick=()=>{ p3=0; pick3={cat:null,blk:null,goal:null,note:""}; render3(); show("s3") };
