@@ -41,12 +41,28 @@ th{background:#F2F7FD;color:var(--ink);font-weight:800;white-space:nowrap}
 .tag{display:inline-block;background:#E3F0FF;color:#1D4FA8;border-radius:999px;
   padding:2px 9px;font-size:11.4px;font-weight:800;margin-left:5px}
 a{color:var(--blue)}
+/* ── 언어 선택 ── */
+.langsw{display:flex;gap:0;border:1.5px solid rgba(255,255,255,.34);border-radius:100px;
+  overflow:hidden;background:rgba(255,255,255,.10);width:max-content;margin-top:11px}
+.langsw button{border:0;background:none;font-family:inherit;font-size:12.2px;font-weight:800;
+  color:rgba(255,255,255,.74);padding:6px 11px;cursor:pointer;transition:.15s;letter-spacing:-.02em}
+.langsw button.on{background:var(--blue);color:#fff}
+@media(max-width:380px){.langsw button{font-size:11.2px;padding:5px 8px}}
+/* ── 정본 고지 ── */
+.notice{display:none;margin:0 0 14px;padding:11px 13px;border-radius:11px;
+  background:#FFF8E8;border:1px solid #F0DDB0;color:#7A5A18;font-size:12.8px;line-height:1.62}
+.notice.on{display:block}
+.notice b{color:#5E4410}
 </style></head>
 <body>
 
 <div class="top">
-  <a class="home" href="/">← AI사주랩 홈으로</a>
-  <h1>이용약관 · 개인정보처리방침 · 환불규정</h1>
+  <a class="home" href="/" id="lgHome">← AI사주랩 홈으로</a>
+  <h1 id="lgTitle">이용약관 · 개인정보처리방침 · 환불규정</h1>
+  <div class="langsw" id="langsw">
+    <button data-lang="ko" class="on">KO</button><button data-lang="en">EN</button>
+    <button data-lang="ja">日</button><button data-lang="zh">中</button><button data-lang="fr">FR</button>
+  </div>
 </div>
 
 <div class="tabs">
@@ -58,6 +74,7 @@ a{color:var(--blue)}
 </div>
 
 <div class="wrap">
+<div class="notice" id="lgNotice"></div>
 
 <!-- ════════ 이용약관 ════════ -->
 <section id="t1" class="on">
@@ -283,6 +300,745 @@ a{color:var(--blue)}
 </div>
 
 <script>
+/* ═══ 법적 페이지 참고 번역 — English / 日本語 ═══
+   한국어가 정본이며, 아래 번역은 이해를 돕기 위한 참고용이다.        */
+window.LEGAL = window.LEGAL || {};
+
+LEGAL.en = {
+_notice:'The Korean text is the official version. This translation is provided for convenience only. If there is any discrepancy, the Korean original prevails.',
+_title:'Terms of Service · Privacy Policy · Refund Policy',
+_home:'← Back to AIsajuLab',
+_tabs:['Terms','Privacy','Refunds','Business info','Contact · FAQ'],
+
+t1:`<h2>Article 1 (Purpose)</h2>
+<p>These Terms set out the conditions and procedures for using AIsajuLab (AIsajuLab.com, the "Service"), operated by Life &amp; Biz Growth Institute (the "Company"), together with the rights, obligations and responsibilities of the Company and the user.</p>
+<h2>Article 2 (Definitions)</h2>
+<ol>
+<li>"Service" means the myeongnihak-based content services provided by the Company, including the Five Elements personality self-check, the daily flow, friend compatibility, the AI in-depth report and consultations.</li>
+<li>"User" means any person who uses the Service under these Terms.</li>
+<li>"Paid Service" means a service used in return for payment.</li>
+<li>"Content" means all material provided by the Company — diagnostic results, interpretations, reports, images and so on — and <b>is produced using generative AI.</b></li>
+</ol>
+<h2>Article 3 (Effect and amendment of these Terms)</h2>
+<ol>
+<li>These Terms take effect when posted on the Service.</li>
+<li>The Company may amend these Terms where there is reasonable cause, within the limits of applicable law. Amendments are announced within the Service at least 7 days before they take effect, or at least 30 days beforehand where the change is unfavourable to users.</li>
+</ol>
+<h2>Article 4 (Scope of the Service)</h2>
+<p>The Company provides the following services.</p>
+<table>
+<tr><th>Service</th><th>Description</th><th>Fee</th></tr>
+<tr><td>Five Elements self-check</td><td>14-question self-check and result card</td><td>Free</td></tr>
+<tr><td>Today's flow</td><td>Daily reading based on your elements</td><td>Free</td></tr>
+<tr><td>Friend compatibility</td><td>Mutual compatibility through a shared link</td><td>Free</td></tr>
+<tr><td>AI in-depth report</td><td>Tailored reading reflecting your question (on-screen)</td><td>Free</td></tr>
+<tr><td><b>AI in-depth report — Premium</b></td><td>PDF report, phone wallpaper, 30-day plan, self-check worksheet</td><td><b>990 KRW</b></td></tr>
+<tr><td>Custom consultation</td><td>One-to-one with a certified management consultant</td><td>Quoted separately</td></tr>
+</table>
+<p>The Company may change the content and the fees of the Service, and will give advance notice on the Service when it does.</p>
+<h2>Article 5 (Suspension of the Service)</h2>
+<p>The Company may suspend the Service temporarily where unavoidable — maintenance and repair of equipment, loss of communications, or failure of external infrastructure such as hosting, database or payment services — and will give advance notice where possible.</p>
+<h2>Article 6 (Obligations of the user)</h2>
+<ol>
+<li>Users must not misappropriate another person's information or enter false information.</li>
+<li>Users must not reproduce, distribute, sell or commercially exploit the Content without the Company's prior consent. Personal use, and sharing your own result on social media, are permitted.</li>
+<li>Users must not interfere with the normal operation of the Service, for instance through automated access or excessive requests.</li>
+</ol>
+<h2>Article 7 (Intellectual property)</h2>
+<p>Intellectual property rights in the diagnostic questions, the interpretive framework, the symbol names, the design and the images belong to the Company. Personal results generated by a user may be used freely by that user for personal purposes.</p>
+<h2>Article 8 (Disclaimer)</h2>
+<div class="box warn">
+<p><b>The results and interpretations provided by the Service are AI-generated content grounded in myeongnihak. They are not scientific fact and do not guarantee the future.</b></p>
+<p>The Company is not responsible for decisions a user makes on the basis of the Service, or for their consequences. The Service does not replace professional diagnosis or advice in medicine, law, investment or psychotherapy.</p>
+<p>An expert consultation puts the reading side by side with your birth chart — a reality check. A solution generated by AI does not go through that step. Please choose for yourself what genuinely fits you.</p>
+</div>
+<p>The Company is not liable for damage arising from force majeure such as natural disaster or failure of an external system, absent intent or gross negligence.</p>
+<h2>Article 9 (Dispute resolution)</h2>
+<p>Disputes relating to use of the Service are governed by the laws of the Republic of Korea, and jurisdiction is determined under the Civil Procedure Act. Users may apply for mediation to the Consumer Dispute Settlement Commission (1372) or the Korea Consumer Agency.</p>
+<p class="upd">Effective: 16 August 2026</p>`,
+
+t2:`<div class="box blue">
+<p><b>AIsajuLab can be used without creating an account, and the Company does not collect personally identifying information such as your name, date of birth or contact details.</b> The diagnosis works from your answers alone.</p>
+</div>
+<h2>1. Information collected and why</h2>
+<table>
+<tr><th>Item</th><th>Description</th><th>Purpose</th><th>Retention</th></tr>
+<tr><td>Device identifier</td><td>A random value generated and stored in your browser (cannot identify a person)</td><td>Distinguishing repeat visits, restoring results</td><td>1 year</td></tr>
+<tr><td>Usage records</td><td>Visit time, screen navigation, button clicks, referral path (UTM), device type</td><td>Service improvement, usage statistics</td><td>1 year</td></tr>
+<tr><td>Answers and results</td><td>Selected options, the resulting element distribution and type</td><td>Providing and re-displaying results</td><td>Stored in your browser (deleted when you delete it)</td></tr>
+<tr><td>Payment-related</td><td>Issue number, time the payment was reported</td><td>Confirming delivery of paid content, handling disputes</td><td>5 years (E-Commerce Act)</td></tr>
+<tr><td>Consultation requests</td><td>What the user enters and sends</td><td>Conducting the consultation</td><td>3 months after the consultation ends</td></tr>
+</table>
+<p>Payment is made through a KakaoPay transfer link. <b>The Company does not collect or store payment details such as card or account numbers.</b></p>
+<h2>2. Processing entrusted to others</h2>
+<table>
+<tr><th>Processor</th><th>Entrusted work</th></tr>
+<tr><td>Supabase Inc.</td><td>Database storage and operation</td></tr>
+<tr><td>Netlify Inc.</td><td>Website hosting</td></tr>
+<tr><td>Kakao Corp.</td><td>Payment (transfer) and consultation channel</td></tr>
+</table>
+<p>These processors' servers may be located outside Korea; by using the Service you are deemed to consent to this.</p>
+<h2>3. Provision to third parties</h2>
+<p>The Company does not provide user information to third parties, except where lawfully requested by an investigative authority under applicable law.</p>
+<h2>4. Your rights and how to exercise them</h2>
+<p>You may request access to, correction of, deletion of, or suspension of processing of your information. Information held in your browser disappears immediately if you <b>clear the site data in your browser settings</b>. For anything else, please contact us at the details below.</p>
+<h2>5. Destruction</h2>
+<p>Information is destroyed without delay once the retention period has passed or the purpose has been achieved. Electronic files are deleted by a method that makes recovery impossible.</p>
+<h2>6. Data protection officer</h2>
+<div class="biz"><dl>
+<dt>Officer</dt><dd>Choi Hyungchul</dd>
+<dt>Phone</dt><dd>+82 10-6789-1341</dd>
+<dt>Email</dt><dd>calvincheoi@gmail.com</dd>
+</dl></div>
+<p>For advice on privacy infringement you may contact the Korea Internet &amp; Security Agency privacy centre (privacy.kisa.or.kr, 118) or the Personal Information Dispute Mediation Committee (kopico.go.kr, 1833-6972).</p>
+<p class="upd">Effective: 16 August 2026</p>`,
+
+t3:`<div class="box warn">
+<p><b>The AI in-depth report Premium (990 KRW) is digital content.</b></p>
+<p>Delivery is treated as having begun at the moment you press the <b>"Payment complete"</b> button in the app and the content is unlocked. Once delivery has begun, withdrawal of subscription is restricted under Article 17(2)5 of the Act on Consumer Protection in Electronic Commerce.</p>
+<p>This is stated in advance on the payment screen, and <b>a full refund is available at any time before delivery begins</b>.</p>
+</div>
+<h2>1. When withdrawal is possible</h2>
+<ul>
+<li><b>Before you press "Payment complete"</b> after paying (content not yet delivered) — full refund within 7 days</li>
+<li>You paid but <b>the content was not delivered because of a system error</b> — full refund</li>
+<li>The content <b>differs markedly from what was described or advertised, or the contract was performed differently</b> — within 3 months of supply, and within 30 days of becoming aware of it</li>
+<li>Mistaken payment, such as a duplicate charge — refunded after verification</li>
+</ul>
+<h2>2. When withdrawal is restricted</h2>
+<ul>
+<li>After you have pressed "Payment complete" and the PDF report, wallpaper and other content have been delivered</li>
+<li>A simple change of mind, or subjective dissatisfaction with the reading</li>
+</ul>
+<p>Even in these cases, a refund is available if the content was not properly delivered or has an evident defect.</p>
+<h2>3. How to request a refund</h2>
+<ol>
+<li>Tell us your <b>issue number</b> (shown at the foot of the report, e.g. AJ-260816-1234) and the time of payment, via the contact details below or our KakaoTalk channel.</li>
+<li>The Company will check and reply on whether a refund applies <b>within 3 business days</b> of receipt.</li>
+<li>Once confirmed, the refund is made <b>within 3 business days</b> to the method you paid with. For KakaoPay transfers, the money is returned to the account you sent it from.</li>
+</ol>
+<h2>4. Paid consultations</h2>
+<p>Consultations are handled by reservation date. Cancellation before the consultation begins is refunded in full; once it has begun, the amount for the part already delivered is deducted.</p>
+<p class="upd">Effective: 16 August 2026</p>`,
+
+t4:`<h2>Business information</h2>
+<div class="biz"><dl>
+<dt>Business name</dt><dd>Life &amp; Biz Growth Institute (라이프앤비즈 성장 연구소) <span class="tag">AIsajuLab</span></dd>
+<dt>Category</dt><dd>Associations and organisations, repair and other personal services · Fortune-telling and similar services</dd>
+<dt>Representative</dt><dd>Choi Hyungchul</dd>
+<dt>Registration no.</dt><dd>688-13-03146</dd>
+<dt>Mail-order licence</dt><dd><span style="opacity:.85">Registration pending (expected August 2026)</span></dd>
+<dt>Address</dt><dd>103-602, 60 Olympic-ro 78-gil, Gangdong-gu, Seoul, Republic of Korea</dd>
+<dt>Phone</dt><dd>+82 10-6789-1341</dd>
+<dt>Email</dt><dd>calvincheoi@gmail.com</dd>
+<dt>Hosting</dt><dd>Netlify, Inc.</dd>
+</dl></div>
+<h2>Customer enquiries</h2>
+<p>For payment, refunds or results, please contact us through KakaoTalk open chat or the details above. We work through enquiries in the order received and reply <b>within 2 business days</b>.</p>
+<h2>Dispute resolution</h2>
+<p>Disputes between the Company and a user follow the Consumer Dispute Resolution Criteria under the Framework Act on Consumers. If a matter cannot be settled amicably, you may apply for mediation through the Consumer Counselling Centre (1372) or the Korea Consumer Agency.</p>
+<p class="upd">Last updated: 16 August 2026</p>`,
+
+t5:`<h2>Contact us</h2>
+<div class="box blue">
+<p>We may not be able to reply immediately. Enquiries are handled in the order received, <b>within 2 business days</b>. For <b>payment and refund</b> matters, including your issue number speeds things up considerably.</p>
+</div>
+<table>
+<tr><th>Type</th><th>What to include</th><th>Where</th></tr>
+<tr><td><b>I paid but see no result</b></td><td>Time of payment, screenshot of the transfer</td><td>KakaoTalk · Email</td></tr>
+<tr><td><b>Refund request</b></td><td>Issue number, time of payment, reason</td><td>KakaoTalk · Email</td></tr>
+<tr><td>Questions about a result</td><td>Screenshot of the result card</td><td>KakaoTalk</td></tr>
+<tr><td>Booking or changing a consultation</td><td>Preferred date and time</td><td>KakaoTalk</td></tr>
+<tr><td>Suggestions and bug reports</td><td>Screenshot, device used</td><td>Email</td></tr>
+</table>
+<p>KakaoTalk open chat <a href="https://open.kakao.com/o/gj3iUKai" target="_blank">open.kakao.com/o/gj3iUKai</a> · Email calvincheoi@gmail.com · Phone +82 10-6789-1341</p>
+<h2>Frequently asked questions</h2>
+<h3>Do I need to create an account?</h3>
+<p>No. You can start straight away. We do not ask for your name or contact details either.</p>
+<h3>My result has disappeared</h3>
+<p>Results are stored in your browser. They are lost if you used private browsing or cleared your browser data. Take the check again — if an earlier record remains, it is restored automatically.</p>
+<h3>What is in the 990 KRW report?</h3>
+<p>A PDF report, a phone wallpaper sized to your screen, a 30-day plan and a self-check worksheet. The free report is for reading on screen; premium is yours to keep as files.</p>
+<h3>I paid but the report has not appeared</h3>
+<p>After sending the payment through KakaoPay, you need to press the <b>"Payment complete · Get my report"</b> button on screen to unlock it. If you have not pressed it, go back to the result screen and do so. If it still does not work, please get in touch.</p>
+<h3>Why do you not ask for my birth time?</h3>
+<p>Many people do not know it, and a meaningful reading is possible from the year, month and day alone. A precise reading that includes the hour is handled in an expert consultation.</p>
+<h3>My birthday is lunar and falls in a leap month</h3>
+<p>Choose <b>lunar</b> on the birth date screen and a <b>leap month</b> checkbox appears. Tick it and the calculation follows the leap month.</p>
+<h3>My result is different from last time</h3>
+<p>Different answers give different results. It is natural for answers to shift with your mood or circumstances. To see your innate temperament, we recommend the report that includes the birth-date correction.</p>
+<h3>Can I trust the result?</h3>
+<p>This service is a tool for understanding yourself. It is AI-generated content grounded in myeongnihak; it is not scientific fact and does not guarantee the future. Nothing here is presented as a fixed destiny — important decisions are yours to make.</p>
+<p class="upd">Last updated: 16 August 2026</p>`
+};
+
+LEGAL.ja = {
+_notice:'韓国語版が正本です。この翻訳は理解を助けるための参考用であり、内容に相違がある場合は韓国語の原文が優先します。',
+_title:'利用規約 · プライバシーポリシー · 返金規定',
+_home:'← AIsajuLab ホームへ',
+_tabs:['利用規約','プライバシー','返金・撤回','事業者情報','お問い合わせ · FAQ'],
+
+t1:`<h2>第1条 (目的)</h2>
+<p>本規約は、ライフアンドビズ(Life &amp; Biz) 成長研究所(以下「当社」)が運営する AIsajuLab(AIsajuLab.com、以下「本サービス」)の利用条件および手続き、ならびに当社と利用者の権利・義務・責任事項を定めることを目的とします。</p>
+<h2>第2条 (定義)</h2>
+<ol>
+<li>「本サービス」とは、当社が提供する五行性格の自己診断、今日の流れ、友だちとの五行相性、AI詳細レポート、相談など、命理学にもとづくコンテンツサービスをいいます。</li>
+<li>「利用者」とは、本規約に従って本サービスを利用する者をいいます。</li>
+<li>「有料サービス」とは、利用者が代金を支払って利用するサービスをいいます。</li>
+<li>「コンテンツ」とは、当社が提供する診断結果、解釈、レポート、画像などすべての資料をいい、<b>生成AIを用いて作成されます。</b></li>
+</ol>
+<h2>第3条 (規約の効力および変更)</h2>
+<ol>
+<li>本規約は、本サービスの画面に掲示することにより効力を生じます。</li>
+<li>当社は合理的な事由がある場合、関係法令に違反しない範囲で本規約を変更することができ、変更後の規約は適用日の7日前から本サービス内に告知します。利用者に不利な変更の場合は30日前から告知します。</li>
+</ol>
+<h2>第4条 (サービスの内容)</h2>
+<p>当社は次のサービスを提供します。</p>
+<table>
+<tr><th>区分</th><th>内容</th><th>利用料</th></tr>
+<tr><td>五行性格の自己診断</td><td>14問の自己診断および結果カード</td><td>無料</td></tr>
+<tr><td>今日の流れ</td><td>自分の五行にもとづく日々の解釈</td><td>無料</td></tr>
+<tr><td>友だちとの五行相性</td><td>リンク共有による相互の相性</td><td>無料</td></tr>
+<tr><td>AI詳細レポート</td><td>悩みの類型を反映した個別解釈(画面での閲覧)</td><td>無料</td></tr>
+<tr><td><b>AI詳細レポート プレミアム</b></td><td>PDFレポート、スマホ壁紙、30日の実践プラン、セルフチェック ワークシート</td><td><b>990ウォン</b></td></tr>
+<tr><td>オーダーメイド相談</td><td>経営指導士による1対1の相談</td><td>別途ご案内</td></tr>
+</table>
+<p>当社はサービスの内容および利用料を変更することができ、変更する場合は本サービスの画面に事前告知します。</p>
+<h2>第5条 (サービスの中断)</h2>
+<p>当社は、設備の点検・補修、通信の途絶、外部インフラ(ホスティング・データベース・決済サービス等)の障害など、やむを得ない事由がある場合、本サービスを一時中断することができ、可能な場合は事前に告知します。</p>
+<h2>第6条 (利用者の義務)</h2>
+<ol>
+<li>利用者は、他人の情報を盗用したり虚偽の情報を入力してはなりません。</li>
+<li>利用者は、当社の事前同意なくコンテンツを複製・配布・販売し、または営利目的で利用してはなりません。ただし、個人的な利用および本人の結果のSNSでの共有は認められます。</li>
+<li>利用者は、自動化プログラムによるアクセスや過度なリクエストなど、本サービスの正常な運営を妨げる行為をしてはなりません。</li>
+</ol>
+<h2>第7条 (知的財産権)</h2>
+<p>本サービスに含まれる診断項目、解釈体系、シンボル名、デザイン、画像などに関する知的財産権は当社に帰属します。利用者が生成した個人の結果物は、利用者が個人的な用途で自由に使用できます。</p>
+<h2>第8条 (免責)</h2>
+<div class="box warn">
+<p><b>本サービスが提供する診断結果および解釈は、命理学にもとづくAI生成コンテンツであり、科学的事実や未来を保証するものではありません。</b></p>
+<p>当社は、利用者が本サービスの結果を根拠として行った意思決定およびその結果について責任を負いません。本サービスは、医療・法律・投資・心理療法など専門家の診断や助言に代わるものではありません。</p>
+<p>専門家の鑑定は四柱の命式と照らし合わせる工程を経ますが、AIが提示するソリューションはその工程を経ていません。ご自身に合う内容をご自身で選んでご活用ください。</p>
+</div>
+<p>当社は、天災地変や外部システムの障害など不可抗力による損害について、故意または重大な過失がない限り責任を負いません。</p>
+<h2>第9条 (紛争の解決)</h2>
+<p>本サービスの利用に関する紛争は大韓民国の法律によるものとし、管轄裁判所は民事訴訟法により定めます。利用者は消費者紛争調停委員会(1372)または韓国消費者院に紛争調停を申請することができます。</p>
+<p class="upd">施行日: 2026年8月16日</p>`,
+
+t2:`<div class="box blue">
+<p><b>AIsajuLab は会員登録なしでご利用いただけ、氏名・生年月日・連絡先など個人を識別できる情報は収集しません。</b>診断は設問への回答のみで行われます。</p>
+</div>
+<h2>1. 収集する情報と利用目的</h2>
+<table>
+<tr><th>項目</th><th>内容</th><th>目的</th><th>保有期間</th></tr>
+<tr><td>端末識別値</td><td>ブラウザに無作為に生成・保存される任意の値(個人の識別は不可)</td><td>重複訪問の区別、結果の復元</td><td>1年</td></tr>
+<tr><td>利用記録</td><td>訪問時刻、画面遷移、ボタンのクリック、流入経路(UTM)、端末の種類</td><td>サービス改善、利用統計</td><td>1年</td></tr>
+<tr><td>診断の回答・結果</td><td>設問の選択値、算出された五行の分布・類型</td><td>結果の提供および再閲覧</td><td>ブラウザ内に保存(利用者が削除すると消滅)</td></tr>
+<tr><td>決済関連</td><td>発行番号、決済申告の時刻</td><td>有料コンテンツ提供の確認、紛争対応</td><td>5年(電子商取引法)</td></tr>
+<tr><td>相談の申込み</td><td>利用者がご自身で入力・送信した内容</td><td>相談の実施</td><td>相談終了後3か月</td></tr>
+</table>
+<p>決済はカカオペイの送金リンクを通じて行われ、<b>当社は利用者のカード番号・口座番号など決済情報を収集または保管しません。</b></p>
+<h2>2. 処理の委託</h2>
+<table>
+<tr><th>受託者</th><th>委託業務</th></tr>
+<tr><td>Supabase Inc.</td><td>データベースの保管および運用</td></tr>
+<tr><td>Netlify Inc.</td><td>ウェブサイトのホスティング</td></tr>
+<tr><td>カカオ㈱</td><td>決済(送金)および相談チャンネルの運営</td></tr>
+</table>
+<p>受託者のサーバーは国外に所在する場合があり、利用者は本サービスを利用することによりこれに同意したものとみなされます。</p>
+<h2>3. 第三者提供</h2>
+<p>当社は利用者の情報を第三者に提供しません。ただし、法令に基づく捜査機関等の適法な要請がある場合は例外とします。</p>
+<h2>4. 利用者の権利と行使方法</h2>
+<p>利用者は、ご自身の情報について閲覧・訂正・削除・処理停止を求めることができます。ブラウザに保存された情報は、<b>ブラウザの設定でサイトデータを削除</b>すると直ちに消滅します。その他のご請求は下記の連絡先までお申し出ください。</p>
+<h2>5. 破棄の手続き</h2>
+<p>保有期間が経過し、または処理目的が達成された情報は遅滞なく破棄します。電子ファイルは復元できない方法で削除します。</p>
+<h2>6. 個人情報保護責任者</h2>
+<div class="biz"><dl>
+<dt>責任者</dt><dd>崔炯哲(チェ・ヒョンチョル)</dd>
+<dt>連絡先</dt><dd>+82 10-6789-1341</dd>
+<dt>メール</dt><dd>calvincheoi@gmail.com</dd>
+</dl></div>
+<p>個人情報の侵害に関するご相談は、個人情報侵害申告センター(privacy.kisa.or.kr、118)、個人情報紛争調停委員会(kopico.go.kr、1833-6972)へお問い合わせいただけます。</p>
+<p class="upd">施行日: 2026年8月16日</p>`,
+
+t3:`<div class="box warn">
+<p><b>AI詳細レポート プレミアム(990ウォン)はデジタルコンテンツです。</b></p>
+<p>決済後、アプリで<b>「入金完了」ボタンを押してコンテンツのロックが解除された時点</b>から「提供が開始された」ものとみなします。提供が開始された後は、「電子商取引等における消費者保護に関する法律」第17条第2項第5号により、申込みの撤回が制限されます。</p>
+<p>この点は決済の画面でも事前にご案内しており、<b>提供の開始前であればいつでも全額返金</b>いたします。</p>
+</div>
+<h2>1. 申込みの撤回ができる場合</h2>
+<ul>
+<li>決済後、<b>「入金完了」ボタンを押す前</b>(コンテンツ未提供の状態) — 7日以内に全額返金</li>
+<li>決済したが<b>システムの不具合によりコンテンツが提供されなかった場合</b> — 全額返金</li>
+<li>コンテンツの内容が表示・広告と<b>著しく異なる、または契約内容と異なって履行された場合</b> — 供給を受けた日から3か月以内、その事実を知った日から30日以内</li>
+<li>重複決済など利用者の操作ミスによる誤決済 — 確認のうえ返金</li>
+</ul>
+<h2>2. 申込みの撤回が制限される場合</h2>
+<ul>
+<li>「入金完了」ボタンを押し、PDFレポート・壁紙などのコンテンツが提供された後</li>
+<li>単なる気変わり、または診断結果・解釈の内容に対する主観的な不満</li>
+</ul>
+<p>ただし上記に該当する場合でも、コンテンツが正常に提供されなかった、または明らかな瑕疵がある場合は返金の対象となります。</p>
+<h2>3. 返金の申請方法</h2>
+<ol>
+<li>下記の連絡先またはカカオトークチャンネルへ、<b>発行番号</b>(レポート下部に表示、例: AJ-260816-1234)と決済日時をお知らせください。</li>
+<li>当社は受付日から<b>3営業日以内</b>に確認し、返金の可否をご案内します。</li>
+<li>返金が確定しましたら、決済された手段へ<b>3営業日以内</b>に返金します。カカオペイの送金で決済された場合は、送金元の口座へお返しします。</li>
+</ol>
+<h2>4. 有料相談</h2>
+<p>相談は予約日を基準に処理します。相談開始前の取消しは全額返金し、相談が開始された後は、進行した部分の代金を差し引いて返金します。</p>
+<p class="upd">施行日: 2026年8月16日</p>`,
+
+t4:`<h2>事業者情報</h2>
+<div class="biz"><dl>
+<dt>商号</dt><dd>ライフアンドビズ(Life &amp; Biz) 成長研究所 <span class="tag">AIsajuLab</span></dd>
+<dt>業態 · 種目</dt><dd>協会および団体、修理その他の個人サービス業 · 占術および類似サービス業</dd>
+<dt>代表者</dt><dd>崔炯哲(チェ・ヒョンチョル)</dd>
+<dt>事業者登録番号</dt><dd>688-13-03146</dd>
+<dt>通信販売業申告</dt><dd><span style="opacity:.85">申告予定 (2026年8月中)</span></dd>
+<dt>所在地</dt><dd>大韓民国 ソウル特別市 江東区 オリンピック路78ギル60, 103棟602号</dd>
+<dt>電話番号</dt><dd>+82 10-6789-1341</dd>
+<dt>メール</dt><dd>calvincheoi@gmail.com</dd>
+<dt>ホスティング提供</dt><dd>Netlify, Inc.</dd>
+</dl></div>
+<h2>お客様のお問い合わせ</h2>
+<p>決済・返金・結果の確認などのお問い合わせは、カカオトークのオープンチャットまたは上記の連絡先へお寄せください。受付順に確認し、<b>営業日基準で2日以内</b>にご返信します。</p>
+<h2>紛争解決の基準</h2>
+<p>当社と利用者の間の紛争は、消費者基本法にもとづく消費者紛争解決基準に従います。円満に解決しない場合は、消費者相談センター(1372)または韓国消費者院を通じて調停を申請できます。</p>
+<p class="upd">最終更新: 2026年8月16日</p>`,
+
+t5:`<h2>お問い合わせ</h2>
+<div class="box blue">
+<p>お問い合わせの受付後、すぐにご返信できない場合があります。<b>営業日基準で2日以内</b>に、受付順に確認してご返信します。お急ぎの<b>決済・返金</b>のお問い合わせは、発行番号を併記いただくと処理が早くなります。</p>
+</div>
+<table>
+<tr><th>お問い合わせの種類</th><th>必要な情報</th><th>受付先</th></tr>
+<tr><td><b>決済したのに結果が見えません</b></td><td>決済日時、送金のスクリーンショット</td><td>カカオトーク · メール</td></tr>
+<tr><td><b>返金の申請</b></td><td>発行番号、決済日時、理由</td><td>カカオトーク · メール</td></tr>
+<tr><td>診断結果・解釈のお問い合わせ</td><td>結果カードのスクリーンショット</td><td>カカオトーク</td></tr>
+<tr><td>相談の予約・変更</td><td>ご希望の日時</td><td>カカオトーク</td></tr>
+<tr><td>その他のご提案・不具合のご報告</td><td>画面のスクリーンショット、ご利用の端末</td><td>メール</td></tr>
+</table>
+<p>カカオトーク オープンチャット <a href="https://open.kakao.com/o/gj3iUKai" target="_blank">open.kakao.com/o/gj3iUKai</a> · メール calvincheoi@gmail.com · 電話 +82 10-6789-1341</p>
+<h2>よくある質問</h2>
+<h3>会員登録は必要ですか?</h3>
+<p>いいえ。登録なしですぐに診断できます。お名前や連絡先もお伺いしません。</p>
+<h3>診断結果が消えてしまいました</h3>
+<p>結果はブラウザに保存されます。シークレットモードでご覧になった場合や、ブラウザのデータを消去された場合は消えます。もう一度診断していただくか、以前の記録が残っていれば自動的に復元されます。</p>
+<h3>990ウォンのレポートには何が入っていますか?</h3>
+<p>PDFレポート、ご自身の画面サイズに合わせたスマホ壁紙、30日の実践プラン、セルフチェック ワークシートが含まれます。無料のレポートは画面で読むもので、プレミアムはファイルとして手元に残せます。</p>
+<h3>決済したのにレポートが出ません</h3>
+<p>カカオペイで送金されたあと、アプリ画面の<b>「入金完了 · レポートを受け取る」</b>ボタンを押していただくとロックが解除されます。押されていない場合は結果画面に戻って押してください。それでも解決しない場合はお問い合わせください。</p>
+<h3>生まれた時刻はなぜ聞かないのですか?</h3>
+<p>時刻をご存じない方が多く、時刻がなくても年・月・日の三柱で十分に意味のある解釈が可能だからです。時刻まで反映した精密な解釈は専門家の相談で扱います。</p>
+<h3>旧暦の誕生日で閏月の場合は?</h3>
+<p>生年月日の入力画面で<b>旧暦</b>を選ぶと<b>閏月</b>のチェック欄が現れます。チェックすると閏月を基準に計算します。</p>
+<h3>診断結果が以前と違って出ます</h3>
+<p>設問への回答が変われば結果も変わります。その日の気分や状況によって答えが変わるのは自然なことです。生まれ持った気質をご覧になりたい場合は、生年月日にもとづく補正が入ったレポートをおすすめします。</p>
+<h3>結果は信じてよいのですか?</h3>
+<p>本サービスは自己理解を助ける道具です。命理学にもとづくAI生成コンテンツであり、科学的事実や未来を保証するものではありません。運命を断定せず、大切な決断はご自身で下されることをおすすめします。</p>
+<p class="upd">最終更新: 2026年8月16日</p>`
+};
+/* ═══ 법적 페이지 참고 번역 — 中文 / Français ═══ */
+window.LEGAL = window.LEGAL || {};
+
+LEGAL.zh = {
+_notice:'韩语版本为正式文本。本翻译仅供参考，如有出入，以韩语原文为准。',
+_title:'服务条款 · 隐私政策 · 退款规定',
+_home:'← 返回 AIsajuLab 首页',
+_tabs:['服务条款','隐私政策','退款与撤销','企业信息','联系 · FAQ'],
+
+t1:`<h2>第1条 (目的)</h2>
+<p>本条款旨在规定 Life &amp; Biz 成长研究所(以下称「本公司」)运营的 AIsajuLab(AIsajuLab.com，以下称「本服务」)的使用条件与流程，以及本公司与用户的权利、义务和责任。</p>
+<h2>第2条 (定义)</h2>
+<ol>
+<li>「本服务」指本公司提供的五行性格自测、今日运势、朋友五行配对、AI 深度报告、咨询等以命理学为基础的内容服务。</li>
+<li>「用户」指依照本条款使用本服务的人。</li>
+<li>「付费服务」指用户支付费用后使用的服务。</li>
+<li>「内容」指本公司提供的测试结果、解读、报告、图片等全部资料，<b>并由生成式 AI 制作。</b></li>
+</ol>
+<h2>第3条 (条款的效力与变更)</h2>
+<ol>
+<li>本条款自在本服务页面公示之时起生效。</li>
+<li>本公司在有合理事由时，可在不违反相关法令的范围内变更本条款；变更后的条款将于适用日前 7 天在本服务内公告。对用户不利的变更，将于 30 天前公告。</li>
+</ol>
+<h2>第4条 (服务内容)</h2>
+<p>本公司提供以下服务。</p>
+<table>
+<tr><th>项目</th><th>内容</th><th>费用</th></tr>
+<tr><td>五行性格自测</td><td>14 道题的自测与结果卡</td><td>免费</td></tr>
+<tr><td>今日运势</td><td>以自身五行为准的每日解读</td><td>免费</td></tr>
+<tr><td>朋友五行配对</td><td>通过分享链接进行的双方配对</td><td>免费</td></tr>
+<tr><td>AI 深度报告</td><td>结合困惑类型的定制解读(页面阅读)</td><td>免费</td></tr>
+<tr><td><b>AI 深度报告 高级版</b></td><td>PDF 报告、手机壁纸、30 天实践计划、自我检视工作表</td><td><b>990 韩元</b></td></tr>
+<tr><td>定制咨询</td><td>由经营指导师一对一咨询</td><td>另行告知</td></tr>
+</table>
+<p>本公司可变更服务内容与费用，变更时将在服务页面事先公告。</p>
+<h2>第5条 (服务的中断)</h2>
+<p>因设备检修、通信中断、外部基础设施(主机、数据库、支付服务等)故障等不得已的事由，本公司可暂时中断本服务，并在可能的情况下事先公告。</p>
+<h2>第6条 (用户的义务)</h2>
+<ol>
+<li>用户不得盗用他人信息或填写虚假信息。</li>
+<li>未经本公司事先同意，用户不得复制、传播、销售本服务提供的内容，或将其用于营利目的。但个人使用以及在社交平台分享本人的结果不在此限。</li>
+<li>用户不得实施妨碍本服务正常运营的行为，例如通过自动化程序访问或发出过量请求。</li>
+</ol>
+<h2>第7条 (知识产权)</h2>
+<p>本服务所含测试题目、解读体系、象征名称、设计、图片等的知识产权归本公司所有。用户生成的个人结果，用户可自由用于个人用途。</p>
+<h2>第8条 (免责)</h2>
+<div class="box warn">
+<p><b>本服务提供的测试结果与解读，是以命理学为基础的 AI 生成内容，并非科学事实，也不保证未来。</b></p>
+<p>用户依据本服务结果所作的决定及其后果，本公司不承担责任。本服务不能替代医疗、法律、投资、心理治疗等专业人士的诊断或建议。</p>
+<p>专业咨询会与八字原局逐项核对，而 AI 给出的方案没有这道工序。请自行判断，选择真正适合自己的内容。</p>
+</div>
+<p>对于天灾、外部系统故障等不可抗力造成的损害，除故意或重大过失外，本公司不承担责任。</p>
+<h2>第9条 (争议解决)</h2>
+<p>与本服务使用相关的争议适用大韩民国法律，管辖法院依民事诉讼法确定。用户可向消费者争议调解委员会(1372)或韩国消费者院申请调解。</p>
+<p class="upd">施行日: 2026年8月16日</p>`,
+
+t2:`<div class="box blue">
+<p><b>AIsajuLab 无需注册即可使用，本公司不收集姓名、出生日期、联系方式等可识别个人的信息。</b>测试仅依据你对题目的作答完成。</p>
+</div>
+<h2>1. 收集的信息与使用目的</h2>
+<table>
+<tr><th>项目</th><th>内容</th><th>目的</th><th>保存期限</th></tr>
+<tr><td>设备标识值</td><td>在浏览器中随机生成并保存的任意值(无法识别个人)</td><td>区分重复访问、恢复结果</td><td>1年</td></tr>
+<tr><td>使用记录</td><td>访问时间、页面跳转、按钮点击、来源路径(UTM)、设备类型</td><td>改进服务、使用统计</td><td>1年</td></tr>
+<tr><td>测试作答与结果</td><td>题目选项、算出的五行分布与类型</td><td>提供结果与再次查看</td><td>保存在浏览器内(用户删除即消失)</td></tr>
+<tr><td>支付相关</td><td>发放编号、支付申报时间</td><td>确认付费内容的交付、处理纠纷</td><td>5年(电子商务法)</td></tr>
+<tr><td>咨询申请</td><td>用户自行填写并发送的内容</td><td>进行咨询</td><td>咨询结束后3个月</td></tr>
+</table>
+<p>支付通过 KakaoPay 转账链接完成，<b>本公司不收集也不保存用户的卡号、账号等支付信息。</b></p>
+<h2>2. 处理的委托</h2>
+<table>
+<tr><th>受托方</th><th>受托业务</th></tr>
+<tr><td>Supabase Inc.</td><td>数据库的保存与运营</td></tr>
+<tr><td>Netlify Inc.</td><td>网站主机服务</td></tr>
+<tr><td>Kakao Corp.</td><td>支付(转账)与咨询频道运营</td></tr>
+</table>
+<p>受托方的服务器可能位于境外，用户使用本服务即视为对此表示同意。</p>
+<h2>3. 向第三方提供</h2>
+<p>本公司不向第三方提供用户信息。但依据法令由侦查机关等提出的合法要求除外。</p>
+<h2>4. 用户的权利与行使方式</h2>
+<p>用户可要求查阅、更正、删除其信息或停止处理。保存在浏览器中的信息，只要<b>在浏览器设置中清除网站数据</b>即立即消失。其他请求请通过下方联系方式提出。</p>
+<h2>5. 销毁流程</h2>
+<p>保存期限届满或处理目的已达成的信息，将不迟延地予以销毁。电子文件以无法恢复的方式删除。</p>
+<h2>6. 个人信息保护负责人</h2>
+<div class="biz"><dl>
+<dt>负责人</dt><dd>崔炯哲</dd>
+<dt>联系电话</dt><dd>+82 10-6789-1341</dd>
+<dt>邮箱</dt><dd>calvincheoi@gmail.com</dd>
+</dl></div>
+<p>关于个人信息侵害的咨询，可联系个人信息侵害举报中心(privacy.kisa.or.kr，118)、个人信息纠纷调解委员会(kopico.go.kr，1833-6972)。</p>
+<p class="upd">施行日: 2026年8月16日</p>`,
+
+t3:`<div class="box warn">
+<p><b>AI 深度报告高级版(990 韩元)属于数字内容。</b></p>
+<p>支付后，在应用中<b>点击「已完成付款」按钮、内容解锁的那一刻</b>起，视为「已开始提供」。开始提供之后，依据《电子商务等消费者保护法》第17条第2款第5项，撤销申请将受到限制。</p>
+<p>这一点在支付页面也会事先说明，<b>在开始提供之前，随时可全额退款</b>。</p>
+</div>
+<h2>1. 可以撤销的情形</h2>
+<ul>
+<li>支付后<b>尚未点击「已完成付款」按钮</b>(内容未交付) — 7日内全额退款</li>
+<li>已支付但<b>因系统故障未能交付内容</b> — 全额退款</li>
+<li>内容与展示、广告<b>明显不符，或履行与合同约定不同</b> — 自获得供给之日起3个月内、自知悉之日起30日内</li>
+<li>重复支付等因操作失误造成的误付 — 核实后退款</li>
+</ul>
+<h2>2. 撤销受限的情形</h2>
+<ul>
+<li>已点击「已完成付款」按钮，PDF 报告、壁纸等内容已交付之后</li>
+<li>单纯改变主意，或对测试结果、解读内容的主观不满</li>
+</ul>
+<p>但即便属于上述情形，若内容未能正常交付或存在明显瑕疵，仍属退款对象。</p>
+<h2>3. 退款申请方式</h2>
+<ol>
+<li>请通过下方联系方式或 KakaoTalk 频道，告知<b>发放编号</b>(标注于报告下方，例：AJ-260816-1234)与支付时间。</li>
+<li>本公司自受理之日起<b>3个工作日内</b>核实并告知是否退款。</li>
+<li>确定退款后，将于<b>3个工作日内</b>按原支付方式退还。以 KakaoPay 转账支付的，退回至转出账户。</li>
+</ol>
+<h2>4. 付费咨询</h2>
+<p>咨询按预约日期处理。咨询开始前取消的全额退款；咨询开始后，扣除已进行部分的费用后退还。</p>
+<p class="upd">施行日: 2026年8月16日</p>`,
+
+t4:`<h2>企业信息</h2>
+<div class="biz"><dl>
+<dt>商号</dt><dd>Life &amp; Biz 成长研究所 <span class="tag">AIsajuLab</span></dd>
+<dt>业态 · 项目</dt><dd>协会及团体、修理及其他个人服务业 · 占卜及类似服务业</dd>
+<dt>代表人</dt><dd>崔炯哲</dd>
+<dt>营业执照号</dt><dd>688-13-03146</dd>
+<dt>通信销售业申报</dt><dd><span style="opacity:.85">办理中 (预计2026年8月内)</span></dd>
+<dt>地址</dt><dd>大韩民国 首尔特别市 江东区 奥林匹克路78街60, 103栋602号</dd>
+<dt>电话</dt><dd>+82 10-6789-1341</dd>
+<dt>邮箱</dt><dd>calvincheoi@gmail.com</dd>
+<dt>主机服务商</dt><dd>Netlify, Inc.</dd>
+</dl></div>
+<h2>客户咨询</h2>
+<p>关于支付、退款、结果查看等问题，请通过 KakaoTalk 开放聊天或上述联系方式提出。我们按受理顺序确认，并在<b>2个工作日内</b>回复。</p>
+<h2>争议解决标准</h2>
+<p>本公司与用户之间的争议，依《消费者基本法》的消费者争议解决标准处理。若未能妥善解决，可通过消费者咨询中心(1372)或韩国消费者院申请调解。</p>
+<p class="upd">最后更新: 2026年8月16日</p>`,
+
+t5:`<h2>联系我们</h2>
+<div class="box blue">
+<p>受理后可能无法立即回复。我们按受理顺序确认，并在<b>2个工作日内</b>回复。需要尽快确认的<b>支付、退款</b>问题，若一并写上发放编号，处理会更快。</p>
+</div>
+<table>
+<tr><th>问题类型</th><th>需要的信息</th><th>受理渠道</th></tr>
+<tr><td><b>付了款但看不到结果</b></td><td>支付时间、转账截图</td><td>KakaoTalk · 邮箱</td></tr>
+<tr><td><b>申请退款</b></td><td>发放编号、支付时间、理由</td><td>KakaoTalk · 邮箱</td></tr>
+<tr><td>测试结果与解读咨询</td><td>结果卡截图</td><td>KakaoTalk</td></tr>
+<tr><td>咨询预约与变更</td><td>希望的日期时间</td><td>KakaoTalk</td></tr>
+<tr><td>其他建议与故障反馈</td><td>页面截图、使用的设备</td><td>邮箱</td></tr>
+</table>
+<p>KakaoTalk 开放聊天 <a href="https://open.kakao.com/o/gj3iUKai" target="_blank">open.kakao.com/o/gj3iUKai</a> · 邮箱 calvincheoi@gmail.com · 电话 +82 10-6789-1341</p>
+<h2>常见问题</h2>
+<h3>需要注册会员吗?</h3>
+<p>不需要。无需注册即可直接开始测试，我们也不收集姓名或联系方式。</p>
+<h3>测试结果不见了</h3>
+<p>结果保存在浏览器中。如果使用了无痕模式，或清除了浏览器数据，结果就会消失。可以重新测试；若此前的记录仍在，会自动恢复。</p>
+<h3>990 韩元的报告里有什么?</h3>
+<p>包含 PDF 报告、按你屏幕尺寸定制的手机壁纸、30 天实践计划和自我检视工作表。免费报告是在页面上阅读，高级版则可作为文件长期保存。</p>
+<h3>付了款但报告没出来</h3>
+<p>通过 KakaoPay 转账后，需要点击页面上的<b>「已完成付款 · 领取报告」</b>按钮才会解锁。若尚未点击，请返回结果页面点击。仍然不行，请与我们联系。</p>
+<h3>为什么不问出生时辰?</h3>
+<p>因为不清楚时辰的人很多，而且仅凭年、月、日三柱也足以做出有意义的解读。包含时辰的精细解读，会在专家咨询中处理。</p>
+<h3>农历生日遇到闰月怎么办?</h3>
+<p>在填写出生日期的页面选择<b>农历</b>，就会出现<b>闰月</b>勾选项。勾选后将按闰月计算。</p>
+<h3>测试结果和以前不一样</h3>
+<p>作答不同，结果自然不同。答案随当天的心情或处境而变化是很自然的事。若想看天生的气质，建议使用包含出生日期校正的报告。</p>
+<h3>结果可以相信吗?</h3>
+<p>本服务是帮助自我理解的工具。它是以命理学为基础的 AI 生成内容，并非科学事实，也不保证未来。我们不断定命运，重要的决定建议由你自己作出。</p>
+<p class="upd">最后更新: 2026年8月16日</p>`
+};
+
+LEGAL.fr = {
+_notice:"La version coréenne fait foi. Cette traduction est fournie à titre indicatif ; en cas de divergence, le texte coréen prévaut.",
+_title:"Conditions d'utilisation · Politique de confidentialité · Remboursement",
+_home:"← Retour à AIsajuLab",
+_tabs:["Conditions","Confidentialité","Remboursement","Informations légales","Contact · FAQ"],
+
+t1:`<h2>Article 1 (Objet)</h2>
+<p>Les présentes conditions définissent les modalités et la procédure d'utilisation d'AIsajuLab (AIsajuLab.com, le « Service »), exploité par Life &amp; Biz Growth Institute (la « Société »), ainsi que les droits, obligations et responsabilités de la Société et de l'utilisateur.</p>
+<h2>Article 2 (Définitions)</h2>
+<ol>
+<li>Le « Service » désigne les services de contenu fondés sur le myeongnihak proposés par la Société : autodiagnostic des Cinq Phases, flux du jour, compatibilité entre amis, rapport IA approfondi et consultations.</li>
+<li>L'« utilisateur » désigne toute personne qui utilise le Service selon les présentes conditions.</li>
+<li>Le « service payant » désigne un service utilisé contre paiement.</li>
+<li>Le « contenu » désigne l'ensemble des éléments fournis par la Société — résultats, interprétations, rapports, images — et <b>il est produit à l'aide d'une IA générative.</b></li>
+</ol>
+<h2>Article 3 (Effet et modification des conditions)</h2>
+<ol>
+<li>Les présentes conditions prennent effet dès leur publication sur le Service.</li>
+<li>La Société peut les modifier pour un motif raisonnable, dans les limites de la loi applicable. Toute modification est annoncée sur le Service au moins 7 jours avant son entrée en vigueur, et au moins 30 jours à l'avance lorsqu'elle est défavorable aux utilisateurs.</li>
+</ol>
+<h2>Article 4 (Contenu du Service)</h2>
+<p>La Société propose les services suivants.</p>
+<table>
+<tr><th>Service</th><th>Description</th><th>Tarif</th></tr>
+<tr><td>Autodiagnostic des Cinq Phases</td><td>14 questions et carte de résultat</td><td>Gratuit</td></tr>
+<tr><td>Flux du jour</td><td>Lecture quotidienne selon vos phases</td><td>Gratuit</td></tr>
+<tr><td>Compatibilité entre amis</td><td>Compatibilité mutuelle via un lien partagé</td><td>Gratuit</td></tr>
+<tr><td>Rapport IA approfondi</td><td>Lecture adaptée à votre question (à l'écran)</td><td>Gratuit</td></tr>
+<tr><td><b>Rapport IA approfondi — Premium</b></td><td>Rapport PDF, fond d'écran, plan de 30 jours, fiche d'auto-évaluation</td><td><b>990 KRW</b></td></tr>
+<tr><td>Consultation sur mesure</td><td>Entretien individuel avec un consultant en gestion agréé</td><td>Sur devis</td></tr>
+</table>
+<p>La Société peut modifier le contenu et les tarifs du Service ; elle en informe alors les utilisateurs à l'avance sur le Service.</p>
+<h2>Article 5 (Interruption du Service)</h2>
+<p>La Société peut suspendre temporairement le Service en cas de nécessité — entretien ou réparation des équipements, coupure des communications, défaillance d'une infrastructure externe (hébergement, base de données, service de paiement) — et en informe à l'avance lorsque cela est possible.</p>
+<h2>Article 6 (Obligations de l'utilisateur)</h2>
+<ol>
+<li>L'utilisateur ne doit pas usurper les informations d'autrui ni saisir de fausses informations.</li>
+<li>L'utilisateur ne doit pas reproduire, diffuser, vendre ni exploiter commercialement le contenu sans l'accord préalable de la Société. L'usage personnel et le partage de son propre résultat sur les réseaux sociaux restent autorisés.</li>
+<li>L'utilisateur ne doit pas entraver le fonctionnement normal du Service, notamment par un accès automatisé ou des requêtes excessives.</li>
+</ol>
+<h2>Article 7 (Propriété intellectuelle)</h2>
+<p>Les droits de propriété intellectuelle sur les questions du diagnostic, le système d'interprétation, les noms des symboles, le design et les images appartiennent à la Société. Les résultats personnels générés par un utilisateur peuvent être librement utilisés par celui-ci à des fins personnelles.</p>
+<h2>Article 8 (Limitation de responsabilité)</h2>
+<div class="box warn">
+<p><b>Les résultats et interprétations fournis par le Service sont un contenu généré par IA fondé sur le myeongnihak. Ils ne constituent pas un fait scientifique et ne garantissent pas l'avenir.</b></p>
+<p>La Société n'est pas responsable des décisions prises par l'utilisateur sur la base du Service, ni de leurs conséquences. Le Service ne remplace pas le diagnostic ou le conseil d'un professionnel en matière médicale, juridique, financière ou psychothérapeutique.</p>
+<p>Une consultation d'expert confronte la lecture au thème natal ; une solution produite par l'IA ne passe pas par cette étape. Retenez vous-même ce qui vous correspond réellement.</p>
+</div>
+<p>La Société n'est pas responsable des dommages résultant d'un cas de force majeure — catastrophe naturelle, défaillance d'un système externe — sauf faute intentionnelle ou lourde.</p>
+<h2>Article 9 (Règlement des litiges)</h2>
+<p>Les litiges liés à l'utilisation du Service sont régis par le droit de la République de Corée, la juridiction compétente étant déterminée selon le code de procédure civile. L'utilisateur peut saisir la Commission de règlement des litiges de consommation (1372) ou l'Agence coréenne de la consommation.</p>
+<p class="upd">Entrée en vigueur : 16 août 2026</p>`,
+
+t2:`<div class="box blue">
+<p><b>AIsajuLab s'utilise sans création de compte, et la Société ne collecte aucune donnée permettant d'identifier une personne — ni nom, ni date de naissance, ni coordonnées.</b> Le diagnostic repose uniquement sur vos réponses.</p>
+</div>
+<h2>1. Données collectées et finalités</h2>
+<table>
+<tr><th>Donnée</th><th>Description</th><th>Finalité</th><th>Conservation</th></tr>
+<tr><td>Identifiant d'appareil</td><td>Valeur aléatoire générée et conservée dans votre navigateur (n'identifie personne)</td><td>Distinguer les visites répétées, restaurer les résultats</td><td>1 an</td></tr>
+<tr><td>Journaux d'utilisation</td><td>Heure de visite, navigation, clics, provenance (UTM), type d'appareil</td><td>Amélioration du service, statistiques</td><td>1 an</td></tr>
+<tr><td>Réponses et résultats</td><td>Options choisies, répartition et type des phases calculés</td><td>Fournir et réafficher le résultat</td><td>Dans votre navigateur (supprimé si vous l'effacez)</td></tr>
+<tr><td>Paiement</td><td>Numéro d'émission, heure de déclaration du paiement</td><td>Vérifier la livraison du contenu payant, traiter les litiges</td><td>5 ans (loi sur le commerce électronique)</td></tr>
+<tr><td>Demande de consultation</td><td>Ce que l'utilisateur saisit et envoie</td><td>Réaliser la consultation</td><td>3 mois après la consultation</td></tr>
+</table>
+<p>Le paiement passe par un lien de transfert KakaoPay. <b>La Société ne collecte ni ne conserve vos données de paiement, numéro de carte ou de compte.</b></p>
+<h2>2. Sous-traitance</h2>
+<table>
+<tr><th>Sous-traitant</th><th>Mission confiée</th></tr>
+<tr><td>Supabase Inc.</td><td>Hébergement et exploitation de la base de données</td></tr>
+<tr><td>Netlify Inc.</td><td>Hébergement du site</td></tr>
+<tr><td>Kakao Corp.</td><td>Paiement (transfert) et canal de consultation</td></tr>
+</table>
+<p>Les serveurs de ces sous-traitants peuvent être situés hors de Corée ; en utilisant le Service, vous êtes réputé y consentir.</p>
+<h2>3. Communication à des tiers</h2>
+<p>La Société ne communique pas vos informations à des tiers, sauf demande légale d'une autorité d'enquête conformément à la loi.</p>
+<h2>4. Vos droits et leur exercice</h2>
+<p>Vous pouvez demander l'accès à vos données, leur rectification, leur effacement ou la limitation de leur traitement. Les informations conservées dans votre navigateur disparaissent immédiatement si vous <b>effacez les données du site dans ses réglages</b>. Pour toute autre demande, écrivez-nous aux coordonnées ci-dessous.</p>
+<h2>5. Destruction</h2>
+<p>Les données sont détruites sans délai une fois la durée de conservation écoulée ou la finalité atteinte. Les fichiers électroniques sont supprimés de manière irrécupérable.</p>
+<h2>6. Responsable de la protection des données</h2>
+<div class="biz"><dl>
+<dt>Responsable</dt><dd>Choi Hyungchul</dd>
+<dt>Téléphone</dt><dd>+82 10-6789-1341</dd>
+<dt>E-mail</dt><dd>calvincheoi@gmail.com</dd>
+</dl></div>
+<p>Pour toute question relative à une atteinte à la vie privée, vous pouvez contacter le centre de signalement de la KISA (privacy.kisa.or.kr, 118) ou la Commission de médiation des litiges relatifs aux données personnelles (kopico.go.kr, 1833-6972).</p>
+<p class="upd">Entrée en vigueur : 16 août 2026</p>`,
+
+t3:`<div class="box warn">
+<p><b>Le rapport IA approfondi Premium (990 KRW) est un contenu numérique.</b></p>
+<p>La fourniture est réputée commencée au moment où vous appuyez sur le bouton <b>« Paiement effectué »</b> dans l'application et où le contenu est déverrouillé. Une fois la fourniture commencée, le droit de rétractation est limité par l'article 17(2)5 de la loi coréenne sur la protection des consommateurs dans le commerce électronique.</p>
+<p>Cela est indiqué à l'avance sur l'écran de paiement, et <b>un remboursement intégral reste possible à tout moment avant le début de la fourniture</b>.</p>
+</div>
+<h2>1. Cas où la rétractation est possible</h2>
+<ul>
+<li><b>Avant d'avoir appuyé sur « Paiement effectué »</b> après avoir payé (contenu non fourni) — remboursement intégral sous 7 jours</li>
+<li>Vous avez payé mais <b>le contenu n'a pas été fourni en raison d'une erreur technique</b> — remboursement intégral</li>
+<li>Le contenu <b>diffère sensiblement de sa présentation ou de la publicité, ou le contrat a été exécuté autrement</b> — dans les 3 mois suivant la fourniture et dans les 30 jours suivant la découverte du fait</li>
+<li>Paiement erroné, par exemple un double débit — remboursé après vérification</li>
+</ul>
+<h2>2. Cas où la rétractation est limitée</h2>
+<ul>
+<li>Après avoir appuyé sur « Paiement effectué » et reçu le rapport PDF, le fond d'écran et les autres contenus</li>
+<li>Simple changement d'avis, ou insatisfaction subjective quant au contenu de la lecture</li>
+</ul>
+<p>Même dans ces cas, un remboursement reste possible si le contenu n'a pas été correctement fourni ou présente un défaut manifeste.</p>
+<h2>3. Comment demander un remboursement</h2>
+<ol>
+<li>Communiquez-nous votre <b>numéro d'émission</b> (indiqué au bas du rapport, par ex. AJ-260816-1234) et l'heure du paiement, via les coordonnées ci-dessous ou notre canal KakaoTalk.</li>
+<li>La Société vérifie et vous indique si le remboursement s'applique <b>sous 3 jours ouvrés</b> à compter de la réception.</li>
+<li>Une fois confirmé, le remboursement est effectué <b>sous 3 jours ouvrés</b> sur le moyen de paiement utilisé. Pour un transfert KakaoPay, la somme est renvoyée sur le compte émetteur.</li>
+</ol>
+<h2>4. Consultations payantes</h2>
+<p>Les consultations sont traitées à la date de réservation. Une annulation avant le début de la consultation est intégralement remboursée ; une fois commencée, le montant correspondant à la partie déjà réalisée est déduit.</p>
+<p class="upd">Entrée en vigueur : 16 août 2026</p>`,
+
+t4:`<h2>Informations légales</h2>
+<div class="biz"><dl>
+<dt>Raison sociale</dt><dd>Life &amp; Biz Growth Institute <span class="tag">AIsajuLab</span></dd>
+<dt>Activité</dt><dd>Associations et organisations, réparation et autres services personnels · Divination et services assimilés</dd>
+<dt>Représentant</dt><dd>Choi Hyungchul</dd>
+<dt>N° d'enregistrement</dt><dd>688-13-03146</dd>
+<dt>Vente à distance</dt><dd><span style="opacity:.85">Déclaration en cours (prévue en août 2026)</span></dd>
+<dt>Adresse</dt><dd>103-602, 60 Olympic-ro 78-gil, Gangdong-gu, Séoul, République de Corée</dd>
+<dt>Téléphone</dt><dd>+82 10-6789-1341</dd>
+<dt>E-mail</dt><dd>calvincheoi@gmail.com</dd>
+<dt>Hébergeur</dt><dd>Netlify, Inc.</dd>
+</dl></div>
+<h2>Nous contacter</h2>
+<p>Pour toute question de paiement, de remboursement ou de résultat, écrivez-nous via le chat ouvert KakaoTalk ou aux coordonnées ci-dessus. Nous traitons les demandes dans l'ordre d'arrivée et répondons <b>sous 2 jours ouvrés</b>.</p>
+<h2>Règlement des litiges</h2>
+<p>Les litiges entre la Société et un utilisateur suivent les critères de règlement des litiges de consommation prévus par la loi-cadre sur les consommateurs. À défaut de règlement amiable, vous pouvez demander une médiation auprès du centre de conseil aux consommateurs (1372) ou de l'Agence coréenne de la consommation.</p>
+<p class="upd">Dernière mise à jour : 16 août 2026</p>`,
+
+t5:`<h2>Nous écrire</h2>
+<div class="box blue">
+<p>Il se peut que nous ne puissions pas répondre immédiatement. Les demandes sont traitées dans l'ordre d'arrivée, <b>sous 2 jours ouvrés</b>. Pour les questions de <b>paiement et de remboursement</b>, indiquer votre numéro d'émission accélère nettement le traitement.</p>
+</div>
+<table>
+<tr><th>Type de demande</th><th>Éléments à joindre</th><th>Canal</th></tr>
+<tr><td><b>J'ai payé mais je ne vois pas de résultat</b></td><td>Heure du paiement, capture du transfert</td><td>KakaoTalk · E-mail</td></tr>
+<tr><td><b>Demande de remboursement</b></td><td>Numéro d'émission, heure du paiement, motif</td><td>KakaoTalk · E-mail</td></tr>
+<tr><td>Question sur un résultat</td><td>Capture de la carte de résultat</td><td>KakaoTalk</td></tr>
+<tr><td>Réserver ou modifier une consultation</td><td>Date et heure souhaitées</td><td>KakaoTalk</td></tr>
+<tr><td>Suggestions et signalement d'erreurs</td><td>Capture d'écran, appareil utilisé</td><td>E-mail</td></tr>
+</table>
+<p>Chat ouvert KakaoTalk <a href="https://open.kakao.com/o/gj3iUKai" target="_blank">open.kakao.com/o/gj3iUKai</a> · E-mail calvincheoi@gmail.com · Téléphone +82 10-6789-1341</p>
+<h2>Questions fréquentes</h2>
+<h3>Faut-il créer un compte ?</h3>
+<p>Non. Vous pouvez commencer directement. Nous ne demandons ni votre nom ni vos coordonnées.</p>
+<h3>Mon résultat a disparu</h3>
+<p>Les résultats sont conservés dans votre navigateur. Ils disparaissent si vous étiez en navigation privée ou si vous avez effacé les données du navigateur. Refaites le diagnostic : si un enregistrement antérieur subsiste, il est restauré automatiquement.</p>
+<h3>Que contient le rapport à 990 KRW ?</h3>
+<p>Un rapport PDF, un fond d'écran ajusté à votre écran, un plan de 30 jours et une fiche d'auto-évaluation. Le rapport gratuit se lit à l'écran ; le premium vous appartient sous forme de fichiers.</p>
+<h3>J'ai payé mais le rapport n'apparaît pas</h3>
+<p>Après le transfert KakaoPay, il faut appuyer sur le bouton <b>« Paiement effectué · Recevoir mon rapport »</b> à l'écran pour le déverrouiller. Si vous ne l'avez pas fait, revenez à l'écran de résultat et appuyez dessus. Si le problème persiste, écrivez-nous.</p>
+<h3>Pourquoi ne demandez-vous pas mon heure de naissance ?</h3>
+<p>Beaucoup de personnes l'ignorent, et une lecture utile reste possible à partir de l'année, du mois et du jour. La lecture précise incluant l'heure relève de la consultation d'expert.</p>
+<h3>Mon anniversaire lunaire tombe un mois intercalaire</h3>
+<p>Choisissez <b>calendrier lunaire</b> sur l'écran de saisie : une case <b>mois intercalaire</b> apparaît. En la cochant, le calcul suit le mois intercalaire.</p>
+<h3>Mon résultat diffère de la dernière fois</h3>
+<p>Des réponses différentes donnent des résultats différents. Il est normal que vos réponses varient selon l'humeur ou les circonstances. Pour voir votre tempérament inné, nous recommandons le rapport intégrant la correction par date de naissance.</p>
+<h3>Peut-on se fier au résultat ?</h3>
+<p>Ce service est un outil de connaissance de soi. C'est un contenu généré par IA fondé sur le myeongnihak ; ce n'est pas un fait scientifique et l'avenir n'est pas garanti. Rien n'est présenté comme un destin fixé : les décisions importantes vous appartiennent.</p>
+<p class="upd">Dernière mise à jour : 16 août 2026</p>`
+};
+
+/* ═══════════ 언어 전환 ═══════════
+   · 한국어 원문은 첫 실행 때 기억해 두므로 ko 사전을 따로 두지 않는다
+   · 저장 키는 사이트 전체와 공유한다 (aisaju_lang / ohaeng_lang 양쪽에 기록) */
+(function(){
+  var LANGS=["ko","en","ja","zh","fr"];
+  var KO={ title:document.getElementById("lgTitle").innerHTML,
+           home:document.getElementById("lgHome").innerHTML,
+           tabs:[], sec:{} };
+  var tabs=[].slice.call(document.querySelectorAll(".tabs button"));
+  tabs.forEach(function(b){ KO.tabs.push(b.innerHTML) });
+  ["t1","t2","t3","t4","t5"].forEach(function(id){
+    var s=document.getElementById(id); if(s) KO.sec[id]=s.innerHTML;
+  });
+
+  function readLang(){
+    try{
+      var a=localStorage.getItem("aisaju_lang");
+      if(a&&LANGS.indexOf(a)>=0) return a;
+      var o=localStorage.getItem("ohaeng_lang");
+      if(o){ var v=JSON.parse(o); if(LANGS.indexOf(v)>=0) return v; }
+    }catch(e){}
+    var n=(navigator.language||"ko").toLowerCase();
+    if(n.indexOf("ko")===0) return "ko";
+    if(n.indexOf("ja")===0) return "ja";
+    if(n.indexOf("zh")===0) return "zh";
+    if(n.indexOf("fr")===0) return "fr";
+    return "en";
+  }
+  function saveLang(l){
+    try{ localStorage.setItem("aisaju_lang",l);
+         localStorage.setItem("ohaeng_lang",JSON.stringify(l)); }catch(e){}
+  }
+
+  var LANG=readLang();
+
+  function apply(){
+    var D=(LANG==="ko")?null:(LEGAL[LANG]||null);
+    document.documentElement.lang=LANG;
+    document.getElementById("lgTitle").innerHTML = D&&D._title ? D._title : KO.title;
+    document.getElementById("lgHome").innerHTML  = D&&D._home  ? D._home  : KO.home;
+    tabs.forEach(function(b,i){
+      b.innerHTML = (D&&D._tabs&&D._tabs[i]) ? D._tabs[i] : KO.tabs[i];
+    });
+    ["t1","t2","t3","t4","t5"].forEach(function(id){
+      var s=document.getElementById(id); if(!s) return;
+      s.innerHTML = (D&&D[id]) ? D[id] : KO.sec[id];
+    });
+    var nt=document.getElementById("lgNotice");
+    if(D&&D._notice){ nt.innerHTML="<b>⚠</b> "+D._notice; nt.classList.add("on") }
+    else { nt.classList.remove("on") }
+    document.querySelectorAll("#langsw button").forEach(function(b){
+      b.classList.toggle("on", b.dataset.lang===LANG);
+    });
+  }
+
+  document.querySelectorAll("#langsw button").forEach(function(b){
+    b.onclick=function(){ LANG=b.dataset.lang; saveLang(LANG); apply(); window.scrollTo({top:0}) };
+  });
+  apply();
+})();
+
 document.querySelectorAll(".tabs button").forEach(function(b){
   b.onclick=function(){
     document.querySelectorAll(".tabs button").forEach(function(e){e.classList.toggle("on",e===b)});
