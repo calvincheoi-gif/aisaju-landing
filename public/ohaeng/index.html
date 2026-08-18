@@ -42,9 +42,10 @@ body{background:var(--bg);color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;
   line-height:1.62;letter-spacing:-.015em;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom)}
 /* 옅은 신경망 패턴 — 페이지와 함께 스크롤되는 배경 (fixed 아님) */
-body{background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='420' height='420' viewBox='0 0 420 420'><g stroke='%230B4FD1' stroke-opacity='.068' stroke-width='1.45' stroke-linecap='round' fill='none'><path d='M60 70 L165 38 L262 96 L370 54'/><path d='M165 38 L128 170 L262 96'/><path d='M30 240 L128 170 L236 232 L370 190 M262 96 L236 232'/><path d='M128 170 L60 70 M236 232 L188 356 L330 320 L370 190'/><path d='M30 240 L92 372 L188 356 M330 320 L262 96'/></g><g fill='%230B4FD1' fill-opacity='.095'><circle cx='60' cy='70' r='4.0'/><circle cx='165' cy='38' r='3.1'/><circle cx='262' cy='96' r='4.5'/><circle cx='370' cy='54' r='2.9'/><circle cx='128' cy='170' r='3.7'/><circle cx='236' cy='232' r='4.1'/><circle cx='30' cy='240' r='3.0'/><circle cx='370' cy='190' r='3.5'/><circle cx='188' cy='356' r='3.3'/><circle cx='330' cy='320' r='3.9'/><circle cx='92' cy='372' r='2.9'/></g><g fill='%23FFFFFF' fill-opacity='.85'><circle cx='262' cy='96' r='1.6'/><circle cx='236' cy='232' r='1.5'/><circle cx='128' cy='170' r='1.4'/><circle cx='330' cy='320' r='1.4'/></g></svg>");background-size:420px 420px;background-repeat:repeat}
+/* 배경 타일은 AJNeural 캔버스(#ajnet)로 대체 — 글자 자리를 피해 그린다 */
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 18px}
-.screen{display:none;animation:fade .36s cubic-bezier(.3,1,.4,1) both}
+#ajnet{position:absolute;left:0;top:0;z-index:0;pointer-events:none;user-select:none}
+.screen{display:none;animation:fade .36s cubic-bezier(.3,1,.4,1) both;position:relative;z-index:1}
 .screen.on{display:block}
 @keyframes fade{from{opacity:0;transform:translateY(11px)}to{opacity:1;transform:none}}
 @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
@@ -3700,7 +3701,331 @@ function drawEmblemVector(x,gan,cx,cy,s,col){
 }
 
 /* ── 신경망 느낌의 은은한 양각(엠보스) 배경 ── */
+/* ═══════════════════════════════════════════════════════════════════
+   AJNeural — 레이아웃 인지형 신경망 레이어  v1.0  (2026-08-18)
+   ───────────────────────────────────────────────────────────────────
+   기존 drawNeuralBg 의 한계: 중앙을 사각형 하나로만 비웠기 때문에
+   글자가 어디 있든 상관없이 같은 자리에 그려져 문장 위에 선이 겹쳤다.
+   이 모듈은 "실제로 무엇이 어디에 그려져 있는지"를 먼저 재고,
+   비어 있는 곳에만 신경망을 놓는다.
+
+   블록 구성 — 세 덩어리로 나눠 놨으니 하나씩 교체·개선이 가능하다
+     ① MASK   차지된 영역을 격자로 수집
+              · maskFromDOM(...)    화면용 — 글자·버튼·카드의 실제 좌표
+              · maskFromCanvas(...) 카드용 — 국소 대비로 잉크 자동 검출
+     ② FIELD  빈 격자에만 노드를 뿌리고, 마스크를 지나는 선은 버린다
+     ③ PAINT  보케 → 선(그라디언트) → 노드(하이라이트) 순으로 그린다
+
+   사용처
+     · 앱 화면 배경   AJNeural.mountDOM()
+     · 결과/궁합 카드 AJNeural.enrich(canvas, opts)
+     · 배경화면      AJNeural.enrich(canvas, opts)
+   ═══════════════════════════════════════════════════════════════════ */
+var AJNeural = (function () {
+
+  /* ───────── ① MASK ───────── */
+  function Mask(W, H, cell) {
+    cell = cell || Math.max(12, Math.round(Math.min(W, H) / 42));
+    var cols = Math.max(1, Math.ceil(W / cell)),
+        rows = Math.max(1, Math.ceil(H / cell)),
+        g = new Uint8Array(cols * rows);
+    return {
+      W: W, H: H, cell: cell, cols: cols, rows: rows, g: g,
+
+      markRect: function (x0, y0, x1, y1, pad) {
+        pad = pad || 0;
+        var a = Math.max(0, Math.floor((x0 - pad) / cell)),
+            b = Math.min(cols - 1, Math.floor((x1 + pad) / cell)),
+            c = Math.max(0, Math.floor((y0 - pad) / cell)),
+            d = Math.min(rows - 1, Math.floor((y1 + pad) / cell));
+        for (var j = c; j <= d; j++) for (var i = a; i <= b; i++) g[j * cols + i] = 1;
+      },
+
+      hit: function (px, py) {
+        var i = Math.floor(px / cell), j = Math.floor(py / cell);
+        if (i < 0 || j < 0 || i >= cols || j >= rows) return true;
+        return g[j * cols + i] === 1;
+      },
+
+      /* 선분이 차지된 칸을 지나가는가 — 지나가면 그 선은 버린다 */
+      crosses: function (x0, y0, x1, y1) {
+        var n = Math.ceil(Math.hypot(x1 - x0, y1 - y0) / (cell * 0.55)), t;
+        for (var s = 0; s <= n; s++) {
+          t = n ? s / n : 0;
+          if (this.hit(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t)) return true;
+        }
+        return false;
+      },
+
+      /* 잉크 둘레로 한 칸 여유를 준다 — 글자에 바짝 붙지 않게 */
+      dilate: function (n) {
+        n = n || 1;
+        for (var k = 0; k < n; k++) {
+          var src = g.slice();
+          for (var j = 0; j < rows; j++) for (var i = 0; i < cols; i++) {
+            if (src[j * cols + i]) continue;
+            if ((i > 0 && src[j * cols + i - 1]) || (i < cols - 1 && src[j * cols + i + 1]) ||
+                (j > 0 && src[(j - 1) * cols + i]) || (j < rows - 1 && src[(j + 1) * cols + i]))
+              g[j * cols + i] = 1;
+          }
+        }
+      },
+
+      freeCells: function () {
+        var out = [];
+        for (var j = 0; j < rows; j++) for (var i = 0; i < cols; i++)
+          if (!g[j * cols + i]) out.push([i, j]);
+        return out;
+      }
+    };
+  }
+
+  /* 화면(DOM)에서 차지된 자리를 읽는다 — 캔버스는 문서 전체를 덮으므로 스크롤 보정 */
+  var DOM_SEL = 'h1,h2,h3,h4,h5,p,span,b,strong,em,i,li,dt,dd,label,small,' +
+                'button,a,input,textarea,select,img,svg,table,hr,' +
+                '.card,.pane,.box,.chip,.qa,.bar,.note,.tiny,.wrap>div';
+
+  function maskFromDOM(W, H, opt) {
+    opt = opt || {};
+    var m = Mask(W, H, opt.cell), pad = opt.pad == null ? 12 : opt.pad,
+        sy = window.pageYOffset || document.documentElement.scrollTop || 0,
+        sx = window.pageXOffset || document.documentElement.scrollLeft || 0;
+    var list;
+    try { list = document.body.querySelectorAll(DOM_SEL); } catch (e) { return m; }
+    for (var k = 0; k < list.length; k++) {
+      var el = list[k];
+      if (el.id === 'ajnet') continue;
+      var cs;
+      try { cs = getComputedStyle(el); } catch (e) { continue; }
+      if (cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) === 0) continue;
+      var r = el.getBoundingClientRect();
+      if (r.width <= 0 || r.height <= 0) continue;
+      if (r.width > W * 1.5) continue;                  // 전체를 덮는 래퍼는 건너뛴다
+      m.markRect(r.left + sx, r.top + sy, r.right + sx, r.bottom + sy, pad);
+    }
+    return m;
+  }
+
+  /* 캔버스에서 잉크를 읽는다 — 국소 대비(밝기 최대-최소)로 판정하므로
+     배경이 흰색이든 그라디언트든 상관없이 글자·도형만 잡힌다 */
+  function maskFromCanvas(cv, opt) {
+    opt = opt || {};
+    var W = cv.width, H = cv.height,
+        m = Mask(W, H, opt.cell || Math.max(14, Math.round(Math.min(W, H) / 38))),
+        TH = opt.contrast == null ? 0.050 : opt.contrast, d;
+    try { d = cv.getContext('2d').getImageData(0, 0, W, H).data; }
+    catch (e) { m.markRect(W * 0.10, H * 0.05, W * 0.90, H * 0.95, 0); return m; }
+    var cell = m.cell, cols = m.cols, rows = m.rows,
+        step = Math.max(1, Math.round(cell / 9));
+    for (var j = 0; j < rows; j++) {
+      var y0 = j * cell, y1 = Math.min(H, y0 + cell);
+      for (var i = 0; i < cols; i++) {
+        var x0 = i * cell, x1 = Math.min(W, x0 + cell), mn = 1, mx = 0;
+        for (var y = y0; y < y1; y += step) {
+          var row = y * W;
+          for (var px = x0; px < x1; px += step) {
+            var o = (row + px) << 2,
+                l = (0.2126 * d[o] + 0.7152 * d[o + 1] + 0.0722 * d[o + 2]) / 255;
+            if (l < mn) mn = l;
+            if (l > mx) mx = l;
+          }
+        }
+        if (mx - mn > TH) m.g[j * cols + i] = 1;
+      }
+    }
+    m.dilate(opt.dilate == null ? 1 : opt.dilate);
+    return m;
+  }
+
+  /* ───────── ② FIELD ───────── */
+  function field(W, H, mask, opt) {
+    opt = opt || {};
+    var s = (opt.seed || 7) * 9301 + 49297;
+    var rnd = function () { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+    var free = mask.freeCells();
+    if (free.length < 5) return { pts: [], links: [] };
+
+    var density = opt.density || 1,
+        target = Math.max(5, Math.min(opt.max || 46, Math.round(free.length * 0.055 * density))),
+        area = free.length * mask.cell * mask.cell,
+        minD = Math.sqrt(area / target) * 0.60,
+        pts = [], guard = 0;
+
+    while (pts.length < target && guard++ < target * 50) {
+      var c = free[Math.floor(rnd() * free.length)],
+          px = (c[0] + 0.15 + rnd() * 0.70) * mask.cell,
+          py = (c[1] + 0.15 + rnd() * 0.70) * mask.cell;
+      if (px > W || py > H || mask.hit(px, py)) continue;
+      var ok = true;
+      for (var k = 0; k < pts.length; k++)
+        if (Math.hypot(pts[k][0] - px, pts[k][1] - py) < minD) { ok = false; break; }
+      if (ok) pts.push([px, py, rnd()]);
+    }
+    if (pts.length < 3) return { pts: pts, links: [] };
+
+    var links = [], seen = {};
+    var add = function (a, b) {
+      if (a === b) return;
+      var key = a < b ? a + '_' + b : b + '_' + a;
+      if (seen[key]) return;
+      if (mask.crosses(pts[a][0], pts[a][1], pts[b][0], pts[b][1])) return;
+      seen[key] = 1; links.push([a, b, rnd()]);
+    };
+    pts.forEach(function (p, i) {
+      var near = pts.map(function (q, j) { return { j: j, d: Math.hypot(p[0] - q[0], p[1] - q[1]) }; })
+                    .filter(function (o) { return o.j !== i; })
+                    .sort(function (a, b) { return a.d - b.d; });
+      if (near[0]) add(i, near[0].j);
+      if (near[1] && rnd() > 0.28) add(i, near[1].j);
+      if (near[2] && rnd() > 0.62) add(i, near[2].j);   // 삼각형을 만들어 성좌 느낌을 낸다
+    });
+    return { pts: pts, links: links };
+  }
+
+  /* ───────── ③ PAINT ───────── */
+  function paint(x, W, H, f, mask, opt) {
+    opt = opt || {};
+    if (!f.pts.length) return;
+    var A = opt.alpha == null ? 1 : opt.alpha,
+        sc = Math.max(0.75, Math.min(W, H) / 1080),
+        NODE = opt.node || '#A9C7EC', HI = opt.nodeHi || '#7FA8DE';
+    x.save();
+
+    /* 보케 — 큰 옅은 원으로 깊이를 준다 */
+    if (opt.bokeh !== false) {
+      for (var i = 0; i < Math.min(5, f.pts.length); i++) {
+        var p = f.pts[(i * 5 + 2) % f.pts.length],
+            R = Math.min(W, H) * (0.10 + ((i * 37) % 11) / 100);
+        var bg = x.createRadialGradient(p[0], p[1], 0, p[0], p[1], R);
+        bg.addColorStop(0, 'rgba(190,216,246,' + (0.24 * A).toFixed(3) + ')');
+        bg.addColorStop(1, 'rgba(190,216,246,0)');
+        x.fillStyle = bg; x.beginPath(); x.arc(p[0], p[1], R, 0, 7); x.fill();
+      }
+    }
+
+    /* 선 — 양 끝이 옅고 가운데가 진한 그라디언트 (실처럼 보이게) */
+    x.lineCap = 'round';
+    f.links.forEach(function (L) {
+      var p = f.pts[L[0]], q = f.pts[L[1]], r = L[2],
+          g = x.createLinearGradient(p[0], p[1], q[0], q[1]),
+          a0 = ((0.05 + r * 0.05) * A).toFixed(3),
+          a1 = ((0.11 + r * 0.11) * A).toFixed(3);
+      g.addColorStop(0, 'rgba(11,79,209,' + a0 + ')');
+      g.addColorStop(0.5, 'rgba(11,79,209,' + a1 + ')');
+      g.addColorStop(1, 'rgba(11,79,209,' + a0 + ')');
+      x.strokeStyle = g; x.lineWidth = (0.9 + r * 0.8) * sc;
+      x.beginPath(); x.moveTo(p[0], p[1]); x.lineTo(q[0], q[1]); x.stroke();
+    });
+
+    /* 노드 — 작게, 일부만 흰 심을 넣어 반짝이게 */
+    f.pts.forEach(function (p) {
+      var t = p[2], r = (1.6 + t * 2.3) * sc;
+      x.globalAlpha = (0.30 + t * 0.28) * A;
+      x.fillStyle = t > 0.74 ? HI : NODE;
+      x.beginPath(); x.arc(p[0], p[1], r, 0, 7); x.fill();
+      if (t > 0.85) {
+        x.globalAlpha = 0.80 * A; x.fillStyle = '#FFFFFF';
+        x.beginPath(); x.arc(p[0], p[1], r * 0.36, 0, 7); x.fill();
+      }
+    });
+    x.restore();
+  }
+
+  /* ───────── 화면 배경 ───────── */
+  var NET = { cv: null, raf: 0, tmr: 0 };
+
+  function mountDOM() {
+    var cv = document.getElementById('ajnet');
+    if (!cv) {
+      cv = document.createElement('canvas');
+      cv.id = 'ajnet';
+      cv.setAttribute('aria-hidden', 'true');
+      document.body.insertBefore(cv, document.body.firstChild);
+    }
+    NET.cv = cv;
+    redraw();
+
+    window.addEventListener('resize', schedule, { passive: true });
+    window.addEventListener('orientationchange', schedule, { passive: true });
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule).catch(function () {});
+    try {
+      new ResizeObserver(schedule).observe(document.body);
+    } catch (e) {
+      setInterval(schedule, 1500);
+    }
+  }
+
+  function schedule() {
+    clearTimeout(NET.tmr);
+    NET.tmr = setTimeout(redraw, 220);
+  }
+
+  function redraw() {
+    var cv = NET.cv; if (!cv) return;
+    cancelAnimationFrame(NET.raf);
+    NET.raf = requestAnimationFrame(function () {
+      try {
+        var W = document.documentElement.clientWidth || window.innerWidth,
+            H = Math.max(document.documentElement.scrollHeight, window.innerHeight || 0);
+        if (!W || !H) return;
+        var sc = Math.min(window.devicePixelRatio || 1, 2);
+        if (W * H * sc * sc > 6e6) sc = Math.sqrt(6e6 / (W * H));
+        cv.style.width = W + 'px'; cv.style.height = H + 'px';
+        cv.width = Math.round(W * sc); cv.height = Math.round(H * sc);
+        var x = cv.getContext('2d');
+        x.setTransform(sc, 0, 0, sc, 0, 0);
+        x.clearRect(0, 0, W, H);
+        var mask = maskFromDOM(W, H, { pad: 14, cell: Math.max(16, Math.round(W / 24)) });
+        var f = field(W, H, mask, { density: 1.0, max: Math.round(H / 110) + 12, seed: 5 });
+        paint(x, W, H, f, mask, { alpha: 0.90, bokeh: true });
+      } catch (e) {}
+    });
+  }
+
+  /* ───────── 산출물(카드·배경화면) 보강 ─────────
+     마스크가 잉크를 피해 주므로 위에 덧그려도 글자를 가리지 않는다.
+     덕분에 기존 그리기 순서를 손대지 않고 감싸기만 하면 된다. */
+  function enrich(cv, opt) {
+    opt = opt || {};
+    try {
+      if (!cv || !cv.width) return cv;
+      var W = cv.width, H = cv.height, x = cv.getContext('2d');
+      var mask = maskFromCanvas(cv, { contrast: opt.contrast, dilate: opt.dilate });
+      /* 카드 테두리 바깥으로 새지 않게 가장자리를 살짝 잠근다 */
+      var inset = opt.inset == null ? 0.022 : opt.inset;
+      if (inset > 0) {
+        mask.markRect(0, 0, W, H * inset, 0);
+        mask.markRect(0, H * (1 - inset), W, H, 0);
+        mask.markRect(0, 0, W * inset, H, 0);
+        mask.markRect(W * (1 - inset), 0, W, H, 0);
+      }
+      var f = field(W, H, mask, {
+        density: opt.density || 1.35,
+        max: opt.max || 56,
+        seed: opt.seed || 11
+      });
+      paint(x, W, H, f, mask, { alpha: opt.alpha == null ? 0.95 : opt.alpha, bokeh: opt.bokeh !== false });
+    } catch (e) {}
+    return cv;
+  }
+
+  return {
+    Mask: Mask,
+    maskFromDOM: maskFromDOM,
+    maskFromCanvas: maskFromCanvas,
+    field: field,
+    paint: paint,
+    mountDOM: mountDOM,
+    redraw: redraw,
+    schedule: schedule,
+    enrich: enrich,
+    takeover: true          /* 켜 두면 옛 drawNeuralBg 는 아무것도 그리지 않는다 */
+  };
+})();
+
 function drawNeuralBg(x,W,H){
+  /* AJNeural 가 배경을 맡으면 이 옛 함수는 아무것도 그리지 않는다 (호출부 4곳 그대로 둠) */
+  if(typeof AJNeural!=="undefined" && AJNeural.takeover) return;
   /* 성좌(constellation) 방식 — 그물망이 아니다.
      ① 노드를 네 모서리 띠에 몰아 가운데(글자 자리)를 비운다
      ② 먼 노드끼리 길게 이어 삼각형 면을 만들되,
@@ -5892,6 +6217,19 @@ FRIEND=readFriend();
 
 /* 시작 */
 bump("v");
+/* ── 카드·배경화면 산출물에 신경망 결 입히기 (호출부는 그대로) ── */
+try{
+  if(typeof card==="function"){ var _ajCard=card;
+    card=function(){ return AJNeural.enrich(_ajCard.apply(this,arguments),{density:1.40,max:60,alpha:.95}) }; }
+  if(typeof mateCardImg==="function"){ var _ajMate=mateCardImg;
+    mateCardImg=function(){ return AJNeural.enrich(_ajMate.apply(this,arguments),{density:1.30,max:54,alpha:.95}) }; }
+  if(typeof wallpaper==="function"){ var _ajWall=wallpaper;
+    wallpaper=function(){ return AJNeural.enrich(_ajWall.apply(this,arguments),{density:1.05,max:44,alpha:.80}) }; }
+}catch(e){}
+/* ── 화면 전환 때마다 배경을 다시 계산 ── */
+try{ if(typeof showRaw!=="undefined"){ var _ajShow=showRaw;
+  showRaw=function(){ var r=_ajShow.apply(this,arguments); AJNeural.schedule(); return r }; } }catch(e){}
+try{ AJNeural.mountDOM() }catch(e){}
 applyLang(); render1(); refreshStats(); renderFBanner(); renderMateAll(); renderKnown(); renderTodayCard();
 if(FRIEND)sbLog("inv","");
 if(charImg.complete)demo(); else charImg.onload=demo;
