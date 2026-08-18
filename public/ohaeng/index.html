@@ -1880,8 +1880,11 @@ en:{
 }};
 /* 미번역 키는 한국어가 아니라 영어로 떨어진다 — 반쪽짜리 화면을 막는다 */
 const T=k=>{
-  if(L[LANG]&&L[LANG][k]!==undefined&&L[LANG][k]!=="") return L[LANG][k];
-  if(L.en &&L.en[k] !==undefined&&L.en[k] !=="") return L.en[k];
+  /* 빈 문자열은 "미번역"이 아니라 "그 언어에서는 쓰지 않는다"는 뜻이다.
+     (예: 한국어 '3개'의 '개', 궁합 점수의 '점' — 영어에는 단위어가 없다)
+     따라서 undefined 일 때만 다음 언어로 넘어간다. */
+  if(L[LANG]&&L[LANG][k]!==undefined) return L[LANG][k];
+  if(L.en &&L.en[k] !==undefined) return L.en[k];
   return L.ko[k]||"";
 };
 /* ★ 핵심: "영어인가"가 아니라 "한국어가 아닌가".
@@ -2036,6 +2039,7 @@ fr:{
 });
 /* ═══ 다국어 사전 — 2차 배치 : STEP 2·3·4 / 리포트 / 공유·저장 ═══ */
 Object.assign(L.ja, {
+ calHint:'STEP 1では<b>惹かれるもの</b>を、ここでは<b>実際の行動</b>を尋ねます。二つの差が、本当の自分とのズレ(영점조정)です。',
  step2CTA:'この結果、本当の自分と合っていますか?',
  step2CTAd:'実際の生活パターン7項目で<br><b class="hl">自分で補正</b>します。1分で終わります。',
  go2:'自分の生活パターンで補正する',
@@ -2079,6 +2083,7 @@ Object.assign(L.ja, {
 });
 
 Object.assign(L.zh, {
+ calHint:'STEP 1问的是<b>你被什么吸引</b>，这里问的是<b>你实际怎么做</b>。两者之间的差距，就是你与真实自己的差距(영점조정)。',
  step2CTA:'这个结果，和真实的你相符吗?',
  step2CTAd:'用7项真实的生活习惯<br><b class="hl">亲自校正</b>，1分钟就够。',
  go2:'用我的生活习惯来校正',
@@ -2122,6 +2127,7 @@ Object.assign(L.zh, {
 });
 
 Object.assign(L.fr, {
+ calHint:"L'étape 1 demandait ce qui vous <b>attire</b> ; ici, ce que vous <b>faites vraiment</b>. L'écart entre les deux, c'est votre écart avec le réel (영점조정).",
  step2CTA:"Ce résultat vous ressemble-t-il vraiment ?",
  step2CTAd:"Sept habitudes réelles pour<br><b class=\"hl\">corriger vous-même</b>. Une minute suffit.",
  go2:"Corriger avec mes habitudes réelles",
