@@ -3701,55 +3701,82 @@ function drawEmblemVector(x,gan,cx,cy,s,col){
 
 /* ── 신경망 느낌의 은은한 양각(엠보스) 배경 ── */
 function drawNeuralBg(x,W,H){
-  /* 규칙적인 격자처럼 보이던 문제를 없앤다.
-     ① 점을 성기게·불규칙하게 흩고 ② 연결선 굵기·투명도를 제각각 주며
-     ③ 일부 노드만 발광 링을 얹어 "묘하게 어울리는 불규칙"을 만든다. */
+  /* 성좌(constellation) 방식 — 그물망이 아니다.
+     ① 노드를 네 모서리 띠에 몰아 가운데(글자 자리)를 비운다
+     ② 먼 노드끼리 길게 이어 삼각형 면을 만들되,
+        선의 중점이 중앙 코어에 들어오면 그 선은 버린다
+     ③ 선이 주인공이므로 점은 아주 작게, 발광은 쓰지 않는다
+     ④ 뒤에 큰 옅은 원(보케)을 깔아 깊이를 준다 */
   const rnd=(i)=>{const v=Math.sin(i*127.1+i*i*0.017)*43758.5453;return v-Math.floor(v)};
-  const N=22, pts=[];
-  for(let i=0;i<N;i++){
-    /* 격자 기준점에 큰 흔들림을 더해 배치 — 완전 랜덤보다 여백이 고르다 */
-    const col=i%5, row=Math.floor(i/5);
-    const px=(col+.5)/5*W + (rnd(i+1)-.5)*W*.30;
-    const py=(row+.5)/5*H + (rnd(i+51)-.5)*H*.30;
-    pts.push([px,py,rnd(i+301)]);
+  /* 중앙 코어 — 이 영역은 선도 점도 들이지 않는다 */
+  const CX0=W*0.30, CX1=W*0.70, CY0=H*0.26, CY1=H*0.74;
+  const inCore=(px,py)=> px>CX0&&px<CX1&&py>CY0&&py<CY1;
+
+  /* 배치 — 상·하·좌·우 네 띠에 나눠 뿌린다 */
+  const pts=[], BAND=[
+    {n:4, fx:[0.04,0.96], fy:[0.03,0.20]},   // 상단 띠
+    {n:4, fx:[0.04,0.96], fy:[0.80,0.97]},   // 하단 띠
+    {n:3, fx:[0.02,0.22], fy:[0.22,0.78]},   // 좌측 띠
+    {n:3, fx:[0.78,0.98], fy:[0.22,0.78]}    // 우측 띠
+  ];
+  let seed=1;
+  BAND.forEach(b=>{
+    for(let k=0;k<b.n;k++){
+      const px=W*(b.fx[0]+rnd(seed++)*(b.fx[1]-b.fx[0]));
+      const py=H*(b.fy[0]+rnd(seed++)*(b.fy[1]-b.fy[0]));
+      if(!inCore(px,py)) pts.push([px,py,rnd(seed++)]);
+    }
+  });
+  const N=pts.length;
+  if(N<3) return;
+
+  /* 보케 — 큰 옅은 원 */
+  x.save();
+  for(let i=0;i<4;i++){
+    const p=pts[(i*3+1)%N], R=W*(0.13+rnd(i+901)*0.11);
+    const bg=x.createRadialGradient(p[0],p[1],0,p[0],p[1],R);
+    bg.addColorStop(0,"rgba(190,216,246,.32)");
+    bg.addColorStop(1,"rgba(190,216,246,0)");
+    x.fillStyle=bg; x.beginPath(); x.arc(p[0],p[1],R,0,7); x.fill();
   }
-  const links=[];
+  x.restore();
+
+  /* 연결 — 먼 노드를 후보로 삼되, 중앙을 가로지르는 선은 제외 */
+  const links=[], seen={};
+  const tryLink=(a,b,r)=>{
+    if(a===b) return;
+    const key=a<b?a+"-"+b:b+"-"+a; if(seen[key]) return;
+    const mx=(pts[a][0]+pts[b][0])/2, my=(pts[a][1]+pts[b][1])/2;
+    if(inCore(mx,my)) return;                       // 중앙 통과 차단
+    seen[key]=1; links.push([a,b,r]);
+  };
   pts.forEach((p,i)=>{
-    const d=pts.map((q,j)=>({j,d:(p[0]-q[0])**2+(p[1]-q[1])**2})).filter(o=>o.j!==i).sort((a,b)=>a.d-b.d);
-    links.push([i,d[0].j,rnd(i+401)]);
-    if(rnd(i+501)>0.35) links.push([i,d[1].j,rnd(i+601)]);   // 두 번째 선은 확률적으로만
-    if(rnd(i+701)>0.86) links.push([i,d[3]?d[3].j:d[2].j,rnd(i+801)]);  // 드물게 먼 연결
+    const d=pts.map((q,j)=>({j,d:Math.hypot(p[0]-q[0],p[1]-q[1])}))
+               .filter(o=>o.j!==i).sort((a,b)=>a.d-b.d);
+    const mid=d.slice(Math.floor(d.length*0.30));   // 중간~먼 구간
+    tryLink(i, mid[Math.floor(rnd(i+401)*mid.length)].j, rnd(i+451));
+    if(rnd(i+501)>0.40) tryLink(i, mid[Math.floor(rnd(i+521)*mid.length)].j, rnd(i+551));
+    if(rnd(i+601)>0.55) tryLink(i, d[0].j, rnd(i+651));   // 가까운 이웃 하나 — 삼각형 유도
   });
 
-  x.save();
+  x.save(); x.lineCap="round";
   links.forEach(([a1,b1,r])=>{
-    const w=0.7+r*1.5, a=0.16+r*0.30;          // 굵기·투명도 제각각
-    x.globalAlpha=a; x.lineWidth=w; x.lineCap="round";
-    const g=x.createLinearGradient(pts[a1][0],pts[a1][1],pts[b1][0],pts[b1][1]);
-    g.addColorStop(0,"#C9D9F2"); g.addColorStop(.5,"#E6EEF9"); g.addColorStop(1,"#C9D9F2");
-    x.strokeStyle=g;
+    x.globalAlpha=0.24+r*0.28;
+    x.lineWidth=0.6+r*0.5;
+    x.strokeStyle="#BFD5F0";
     x.beginPath(); x.moveTo(pts[a1][0],pts[a1][1]); x.lineTo(pts[b1][0],pts[b1][1]); x.stroke();
   });
   x.restore();
 
-  pts.forEach((p,i)=>{
-    const t=p[2], r=1.6+t*3.4;
-    x.save();
-    if(t>0.72){                                  // 일부만 발광 — 데이터가 흐르는 느낌
-      const rg=x.createRadialGradient(p[0],p[1],0,p[0],p[1],r*5.5);
-      rg.addColorStop(0,"rgba(37,185,255,.20)"); rg.addColorStop(1,"rgba(37,185,255,0)");
-      x.fillStyle=rg; x.beginPath(); x.arc(p[0],p[1],r*5.5,0,7); x.fill();
-      x.globalAlpha=.55; x.fillStyle="#25B9FF";
-    }else{
-      x.globalAlpha=.34; x.fillStyle="#B9CCE8";
-    }
+  /* 노드 — 작고 조용하게 */
+  x.save();
+  pts.forEach(p=>{
+    const t=p[2], r=1.5+t*2.0;
+    x.globalAlpha=0.32+t*0.26;
+    x.fillStyle = t>0.74 ? "#7FA8DE" : "#A9C7EC";
     x.beginPath(); x.arc(p[0],p[1],r,0,7); x.fill();
-    if(t>0.55){                                  // 얇은 링
-      x.globalAlpha=.22; x.strokeStyle="#8FB4E8"; x.lineWidth=.9;
-      x.beginPath(); x.arc(p[0],p[1],r*2.4,0,7); x.stroke();
-    }
-    x.restore();
   });
+  x.restore();
 }
 
 
