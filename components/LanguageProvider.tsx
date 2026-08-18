@@ -23,14 +23,29 @@ const LanguageContext = createContext<LanguageContextValue>({
 export default function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [lang, setLangState] = useState<Lang>("ko");
 
+  /* 오행 앱(public/ohaeng)과 정적 legal 페이지는 JSON 문자열 형태의
+     ohaeng_lang 키를 쓴다. 어느 쪽에서 바꾸든 사이트 전체가 따라오도록
+     읽을 때는 두 키를 모두 보고, 쓸 때는 두 키에 모두 기록한다. */
+  const LEGACY_KEY = "ohaeng_lang";
+  const VALID: Lang[] = ["ko", "en", "ja", "zh", "fr"];
+
   useEffect(() => {
     const saved = localStorage.getItem(STORAGE_KEY) as Lang | null;
-    if (saved) setLangState(saved);
+    if (saved && VALID.includes(saved)) { setLangState(saved); return; }
+    try {
+      const raw = localStorage.getItem(LEGACY_KEY);
+      if (raw) {
+        const v = JSON.parse(raw) as Lang;
+        if (VALID.includes(v)) { setLangState(v); localStorage.setItem(STORAGE_KEY, v); }
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function setLang(next: Lang) {
     setLangState(next);
     localStorage.setItem(STORAGE_KEY, next);
+    try { localStorage.setItem(LEGACY_KEY, JSON.stringify(next)); } catch {}
   }
 
   return (
