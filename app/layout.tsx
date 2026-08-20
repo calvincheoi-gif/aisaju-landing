@@ -42,8 +42,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko">
+    <html lang="ko" translate="no" className="notranslate">
       <head>
+        {/* 자체 5개 국어 전환을 쓰므로 브라우저 자동번역을 끈다.
+            켜져 있으면 크롬이 우리 화면을 다시 기계번역해 덮어쓴다. */}
+        <meta name="google" content="notranslate" />
         <link
           rel="stylesheet"
           as="style"
