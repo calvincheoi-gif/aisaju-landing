@@ -1,6 +1,9 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" translate="no" class="notranslate">
 <head>
+<meta name="google" content="notranslate">
+<meta name="robots" content="notranslate">
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>그럼, 나의 (자연) 오행 성격은? → 고민 솔루션 TOP 4 · AI사주랩</title>
@@ -44,6 +47,17 @@ body{background:var(--bg);color:var(--ink);
 /* 옅은 신경망 패턴 — 페이지와 함께 스크롤되는 배경 (fixed 아님) */
 /* 배경 타일은 AJNeural 캔버스(#ajnet)로 대체 — 글자 자리를 피해 그린다 */
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 18px}
+/* ── 언어별 문장 길이 차이 방어 ──
+   한국어는 짧지만 영어·프랑스어는 같은 뜻이 2~3배 길어진다.
+   nowrap 로 고정된 자리는 잘리므로, 한국어가 아닐 때만 줄바꿈을 허용한다. */
+html:not([lang="ko"]) .qchip{white-space:normal;line-height:1.25;text-align:center}
+html:not([lang="ko"]) .toast{white-space:normal;max-width:88vw;line-height:1.4}
+html:not([lang="ko"]) .qahead span{white-space:normal}
+html:not([lang="ko"]) .qa b{white-space:normal}
+html:not([lang="ko"]) .xs b,html:not([lang="ko"]) .xs span{white-space:normal;overflow-wrap:anywhere}
+html:not([lang="ko"]) .premb1 b,html:not([lang="ko"]) .premb1 span{white-space:normal;overflow-wrap:anywhere}
+html:not([lang="ko"]) .bd-l,html:not([lang="ko"]) .bd-note{overflow-wrap:anywhere}
+html:not([lang="ko"]) .langsw button{letter-spacing:-.03em}
 #ajnet{position:absolute;left:0;top:0;z-index:0;pointer-events:none;user-select:none}
 .screen{display:none;animation:fade .36s cubic-bezier(.3,1,.4,1) both;position:relative;z-index:1}
 .screen.on{display:block}
