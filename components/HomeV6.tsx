@@ -103,8 +103,24 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
   display:flex;align-items:center;gap:8px}
 .btn .ico{flex:0 0 30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:15px;background:rgba(255,255,255,.9)}
 .btn .tx{flex:1;min-width:0}
-.btn .t1{font-size:14px;font-weight:800;letter-spacing:-.05em;line-height:1.2;white-space:nowrap}
-.btn .t2{font-size:9.5px;font-weight:700;letter-spacing:-.03em;opacity:.9;margin-top:1px;white-space:nowrap}
+.btn .t1{font-size:14px;font-weight:800;letter-spacing:-.05em;line-height:1.2;
+  white-space:normal;overflow-wrap:anywhere;word-break:keep-all}
+.btn .t2{font-size:9.5px;font-weight:700;letter-spacing:-.03em;opacity:.9;margin-top:1px;
+  white-space:normal;overflow-wrap:anywhere;word-break:keep-all}
+/* 한국어 외 언어는 문장이 길어 2단 배치에서 잘린다 — 세로로 쌓는다 */
+html:not([lang="ko"]) .cta-pair{grid-template-columns:1fr}
+html:not([lang="ko"]) .btn .t1{font-size:15px}
+html:not([lang="ko"]) .btn .t2{font-size:10.5px}
+html:not([lang="ko"]) .sv .sn{white-space:normal;overflow-wrap:anywhere}
+html:not([lang="ko"]) .trust .n,html:not([lang="ko"]) .trust .l{white-space:normal;overflow-wrap:anywhere}
+html:not([lang="ko"]) .card-title{font-size:26px;line-height:1.2}
+html:not([lang="ko"]) .card-pill,html:not([lang="ko"]) .card-foot{white-space:normal;overflow-wrap:anywhere;line-height:1.45}
+html:not([lang="ko"]) .card-line{white-space:normal;overflow-wrap:anywhere}
+html:not([lang="ko"]) .need span,html:not([lang="ko"]) .ch-btn{white-space:normal;overflow-wrap:anywhere}
+html:not([lang="ko"]) .step h4,html:not([lang="ko"]) .step p{overflow-wrap:anywhere}
+html:not([lang="ko"]) .oh .nm,html:not([lang="ko"]) .oh .kw{white-space:normal;line-height:1.22}
+html:not([lang="ko"]) .cycnote{white-space:normal;line-height:1.5}
+html:not([lang="ko"]) .biz{overflow-wrap:anywhere}
 .btn .go{flex:0 0 20px;height:20px;border-radius:50%;display:grid;place-items:center;font-size:11px;font-weight:800}
 .btn-free{background:linear-gradient(135deg,#3B82F6,#4F46E5);color:#fff;box-shadow:0 10px 22px rgba(37,99,235,.32)}
 .btn-free .go{background:rgba(255,255,255,.95);color:var(--blue-d)}
