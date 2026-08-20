@@ -100,17 +100,25 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 /* 듀얼 CTA */
 .cta-pair{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .btn{border:0;border-radius:16px;padding:12px 10px;cursor:pointer;font-family:inherit;text-align:left;
-  display:flex;align-items:center;gap:8px}
+  display:flex;align-items:center;gap:8px;min-height:66px}
 .btn .ico{flex:0 0 30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:15px;background:rgba(255,255,255,.9)}
 .btn .tx{flex:1;min-width:0}
-.btn .t1{font-size:14px;font-weight:800;letter-spacing:-.05em;line-height:1.2;
+/* 큰 글씨(t1)와 작은 글씨(t2)는 반드시 다른 줄에 둔다.
+   원래 nowrap 이 두 span 을 갈라 주고 있었을 뿐이라, 줄바꿈을 허용한
+   순간 한 줄로 붙어 버렸다. display:block 으로 구조 자체를 고친다. */
+.btn .t1{display:block;font-size:14px;font-weight:800;letter-spacing:-.04em;line-height:1.26;
   white-space:normal;overflow-wrap:anywhere;word-break:keep-all}
-.btn .t2{font-size:9.5px;font-weight:700;letter-spacing:-.03em;opacity:.9;margin-top:1px;
+.btn .t2{display:block;font-size:10px;font-weight:700;letter-spacing:-.02em;opacity:.88;
+  margin-top:4px;line-height:1.32;
   white-space:normal;overflow-wrap:anywhere;word-break:keep-all}
-/* 한국어 외 언어는 문장이 길어 2단 배치에서 잘린다 — 세로로 쌓는다 */
-html:not([lang="ko"]) .cta-pair{grid-template-columns:1fr}
-html:not([lang="ko"]) .btn .t1{font-size:15px}
-html:not([lang="ko"]) .btn .t2{font-size:10.5px}
+/* 한국어 외 언어도 좌우 2단을 유지한다 — 대신 글자를 조금 줄여 2줄에 담는다 */
+html:not([lang="ko"]) .btn{padding:12px 8px;gap:6px}
+html:not([lang="ko"]) .btn .ico{flex:0 0 26px;height:26px;font-size:13px}
+html:not([lang="ko"]) .btn .go{flex:0 0 18px;height:18px;font-size:10px}
+html:not([lang="ko"]) .btn .t1{font-size:12.6px;letter-spacing:-.03em;line-height:1.24}
+html:not([lang="ko"]) .btn .t2{font-size:9.2px;margin-top:3px;line-height:1.3}
+/* 아주 좁은 화면에서만 세로로 쌓는다 */
+@media(max-width:342px){ html:not([lang="ko"]) .cta-pair{grid-template-columns:1fr} }
 html:not([lang="ko"]) .sv .sn{white-space:normal;overflow-wrap:anywhere}
 html:not([lang="ko"]) .trust .n,html:not([lang="ko"]) .trust .l{white-space:normal;overflow-wrap:anywhere}
 html:not([lang="ko"]) .card-title{font-size:26px;line-height:1.2}
