@@ -102,7 +102,7 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 .btn{border:0;border-radius:16px;padding:12px 10px;cursor:pointer;font-family:inherit;text-align:left;
   display:flex;align-items:center;gap:8px;min-height:66px}
 .btn .ico{flex:0 0 30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:15px;background:rgba(255,255,255,.9)}
-.btn .tx{flex:1;min-width:0}
+.btn .tx{flex:1;min-width:0;text-align:center}
 /* 큰 글씨(t1)와 작은 글씨(t2)는 반드시 다른 줄에 둔다.
    원래 nowrap 이 두 span 을 갈라 주고 있었을 뿐이라, 줄바꿈을 허용한
    순간 한 줄로 붙어 버렸다. display:block 으로 구조 자체를 고친다. */
@@ -162,7 +162,7 @@ body{padding-bottom:86px}
 .ch-btn.insta{background:linear-gradient(135deg,rgba(96,196,255,.92),rgba(45,160,240,.92));
   box-shadow:0 3px 11px rgba(45,160,240,.26)}
 .ch-btn.hot:active{transform:translateY(0);box-shadow:0 1px 4px rgba(20,60,120,.2)}
-a.need{text-decoration:none;color:inherit;display:flex;align-items:center;gap:10px}
+a.need{text-decoration:none;color:inherit;display:flex;align-items:center;justify-content:center;gap:10px;text-align:center}
 a.need:hover{background:#EEF5FF}
 .sec-label{font-size:11px;font-weight:800;letter-spacing:.13em;color:var(--blue);margin-bottom:7px}
 h2{margin:0 0 6px;font-size:20px;line-height:1.38;letter-spacing:-.045em;font-weight:800;color:var(--navy)}
@@ -211,13 +211,13 @@ h2 b{color:var(--blue)}
  * data-id 속성으로 향후 CMS 연동 가능 */
 .slides{display:flex;gap:9px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 0 8px;scrollbar-width:none}
 .slides::-webkit-scrollbar{display:none}
-.slide{flex:0 0 79%;scroll-snap-align:center;border-radius:18px;padding:16px;position:relative;background:#fff;border:1px solid var(--line);box-shadow:0 6px 16px rgba(20,50,110,.07)}
+.slide{flex:0 0 79%;scroll-snap-align:center;text-align:center;border-radius:18px;padding:16px;position:relative;background:#fff;border:1px solid var(--line);box-shadow:0 6px 16px rgba(20,50,110,.07)}
 .slide .tag{display:inline-block;font-size:10.5px;font-weight:800;padding:4px 10px;border-radius:999px;background:var(--blue-p);color:var(--blue-d);margin-bottom:8px}
 .slide.warm .tag{background:#FFF3D6;color:#A97904}
 .slide h3{margin:0 0 5px;font-size:16px;letter-spacing:-.04em;font-weight:800;color:var(--navy);line-height:1.35}
 .slide p{margin:0 0 10px;font-size:12px;color:var(--gray);line-height:1.55;font-weight:500}
 .slide a{display:inline-block;font-size:12px;font-weight:800;color:var(--blue);text-decoration:none;border-bottom:1.5px solid rgba(37,99,235,.35)}
-.dday{position:absolute;top:13px;right:13px;font-size:10.5px;font-weight:800;color:var(--crim);background:#FDECF1;padding:4px 9px;border-radius:999px}
+.dday{position:absolute;top:13px;right:13px;z-index:1;font-size:10.5px;font-weight:800;color:var(--crim);background:#FDECF1;padding:4px 9px;border-radius:999px}
 
 /* 고민 */
 .needs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -228,14 +228,14 @@ h2 b{color:var(--blue)}
 /* 3단계 */
 .steps{position:relative;padding-left:26px}
 .steps::before{content:"";position:absolute;left:7px;top:9px;bottom:16px;width:2px;background:linear-gradient(180deg,var(--blue),rgba(37,99,235,.12))}
-.step{position:relative;margin-bottom:16px}
+.step{position:relative;margin-bottom:16px;text-align:center}
 .step::before{content:"";position:absolute;left:-24px;top:4px;width:15px;height:15px;border-radius:50%;background:#fff;border:3px solid var(--blue)}
 .step .t{font-size:10.5px;color:var(--blue);font-weight:800}
 .step h4{margin:1px 0 3px;font-size:14.5px;font-weight:800;letter-spacing:-.04em;color:var(--navy)}
 .step p{margin:0;font-size:12.5px;color:var(--gray);line-height:1.6;font-weight:500}
 
 /* 후기 */
-.review{background:#fff;border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:0 4px 12px rgba(20,50,110,.05)}
+.review{background:#fff;text-align:center;border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:0 4px 12px rgba(20,50,110,.05)}
 .review .stars{color:var(--gold);font-size:13px;letter-spacing:2px}
 .review p{margin:8px 0 9px;font-size:13px;line-height:1.7;color:var(--ink);font-weight:500}
 .review .who{font-size:11.5px;color:var(--gray);font-weight:600}
@@ -275,7 +275,7 @@ footer .lg{display:inline-block;margin:6px 12px 0 0;color:rgba(255,255,255,.85);
 
 /* ═══ v6: 서비스 카드 그리드 ═══ */
 .svc{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
-.sv{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 13px 12px;box-shadow:0 4px 12px rgba(20,50,110,.05);text-align:left}
+.sv{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 13px 12px;box-shadow:0 4px 12px rgba(20,50,110,.05);text-align:center}
 .sv .si{font-size:23px;line-height:1}
 .sv .sn{font-size:14.5px;font-weight:800;color:var(--ink);margin-top:7px}
 .sv .sd{font-size:11.5px;color:var(--gray);margin-top:3px;line-height:1.45;font-weight:500}
@@ -288,7 +288,7 @@ footer .lg{display:inline-block;margin:6px 12px 0 0;color:rgba(255,255,255,.85);
 .consult .ct{font-size:15px;font-weight:800;color:var(--ink)}
 .consult .cs{font-size:11.5px;color:var(--gray);margin-top:3px;font-weight:500}
 .cbtns{display:grid;grid-template-columns:1.15fr 1fr;gap:8px;margin-top:11px}
-.cb{border-radius:14px;padding:12px 10px;text-align:left;font-family:inherit;cursor:pointer}
+.cb{border-radius:14px;padding:12px 10px;text-align:center;font-family:inherit;cursor:pointer}
 .cb .b1{display:block;font-size:13.5px;font-weight:800;letter-spacing:-.3px}
 .cb .b2{display:block;font-size:11px;margin-top:3px;font-weight:600;opacity:.92}
 .cb-quick{background:linear-gradient(135deg,#2F7FF0,#1D6DE3);border:0;color:#fff;box-shadow:0 6px 14px rgba(29,109,227,.28)}
