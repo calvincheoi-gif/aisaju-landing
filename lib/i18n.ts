@@ -123,6 +123,24 @@ interface Dictionary {
     fastestBadge: string;
     saveDelayed: string;
     saveFailed: string;
+    payTitle: string;
+    payAmount: string;
+    payRefNo: string;
+    payRefNoHint: string;
+    payStep1: string;
+    payStep2: string;
+    payStep3: string;
+    payKakaoBtn: string;
+    payBankTitle: string;
+    payHolder: string;
+    payDepositName: string;
+    payAfter: string;
+    payLawTitle: string;
+    payLawBody: string;
+    payRefundLink: string;
+    payCopyBtn: string;
+    payCopied: string;
+    payVat: string;
   };
   reportPage: { eyebrow: string; title: string; desc: string };
   reportForm: {
@@ -300,6 +318,24 @@ const ko: Dictionary = {
     fastestBadge: "가장 빠른 방법",
     saveDelayed: "DB 응답이 지연되어 자동 저장은 확인되지 않았습니다. 이메일로 접수된 내용을 확인해 연락드리겠습니다.",
     saveFailed: "DB 저장 요청에 실패했습니다. 이메일로 접수된 내용을 확인해 연락드리겠습니다.",
+    payTitle: "결제 안내",
+    payAmount: "결제하실 금액",
+    payRefNo: "접수번호",
+    payRefNoHint: "입금 확인 시 대조에 쓰이니 그대로 보관해 주세요.",
+    payStep1: "아래 버튼으로 <b>%A</b>을 송금해 주세요. 금액은 직접 입력하셔야 합니다.",
+    payStep2: "입금자명은 <b>신청자 성함과 동일하게</b> 적어 주세요. 다르면 확인이 늦어집니다.",
+    payStep3: "입금이 확인되면 <b>영업일 %D일 이내</b>에 연락드립니다.",
+    payKakaoBtn: "카카오페이로 송금하기",
+    payBankTitle: "계좌이체로 보내실 분",
+    payHolder: "예금주",
+    payDepositName: "입금자명",
+    payAfter: "입금 후 별도로 알려주실 필요는 없습니다. 확인되는 대로 먼저 연락드립니다.",
+    payLawTitle: "결제 전 꼭 확인해 주세요",
+    payLawBody: "리포트는 발송이 시작된 뒤에는 전자상거래법 제17조 제2항 제5호에 따라 청약철회가 제한됩니다. 상담은 시작 전까지 전액 환불됩니다.",
+    payRefundLink: "환불·청약철회 규정 보기",
+    payCopyBtn: "신청 내용 복사",
+    payCopied: "복사했습니다",
+    payVat: "부가세 포함 금액입니다.",
   },
   reportPage: {
     eyebrow: "AI 명리 리포트",
@@ -487,6 +523,24 @@ const en: Dictionary = {
     fastestBadge: "Fastest way",
     saveDelayed: "The database was slow to respond, so we could not confirm the automatic save. We will check what came in by email and get back to you.",
     saveFailed: "The save request failed. We will check what came in by email and get back to you.",
+    payTitle: "How to pay",
+    payAmount: "Amount to pay",
+    payRefNo: "Reference no.",
+    payRefNoHint: "Please keep this — we use it to match your payment.",
+    payStep1: "Send <b>%A</b> using the button below. You will need to enter the amount yourself.",
+    payStep2: "Please use <b>the same name as on this request</b> as the sender name. A different name delays confirmation.",
+    payStep3: "Once your payment is confirmed we will contact you <b>within %D business days</b>.",
+    payKakaoBtn: "Pay with KakaoPay",
+    payBankTitle: "If you prefer a bank transfer",
+    payHolder: "Account holder",
+    payDepositName: "Sender name",
+    payAfter: "You do not need to notify us after paying. We will reach out as soon as it clears.",
+    payLawTitle: "Please read before paying",
+    payLawBody: "Once delivery of the report has begun, withdrawal is restricted under Article 17(2)5 of the Korean E-Commerce Act. Consultations are fully refundable until they begin.",
+    payRefundLink: "See the refund policy",
+    payCopyBtn: "Copy this request",
+    payCopied: "Copied",
+    payVat: "VAT included.",
   },
   reportPage: {
     eyebrow: "AI Saju Report",
@@ -674,6 +728,24 @@ const ja: Dictionary = {
     fastestBadge: "いちばん早い方法",
     saveDelayed: "データベースの応答が遅れたため、自動保存を確認できませんでした。メールで受け付けた内容を確認のうえご連絡します。",
     saveFailed: "保存の要求に失敗しました。メールで受け付けた内容を確認のうえご連絡します。",
+    payTitle: "お支払いのご案内",
+    payAmount: "お支払い金額",
+    payRefNo: "受付番号",
+    payRefNoHint: "入金確認の照合に使いますので、そのまま保管してください。",
+    payStep1: "下のボタンから<b>%A</b>をお送りください。金額はご自身で入力していただきます。",
+    payStep2: "振込名義は<b>お申込みのお名前と同じ</b>にしてください。異なると確認が遅れます。",
+    payStep3: "入金が確認できましたら<b>営業日%D日以内</b>にご連絡します。",
+    payKakaoBtn: "カカオペイで送金する",
+    payBankTitle: "銀行振込をご希望の方",
+    payHolder: "口座名義",
+    payDepositName: "振込名義",
+    payAfter: "入金後にご連絡いただく必要はありません。確認でき次第こちらからご連絡します。",
+    payLawTitle: "お支払い前に必ずご確認ください",
+    payLawBody: "レポートは発送が開始された後、韓国の電子商取引法第17条第2項第5号により申込みの撤回が制限されます。相談は開始前であれば全額返金いたします。",
+    payRefundLink: "返金・撤回規定を見る",
+    payCopyBtn: "申込内容をコピー",
+    payCopied: "コピーしました",
+    payVat: "消費税込みの金額です。",
   },
   reportPage: {
     eyebrow: "AI四柱レポート",
@@ -861,6 +933,24 @@ const zh: Dictionary = {
     fastestBadge: "最快的方式",
     saveDelayed: "数据库响应延迟，未能确认自动保存。我们会核对通过邮件收到的内容后与你联系。",
     saveFailed: "保存请求失败。我们会核对通过邮件收到的内容后与你联系。",
+    payTitle: "付款说明",
+    payAmount: "应付金额",
+    payRefNo: "受理编号",
+    payRefNoHint: "核对入金时会用到，请妥善保存。",
+    payStep1: "请通过下方按钮汇款<b>%A</b>。金额需要你自行填写。",
+    payStep2: "汇款人姓名请<b>与申请人姓名一致</b>。不一致会导致确认延迟。",
+    payStep3: "确认到账后，我们会在<b>%D个工作日内</b>与你联系。",
+    payKakaoBtn: "用 KakaoPay 汇款",
+    payBankTitle: "希望银行转账的话",
+    payHolder: "账户名",
+    payDepositName: "汇款人姓名",
+    payAfter: "付款后无需另行告知，确认到账后我们会主动联系你。",
+    payLawTitle: "付款前请务必确认",
+    payLawBody: "报告一旦开始发送，依据韩国《电子商务法》第17条第2款第5项，撤销申请将受到限制。咨询在开始之前可全额退款。",
+    payRefundLink: "查看退款与撤销规定",
+    payCopyBtn: "复制申请内容",
+    payCopied: "已复制",
+    payVat: "含增值税。",
   },
   reportPage: {
     eyebrow: "AI命理报告",
@@ -1048,6 +1138,24 @@ const fr: Dictionary = {
     fastestBadge: "Le plus rapide",
     saveDelayed: "La base de données a mis trop de temps à répondre : l'enregistrement automatique n'a pas pu être confirmé. Nous vérifierons ce qui nous est parvenu par e-mail et vous recontacterons.",
     saveFailed: "L'enregistrement a échoué. Nous vérifierons ce qui nous est parvenu par e-mail et vous recontacterons.",
+    payTitle: "Comment payer",
+    payAmount: "Montant à régler",
+    payRefNo: "N° de dossier",
+    payRefNoHint: "Conservez-le : il nous sert à rapprocher votre paiement.",
+    payStep1: "Envoyez <b>%A</b> via le bouton ci-dessous. Vous devrez saisir le montant vous-même.",
+    payStep2: "Indiquez comme émetteur <b>le même nom que sur cette demande</b>. Un nom différent retarde la confirmation.",
+    payStep3: "Dès votre paiement confirmé, nous vous contactons <b>sous %D jours ouvrés</b>.",
+    payKakaoBtn: "Payer avec KakaoPay",
+    payBankTitle: "Si vous préférez le virement bancaire",
+    payHolder: "Titulaire du compte",
+    payDepositName: "Nom de l'émetteur",
+    payAfter: "Inutile de nous prévenir après le paiement : nous vous contactons dès réception.",
+    payLawTitle: "À lire avant de payer",
+    payLawBody: "Une fois l'envoi du rapport commencé, la rétractation est limitée par l'article 17(2)5 de la loi coréenne sur le commerce électronique. Les consultations sont intégralement remboursables tant qu'elles n'ont pas commencé.",
+    payRefundLink: "Voir la politique de remboursement",
+    payCopyBtn: "Copier ma demande",
+    payCopied: "Copié",
+    payVat: "TVA incluse.",
   },
   reportPage: {
     eyebrow: "Rapport IA Saju",
