@@ -422,7 +422,7 @@ en: {
  ftBrand:'AIsajuLab.com', ftTag:'AI analyses; myeongnihak finds the direction',
  ftDisc:'Results are AI-generated content grounded in myeongnihak. They are not scientific fact and do not guarantee the future.',
  bizName:'Business name: Life &amp; Biz Growth Institute (라이프앤비즈 성장 연구소) · Representative: Choi Hyungchul',
- bizNo:'Business registration no. 688-13-03146 · Mail-order registration pending',
+ bizNo:'Business registration no. 688-13-03146 · Mail-order reg. no. 2026-서울강동-1350',
  bizAddr:'Address: 103-602, 60 Olympic-ro 78-gil, Gangdong-gu, Seoul, Republic of Korea',
  bizTel:'Tel +82 10-6789-1341 · Email calvincheoi@gmail.com',
  bizHost:'Hosting provider: Netlify, Inc.',
@@ -510,7 +510,7 @@ ja: {
  ftBrand:'AIsajuLab.com', ftTag:'AIが分析し、命理学が方向を見つけます',
  ftDisc:'診断結果は命理学にもとづくAI生成コンテンツであり、科学的事実や未来を保証するものではありません。',
  bizName:'商号 ライフアンドビズ(Life &amp; Biz) 成長研究所 · 代表 チェ・ヒョンチョル',
- bizNo:'事業者登録番号 688-13-03146 · 通信販売業申告 手続き中',
+ bizNo:'事業者登録番号 688-13-03146 · 通信販売業申告 第 2026-서울강동-1350 号',
  bizAddr:'所在地 大韓民国 ソウル特別市 江東区 オリンピック路78ギル60, 103棟602号',
  bizTel:'電話 +82 10-6789-1341 · メール calvincheoi@gmail.com',
  bizHost:'ホスティング提供 Netlify, Inc.',
@@ -598,7 +598,7 @@ zh: {
  ftBrand:'AIsajuLab.com', ftTag:'AI 做分析，命理学找方向',
  ftDisc:'测试结果是以命理学为基础的 AI 生成内容，并非科学事实，也不保证未来。',
  bizName:'商号 Life &amp; Biz 成长研究所 (라이프앤비즈 성장 연구소) · 代表 崔炯哲',
- bizNo:'营业执照号 688-13-03146 · 通信销售业申报 办理中',
+ bizNo:'营业执照号 688-13-03146 · 通信销售业申报 第 2026-서울강동-1350 号',
  bizAddr:'地址 大韩民国 首尔特别市 江东区 奥林匹克路78街60, 103栋602号',
  bizTel:'电话 +82 10-6789-1341 · 邮箱 calvincheoi@gmail.com',
  bizHost:'主机服务商 Netlify, Inc.',
@@ -686,7 +686,7 @@ fr: {
  ftBrand:'AIsajuLab.com', ftTag:"L'IA analyse ; le myeongnihak trouve la direction",
  ftDisc:"Les résultats sont un contenu généré par IA fondé sur le myeongnihak. Ils ne constituent pas un fait scientifique et ne garantissent pas l'avenir.",
  bizName:'Raison sociale : Life &amp; Biz Growth Institute (라이프앤비즈 성장 연구소) · Représentant : Choi Hyungchul',
- bizNo:"N° d'enregistrement 688-13-03146 · Déclaration de vente à distance en cours",
+ bizNo:"N° d'enregistrement 688-13-03146 · Vente à distance n° 2026-서울강동-1350",
  bizAddr:'Adresse : 103-602, 60 Olympic-ro 78-gil, Gangdong-gu, Séoul, République de Corée',
  bizTel:'Tél. +82 10-6789-1341 · E-mail calvincheoi@gmail.com',
  bizHost:'Hébergeur : Netlify, Inc.',
@@ -975,7 +975,7 @@ const HTML = String.raw`
     <span data-i="ftDisc">진단 결과는 명리학에 기반한 AI 생성 콘텐츠이며, 과학적 사실이나 미래를 보장하지 않습니다.</span><br><br>
     <span class="biz">
       <span data-i="bizName">상호 라이프앤비즈(Life &amp; Biz) 성장 연구소 · 대표 최형철</span><br>
-      <span data-i="bizNo">사업자등록번호 688-13-03146 · 통신판매업신고 신고 예정</span><br>
+      <span data-i="bizNo">사업자등록번호 688-13-03146 · 통신판매업신고 제 2026-서울강동-1350 호</span><br>
       <span data-i="bizAddr">사업장 소재지 서울특별시 강동구 올림픽로78길 60, 103동 602호 (천호동, 강동밀레니얼중흥S클래스)</span><br>
       <span data-i="bizTel">전화 010-6789-1341 · 이메일 calvincheoi@gmail.com</span><br>
       <span data-i="bizHost">호스팅 제공자 Netlify, Inc.</span>
