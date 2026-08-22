@@ -58,6 +58,7 @@ html:not([lang="ko"]) .xs b,html:not([lang="ko"]) .xs span{white-space:normal;ov
 html:not([lang="ko"]) .premb1 b,html:not([lang="ko"]) .premb1 span{white-space:normal;overflow-wrap:anywhere}
 html:not([lang="ko"]) .bd-l,html:not([lang="ko"]) .bd-note{overflow-wrap:anywhere}
 html:not([lang="ko"]) .langsw button{letter-spacing:-.03em}
+.bizf{margin-top:9px;padding-top:9px;border-top:1px solid var(--line);font-size:11.2px;line-height:1.65;color:var(--ink3);word-break:keep-all}
 #ajnet{position:absolute;left:0;top:0;z-index:0;pointer-events:none;user-select:none}
 .screen{display:none;animation:fade .36s cubic-bezier(.3,1,.4,1) both;position:relative;z-index:1}
 .screen.on{display:block}
@@ -569,6 +570,8 @@ h1.big{font-size:41.1px;margin-bottom:6px}
   background:#D6DEEA;color:#8A99B2;font-family:inherit;font-size:15.6px;font-weight:900;cursor:not-allowed}
 .pay-done.on{background:linear-gradient(135deg,#1D7CF2,#25B9FF);color:#fff;cursor:pointer;
   box-shadow:0 5px 16px rgba(29,124,242,.34)}
+.pay-acct{margin:9px 0 2px;padding:9px 11px;border-radius:9px;background:#F3F7FD;border:1px solid #DCE7F5;font-size:12.6px;line-height:1.6;color:#3C5070;text-align:center}
+.pay-acct b{color:#12305F;letter-spacing:.2px}
 .pay-law{margin:10px 0 2px;padding:9px 11px;border-radius:9px;background:#FFF8E8;border:1px solid #F0DDB0;
   font-size:13px;line-height:1.6;color:#7A6634;text-align:left}
 .pay-law b{color:#5E4E22}
@@ -792,7 +795,7 @@ h1.big{font-size:41.1px;margin-bottom:6px}
     <div class="kv"><div class="kv-k" style="width:26px;color:var(--b500)">◆</div><div class="kv-v" data-i="note2"></div></div>
     <div class="kv"><div class="kv-k" style="width:26px;color:var(--b500)">◆</div><div class="kv-v" data-i="note3"></div></div>
   </div>
-  <div class="foot"><p id="footVer" data-i="footer"></p></div>
+  <div class="foot"><p id="footVer" data-i="footer"></p><p class="bizf" data-i="bizInfo"></p></div>
 </div></div>
 
 <!-- ═══════ 성별 선택 ═══════ -->
@@ -876,7 +879,7 @@ h1.big{font-size:41.1px;margin-bottom:6px}
     <button class="skiplink" id="skip2" data-i="skipCal"></button>
   </div>
   <div class="row3" style="margin-top:10px"><button class="btn btn-g sm" id="ed1" data-i="editAns"></button><button class="btn btn-g sm" id="tb1" data-i="tableBtn"></button><button class="btn btn-g sm" id="ag1" data-i="again"></button></div>
-  <div class="foot"><p data-i="footer"></p></div>
+  <div class="foot"><p data-i="footer"></p><p class="bizf" data-i="bizInfo"></p></div>
 </div></div>
 
 <!-- ═══════ 2단계 ═══════ -->
@@ -923,7 +926,7 @@ h1.big{font-size:41.1px;margin-bottom:6px}
     <button class="btn btn-p" id="go3" data-i="go3"></button>
   </div>
   <div class="row2" style="margin-top:12px"><button class="btn btn-g sm" id="ed2" data-i="editCal"></button><button class="btn btn-g sm" id="ed2b" data-i="editAns"></button></div>
-  <div class="foot"><p data-i="footer"></p></div>
+  <div class="foot"><p data-i="footer"></p><p class="bizf" data-i="bizInfo"></p></div>
 </div></div>
 
 <!-- ═══════ 3단계 ═══════ -->
@@ -1059,7 +1062,7 @@ h1.big{font-size:41.1px;margin-bottom:6px}
     <div class="row2"><button class="btn btn-g sm" id="again" data-i="again"></button><button class="btn btn-g sm" id="reQ" data-i="reQ"></button></div>
   </div>
   <div class="disc"><p class="tiny" data-i="disc"></p></div>
-  <div class="foot"><p data-i="footer"></p></div>
+  <div class="foot"><p data-i="footer"></p><p class="bizf" data-i="bizInfo"></p></div>
 </div></div>
 
 <!-- ═══════ 친구 궁합 ═══════ -->
@@ -1095,7 +1098,7 @@ h1.big{font-size:41.1px;margin-bottom:6px}
       <button class="btn btn-g sm" id="mAgain" data-i="again"></button>
     </div>
     <p class="tiny" style="margin-top:11px;text-align:center" data-i="mateNote"></p>
-    <div class="foot"><p data-i="footer"></p></div>
+    <div class="foot"><p data-i="footer"></p><p class="bizf" data-i="bizInfo"></p></div>
   </div>
 </div>
 
@@ -1114,7 +1117,7 @@ h1.big{font-size:41.1px;margin-bottom:6px}
     <div class="qchips" id="qSea"></div>
     <div class="q-foot"><button class="btn btn-p" id="qGo" disabled></button></div>
     <p class="tiny" style="text-align:center;margin-top:10px" data-i="qNote"></p>
-    <div class="foot"><p data-i="footer"></p></div>
+    <div class="foot"><p data-i="footer"></p><p class="bizf" data-i="bizInfo"></p></div>
   </div>
 </div>
 
@@ -1138,7 +1141,7 @@ h1.big{font-size:41.1px;margin-bottom:6px}
       <button class="btn btn-g sm" id="tdBack" data-i="mateBack"></button>
     </div>
     <p class="tiny" style="margin-top:11px;text-align:center" data-i="tdNote"></p>
-    <div class="foot"><p data-i="footer"></p></div>
+    <div class="foot"><p data-i="footer"></p><p class="bizf" data-i="bizInfo"></p></div>
   </div>
 </div>
 
@@ -1154,7 +1157,7 @@ h1.big{font-size:41.1px;margin-bottom:6px}
     <div class="mlsum" id="mlSum"></div>
     <div id="mlBody"></div>
     <button class="btn btn-p" id="mlAdd" style="margin-top:16px" data-i="mlAdd"></button>
-    <div class="foot"><p data-i="footer"></p></div>
+    <div class="foot"><p data-i="footer"></p><p class="bizf" data-i="bizInfo"></p></div>
   </div>
 </div>
 
@@ -2676,6 +2679,8 @@ Object.assign(L.fr, {
 });
 /* ═══ 다국어 사전 — 6차 배치 : 상담 신청 폼 · 마이페이지 · 상단바 ═══ */
 Object.assign(L.ko, {
+ payAcct:'또는 <b>계좌이체</b> · 카카오뱅크 <b>3333-37-2825990</b><br>예금주 라이프앤비즈(Life &amp; Biz) 성장 연구소 · 입금자명은 신청하신 이름으로 적어주세요',
+ bizInfo:'상호 라이프앤비즈(Life &amp; Biz) 성장 연구소 · 대표 최형철<br>사업자등록번호 688-13-03146 · 통신판매업신고 신고 진행 중<br>서울특별시 강동구 올림픽로78길 60, 103동 602호<br>전화 010-6789-1341 · 이메일 calvincheoi@gmail.com',
  navSaju:"사주 보정",
  navHome:'홈 ⌂', navMe:'마이페이지', navCs:'전문가 상담', navCsSub:'신청서',
  csT:'전문가 상담 신청',
@@ -2692,6 +2697,8 @@ Object.assign(L.ko, {
  aiCopyB:'보정 문구 복사'
 });
 Object.assign(L.en, {
+ payAcct:'Or <b>bank transfer</b> · KakaoBank <b>3333-37-2825990</b><br>Account holder: 라이프앤비즈(Life &amp; Biz) 성장 연구소 · please send under your own name',
+ bizInfo:'Life &amp; Biz Growth Institute (라이프앤비즈 성장 연구소) · Representative Choi Hyungchul<br>Business reg. no. 688-13-03146 · Mail-order registration pending<br>103-602, 60 Olympic-ro 78-gil, Gangdong-gu, Seoul, Republic of Korea<br>Tel +82 10-6789-1341 · Email calvincheoi@gmail.com',
  navSaju:"Chart correction",
  navHome:'Home ⌂', navMe:'My page', navCs:'Expert consultation', navCsSub:'Request form',
  csT:'Request an expert consultation',
@@ -2708,6 +2715,8 @@ Object.assign(L.en, {
  aiCopyB:'Copy the fix prompt'
 });
 Object.assign(L.ja, {
+ payAcct:'または<b>銀行振込</b> · カカオバンク <b>3333-37-2825990</b><br>口座名義 라이프앤비즈(Life &amp; Biz) 성장 연구소 · 振込名義はお申込みのお名前でお願いします',
+ bizInfo:'商号 ライフアンドビズ(Life &amp; Biz) 成長研究所 · 代表 崔炯哲<br>事業者登録番号 688-13-03146 · 通信販売業申告 手続き中<br>大韓民国 ソウル特別市 江東区 オリンピック路78ギル60, 103棟602号<br>電話 +82 10-6789-1341 · メール calvincheoi@gmail.com',
  navSaju:"四柱で補正",
  navHome:'ホーム ⌂', navMe:'マイページ', navCs:'専門家の相談', navCsSub:'申込書',
  csT:'専門家への相談申込み',
@@ -2724,6 +2733,8 @@ Object.assign(L.ja, {
  aiCopyB:'補正の文章をコピー'
 });
 Object.assign(L.zh, {
+ payAcct:'或<b>银行转账</b> · KakaoBank <b>3333-37-2825990</b><br>账户名 라이프앤비즈(Life &amp; Biz) 성장 연구소 · 汇款人姓名请与申请姓名一致',
+ bizInfo:'商号 Life &amp; Biz 成长研究所 · 代表 崔炯哲<br>营业执照号 688-13-03146 · 通信销售业申报 办理中<br>大韩民国 首尔特别市 江东区 奥林匹克路78街60, 103栋602号<br>电话 +82 10-6789-1341 · 邮箱 calvincheoi@gmail.com',
  navSaju:"八字校正",
  navHome:'首页 ⌂', navMe:'我的页面', navCs:'专家咨询', navCsSub:'申请表',
  csT:'申请专家咨询',
@@ -2740,6 +2751,8 @@ Object.assign(L.zh, {
  aiCopyB:'复制调整用文字'
 });
 Object.assign(L.fr, {
+ payAcct:'Ou <b>virement bancaire</b> · KakaoBank <b>3333-37-2825990</b><br>Titulaire : 라이프앤비즈(Life &amp; Biz) 성장 연구소 · indiquez votre propre nom comme émetteur',
+ bizInfo:'Life &amp; Biz Growth Institute (라이프앤비즈 성장 연구소) · Représentant Choi Hyungchul<br>N° d\'enregistrement 688-13-03146 · Déclaration de vente à distance en cours<br>103-602, 60 Olympic-ro 78-gil, Gangdong-gu, Séoul, République de Corée<br>Tél. +82 10-6789-1341 · E-mail calvincheoi@gmail.com',
  navSaju:"Correction du thème",
  navHome:'Accueil ⌂', navMe:'Mon espace', navCs:"Consultation d'expert", navCsSub:'Formulaire',
  csT:"Demander une consultation d'expert",
@@ -7265,8 +7278,10 @@ setTimeout(demo,60);
   <div class="pay-t" id="payT"></div><div class="pay-p" id="payP"></div>
   <ol class="pay-s" id="payS"></ol>
   <button class="pay-a" onclick="goPay()">카카오페이로 결제하기</button>
+  <p class="pay-acct" data-i="payAcct"></p>
   <p class="pay-hint" id="payHint">① 위 노란 버튼으로 송금하시면 아래 「입금 완료」 버튼이 열립니다</p>
   <button class="pay-done" id="payDone" onclick="payDone()" disabled>입금 완료 · 리포트 받기</button>
+  <p class="bizf" style="margin:8px 0 0;padding-top:8px" data-i="bizInfo"></p>
   <p class="pay-law">「입금 완료」를 누르면 PDF·배경화면이 <b>즉시 제공</b>되며, 제공이 개시된 이후에는
     전자상거래법 제17조 제2항 제5호에 따라 <b>청약철회가 제한</b>됩니다.
     제공 전에는 언제든 전액 환불됩니다. <a href="/legal/#t3" target="_blank">환불규정 보기</a></p>
