@@ -174,6 +174,9 @@ export default function ConsultWizard() {
   }
 
   const [contact, setContact] = useState("");
+  /* 입금 확인 시 대조하는 접수번호. 신청이 접수된 순간 한 번만 만든다. */
+  const [refNo, setRefNo] = useState("");
+  const [copied, setCopied] = useState(false);
   const [concern, setConcern] = useState("");
 
   // 간편 버전
@@ -303,7 +306,18 @@ export default function ConsultWizard() {
             ...detailAddons.filter((a) => selectedAddons.includes(a.key)).map((a) => `+ ${a.label}`),
           ];
 
+    const d = new Date();
+    const ref =
+      "CS-" +
+      String(d.getFullYear()).slice(2) +
+      String(d.getMonth() + 1).padStart(2, "0") +
+      String(d.getDate()).padStart(2, "0") +
+      "-" +
+      String(Math.floor(1000 + Math.random() * 9000));
+    setRefNo(ref);
+
     const summary = [
+      `${t.consultWizard.payRefNo}: ${ref}`,
       `${typeLabel} / ${modeLabel}`,
       `${t.consultWizard.nameLabel}: ${name}`,
       `${t.consultWizard.genderLabel}: ${gender === "female" ? t.consultWizard.female : t.consultWizard.male}`,
@@ -438,12 +452,90 @@ export default function ConsultWizard() {
         <div className="card">
           <p className="text-[18px] font-semibold text-ink-900">{t.consultWizard.doneTitle}</p>
           {saveNotice && <p className="mt-2 text-[13px] font-medium text-indigo-600">{saveNotice}</p>}
-          <p className="mt-2 text-[13px] text-body">
+
+          {/* 접수번호 — 입금 확인 시 대조용 */}
+          <div className="mt-4 rounded-md border border-indigo-200 bg-indigo-50/60 px-4 py-3">
+            <p className="text-[12px] font-semibold text-indigo-700">{t.consultWizard.payRefNo}</p>
+            <p className="mt-0.5 text-[19px] font-bold tracking-wide text-ink-900">{refNo}</p>
+            <p className="mt-1 text-[11.5px] text-body">{t.consultWizard.payRefNoHint}</p>
+          </div>
+
+          <p className="mt-4 text-[13px] text-body">
             {t.consultWizard.doneDesc} ({siteConfig.contactEmail})
           </p>
-          <pre className="mt-4 whitespace-pre-wrap rounded-sm bg-bg-alt p-4 text-[12px] leading-relaxed text-ink-700">
+          <pre className="mt-3 whitespace-pre-wrap rounded-sm bg-bg-alt p-4 text-[12px] leading-relaxed text-ink-700">
             {submittedSummary}
           </pre>
+          <button
+            type="button"
+            className="mt-3 w-full rounded-md border border-line px-4 py-2.5 text-[13px] font-semibold text-ink-900 transition hover:bg-bg-alt"
+            onClick={() => {
+              try {
+                navigator.clipboard.writeText(submittedSummary);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 1800);
+              } catch {}
+            }}
+          >
+            {copied ? t.consultWizard.payCopied : t.consultWizard.payCopyBtn}
+          </button>
+        </div>
+
+        {/* ── 결제 안내 ── */}
+        <div className="card mt-4">
+          <p className="text-[18px] font-semibold text-ink-900">{t.consultWizard.payTitle}</p>
+
+          <div className="mt-3 flex items-baseline justify-between border-b border-line pb-3">
+            <span className="text-[13px] text-body">{t.consultWizard.payAmount}</span>
+            <span className="text-[22px] font-bold text-indigo-600">{fmt(total)}</span>
+          </div>
+          {siteConfig.payment.vatIncluded && (
+            <p className="mt-1.5 text-right text-[11.5px] text-body">{t.consultWizard.payVat}</p>
+          )}
+
+          <ol className="mt-4 space-y-2.5 text-[13px] leading-relaxed text-ink-700">
+            <li dangerouslySetInnerHTML={{ __html: "1. " + t.consultWizard.payStep1.replace("%A", fmt(total)) }} />
+            <li dangerouslySetInnerHTML={{ __html: "2. " + t.consultWizard.payStep2 }} />
+            <li
+              dangerouslySetInnerHTML={{
+                __html: "3. " + t.consultWizard.payStep3.replace("%D", String(siteConfig.payment.leadTimeDays)),
+              }}
+            />
+          </ol>
+
+          <a
+            href={siteConfig.payment.kakaoPayUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-4 block rounded-md bg-[#FEE500] px-4 py-3.5 text-center text-[15px] font-bold text-[#3C1E1E] transition hover:brightness-95"
+          >
+            {t.consultWizard.payKakaoBtn}
+          </a>
+
+          {siteConfig.payment.account && (
+            <div className="mt-4 rounded-md bg-bg-alt px-4 py-3">
+              <p className="text-[12px] font-semibold text-ink-900">{t.consultWizard.payBankTitle}</p>
+              <p className="mt-1.5 text-[15px] font-bold text-ink-900">
+                {siteConfig.payment.bank} {siteConfig.payment.account}
+              </p>
+              <p className="mt-0.5 text-[12px] text-body">
+                {t.consultWizard.payHolder} {siteConfig.payment.holder}
+              </p>
+              <p className="mt-2 text-[12px] text-body">
+                {t.consultWizard.payDepositName}: <b className="text-ink-900">{name}</b>
+              </p>
+            </div>
+          )}
+
+          <p className="mt-3 text-[12px] text-body">{t.consultWizard.payAfter}</p>
+
+          <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 px-4 py-3">
+            <p className="text-[12.5px] font-semibold text-amber-900">{t.consultWizard.payLawTitle}</p>
+            <p className="mt-1 text-[12px] leading-relaxed text-amber-900/90">{t.consultWizard.payLawBody}</p>
+            <a href="/legal/#t3" target="_blank" className="mt-1.5 inline-block text-[12px] font-semibold text-indigo-600 underline">
+              {t.consultWizard.payRefundLink}
+            </a>
+          </div>
         </div>
       </div>
     );
@@ -711,7 +803,18 @@ export default function ConsultWizard() {
 
       <div>
         <label className={labelClass}>{t.consultWizard.contactLabel}</label>
-        <input className={inputClass} value={contact} onChange={(e) => setContact(e.target.value)} required />
+        <input
+          className={inputClass}
+          value={contact}
+          inputMode="tel"
+          placeholder="010-0000-0000"
+          onChange={(e) => {
+            /* 숫자와 일부 기호만 남겨 저장 형식이 흐트러지지 않게 한다 */
+            const v = e.target.value.replace(/[^\d\-+@.\w]/g, "");
+            setContact(v);
+          }}
+          required
+        />
       </div>
 
       <div>

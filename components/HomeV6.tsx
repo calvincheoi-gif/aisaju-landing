@@ -363,7 +363,7 @@ en: {
  cyc:'木 <span class="arrow">→</span> 火 <span class="arrow">→</span> 土 <span class="arrow">→</span> 金 <span class="arrow">→</span> 水 <span class="arrow">→</span> back to 木',
  tlQ:'14 questions', tlA:'Done in <em>1 minute</em>!',
  ctaFree1:'Free element check', ctaFree2:'No sign-up needed',
- ctaPro1:'Expert consultation', ctaPro2:'From 50,000 KRW',
+ ctaPro1:'Expert consultation', ctaPro2:'Reports from 20,000 KRW',
  tr1n:'Privacy first', tr1l:'Minimal storage',
  tr2n:'Just 14 questions', tr2l:'Analysis in a minute',
  tr3n:'AI + expert', tr3l:'Readings checked by a person',
@@ -451,7 +451,7 @@ ja: {
  cyc:'木 <span class="arrow">→</span> 火 <span class="arrow">→</span> 土 <span class="arrow">→</span> 金 <span class="arrow">→</span> 水 <span class="arrow">→</span> ふたたび 木',
  tlQ:'質問14問', tlA:'<em>1分</em>で出ます!',
  ctaFree1:'無料 五行診断', ctaFree2:'登録なしですぐに',
- ctaPro1:'専門家に相談', ctaPro2:'基本 50,000ウォン',
+ ctaPro1:'専門家に相談', ctaPro2:'レポート20,000ウォン〜',
  tr1n:'個人情報は安心', tr1l:'保存は最小限',
  tr2n:'たった14問', tr2l:'1分で分析',
  tr3n:'AI + 専門家', tr3l:'解釈は人が検証',
@@ -539,7 +539,7 @@ zh: {
  cyc:'木 <span class="arrow">→</span> 火 <span class="arrow">→</span> 土 <span class="arrow">→</span> 金 <span class="arrow">→</span> 水 <span class="arrow">→</span> 再回到 木',
  tlQ:'14 道题', tlA:'<em>1分钟</em>就出结果!',
  ctaFree1:'免费五行测试', ctaFree2:'无需注册，直接开始',
- ctaPro1:'专家咨询', ctaPro2:'基础 50,000 韩元',
+ ctaPro1:'专家咨询', ctaPro2:'报告 20,000韩元起',
  tr1n:'个人信息放心', tr1l:'最少化保存',
  tr2n:'仅 14 道题', tr2l:'1分钟快速分析',
  tr3n:'AI + 专家', tr3l:'解读由人工复核',
@@ -627,7 +627,7 @@ fr: {
  cyc:'木 <span class="arrow">→</span> 火 <span class="arrow">→</span> 土 <span class="arrow">→</span> 金 <span class="arrow">→</span> 水 <span class="arrow">→</span> de nouveau 木',
  tlQ:'14 questions', tlA:"Résultat en <em>1 minute</em> !",
  ctaFree1:'Diagnostic gratuit', ctaFree2:'Sans inscription',
- ctaPro1:"Consultation d'expert", ctaPro2:'À partir de 50 000 KRW',
+ ctaPro1:"Consultation d'expert", ctaPro2:'Rapports dès 20 000 KRW',
  tr1n:'Vie privée protégée', tr1l:'Stockage minimal',
  tr2n:'14 questions seulement', tr2l:'Analyse en une minute',
  tr3n:'IA + expert', tr3l:'Lecture revue par un humain',
@@ -781,7 +781,7 @@ const HTML = String.raw`
       </button>
       <button class="btn btn-pro" data-go="consult" data-from="hero">
         <span class="ico">💬</span>
-        <span class="tx"><span class="t1" data-i="ctaPro1">전문가 상담</span><span class="t2" data-i="ctaPro2">기본 50,000원</span></span>
+        <span class="tx"><span class="t1" data-i="ctaPro1">전문가 상담</span><span class="t2" data-i="ctaPro2">리포트 20,000원부터</span></span>
         <span class="go">›</span>
       </button>
     </div>
