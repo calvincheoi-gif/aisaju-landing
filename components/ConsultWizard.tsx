@@ -115,12 +115,18 @@ export default function ConsultWizard() {
     if (typeof window === "undefined") return;
     const q = new URLSearchParams(window.location.search);
     const m = q.get("mode");
-    const item = q.get("item");
     if (m !== "detail" && m !== "simple") return;
     setCustomerType("general");
     setMode(m as ApplicationMode);
     setStep("form");
-    if (item) setSelectedPurposes([item]);
+    /* 항목 지정 방식 두 가지
+       · item=<key>      키를 아는 경우
+       · naming=<가격>   관리자가 추가한 항목은 키가 item11 처럼 자동 생성돼
+                         미리 알 수 없다. 그래서 홈이 보여 준 가격으로 찾는다. */
+    const item = q.get("item");
+    const namingPrice = Number(q.get("naming") || 0);
+    if (item) setPendingPick({ key: item });
+    else if (namingPrice) setPendingPick({ price: namingPrice });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -207,6 +213,9 @@ export default function ConsultWizard() {
 
   // 디테일 버전
   const [selectedPurposes, setSelectedPurposes] = useState<string[]>([]);
+  /* 가격표는 /api/pricing 에서 나중에 도착하므로, 딥링크 선택은 미뤄 두었다가
+     목록이 실제로 채워진 뒤에 맞춘다. */
+  const [pendingPick, setPendingPick] = useState<{ key?: string; price?: number } | null>(null);
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
 
   const [submittedSummary, setSubmittedSummary] = useState("");
@@ -290,7 +299,28 @@ export default function ConsultWizard() {
 
   /* 작명은 아기의 성씨가 없으면 진행이 불가능하고, 출생 전이면 예정일로 받아야 한다.
      신청서에 그 안내가 없으면 되묻느라 하루가 그냥 간다. */
-  const isNaming = selectedPurposes.some((k) => k.startsWith("naming"));
+  const isNaming = selectedPurposes.some((k) => {
+    if (k.startsWith("naming")) return true;
+    const p = detailPurposes.find((x) => x.key === k);
+    return !!p && p.label.includes("작명");
+  });
+
+  useEffect(() => {
+    if (!pendingPick || detailPurposes.length === 0) return;
+    let hit: PricedItem | undefined;
+    if (pendingPick.key) {
+      hit = detailPurposes.find((p) => p.key === pendingPick.key);
+    }
+    if (!hit && pendingPick.price) {
+      /* 같은 가격이 여럿이면 작명 항목을 먼저 본다 */
+      const naming = detailPurposes.filter((p) => p.label.includes("작명") || p.key.startsWith("naming"));
+      hit = naming.find((p) => p.price === pendingPick.price)
+         || detailPurposes.find((p) => p.price === pendingPick.price)
+         || naming[0];
+    }
+    if (hit) setSelectedPurposes([hit.key]);
+    setPendingPick(null);
+  }, [pendingPick, detailPurposes]);
 
   function togglePurpose(key: string) {
     setSelectedPurposes((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));

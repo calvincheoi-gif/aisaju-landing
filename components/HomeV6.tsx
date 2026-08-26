@@ -352,9 +352,17 @@ footer .lg{display:inline-block;margin:6px 12px 0 0;color:rgba(255,255,255,.85);
 
 .prod-peek{margin-top:13px;font-size:12.6px;font-weight:700;color:var(--navy);background:var(--bg-alt);border-radius:11px;padding:10px 12px;word-break:keep-all}
 /* 접기 — 홈이 길어지지 않도록 상세는 눌러야 펼친다 */
-.prod-fold{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .34s ease,opacity .28s ease}
-.prod-fold>*{overflow:hidden}
-.prod-fold.on{grid-template-rows:1fr;opacity:1}
+.prod-fold{overflow:hidden;max-height:0;opacity:0;
+  transition:max-height .38s ease,opacity .3s ease}
+.prod-fold.on{max-height:4200px;opacity:1}
+.prod-pdf{margin-top:15px;border-top:1px dashed var(--line);padding-top:14px}
+.prod-pdf-t{font-size:12.6px;font-weight:800;color:var(--navy);margin-bottom:9px}
+.prod-pdf-g{display:grid;gap:7px}
+.prod-pdf-g a{display:flex;align-items:center;justify-content:center;gap:6px;
+  border:1.5px solid var(--line);border-radius:11px;padding:11px;background:#fff;
+  font-size:12.8px;font-weight:800;color:var(--blue);text-decoration:none;transition:.15s}
+.prod-pdf-g a::before{content:"📄";font-size:13px}
+.prod-pdf-g a:hover{background:var(--blue-p);border-color:var(--blue-l)}
 .prod-more{margin-top:13px;width:100%;border:1.5px solid var(--line);background:#fff;border-radius:12px;
   padding:11px;font-family:inherit;font-size:13px;font-weight:800;color:var(--blue);cursor:pointer;
   display:flex;align-items:center;justify-content:center;gap:6px;transition:.15s}
@@ -444,6 +452,10 @@ en: {
  nmMore:"See the details",
  nmLess:"Show less",
  nmPeek:"Report of 20–25 pages · framed certificate · 8-page keepsake commentary",
+ nmPdfT:"See the actual deliverables",
+ nmPdf1:"Detailed report (PDF)",
+ nmPdf2:"Certificate (PDF)",
+ nmPdf3:"Name commentary (PDF)",
  nmH2:"A child's name is the word they will hear <b>more than any other</b>",
  nmSub:"So it should not merely be pretty. It should fit.",
  nmKick:"Newborn naming, premium",
@@ -573,6 +585,10 @@ ja: {
  nmMore:"詳しく見る",
  nmLess:"閉じる",
  nmPeek:"精密レポート20~25P · 額装用命名書 · 保存用解説書8P",
+ nmPdfT:"実際の成果物をご覧ください",
+ nmPdf1:"精密レポート (PDF)",
+ nmPdf2:"命名書 (PDF)",
+ nmPdf3:"名前解説書 (PDF)",
  nmH2:"子どもの名前は、<b>生涯もっとも多く</b>呼ばれる言葉です",
  nmSub:"だから、きれいな名前ではなく、合う名前であるべきです。",
  nmKick:"新生児の命名 プレミアム",
@@ -702,6 +718,10 @@ zh: {
  nmMore:"查看详情",
  nmLess:"收起",
  nmPeek:"精密报告20~25页 · 装裱用命名书 · 收藏用释义8页",
+ nmPdfT:"看看实际的成果物",
+ nmPdf1:"精密报告 (PDF)",
+ nmPdf2:"命名书 (PDF)",
+ nmPdf3:"名字释义 (PDF)",
  nmH2:"孩子的名字，是<b>一生被叫得最多</b>的那个词",
  nmSub:"所以它不该只是好听，而该是合适。",
  nmKick:"新生儿取名 高级版",
@@ -831,6 +851,10 @@ fr: {
  nmMore:"Voir le détail",
  nmLess:"Réduire",
  nmPeek:"Rapport de 20 à 25 pages · certificat encadrable · livret de 8 pages",
+ nmPdfT:"Voyez les livrables réels",
+ nmPdf1:"Rapport détaillé (PDF)",
+ nmPdf2:"Certificat (PDF)",
+ nmPdf3:"Livret explicatif (PDF)",
  nmH2:"Le prénom d'un enfant est le mot qu'il entendra <b>plus que tout autre</b>",
  nmSub:"Il ne doit donc pas seulement être joli. Il doit convenir.",
  nmKick:"Nomination du nouveau-né, premium",
@@ -1103,10 +1127,10 @@ const HTML = String.raw`
       <div class="prod-body">
         <div class="prod-kick" data-i="nmKick">신생아 작명 프리미엄</div>
         <div class="prod-h" data-i="nmTitle">작명 3종 세트</div>
-        <p class="prod-lead" data-i="nmLead">아기의 사주를 용신·희신·대운까지 정밀 분석해 평생 최적의 오행을 도출하고, 자원오행 · 발음오행 · 81수리 삼중 검증을 모두 통과한 이름만 후보로 올립니다. 대법원 인명용 한자와 불용문자도 함께 확인합니다.</p>
-
         <div class="prod-peek" data-i="nmPeek">정밀 리포트 20~25P · 액자용 명명서 · 소장용 풀이서 8P</div>
         <div class="prod-fold" id="nmFold">
+        <p class="prod-lead" data-i="nmLead">아기의 사주를 용신·희신·대운까지 정밀 분석해 평생 최적의 오행을 도출하고, 자원오행 · 발음오행 · 81수리 삼중 검증을 모두 통과한 이름만 후보로 올립니다. 대법원 인명용 한자와 불용문자도 함께 확인합니다.</p>
+
         <div class="prod-inc">
           <div class="prod-inc-i"><div class="prod-inc-n">1</div><div>
             <div class="prod-inc-t" data-i="nmInc1t">정밀 리포트 20~25P</div>
@@ -1136,23 +1160,32 @@ const HTML = String.raw`
         </div>
 
         </div>
+        <div class="prod-pdf">
+          <div class="prod-pdf-t" data-i="nmPdfT">실제 결과물을 직접 확인해 보세요</div>
+          <div class="prod-pdf-g">
+            <a href="/sample/naming-report.pdf" target="_blank" rel="noopener" data-i="nmPdf1">정밀 리포트 (PDF)</a>
+            <a href="/sample/naming-certificate.pdf" target="_blank" rel="noopener" data-i="nmPdf2">명명서 (PDF)</a>
+            <a href="/sample/naming-commentary.pdf" target="_blank" rel="noopener" data-i="nmPdf3">이름 풀이서 (PDF)</a>
+          </div>
+        </div>
+
         <button class="prod-more" id="nmMore" type="button" aria-expanded="false">
           <span data-i="nmMore">자세히 보기</span><i>▾</i></button>
 
         <div class="prod-same" data-i="nmSame">세 등급 모두 <b>결과물 3종은 동일</b>합니다. 차이는 상담 방식뿐입니다.<br>신청서에서 <b>원하시는 등급을 그대로 선택</b>하시면 됩니다.</div>
         <div class="prod-tiers">
-          <a class="prod-tier" href="/consult?mode=detail&item=naming" data-tier="basic">
+          <a class="prod-tier" href="/consult?mode=detail&naming=200000" data-tier="basic">
             <div class="prod-tier-l"><div class="n" data-i="nmT1n">기본 · 리포트만</div>
               <div class="d" data-i="nmT1d">상담 없음 · 궁금한 건 톡으로</div></div>
             <div class="prod-tier-p">200,000<span data-i="nmWon">원</span></div>
           </a>
-          <a class="prod-tier best" href="/consult?mode=detail&item=namingStd" data-tier="std">
+          <a class="prod-tier best" href="/consult?mode=detail&naming=250000" data-tier="std">
             <span class="prod-best-tag" data-i="nmBest">가장 많이 선택</span>
             <div class="prod-tier-l"><div class="n" data-i="nmT2n">표준 · 톡/전화 상담</div>
               <div class="d" data-i="nmT2d">톡 또는 전화 30분 포함</div></div>
             <div class="prod-tier-p">250,000<span data-i="nmWon2">원</span></div>
           </a>
-          <a class="prod-tier" href="/consult?mode=detail&item=namingPrem" data-tier="prem">
+          <a class="prod-tier" href="/consult?mode=detail&naming=300000" data-tier="prem">
             <div class="prod-tier-l"><div class="n" data-i="nmT3n">프리미엄 · 대면 상담</div>
               <div class="d" data-i="nmT3d">직접 만나 60분 · 카페 등 협의</div></div>
             <div class="prod-tier-p">300,000<span data-i="nmWon3">원</span></div>
@@ -1162,7 +1195,7 @@ const HTML = String.raw`
         <div class="prod-note" data-i="nmNote">1차 리포트 <b>72시간</b> 내 전달 · 이름 확정까지 <b>2~3차 보완 무료</b> · 출생 전 예정일시로도 진행 가능하며 실제 출생일시 확정 시 <b>무료 재검증</b>합니다.<br>대면 상담은 사무실 이전 중이라 <b>카페 등 협의</b>로 진행합니다.</div>
 
         <div class="prod-cta">
-          <a class="go" href="/consult?mode=detail&item=naming" data-i="nmGo">작명 신청하기 →</a>
+          <a class="go" href="/consult?mode=detail&naming=250000" data-i="nmGo">작명 신청하기 →</a>
           <button class="sub" data-go="kakao" data-from="naming" data-i="nmAsk">먼저 물어보기 (카카오톡)</button>
         </div>
       </div>
