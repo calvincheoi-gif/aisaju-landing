@@ -520,6 +520,7 @@ en: {
  sv5d:"Report · certificate · commentary",
  tagNm:"From 200,000 KRW",
  navNaming:"Naming",
+ secResult:"FREE ELEMENT CHECK · RESULT",
  brand:'AI<span>sajuLab</span>.com', brandSub:'AI × Myeongnihak',
  voc:'AIsajuLab.com listens to every piece of customer feedback and keeps refining its analysis and report quality, so that your satisfaction and your quality of life keep improving.',
  voc2:'AIsajuLab.com listens to every piece of customer feedback and keeps refining its analysis and report quality, so that your satisfaction and your quality of life keep improving.',
@@ -538,7 +539,7 @@ en: {
  dSu:'Water (水) — the force that weighs. You flow flexibly and think deeply.',
  cyc:'木 <span class="arrow">→</span> 火 <span class="arrow">→</span> 土 <span class="arrow">→</span> 金 <span class="arrow">→</span> 水 <span class="arrow">→</span> back to 木',
  tlQ:'14 questions', tlA:'Done in <em>1 minute</em>!',
- ctaFree1:'Free element check', ctaFree2:'No sign-up needed',
+ ctaFree1:"Free element check", ctaFree2:'No sign-up needed',
  ctaPro1:'Expert consultation', ctaPro2:'Reports from 20,000 KRW',
  tr1n:'Privacy first', tr1l:'Minimal storage',
  tr2n:'Just 14 questions', tr2l:'Analysis in a minute',
@@ -546,7 +547,7 @@ en: {
  disclosure:'AIsajuLab builds on myeongnihak, with AI assisting the analysis<br>to give you clearer, more accurate insight.',
  h2Svc:'What you can do here',
  tagFree:'Free', tagFree2:'Free', tagDay:'Free once a day', tagPay:'990 KRW · instant',
- sv1n:'Element personality check', sv1d:'14 questions, 1 minute · no sign-up',
+ sv1n:"Free element check", sv1d:'14 questions, 1 minute · no sign-up',
  sv2n:'Today\u0027s flow', sv2d:'Today\u0027s condition, read from your elements',
  sv3n:'Element match with a friend', sv3d:'Send a link and your match opens up',
  sv4n:'AI in-depth report', sv4d:'Tailored to your question · KakaoPay',
@@ -656,6 +657,7 @@ ja: {
  sv5d:"レポート · 命名書 · 解説書",
  tagNm:"20万ウォン〜",
  navNaming:"命名",
+ secResult:"無料 五行性格診断 RESULT",
  brand:'AI<span>四柱ラボ</span>.com', brandSub:'AI × 命理学',
  voc:'AIsajuLab.com は、お客様の声と継続的な分析、レポートの品質改善を通じて、ご満足と暮らしの質の向上に力を尽くしてまいります。',
  voc2:'AIsajuLab.com は、お客様の声と継続的な分析、レポートの品質改善を通じて、ご満足と暮らしの質の向上に力を尽くしてまいります。',
@@ -674,7 +676,7 @@ ja: {
  dSu:'水 — 汲みとる力。柔らかく流れ、深く考えます。',
  cyc:'木 <span class="arrow">→</span> 火 <span class="arrow">→</span> 土 <span class="arrow">→</span> 金 <span class="arrow">→</span> 水 <span class="arrow">→</span> ふたたび 木',
  tlQ:'質問14問', tlA:'<em>1分</em>で出ます!',
- ctaFree1:'無料 五行診断', ctaFree2:'登録なしですぐに',
+ ctaFree1:"無料 五行性格診断", ctaFree2:'登録なしですぐに',
  ctaPro1:'専門家に相談', ctaPro2:'レポート20,000ウォン〜',
  tr1n:'個人情報は安心', tr1l:'保存は最小限',
  tr2n:'たった14問', tr2l:'1分で分析',
@@ -682,7 +684,7 @@ ja: {
  disclosure:'AIsajuLab は命理学をもとに、AIが分析を補助して<br>よりわかりやすく確かな示唆をお届けします。',
  h2Svc:'ここでできること',
  tagFree:'無料', tagFree2:'無料', tagDay:'1日1回無料', tagPay:'990ウォン · 即時',
- sv1n:'五行性格の診断', sv1d:'14問1分 · 登録なしですぐに',
+ sv1n:"無料 五行性格診断", sv1d:'14問1分 · 登録なしですぐに',
  sv2n:'今日の流れ', sv2d:'自分の五行で読む今日の調子',
  sv3n:'友だちと五行の相性', sv3d:'リンクを送れば二人の相性が開きます',
  sv4n:'AI 詳細レポート', sv4d:'悩みを反映した個別解釈 · カカオペイ',
@@ -792,6 +794,7 @@ zh: {
  sv5d:"报告 · 命名书 · 释义",
  tagNm:"20万韩元起",
  navNaming:"取名",
+ secResult:"免费五行性格测试 RESULT",
  brand:'AI<span>四柱Lab</span>.com', brandSub:'AI × 命理学',
  voc:'AIsajuLab.com 将始终倾听客户的声音，持续改进分析与报告质量，努力提升您的满意度与生活品质。',
  voc2:'AIsajuLab.com 将始终倾听客户的声音，持续改进分析与报告质量，努力提升您的满意度与生活品质。',
@@ -810,7 +813,7 @@ zh: {
  dSu:'水 — 权衡的力量。柔韧地流动，想得也深。',
  cyc:'木 <span class="arrow">→</span> 火 <span class="arrow">→</span> 土 <span class="arrow">→</span> 金 <span class="arrow">→</span> 水 <span class="arrow">→</span> 再回到 木',
  tlQ:'14 道题', tlA:'<em>1分钟</em>就出结果!',
- ctaFree1:'免费五行测试', ctaFree2:'无需注册，直接开始',
+ ctaFree1:"免费五行性格测试", ctaFree2:'无需注册，直接开始',
  ctaPro1:'专家咨询', ctaPro2:'报告 20,000韩元起',
  tr1n:'个人信息放心', tr1l:'最少化保存',
  tr2n:'仅 14 道题', tr2l:'1分钟快速分析',
@@ -818,7 +821,7 @@ zh: {
  disclosure:'AIsajuLab 以命理学为基础，由 AI 辅助分析，<br>为你提供更易懂、更准确的洞察。',
  h2Svc:'在这里你可以做什么',
  tagFree:'免费', tagFree2:'免费', tagDay:'每天免费1次', tagPay:'990韩元 · 即时',
- sv1n:'五行性格测试', sv1d:'14题1分钟 · 无需注册',
+ sv1n:"免费五行性格测试", sv1d:'14题1分钟 · 无需注册',
  sv2n:'今日运势', sv2d:'用你的五行看今天的状态',
  sv3n:'与朋友的五行配对', sv3d:'把链接发过去，就能看到两人的配对',
  sv4n:'AI 深度报告', sv4d:'结合你的困惑定制解读 · KakaoPay',
@@ -928,6 +931,7 @@ fr: {
  sv5d:"Rapport · certificat · livret",
  tagNm:"Dès 200 000 KRW",
  navNaming:"Nomination",
+ secResult:"DIAGNOSTIC GRATUIT · RÉSULTAT",
  brand:'AI<span>sajuLab</span>.com', brandSub:'IA × Myeongnihak (命理学)',
  voc:"AIsajuLab.com écoute chaque retour de ses clients et continue d'affiner ses analyses et la qualité de ses rapports, pour votre satisfaction et votre qualité de vie.",
  voc2:"AIsajuLab.com écoute chaque retour de ses clients et continue d'affiner ses analyses et la qualité de ses rapports, pour votre satisfaction et votre qualité de vie.",
@@ -946,7 +950,7 @@ fr: {
  dSu:"Eau (水) — la force qui pèse. Vous coulez avec souplesse et pensez en profondeur.",
  cyc:'木 <span class="arrow">→</span> 火 <span class="arrow">→</span> 土 <span class="arrow">→</span> 金 <span class="arrow">→</span> 水 <span class="arrow">→</span> de nouveau 木',
  tlQ:'14 questions', tlA:"Résultat en <em>1 minute</em> !",
- ctaFree1:'Diagnostic gratuit', ctaFree2:'Sans inscription',
+ ctaFree1:"Diagnostic gratuit", ctaFree2:'Sans inscription',
  ctaPro1:"Consultation d'expert", ctaPro2:'Rapports dès 20 000 KRW',
  tr1n:'Vie privée protégée', tr1l:'Stockage minimal',
  tr2n:'14 questions seulement', tr2l:'Analyse en une minute',
@@ -954,7 +958,7 @@ fr: {
  disclosure:"AIsajuLab s'appuie sur le myeongnihak, l'IA venant en soutien de l'analyse,<br>pour un éclairage plus clair et plus juste.",
  h2Svc:'Ce que vous pouvez faire ici',
  tagFree:'Gratuit', tagFree2:'Gratuit', tagDay:'1 fois par jour, gratuit', tagPay:'990 KRW · immédiat',
- sv1n:'Diagnostic des Cinq Phases', sv1d:'14 questions, 1 minute · sans inscription',
+ sv1n:"Diagnostic gratuit", sv1d:'14 questions, 1 minute · sans inscription',
  sv2n:'Le flux du jour', sv2d:'Votre journée lue à travers vos phases',
  sv3n:'Compatibilité avec un ami', sv3d:"Envoyez le lien et votre compatibilité s'ouvre",
  sv4n:'Rapport IA approfondi', sv4d:'Lecture adaptée à votre question · KakaoPay',
@@ -1096,7 +1100,7 @@ const HTML = String.raw`
     <div class="cta-pair">
       <button class="btn btn-free" data-go="ohaeng" data-from="hero">
         <span class="ico">🤖</span>
-        <span class="tx"><span class="t1" data-i="ctaFree1">무료 오행 진단</span><span class="t2" data-i="ctaFree2">가입 없이 바로</span></span>
+        <span class="tx"><span class="t1" data-i="ctaFree1">무료 오행 성격 진단</span><span class="t2" data-i="ctaFree2">가입 없이 바로</span></span>
         <span class="go">›</span>
       </button>
       <button class="btn btn-pro" data-go="consult" data-from="hero">
@@ -1121,7 +1125,7 @@ const HTML = String.raw`
     <h2 data-i="h2Svc">여기서 할 수 있는 것</h2>
     <div class="svc">
       <button class="sv" data-go="ohaeng" data-from="svc"><span class="tag free" data-i="tagFree">무료</span>
-        <div class="si">🤖</div><div class="sn" data-i="sv1n">오행 성격 진단</div>
+        <div class="si">🤖</div><div class="sn" data-i="sv1n">무료 오행 성격 진단</div>
         <div class="sd" data-i="sv1d">14문항 1분 · 가입 없이 바로</div></button>
       <button class="sv" data-go="today" data-from="svc"><span class="tag day" data-i="tagDay">하루 1회 무료</span>
         <div class="si">🌤️</div><div class="sn" data-i="sv2n">오늘의 흐름</div>
@@ -1261,7 +1265,7 @@ const HTML = String.raw`
 
   <!-- 결과 카드 -->
   <section class="preview">
-    <div class="sec-label">RESULT</div>
+    <div class="sec-label" data-i="secResult">무료 오행 성격 진단 RESULT</div>
     <h2 data-i="h2Prev">받게 될 <b>결과 카드</b>는 이런 모습</h2>
     <p class="sec-sub" data-i="prevSub">계절과 상징으로 이름 붙인 나만의 카드. 저장해서 친구에게 바로 보낼 수 있어요.</p>
     <div style="text-align:center;margin:10px 0 16px"><span class="wallchip" data-i="wallchip">📱 폰 배경화면으로 저장 가능한 화질</span></div>

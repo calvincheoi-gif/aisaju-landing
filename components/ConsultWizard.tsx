@@ -140,7 +140,8 @@ export default function ConsultWizard() {
         if (Array.isArray(data.detailAddons)) setDetailAddons(data.detailAddons);
         if (typeof data.memberDiscountRate === "number") setMemberDiscountRate(data.memberDiscountRate);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setPricingLoaded(true));
   }, []);
 
   // 공통 입력
@@ -216,6 +217,9 @@ export default function ConsultWizard() {
   /* 가격표는 /api/pricing 에서 나중에 도착하므로, 딥링크 선택은 미뤄 두었다가
      목록이 실제로 채워진 뒤에 맞춘다. */
   const [pendingPick, setPendingPick] = useState<{ key?: string; price?: number } | null>(null);
+  /* /api/pricing 이 실제로 응답한 뒤에만 딥링크 선택을 확정한다.
+     기본값 목록으로 먼저 맞추면 관리자가 추가한 등급을 영영 못 찾는다. */
+  const [pricingLoaded, setPricingLoaded] = useState(false);
   const [selectedAddons, setSelectedAddons] = useState<string[]>([]);
 
   const [submittedSummary, setSubmittedSummary] = useState("");
@@ -306,7 +310,7 @@ export default function ConsultWizard() {
   });
 
   useEffect(() => {
-    if (!pendingPick || detailPurposes.length === 0) return;
+    if (!pendingPick || !pricingLoaded || detailPurposes.length === 0) return;
     let hit: PricedItem | undefined;
     if (pendingPick.key) {
       hit = detailPurposes.find((p) => p.key === pendingPick.key);
@@ -320,7 +324,7 @@ export default function ConsultWizard() {
     }
     if (hit) setSelectedPurposes([hit.key]);
     setPendingPick(null);
-  }, [pendingPick, detailPurposes]);
+  }, [pendingPick, pricingLoaded, detailPurposes]);
 
   function togglePurpose(key: string) {
     setSelectedPurposes((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
