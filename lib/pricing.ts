@@ -53,7 +53,11 @@ export const DEFAULT_DETAIL_PURPOSES: PricedItem[] = [
   { key: "business", label: "사업운", price: 40000 },
   { key: "wealth", label: "재물운", price: 30000 },
   { key: "yearly", label: "대운·세운", price: 30000 },
-  { key: "naming", label: "작명", price: 50000 },
+  /* 작명 3종 세트 — 결과물(정밀 리포트·명명서·풀이서)은 셋 다 같고
+     상담 방식만 다르다. 그래서 라벨에 차이를 못 박아 둔다. */
+  { key: "naming", label: "작명 3종세트_기본 (리포트만)", price: 200000 },
+  { key: "namingStd", label: "작명 3종세트_표준 (+톡·전화 30분)", price: 250000 },
+  { key: "namingPrem", label: "작명 3종세트_프리미엄 (+대면 60분)", price: 300000 },
   { key: "children", label: "자녀운", price: 30000 },
   { key: "health", label: "건강운", price: 30000 },
   { key: "comprehensive", label: "종합 분석", price: 60000 },
