@@ -368,6 +368,11 @@ footer .lg{display:inline-block;margin:6px 12px 0 0;color:rgba(255,255,255,.85);
 .prod-tiers{margin-top:16px;display:grid;gap:9px}
 .prod-tier{position:relative;border:1.5px solid var(--line);border-radius:14px;padding:13px 12px;background:#fff;
   display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left}
+.prod-tier{text-decoration:none;color:inherit;cursor:pointer;transition:.15s}
+.prod-tier:hover{border-color:var(--blue-l);box-shadow:0 4px 14px rgba(45,127,240,.14);transform:translateY(-1px)}
+.prod-tier::after{content:"›";position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  font-size:19px;font-weight:900;color:var(--gray);line-height:1}
+.prod-tier .prod-tier-p{padding-right:16px}
 .prod-tier.best{border-color:var(--blue);background:var(--blue-p);box-shadow:0 4px 14px rgba(45,127,240,.16)}
 .prod-tier-l .n{font-size:13.4px;font-weight:900;color:var(--ink);letter-spacing:-.02em}
 .prod-tier-l .d{font-size:11.4px;color:var(--body);margin-top:2px}
@@ -458,7 +463,7 @@ en: {
  nmS2d:"Do the characters' own elements fill what the chart lacks? Do the surname and given name flow without clashing? Are all four numerology segments auspicious? Only names that clear all three become candidates.",
  nmS3t:"Step 3 · The set of three",
  nmS3d:"Not just a name, but the record of why this name.",
- nmSame:"All three tiers include <b>the same set of three</b>. Only the consultation differs.<br>For Standard or Premium, <b>add the consultation option</b> on the request form.",
+ nmSame:"All three tiers include <b>the same set of three</b>. Only the consultation differs.<br>Just <b>pick the tier you want</b> on the request form.",
  nmT1n:"Basic · report only",
  nmT1d:"No consultation · ask by chat",
  nmT2n:"Standard · chat or phone",
@@ -587,7 +592,7 @@ ja: {
  nmS2d:"字源五行が四柱の不足を満たすか、姓と名の音が相剋なく流れるか、81数理の四つの格がすべて吉数か。三つすべてを通過した名前だけを候補にします。",
  nmS3t:"第3段階 · 3点セットで完成",
  nmS3d:"名前ひとつではなく、その名前がなぜこの名前なのかという記録を一緒にお渡しします。",
- nmSame:"3つの等級とも<b>3点セットの内容は同じ</b>です。違うのは相談の方法だけです。<br>標準・プレミアムは申込書で<b>相談オプションも一緒に選択</b>してください。",
+ nmSame:"3つの等級とも<b>3点セットの内容は同じ</b>です。違うのは相談の方法だけです。<br>申込書で<b>ご希望の等級をそのまま選択</b>してください。",
  nmT1n:"基本 · レポートのみ",
  nmT1d:"相談なし · 気になる点はトークで",
  nmT2n:"標準 · トーク/電話相談",
@@ -716,7 +721,7 @@ zh: {
  nmS2d:"字源五行能否补上八字的欠缺，姓与名的声音是否顺而不相克，81数理四格是否皆为吉数。三项全过的名字才进候选。",
  nmS3t:"第三步 · 以三件套收尾",
  nmS3d:"给你的不只是一个名字，还有这个名字为什么是它的记录。",
- nmSame:"三个等级的<b>三件套内容完全相同</b>，差别只在咨询方式。<br>标准与高级请在申请表中<b>一并勾选咨询选项</b>。",
+ nmSame:"三个等级的<b>三件套内容完全相同</b>，差别只在咨询方式。<br>在申请表中<b>直接选择你想要的等级</b>即可。",
  nmT1n:"基础 · 仅报告",
  nmT1d:"不含咨询 · 有疑问可用聊天",
  nmT2n:"标准 · 聊天/电话咨询",
@@ -845,7 +850,7 @@ fr: {
  nmS2d:"Les éléments des caractères comblent-ils ce qui manque au thème ? Le nom et le prénom s'enchaînent-ils sans conflit ? Les quatre segments numérologiques sont-ils tous favorables ? Seuls les noms qui passent les trois deviennent candidats.",
  nmS3t:"Étape 3 · L'ensemble de trois",
  nmS3d:"Pas seulement un nom, mais la trace écrite de la raison de ce nom.",
- nmSame:"Les trois formules comprennent <b>le même ensemble de trois</b>. Seule la consultation change.<br>Pour Standard ou Premium, <b>ajoutez l'option de consultation</b> sur le formulaire.",
+ nmSame:"Les trois formules comprennent <b>le même ensemble de trois</b>. Seule la consultation change.<br><b>Choisissez simplement la formule</b> qui vous convient sur le formulaire.",
  nmT1n:"Essentiel · rapport seul",
  nmT1d:"Sans consultation · questions par messagerie",
  nmT2n:"Standard · échange ou téléphone",
@@ -1134,24 +1139,24 @@ const HTML = String.raw`
         <button class="prod-more" id="nmMore" type="button" aria-expanded="false">
           <span data-i="nmMore">자세히 보기</span><i>▾</i></button>
 
-        <div class="prod-same" data-i="nmSame">세 등급 모두 <b>결과물 3종은 동일</b>합니다. 차이는 상담 방식뿐입니다.<br>표준·프리미엄은 신청서에서 <b>상담 옵션을 함께 선택</b>하시면 됩니다.</div>
+        <div class="prod-same" data-i="nmSame">세 등급 모두 <b>결과물 3종은 동일</b>합니다. 차이는 상담 방식뿐입니다.<br>신청서에서 <b>원하시는 등급을 그대로 선택</b>하시면 됩니다.</div>
         <div class="prod-tiers">
-          <div class="prod-tier">
+          <a class="prod-tier" href="/consult?mode=detail&item=naming" data-tier="basic">
             <div class="prod-tier-l"><div class="n" data-i="nmT1n">기본 · 리포트만</div>
               <div class="d" data-i="nmT1d">상담 없음 · 궁금한 건 톡으로</div></div>
             <div class="prod-tier-p">200,000<span data-i="nmWon">원</span></div>
-          </div>
-          <div class="prod-tier best">
+          </a>
+          <a class="prod-tier best" href="/consult?mode=detail&item=namingStd" data-tier="std">
             <span class="prod-best-tag" data-i="nmBest">가장 많이 선택</span>
             <div class="prod-tier-l"><div class="n" data-i="nmT2n">표준 · 톡/전화 상담</div>
               <div class="d" data-i="nmT2d">톡 또는 전화 30분 포함</div></div>
             <div class="prod-tier-p">250,000<span data-i="nmWon2">원</span></div>
-          </div>
-          <div class="prod-tier">
+          </a>
+          <a class="prod-tier" href="/consult?mode=detail&item=namingPrem" data-tier="prem">
             <div class="prod-tier-l"><div class="n" data-i="nmT3n">프리미엄 · 대면 상담</div>
               <div class="d" data-i="nmT3d">직접 만나 60분 · 카페 등 협의</div></div>
             <div class="prod-tier-p">300,000<span data-i="nmWon3">원</span></div>
-          </div>
+          </a>
         </div>
 
         <div class="prod-note" data-i="nmNote">1차 리포트 <b>72시간</b> 내 전달 · 이름 확정까지 <b>2~3차 보완 무료</b> · 출생 전 예정일시로도 진행 가능하며 실제 출생일시 확정 시 <b>무료 재검증</b>합니다.<br>대면 상담은 사무실 이전 중이라 <b>카페 등 협의</b>로 진행합니다.</div>
