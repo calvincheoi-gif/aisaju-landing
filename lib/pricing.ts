@@ -53,11 +53,10 @@ export const DEFAULT_DETAIL_PURPOSES: PricedItem[] = [
   { key: "business", label: "사업운", price: 40000 },
   { key: "wealth", label: "재물운", price: 30000 },
   { key: "yearly", label: "대운·세운", price: 30000 },
-  /* 작명 3종 세트 — 결과물(정밀 리포트·명명서·풀이서)은 셋 다 같고
-     상담 방식만 다르다. 그래서 라벨에 차이를 못 박아 둔다. */
-  { key: "naming", label: "작명 3종세트_기본 (리포트만)", price: 200000 },
-  { key: "namingStd", label: "작명 3종세트_표준 (+톡·전화 30분)", price: 250000 },
-  { key: "namingPrem", label: "작명 3종세트_프리미엄 (+대면 60분)", price: 300000 },
+  /* 작명 3종 세트 — 본체는 리포트·명명서·풀이서 3종(200,000원) 하나로 두고,
+     표준/프리미엄은 아래 추가 옵션의 상담을 얹어 만든다.
+     200,000 + 상담 50,000 = 250,000 / 200,000 + 대면 100,000 = 300,000 */
+  { key: "naming", label: "작명 3종세트 (리포트·명명서·풀이서)", price: 200000 },
   { key: "children", label: "자녀운", price: 30000 },
   { key: "health", label: "건강운", price: 30000 },
   { key: "comprehensive", label: "종합 분석", price: 60000 },
@@ -67,6 +66,7 @@ export const DEFAULT_DETAIL_PURPOSES: PricedItem[] = [
 export const DEFAULT_DETAIL_ADDONS: PricedItem[] = [
   { key: "call", label: "전화 상담 추가", price: 30000 },
   { key: "meeting", label: "대면 상담(커피톡) 추가", price: 70000 },
+  { key: "namingTalk", label: "작명 상담 추가_톡/전화 30분", price: 50000 },
   { key: "pdfExpress", label: "리포트 익일 발급(일반은 3일)", price: 10000 },
 ];
 

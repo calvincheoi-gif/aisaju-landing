@@ -141,6 +141,8 @@ interface Dictionary {
     payCopyBtn: string;
     payCopied: string;
     payVat: string;
+    namingNoticeT: string;
+    namingNoticeD: string;
   };
   reportPage: { eyebrow: string; title: string; desc: string };
   reportForm: {
@@ -336,6 +338,8 @@ const ko: Dictionary = {
     payCopyBtn: "신청 내용 복사",
     payCopied: "복사했습니다",
     payVat: "부가세 포함 금액입니다.",
+    namingNoticeT: "작명 신청 전 꼭 확인해 주세요",
+    namingNoticeD: "아기의 <b>성씨</b>가 있어야 작명이 가능합니다. 아래 「더 알려주실 내용」에 성씨를 적어 주세요. 아직 태어나기 전이라면 <b>예정일시</b>를 넣어 주시면 되고, 실제 출생일시가 확정되면 무료로 다시 검증해 드립니다.",
   },
   reportPage: {
     eyebrow: "AI 명리 리포트",
@@ -541,6 +545,8 @@ const en: Dictionary = {
     payCopyBtn: "Copy this request",
     payCopied: "Copied",
     payVat: "VAT included.",
+    namingNoticeT: "Before you request a naming",
+    namingNoticeD: "We need the child's <b>family name</b> to begin. Please write it in the box below. If the child has not been born yet, enter the <b>expected date and time</b> — we re-verify free of charge once the actual time is known.",
   },
   reportPage: {
     eyebrow: "AI Saju Report",
@@ -746,6 +752,8 @@ const ja: Dictionary = {
     payCopyBtn: "申込内容をコピー",
     payCopied: "コピーしました",
     payVat: "消費税込みの金額です。",
+    namingNoticeT: "命名のお申込み前にご確認ください",
+    namingNoticeD: "お子さまの<b>姓</b>がないと命名を進められません。下の「ほかにお伝えいただきたいこと」に姓をお書きください。まだお生まれ前でしたら<b>予定日時</b>をご入力いただければ、実際の出生日時が確定した時点で無料で再検証いたします。",
   },
   reportPage: {
     eyebrow: "AI四柱レポート",
@@ -951,6 +959,8 @@ const zh: Dictionary = {
     payCopyBtn: "复制申请内容",
     payCopied: "已复制",
     payVat: "含增值税。",
+    namingNoticeT: "申请取名前请务必确认",
+    namingNoticeD: "需要孩子的<b>姓氏</b>才能开始取名，请写在下方的「还想告诉我们的内容」里。若尚未出生，填写<b>预产期与时辰</b>即可；实际出生时辰确定后我们会免费重新校验。",
   },
   reportPage: {
     eyebrow: "AI命理报告",
@@ -1156,6 +1166,8 @@ const fr: Dictionary = {
     payCopyBtn: "Copier ma demande",
     payCopied: "Copié",
     payVat: "TVA incluse.",
+    namingNoticeT: "Avant de demander une nomination",
+    namingNoticeD: "Nous avons besoin du <b>nom de famille</b> de l'enfant. Indiquez-le dans le champ ci-dessous. S'il n'est pas encore né, saisissez la <b>date et l'heure prévues</b> : nous revérifions gratuitement une fois l'heure réelle connue.",
   },
   reportPage: {
     eyebrow: "Rapport IA Saju",
