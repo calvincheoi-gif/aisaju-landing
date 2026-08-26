@@ -276,6 +276,13 @@ footer .lg{display:inline-block;margin:6px 12px 0 0;color:rgba(255,255,255,.85);
 /* ═══ v6: 서비스 카드 그리드 ═══ */
 .svc{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
 .sv-wide{grid-column:1 / -1}
+/* 신규 상품 강조 — 밝고 투명한 청색 바탕 + 도톰한 테두리 */
+.sv-new{background:linear-gradient(180deg,rgba(228,240,255,.92),rgba(240,247,255,.88));
+  border:2px solid var(--blue);box-shadow:0 6px 20px rgba(45,127,240,.20)}
+.sv-new .sn{color:var(--navy)}
+.sv-new .tag{background:var(--blue);color:#fff}
+.sv-new::after{content:"NEW";position:absolute;top:9px;left:11px;font-size:9px;font-weight:900;
+  letter-spacing:.06em;color:#fff;background:#F0455E;border-radius:999px;padding:2px 7px}
 .sv{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 13px 12px;box-shadow:0 4px 12px rgba(20,50,110,.05);text-align:center}
 .sv .si{font-size:23px;line-height:1}
 .sv .sn{font-size:14.5px;font-weight:800;color:var(--ink);margin-top:7px}
@@ -342,6 +349,18 @@ footer .lg{display:inline-block;margin:6px 12px 0 0;color:rgba(255,255,255,.85);
 .prod-step{text-align:left;background:#F7FAFF;border:1px solid #E4EDFB;border-radius:12px;padding:11px 13px}
 .prod-step b{display:block;font-size:12.6px;font-weight:900;color:var(--navy);letter-spacing:-.02em}
 .prod-step span{display:block;font-size:11.6px;line-height:1.62;color:var(--body);margin-top:3px;word-break:keep-all}
+
+.prod-peek{margin-top:13px;font-size:12.6px;font-weight:700;color:var(--navy);background:var(--bg-alt);border-radius:11px;padding:10px 12px;word-break:keep-all}
+/* 접기 — 홈이 길어지지 않도록 상세는 눌러야 펼친다 */
+.prod-fold{display:grid;grid-template-rows:0fr;opacity:0;transition:grid-template-rows .34s ease,opacity .28s ease}
+.prod-fold>*{overflow:hidden}
+.prod-fold.on{grid-template-rows:1fr;opacity:1}
+.prod-more{margin-top:13px;width:100%;border:1.5px solid var(--line);background:#fff;border-radius:12px;
+  padding:11px;font-family:inherit;font-size:13px;font-weight:800;color:var(--blue);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;transition:.15s}
+.prod-more:hover{background:var(--blue-p);border-color:var(--blue-l)}
+.prod-more i{font-style:normal;font-size:10px;transition:transform .3s}
+.prod-more.on i{transform:rotate(180deg)}
 
 /* 등급 안내 · 카드 */
 .prod-same{margin-top:16px;font-size:12.2px;line-height:1.6;color:var(--body);background:#F3F7FD;border:1px solid #DCE7F5;border-radius:11px;padding:9px 12px;word-break:keep-all}
@@ -417,6 +436,9 @@ const I18N: Record<Lang, Record<string, string>> = {
 ko: {},   /* 한국어는 HTML 원문을 그대로 쓴다 (applyLang 이 원본을 기억한다) */
 
 en: {
+ nmMore:"See the details",
+ nmLess:"Show less",
+ nmPeek:"Report of 20–25 pages · framed certificate · 8-page keepsake commentary",
  nmH2:"A child's name is the word they will hear <b>more than any other</b>",
  nmSub:"So it should not merely be pretty. It should fit.",
  nmKick:"Newborn naming, premium",
@@ -436,7 +458,7 @@ en: {
  nmS2d:"Do the characters' own elements fill what the chart lacks? Do the surname and given name flow without clashing? Are all four numerology segments auspicious? Only names that clear all three become candidates.",
  nmS3t:"Step 3 · The set of three",
  nmS3d:"Not just a name, but the record of why this name.",
- nmSame:"All three tiers include <b>the same set of three</b>. Only the consultation differs.",
+ nmSame:"All three tiers include <b>the same set of three</b>. Only the consultation differs.<br>For Standard or Premium, <b>add the consultation option</b> on the request form.",
  nmT1n:"Basic · report only",
  nmT1d:"No consultation · ask by chat",
  nmT2n:"Standard · chat or phone",
@@ -543,6 +565,9 @@ en: {
 },
 
 ja: {
+ nmMore:"詳しく見る",
+ nmLess:"閉じる",
+ nmPeek:"精密レポート20~25P · 額装用命名書 · 保存用解説書8P",
  nmH2:"子どもの名前は、<b>生涯もっとも多く</b>呼ばれる言葉です",
  nmSub:"だから、きれいな名前ではなく、合う名前であるべきです。",
  nmKick:"新生児の命名 プレミアム",
@@ -562,7 +587,7 @@ ja: {
  nmS2d:"字源五行が四柱の不足を満たすか、姓と名の音が相剋なく流れるか、81数理の四つの格がすべて吉数か。三つすべてを通過した名前だけを候補にします。",
  nmS3t:"第3段階 · 3点セットで完成",
  nmS3d:"名前ひとつではなく、その名前がなぜこの名前なのかという記録を一緒にお渡しします。",
- nmSame:"3つの等級とも<b>3点セットの内容は同じ</b>です。違うのは相談の方法だけです。",
+ nmSame:"3つの等級とも<b>3点セットの内容は同じ</b>です。違うのは相談の方法だけです。<br>標準・プレミアムは申込書で<b>相談オプションも一緒に選択</b>してください。",
  nmT1n:"基本 · レポートのみ",
  nmT1d:"相談なし · 気になる点はトークで",
  nmT2n:"標準 · トーク/電話相談",
@@ -669,6 +694,9 @@ ja: {
 },
 
 zh: {
+ nmMore:"查看详情",
+ nmLess:"收起",
+ nmPeek:"精密报告20~25页 · 装裱用命名书 · 收藏用释义8页",
  nmH2:"孩子的名字，是<b>一生被叫得最多</b>的那个词",
  nmSub:"所以它不该只是好听，而该是合适。",
  nmKick:"新生儿取名 高级版",
@@ -688,7 +716,7 @@ zh: {
  nmS2d:"字源五行能否补上八字的欠缺，姓与名的声音是否顺而不相克，81数理四格是否皆为吉数。三项全过的名字才进候选。",
  nmS3t:"第三步 · 以三件套收尾",
  nmS3d:"给你的不只是一个名字，还有这个名字为什么是它的记录。",
- nmSame:"三个等级的<b>三件套内容完全相同</b>，差别只在咨询方式。",
+ nmSame:"三个等级的<b>三件套内容完全相同</b>，差别只在咨询方式。<br>标准与高级请在申请表中<b>一并勾选咨询选项</b>。",
  nmT1n:"基础 · 仅报告",
  nmT1d:"不含咨询 · 有疑问可用聊天",
  nmT2n:"标准 · 聊天/电话咨询",
@@ -795,6 +823,9 @@ zh: {
 },
 
 fr: {
+ nmMore:"Voir le détail",
+ nmLess:"Réduire",
+ nmPeek:"Rapport de 20 à 25 pages · certificat encadrable · livret de 8 pages",
  nmH2:"Le prénom d'un enfant est le mot qu'il entendra <b>plus que tout autre</b>",
  nmSub:"Il ne doit donc pas seulement être joli. Il doit convenir.",
  nmKick:"Nomination du nouveau-né, premium",
@@ -814,7 +845,7 @@ fr: {
  nmS2d:"Les éléments des caractères comblent-ils ce qui manque au thème ? Le nom et le prénom s'enchaînent-ils sans conflit ? Les quatre segments numérologiques sont-ils tous favorables ? Seuls les noms qui passent les trois deviennent candidats.",
  nmS3t:"Étape 3 · L'ensemble de trois",
  nmS3d:"Pas seulement un nom, mais la trace écrite de la raison de ce nom.",
- nmSame:"Les trois formules comprennent <b>le même ensemble de trois</b>. Seule la consultation change.",
+ nmSame:"Les trois formules comprennent <b>le même ensemble de trois</b>. Seule la consultation change.<br>Pour Standard ou Premium, <b>ajoutez l'option de consultation</b> sur le formulaire.",
  nmT1n:"Essentiel · rapport seul",
  nmT1d:"Sans consultation · questions par messagerie",
  nmT2n:"Standard · échange ou téléphone",
@@ -1037,7 +1068,7 @@ const HTML = String.raw`
       <button class="sv" data-go="report" data-from="svc" data-ev="report_open"><span class="tag pay" data-i="tagPay">990원 · 즉시</span>
         <div class="si">📊</div><div class="sn" data-i="sv4n">AI 심층 리포트</div>
         <div class="sd" data-i="sv4d">고민 반영 맞춤 해석 · 카카오페이</div></button>
-      <button class="sv sv-wide" data-go="naming" data-from="svc"><span class="tag pay" data-i="tagNm">20만원부터</span>
+      <button class="sv sv-wide sv-new" data-go="naming" data-from="svc"><span class="tag pay" data-i="tagNm">20만원부터</span>
         <div class="si">✍️</div><div class="sn" data-i="sv5n">작명 3종 세트</div>
         <div class="sd" data-i="sv5d">리포트 · 명명서 · 풀이서</div></button>
     </div>
@@ -1069,6 +1100,8 @@ const HTML = String.raw`
         <div class="prod-h" data-i="nmTitle">작명 3종 세트</div>
         <p class="prod-lead" data-i="nmLead">아기의 사주를 용신·희신·대운까지 정밀 분석해 평생 최적의 오행을 도출하고, 자원오행 · 발음오행 · 81수리 삼중 검증을 모두 통과한 이름만 후보로 올립니다. 대법원 인명용 한자와 불용문자도 함께 확인합니다.</p>
 
+        <div class="prod-peek" data-i="nmPeek">정밀 리포트 20~25P · 액자용 명명서 · 소장용 풀이서 8P</div>
+        <div class="prod-fold" id="nmFold">
         <div class="prod-inc">
           <div class="prod-inc-i"><div class="prod-inc-n">1</div><div>
             <div class="prod-inc-t" data-i="nmInc1t">정밀 리포트 20~25P</div>
@@ -1097,7 +1130,11 @@ const HTML = String.raw`
             <span data-i="nmS3d">이름 하나가 아니라, 그 이름이 왜 이 이름인지에 대한 기록을 함께 드립니다.</span></div>
         </div>
 
-        <div class="prod-same" data-i="nmSame">세 등급 모두 <b>결과물 3종은 동일</b>합니다. 차이는 상담 방식뿐입니다.</div>
+        </div>
+        <button class="prod-more" id="nmMore" type="button" aria-expanded="false">
+          <span data-i="nmMore">자세히 보기</span><i>▾</i></button>
+
+        <div class="prod-same" data-i="nmSame">세 등급 모두 <b>결과물 3종은 동일</b>합니다. 차이는 상담 방식뿐입니다.<br>표준·프리미엄은 신청서에서 <b>상담 옵션을 함께 선택</b>하시면 됩니다.</div>
         <div class="prod-tiers">
           <div class="prod-tier">
             <div class="prod-tier-l"><div class="n" data-i="nmT1n">기본 · 리포트만</div>
@@ -1120,7 +1157,7 @@ const HTML = String.raw`
         <div class="prod-note" data-i="nmNote">1차 리포트 <b>72시간</b> 내 전달 · 이름 확정까지 <b>2~3차 보완 무료</b> · 출생 전 예정일시로도 진행 가능하며 실제 출생일시 확정 시 <b>무료 재검증</b>합니다.<br>대면 상담은 사무실 이전 중이라 <b>카페 등 협의</b>로 진행합니다.</div>
 
         <div class="prod-cta">
-          <a class="go" href="/consult" data-i="nmGo">작명 신청하기 →</a>
+          <a class="go" href="/consult?mode=detail&item=naming" data-i="nmGo">작명 신청하기 →</a>
           <button class="sub" data-go="kakao" data-from="naming" data-i="nmAsk">먼저 물어보기 (카카오톡)</button>
         </div>
       </div>
@@ -1406,6 +1443,22 @@ export default function HomeV6() {
         const open = box?.classList.toggle("open");
         btn?.setAttribute("aria-expanded", open ? "true" : "false");
         track("lang_click", { from: "top" });
+        return;
+      }
+
+      /* 작명 상세 펼치기 */
+      if (t.closest("#nmMore")) {
+        const fold = document.getElementById("nmFold");
+        const btn = document.getElementById("nmMore");
+        const open = fold?.classList.toggle("on");
+        btn?.classList.toggle("on", !!open);
+        btn?.setAttribute("aria-expanded", open ? "true" : "false");
+        const label = btn?.querySelector("[data-i]") as HTMLElement | null;
+        if (label) {
+          label.dataset.i = open ? "nmLess" : "nmMore";
+          label.innerHTML = (I18N[LANG] && I18N[LANG][label.dataset.i]) || label.innerHTML;
+        }
+        track("naming_expand", { open: !!open });
         return;
       }
 

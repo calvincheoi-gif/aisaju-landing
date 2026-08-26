@@ -108,6 +108,22 @@ export default function ConsultWizard() {
   const [detailAddons, setDetailAddons] = useState<PricedItem[]>(DEFAULT_DETAIL_ADDONS);
   const [memberDiscountRate, setMemberDiscountRate] = useState(DEFAULT_MEMBER_DISCOUNT_RATE);
 
+  /* 홈의 상품 카드에서 넘어온 경우 — 예: /consult?mode=detail&item=naming
+     고객유형·신청방식을 고르는 두 화면을 건너뛰고 바로 신청서를 연다.
+     상품을 보고 마음먹은 사람에게 다시 분류를 묻는 건 이탈 지점이 된다. */
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const q = new URLSearchParams(window.location.search);
+    const m = q.get("mode");
+    const item = q.get("item");
+    if (m !== "detail" && m !== "simple") return;
+    setCustomerType("general");
+    setMode(m as ApplicationMode);
+    setStep("form");
+    if (item) setSelectedPurposes([item]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     fetch("/api/pricing")
       .then((res) => (res.ok ? res.json() : null))
@@ -271,6 +287,10 @@ export default function ConsultWizard() {
     }
     return 0;
   }, [customerType, mode, selectedPackage, selectedPurposes, selectedAddons, simplePackages, detailPurposes, detailAddons, memberDiscountRate]);
+
+  /* 작명은 아기의 성씨가 없으면 진행이 불가능하고, 출생 전이면 예정일로 받아야 한다.
+     신청서에 그 안내가 없으면 되묻느라 하루가 그냥 간다. */
+  const isNaming = selectedPurposes.some((k) => k.startsWith("naming"));
 
   function togglePurpose(key: string) {
     setSelectedPurposes((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]));
@@ -552,6 +572,13 @@ export default function ConsultWizard() {
         {customerType === "member" ? t.consultWizard.badgeMember : t.consultWizard.badgeGeneral} ·{" "}
         {mode === "detail" ? t.consultWizard.badgeDetail : t.consultWizard.badgeSimple}
       </div>
+
+      {isNaming && (
+        <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3">
+          <p className="text-[12.5px] font-semibold text-amber-900">{t.consultWizard.namingNoticeT}</p>
+          <p className="mt-1 text-[12px] leading-relaxed text-amber-900/90">{t.consultWizard.namingNoticeD}</p>
+        </div>
+      )}
 
       {mode === "simple" ? (
         <div className="space-y-3">
