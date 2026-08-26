@@ -351,6 +351,24 @@ footer .lg{display:inline-block;margin:6px 12px 0 0;color:rgba(255,255,255,.85);
 .prod-step span{display:block;font-size:11.6px;line-height:1.62;color:var(--body);margin-top:3px;word-break:keep-all}
 
 .prod-peek{margin-top:13px;font-size:12.6px;font-weight:700;color:var(--navy);background:var(--bg-alt);border-radius:11px;padding:10px 12px;word-break:keep-all}
+/* 샘플 뷰어 */
+.gal{position:fixed;inset:0;z-index:90;background:rgba(8,20,40,.94);display:none;
+  flex-direction:column;-webkit-user-select:none;user-select:none}
+.gal.on{display:flex}
+.gal-bar{display:flex;align-items:center;gap:10px;padding:14px 16px;color:#fff}
+.gal-t{font-size:14px;font-weight:800;flex:1;min-width:0}
+.gal-n{font-size:12.5px;font-weight:700;opacity:.75;white-space:nowrap}
+.gal-x{width:32px;height:32px;border:0;border-radius:50%;background:rgba(255,255,255,.16);
+  color:#fff;font-size:20px;line-height:1;cursor:pointer;font-family:inherit;flex:0 0 32px}
+.gal-stage{flex:1;display:flex;align-items:center;justify-content:center;padding:0 14px;overflow:hidden}
+.gal-stage img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;
+  box-shadow:0 10px 40px rgba(0,0,0,.5);pointer-events:none}
+.gal-nav{display:flex;gap:10px;justify-content:center;padding:12px}
+.gal-nav button{width:46px;height:46px;border:0;border-radius:50%;background:rgba(255,255,255,.16);
+  color:#fff;font-size:24px;line-height:1;cursor:pointer;font-family:inherit}
+.gal-nav button:disabled{opacity:.3}
+.gal-foot{text-align:center;color:rgba(255,255,255,.72);font-size:11.6px;padding:0 16px 18px}
+
 /* 접기 — 홈이 길어지지 않도록 상세는 눌러야 펼친다 */
 .prod-fold{overflow:hidden;max-height:0;opacity:0;
   transition:max-height .38s ease,opacity .3s ease}
@@ -361,11 +379,12 @@ footer .lg{display:inline-block;margin:6px 12px 0 0;color:rgba(255,255,255,.85);
   border-radius:9px;padding:8px 11px;margin-bottom:9px;word-break:keep-all}
 .prod-pdf-n b{color:var(--navy)}
 .prod-pdf-g{display:grid;gap:7px}
-.prod-pdf-g a{display:flex;align-items:center;justify-content:center;gap:6px;
+.prod-pdf-g button{display:flex;align-items:center;justify-content:center;gap:6px;
   border:1.5px solid var(--line);border-radius:11px;padding:11px;background:#fff;
   font-size:12.8px;font-weight:800;color:var(--blue);text-decoration:none;transition:.15s}
-.prod-pdf-g a::before{content:"📄";font-size:13px}
-.prod-pdf-g a:hover{background:var(--blue-p);border-color:var(--blue-l)}
+.prod-pdf-g button::before{content:"🔍";font-size:13px}
+.prod-pdf-g button{width:100%;font-family:inherit;cursor:pointer}
+.prod-pdf-g button:hover{background:var(--blue-p);border-color:var(--blue-l)}
 .prod-more{margin-top:13px;width:100%;border:1.5px solid var(--line);background:#fff;border-radius:12px;
   padding:11px;font-family:inherit;font-size:13px;font-weight:800;color:var(--blue);cursor:pointer;
   display:flex;align-items:center;justify-content:center;gap:6px;transition:.15s}
@@ -406,6 +425,7 @@ footer .lg{display:inline-block;margin:6px 12px 0 0;color:rgba(255,255,255,.85);
 .prod-cta .go:hover{filter:brightness(1.06)}
 .prod-cta .sub{background:#fff;color:var(--blue);border:1.5px solid var(--line)}
 .prod-cta .sub:hover{background:var(--blue-p);border-color:var(--blue-l)}
+.prod-other{margin-top:13px;font-size:12.2px;line-height:1.65;color:var(--body);word-break:keep-all}
 
 /* 샘플 미리보기 2장 */
 .prod-samples{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -452,15 +472,16 @@ const I18N: Record<Lang, Record<string, string>> = {
 ko: {},   /* 한국어는 HTML 원문을 그대로 쓴다 (applyLang 이 원본을 기억한다) */
 
 en: {
- nmMore:"See the details",
- nmLess:"Show less",
+ nmMore:"See prices and contents",
+ nmLess:"Close",
  nmPeek:"Report of 20–25 pages · framed certificate · 8-page keepsake commentary",
  nmPdfT:"See the actual deliverables",
- nmPdf1:"Detailed report (PDF)",
- nmPdf2:"Certificate (PDF)",
- nmPdf3:"Name commentary (PDF)",
+ nmPdf1:"Preview the report",
+ nmPdf2:"Preview the certificate",
+ nmPdf3:"Preview the commentary",
  nmPdfN:"These samples are <b>fictional examples</b>, not real customer data.",
  nmPdfN2:"These samples are <b>fictional examples</b>, not real customer data.",
+ nmGalFoot:"The full document goes only to those who order · view only",
  nmH2:"A child's name is the word they will hear <b>more than any other</b>",
  nmSub:"So it should not merely be pretty. It should fit.",
  nmKick:"Newborn naming, premium",
@@ -587,15 +608,16 @@ en: {
 },
 
 ja: {
- nmMore:"詳しく見る",
+ nmMore:"価格 · 内容を詳しく見る",
  nmLess:"閉じる",
  nmPeek:"精密レポート20~25P · 額装用命名書 · 保存用解説書8P",
  nmPdfT:"実際の成果物をご覧ください",
- nmPdf1:"精密レポート (PDF)",
- nmPdf2:"命名書 (PDF)",
- nmPdf3:"名前解説書 (PDF)",
+ nmPdf1:"精密レポートを見る",
+ nmPdf2:"命名書を見る",
+ nmPdf3:"名前解説書を見る",
  nmPdfN:"こちらのサンプルは<b>架空の例</b>であり、実際のお客様の情報ではありません。",
  nmPdfN2:"こちらのサンプルは<b>架空の例</b>であり、実際のお客様の情報ではありません。",
+ nmGalFoot:"全編はお申込みの方にのみお渡しします · 画面閲覧専用",
  nmH2:"子どもの名前は、<b>生涯もっとも多く</b>呼ばれる言葉です",
  nmSub:"だから、きれいな名前ではなく、合う名前であるべきです。",
  nmKick:"新生児の命名 プレミアム",
@@ -722,15 +744,16 @@ ja: {
 },
 
 zh: {
- nmMore:"查看详情",
+ nmMore:"查看价格与内容",
  nmLess:"收起",
  nmPeek:"精密报告20~25页 · 装裱用命名书 · 收藏用释义8页",
  nmPdfT:"看看实际的成果物",
- nmPdf1:"精密报告 (PDF)",
- nmPdf2:"命名书 (PDF)",
- nmPdf3:"名字释义 (PDF)",
+ nmPdf1:"预览精密报告",
+ nmPdf2:"预览命名书",
+ nmPdf3:"预览名字释义",
  nmPdfN:"以下样本为<b>虚构示例</b>，并非真实客户信息。",
  nmPdfN2:"以下样本为<b>虚构示例</b>，并非真实客户信息。",
+ nmGalFoot:"完整内容仅提供给下单的客户 · 仅供屏幕查看",
  nmH2:"孩子的名字，是<b>一生被叫得最多</b>的那个词",
  nmSub:"所以它不该只是好听，而该是合适。",
  nmKick:"新生儿取名 高级版",
@@ -857,15 +880,16 @@ zh: {
 },
 
 fr: {
- nmMore:"Voir le détail",
- nmLess:"Réduire",
+ nmMore:"Voir prix et contenu",
+ nmLess:"Fermer",
  nmPeek:"Rapport de 20 à 25 pages · certificat encadrable · livret de 8 pages",
  nmPdfT:"Voyez les livrables réels",
- nmPdf1:"Rapport détaillé (PDF)",
- nmPdf2:"Certificat (PDF)",
- nmPdf3:"Livret explicatif (PDF)",
+ nmPdf1:"Aperçu du rapport",
+ nmPdf2:"Aperçu du certificat",
+ nmPdf3:"Aperçu du livret",
  nmPdfN:"Ces exemples sont <b>fictifs</b> et ne correspondent à aucun client réel.",
  nmPdfN2:"Ces exemples sont <b>fictifs</b> et ne correspondent à aucun client réel.",
+ nmGalFoot:"Le document complet est réservé aux clients · consultation à l'écran",
  nmH2:"Le prénom d'un enfant est le mot qu'il entendra <b>plus que tout autre</b>",
  nmSub:"Il ne doit donc pas seulement être joli. Il doit convenir.",
  nmKick:"Nomination du nouveau-né, premium",
@@ -1139,6 +1163,19 @@ const HTML = String.raw`
         <div class="prod-kick" data-i="nmKick">신생아 작명 프리미엄</div>
         <div class="prod-h" data-i="nmTitle">작명 3종 세트</div>
         <div class="prod-peek" data-i="nmPeek">정밀 리포트 20~25P · 액자용 명명서 · 소장용 풀이서 8P</div>
+        <div class="prod-pdf">
+          <div class="prod-pdf-t" data-i="nmPdfT">실제 결과물을 직접 확인해 보세요</div>
+          <div class="prod-pdf-n" data-i="nmPdfN">아래 샘플은 <b>가상의 예시</b>입니다. 실제 고객 정보가 아닙니다.</div>
+          <div class="prod-pdf-g">
+            <button type="button" data-gal="report" data-i="nmPdf1">정밀 리포트 미리보기</button>
+            <button type="button" data-gal="cert" data-i="nmPdf2">명명서 미리보기</button>
+            <button type="button" data-gal="comm" data-i="nmPdf3">이름 풀이서 미리보기</button>
+          </div>
+        </div>
+
+        <button class="prod-more" id="nmMore" type="button" aria-expanded="false">
+          <span data-i="nmMore">가격 · 구성 자세히 보기</span><i>▾</i></button>
+
         <div class="prod-fold" id="nmFold">
         <p class="prod-lead" data-i="nmLead">아기의 사주를 용신·희신·대운까지 정밀 분석해 평생 최적의 오행을 도출하고, 자원오행 · 발음오행 · 81수리 삼중 검증을 모두 통과한 이름만 후보로 올립니다. 대법원 인명용 한자와 불용문자도 함께 확인합니다.</p>
 
@@ -1172,19 +1209,7 @@ const HTML = String.raw`
             <span data-i="nmS3d">이름 하나가 아니라, 그 이름이 왜 이 이름인지에 대한 기록을 함께 드립니다.</span></div>
         </div>
 
-        </div>
-        <div class="prod-pdf">
-          <div class="prod-pdf-t" data-i="nmPdfT">실제 결과물을 직접 확인해 보세요</div>
-          <div class="prod-pdf-n" data-i="nmPdfN">아래 샘플은 <b>가상의 예시</b>입니다. 실제 고객 정보가 아닙니다.</div>
-          <div class="prod-pdf-g">
-            <a href="/sample/naming-report.pdf" target="_blank" rel="noopener" data-i="nmPdf1">정밀 리포트 (PDF)</a>
-            <a href="/sample/naming-certificate.pdf" target="_blank" rel="noopener" data-i="nmPdf2">명명서 (PDF)</a>
-            <a href="/sample/naming-commentary.pdf" target="_blank" rel="noopener" data-i="nmPdf3">이름 풀이서 (PDF)</a>
-          </div>
-        </div>
 
-        <button class="prod-more" id="nmMore" type="button" aria-expanded="false">
-          <span data-i="nmMore">자세히 보기</span><i>▾</i></button>
 
         <div class="prod-same" data-i="nmSame">세 등급 모두 <b>결과물 3종은 동일</b>합니다. 차이는 상담 방식뿐입니다.<br>신청서에서 <b>원하시는 등급을 그대로 선택</b>하시면 됩니다.</div>
         <div class="prod-tiers">
@@ -1212,11 +1237,27 @@ const HTML = String.raw`
           <a class="go" href="/consult?mode=detail&naming=250000" data-i="nmGo">작명 신청하기 →</a>
           <button class="sub" data-go="kakao" data-from="naming" data-i="nmAsk">먼저 물어보기 (카카오톡)</button>
         </div>
+
+        <p class="prod-other" data-i="nmOther">개명 · 예명/활동명 · 상호/사업체명도 동일한 프로세스로 진행됩니다. 상담 신청서에 남겨 주세요.</p>
+        </div>
       </div>
     </div>
-
-    <p class="sec-sub" style="margin-top:13px;font-size:12.4px" data-i="nmOther">개명 · 예명/활동명 · 상호/사업체명도 동일한 프로세스로 진행됩니다. 상담 신청서에 남겨 주세요.</p>
   </section>
+
+  <!-- 샘플 뷰어 — 다운로드 없이 화면에서만 본다 -->
+  <div class="gal" id="gal" aria-hidden="true">
+    <div class="gal-bar">
+      <span class="gal-t" id="galT"></span>
+      <span class="gal-n" id="galN"></span>
+      <button class="gal-x" id="galX" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="gal-stage" id="galStage"></div>
+    <div class="gal-nav">
+      <button type="button" id="galP" aria-label="Prev">‹</button>
+      <button type="button" id="galNx" aria-label="Next">›</button>
+    </div>
+    <div class="gal-foot" data-i="nmGalFoot">전체 분량은 신청하신 분께만 드립니다 · 화면 보기 전용</div>
+  </div>
 
   <!-- 결과 카드 -->
   <section class="preview">
@@ -1482,6 +1523,47 @@ export default function HomeV6() {
     const onDocClick = (e: Event) => { if (box && !box.contains(e.target as Node)) closeMenu(); };
     document.addEventListener("click", onDocClick);
 
+    /* ── 샘플 뷰어 ── PDF 다운로드 대신 이미지로만 보여 준다 */
+    const GAL: Record<string, { t: string; n: number; src: string[] }> = {
+      report: { t: "정밀 리포트", n: 23, src: ["/img/sample/report-1.jpg", "/img/sample/report-2.jpg", "/img/sample/report-3.jpg", "/img/sample/report-4.jpg"] },
+      cert:   { t: "액자용 명명서", n: 1, src: ["/img/sample/cert-1.jpg"] },
+      comm:   { t: "이름 풀이서", n: 8, src: ["/img/sample/comm-1.jpg", "/img/sample/comm-2.jpg", "/img/sample/comm-3.jpg"] },
+    };
+    let galKey = "report", galI = 0;
+    const galEl = document.getElementById("gal");
+    const drawGal = () => {
+      const g = GAL[galKey]; if (!g) return;
+      const stage = document.getElementById("galStage");
+      const im = new window.Image();
+      im.src = g.src[galI]; im.alt = ""; im.draggable = false;
+      if (stage) { stage.innerHTML = ""; stage.appendChild(im); }
+      const tEl = document.getElementById("galT");
+      const nEl = document.getElementById("galN");
+      if (tEl) tEl.textContent = g.t;
+      if (nEl) nEl.textContent = (galI + 1) + " / " + g.src.length + (g.n > g.src.length ? "  (전체 " + g.n + "P)" : "");
+      const pB = document.getElementById("galP") as HTMLButtonElement | null;
+      const nB = document.getElementById("galNx") as HTMLButtonElement | null;
+      if (pB) pB.disabled = galI === 0;
+      if (nB) nB.disabled = galI >= g.src.length - 1;
+    };
+    const openGal = (k: string) => {
+      galKey = k; galI = 0;
+      galEl?.classList.add("on");
+      galEl?.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      drawGal(); track("naming_sample", { doc: k });
+    };
+    const closeGal = () => {
+      galEl?.classList.remove("on");
+      galEl?.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    };
+    document.getElementById("galX")?.addEventListener("click", closeGal);
+    document.getElementById("galP")?.addEventListener("click", () => { if (galI > 0) { galI--; drawGal(); } });
+    document.getElementById("galNx")?.addEventListener("click", () => { if (galI < GAL[galKey].src.length - 1) { galI++; drawGal(); } });
+    galEl?.addEventListener("click", (e) => { if (e.target === galEl) closeGal(); });
+    galEl?.addEventListener("contextmenu", (e) => e.preventDefault());
+
     let cycBase = "";
     applyLang();
 
@@ -1498,11 +1580,16 @@ export default function HomeV6() {
         return;
       }
 
-      /* 작명 상세 펼치기 */
+      const gb = t.closest("[data-gal]") as HTMLElement | null;
+      if (gb) { openGal(gb.dataset.gal || "report"); return; }
+
+      /* 작명 상세 펼치기 — 두 구역을 함께 여닫는다 */
       if (t.closest("#nmMore")) {
+        const fold2 = document.getElementById("nmFold2");
         const fold = document.getElementById("nmFold");
         const btn = document.getElementById("nmMore");
         const open = fold?.classList.toggle("on");
+        fold2?.classList.toggle("on", !!open);
         btn?.classList.toggle("on", !!open);
         btn?.setAttribute("aria-expanded", open ? "true" : "false");
         const label = btn?.querySelector("[data-i]") as HTMLElement | null;
