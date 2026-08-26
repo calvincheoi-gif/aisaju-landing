@@ -275,6 +275,7 @@ footer .lg{display:inline-block;margin:6px 12px 0 0;color:rgba(255,255,255,.85);
 
 /* ═══ v6: 서비스 카드 그리드 ═══ */
 .svc{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:14px}
+.sv-wide{grid-column:1 / -1}
 .sv{position:relative;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 13px 12px;box-shadow:0 4px 12px rgba(20,50,110,.05);text-align:center}
 .sv .si{font-size:23px;line-height:1}
 .sv .sn{font-size:14.5px;font-weight:800;color:var(--ink);margin-top:7px}
@@ -305,6 +306,78 @@ footer .lg{display:inline-block;margin:6px 12px 0 0;color:rgba(255,255,255,.85);
 .tb.main .ti svg{width:24px;height:24px;stroke-width:2}
 .tb.main{color:var(--blue)}
 .wallchip{display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:#0F2A5C;color:#DCE9FF;font-size:11.5px;font-weight:700;padding:7px 12px;border-radius:99px}
+
+/* ══════════════════════════════════════════════════════════════
+   상품 진열 블록 (PRODUCT SHOWCASE)
+   ──────────────────────────────────────────────────────────────
+   작명 3종 세트를 첫 사례로 만들지만, 구조는 상품 종류와 무관하다.
+   나중에 사주 리포트 10~12종을 붙일 때도 마크업만 복제하면 된다.
+
+     .prod        상품 한 덩어리 (이미지 + 설명 + 등급 + CTA)
+     .prod-hero   대표 이미지
+     .prod-inc    포함 내용 3가지
+     .prod-step   진행 단계
+     .prod-tier   등급 카드 (가격)
+     .prod-cta    신청 버튼
+   ══════════════════════════════════════════════════════════════ */
+.prod{background:#fff;border:1px solid var(--line);border-radius:20px;overflow:hidden;
+  box-shadow:0 8px 26px rgba(20,50,110,.08);margin-top:16px}
+.prod-hero{display:block;width:100%;aspect-ratio:1200/750;object-fit:cover;background:var(--bg-alt)}
+.prod-body{padding:18px 16px 20px;text-align:center}
+.prod-kick{font-size:11px;font-weight:900;letter-spacing:.09em;color:var(--blue);margin-bottom:7px}
+.prod-h{font-size:19px;font-weight:900;line-height:1.35;letter-spacing:-.03em;color:var(--navy)}
+.prod-lead{margin-top:9px;font-size:13px;line-height:1.72;color:var(--body);word-break:keep-all}
+
+/* 포함 내용 3가지 */
+.prod-inc{margin-top:15px;display:grid;gap:8px}
+.prod-inc-i{display:flex;gap:10px;align-items:flex-start;text-align:left;
+  background:var(--bg-alt);border-radius:12px;padding:11px 13px}
+.prod-inc-n{flex:0 0 21px;height:21px;border-radius:7px;background:var(--blue);color:#fff;
+  font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-top:1px}
+.prod-inc-t{font-size:13px;font-weight:800;color:var(--ink);letter-spacing:-.02em}
+.prod-inc-d{font-size:11.8px;line-height:1.6;color:var(--body);margin-top:2px;word-break:keep-all}
+
+/* 진행 단계 */
+.prod-steps{margin-top:15px;border-top:1px dashed var(--line);padding-top:14px;display:grid;gap:9px}
+.prod-step{text-align:left;background:#F7FAFF;border:1px solid #E4EDFB;border-radius:12px;padding:11px 13px}
+.prod-step b{display:block;font-size:12.6px;font-weight:900;color:var(--navy);letter-spacing:-.02em}
+.prod-step span{display:block;font-size:11.6px;line-height:1.62;color:var(--body);margin-top:3px;word-break:keep-all}
+
+/* 등급 안내 · 카드 */
+.prod-same{margin-top:16px;font-size:12.2px;line-height:1.6;color:var(--body);background:#F3F7FD;border:1px solid #DCE7F5;border-radius:11px;padding:9px 12px;word-break:keep-all}
+.prod-same b{color:var(--navy)}
+.prod-tiers{margin-top:16px;display:grid;gap:9px}
+.prod-tier{position:relative;border:1.5px solid var(--line);border-radius:14px;padding:13px 12px;background:#fff;
+  display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left}
+.prod-tier.best{border-color:var(--blue);background:var(--blue-p);box-shadow:0 4px 14px rgba(45,127,240,.16)}
+.prod-tier-l .n{font-size:13.4px;font-weight:900;color:var(--ink);letter-spacing:-.02em}
+.prod-tier-l .d{font-size:11.4px;color:var(--body);margin-top:2px}
+.prod-tier-p{font-size:16px;font-weight:900;color:var(--navy);white-space:nowrap}
+.prod-tier.best .prod-tier-p{color:var(--blue)}
+.prod-best-tag{position:absolute;top:-9px;left:12px;background:var(--blue);color:#fff;
+  font-size:9.6px;font-weight:900;letter-spacing:.02em;border-radius:999px;padding:3px 9px}
+
+/* 공통 조건 · 안내 */
+.prod-note{margin-top:13px;background:#FFF8E8;border:1px solid #F0DDB0;border-radius:12px;
+  padding:11px 13px;font-size:11.6px;line-height:1.7;color:#7A5A18;text-align:left;word-break:keep-all}
+.prod-note b{color:#5E4410}
+
+/* CTA */
+.prod-cta{margin-top:14px;display:grid;gap:8px}
+.prod-cta a,.prod-cta button{display:block;width:100%;border:0;border-radius:14px;padding:14px 12px;
+  font-family:inherit;font-size:14.6px;font-weight:900;letter-spacing:-.02em;text-align:center;
+  text-decoration:none;cursor:pointer;transition:.15s}
+.prod-cta .go{background:linear-gradient(135deg,#2F7FF0,#1D6DE3);color:#fff}
+.prod-cta .go:hover{filter:brightness(1.06)}
+.prod-cta .sub{background:#fff;color:var(--blue);border:1.5px solid var(--line)}
+.prod-cta .sub:hover{background:var(--blue-p);border-color:var(--blue-l)}
+
+/* 샘플 미리보기 2장 */
+.prod-samples{margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.prod-samples img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:12px;
+  border:1px solid var(--line);background:var(--bg-alt)}
+.prod-samples figcaption{font-size:10.8px;font-weight:700;color:var(--body);margin-top:5px;text-align:center}
+@media(max-width:342px){ .prod-samples{grid-template-columns:1fr} }
 
 /* ── 언어 드롭다운 (5개 국어) ── */
 .langbox{position:relative}
@@ -344,6 +417,44 @@ const I18N: Record<Lang, Record<string, string>> = {
 ko: {},   /* 한국어는 HTML 원문을 그대로 쓴다 (applyLang 이 원본을 기억한다) */
 
 en: {
+ nmH2:"A child's name is the word they will hear <b>more than any other</b>",
+ nmSub:"So it should not merely be pretty. It should fit.",
+ nmKick:"Newborn naming, premium",
+ nmTitle:"The Naming Set of Three",
+ nmLead:"We analyse the child's Saju down to the useful god, the supporting element and the ten-year cycles to find the elements they will need for life. Only names that clear all three checks — radical elements, phonetic flow and the 81 numerology — become candidates. We also verify the characters against the Supreme Court's approved list.",
+ nmInc1t:"Detailed report, 20–25 pages",
+ nmInc1d:"From the full Saju analysis to a scoreboard comparing five or six candidate names",
+ nmInc2t:"Framed certificate of naming (命名書)",
+ nmInc2d:"The chart, the prescribed elements, the three checks, a blessing and the representative's signature. High-resolution A4 original.",
+ nmInc3t:"Keepsake name commentary, 8 pages",
+ nmInc3d:"What each character carries, why these sounds and stroke counts, and a letter to the child",
+ nmSmp1:"The actual set",
+ nmSmp2:"The certificate",
+ nmS1t:"Step 1 · Saju analysis",
+ nmS1d:"The strength of the Day Master, which elements run short or over, the ten gods, the ten-year cycles. From this we find the element this child will need for life, and the channel to release what runs over.",
+ nmS2t:"Step 2 · Three checks",
+ nmS2d:"Do the characters' own elements fill what the chart lacks? Do the surname and given name flow without clashing? Are all four numerology segments auspicious? Only names that clear all three become candidates.",
+ nmS3t:"Step 3 · The set of three",
+ nmS3d:"Not just a name, but the record of why this name.",
+ nmSame:"All three tiers include <b>the same set of three</b>. Only the consultation differs.",
+ nmT1n:"Basic · report only",
+ nmT1d:"No consultation · ask by chat",
+ nmT2n:"Standard · chat or phone",
+ nmT2d:"Includes 30 minutes by chat or phone",
+ nmT3n:"Premium · in person",
+ nmT3d:"60 minutes in person · at a café by agreement",
+ nmWon:" KRW",
+ nmWon2:" KRW",
+ nmWon3:" KRW",
+ nmBest:"Most chosen",
+ nmNote:"First report delivered within <b>72 hours</b> · <b>two or three revisions free</b> until the name is settled · we can start from an expected birth date and <b>re-verify free of charge</b> once the actual time is known.<br>In-person meetings are arranged at a café by agreement while our office is between locations.",
+ nmGo:"Request a naming →",
+ nmAsk:"Ask first (KakaoTalk)",
+ nmOther:"Renaming, stage names and business names follow the same process. Just tell us on the request form.",
+ sv5n:"Naming Set of Three",
+ sv5d:"Report · certificate · commentary",
+ tagNm:"From 200,000 KRW",
+ navNaming:"Naming",
  brand:'AI<span>sajuLab</span>.com', brandSub:'AI × Myeongnihak',
  voc:'AIsajuLab.com listens to every piece of customer feedback and keeps refining its analysis and report quality, so that your satisfaction and your quality of life keep improving.',
  voc2:'AIsajuLab.com listens to every piece of customer feedback and keeps refining its analysis and report quality, so that your satisfaction and your quality of life keep improving.',
@@ -432,6 +543,44 @@ en: {
 },
 
 ja: {
+ nmH2:"子どもの名前は、<b>生涯もっとも多く</b>呼ばれる言葉です",
+ nmSub:"だから、きれいな名前ではなく、合う名前であるべきです。",
+ nmKick:"新生児の命名 プレミアム",
+ nmTitle:"命名 3点セット",
+ nmLead:"赤ちゃんの四柱を用神・喜神・大運まで精密に分析し、生涯にわたって最適な五行を導き出します。字源五行・発音五行・81数理の三重検証をすべて通過した名前だけを候補に挙げ、大法院の人名用漢字と不用文字も併せて確認します。",
+ nmInc1t:"精密レポート 20~25P",
+ nmInc1d:"四柱の精密分析から、名前の候補5~6件を点数で比較したスコアボードまで",
+ nmInc2t:"額装用 命名書",
+ nmInc2d:"命造・処方五行・三重検証の結果・祝願文・代表署名。A4の高解像度原本",
+ nmInc3t:"保存用 名前解説書 8P",
+ nmInc3d:"一文字ごとの字源、音と画数の根拠、お子さまへの手紙",
+ nmSmp1:"実際の3点セット",
+ nmSmp2:"額装用 命名書",
+ nmS1t:"第1段階 · 四柱の精密分析",
+ nmS1d:"日干の強弱、五行の過不足、十神の構造、10年単位の大運まで。この子に生涯必要な五行と、あふれる気を流す通路を見つけます。",
+ nmS2t:"第2段階 · 三重検証",
+ nmS2d:"字源五行が四柱の不足を満たすか、姓と名の音が相剋なく流れるか、81数理の四つの格がすべて吉数か。三つすべてを通過した名前だけを候補にします。",
+ nmS3t:"第3段階 · 3点セットで完成",
+ nmS3d:"名前ひとつではなく、その名前がなぜこの名前なのかという記録を一緒にお渡しします。",
+ nmSame:"3つの等級とも<b>3点セットの内容は同じ</b>です。違うのは相談の方法だけです。",
+ nmT1n:"基本 · レポートのみ",
+ nmT1d:"相談なし · 気になる点はトークで",
+ nmT2n:"標準 · トーク/電話相談",
+ nmT2d:"トークまたは電話30分を含む",
+ nmT3n:"プレミアム · 対面相談",
+ nmT3d:"直接会って60分 · カフェなど協議",
+ nmWon:"ウォン",
+ nmWon2:"ウォン",
+ nmWon3:"ウォン",
+ nmBest:"いちばん選ばれています",
+ nmNote:"1次レポートは<b>72時間</b>以内にお渡し · 名前が決まるまで<b>2~3次の補完が無料</b> · 出生前の予定日時でも進められ、実際の出生日時が確定した時点で<b>無料で再検証</b>します。<br>対面相談は事務所の移転中のため、<b>カフェなど協議のうえ</b>で行います。",
+ nmGo:"命名を申し込む →",
+ nmAsk:"まず問い合わせる (カカオトーク)",
+ nmOther:"改名・芸名/活動名・商号/事業体名も同じ工程で進めます。相談申込書にお書きください。",
+ sv5n:"命名 3点セット",
+ sv5d:"レポート · 命名書 · 解説書",
+ tagNm:"20万ウォン〜",
+ navNaming:"命名",
  brand:'AI<span>四柱ラボ</span>.com', brandSub:'AI × 命理学',
  voc:'AIsajuLab.com は、お客様の声と継続的な分析、レポートの品質改善を通じて、ご満足と暮らしの質の向上に力を尽くしてまいります。',
  voc2:'AIsajuLab.com は、お客様の声と継続的な分析、レポートの品質改善を通じて、ご満足と暮らしの質の向上に力を尽くしてまいります。',
@@ -520,6 +669,44 @@ ja: {
 },
 
 zh: {
+ nmH2:"孩子的名字，是<b>一生被叫得最多</b>的那个词",
+ nmSub:"所以它不该只是好听，而该是合适。",
+ nmKick:"新生儿取名 高级版",
+ nmTitle:"取名三件套",
+ nmLead:"我们把宝宝的八字分析到用神、喜神与大运，找出一生最需要的五行。只有同时通过字源五行、发音五行与81数理三重检验的名字，才会进入候选，并核对大法院人名用汉字与不用字。",
+ nmInc1t:"精密报告 20~25页",
+ nmInc1d:"从八字精密分析，到把5~6个候选名字用分数排出的对照表",
+ nmInc2t:"装裱用命名书(命名書)",
+ nmInc2d:"命造 · 处方五行 · 三重检验结果 · 祝愿文 · 代表签名。A4高清原件",
+ nmInc3t:"收藏用名字释义 8页",
+ nmInc3d:"逐字的字源、声音与笔画的依据，以及写给孩子的一封信",
+ nmSmp1:"实际三件套",
+ nmSmp2:"装裱用命名书",
+ nmS1t:"第一步 · 八字精密分析",
+ nmS1d:"日干强弱、五行多寡、十神结构、十年一运的走势。由此找出这个孩子一生需要的五行，以及疏导过盛之气的通道。",
+ nmS2t:"第二步 · 三重检验",
+ nmS2d:"字源五行能否补上八字的欠缺，姓与名的声音是否顺而不相克，81数理四格是否皆为吉数。三项全过的名字才进候选。",
+ nmS3t:"第三步 · 以三件套收尾",
+ nmS3d:"给你的不只是一个名字，还有这个名字为什么是它的记录。",
+ nmSame:"三个等级的<b>三件套内容完全相同</b>，差别只在咨询方式。",
+ nmT1n:"基础 · 仅报告",
+ nmT1d:"不含咨询 · 有疑问可用聊天",
+ nmT2n:"标准 · 聊天/电话咨询",
+ nmT2d:"含聊天或电话30分钟",
+ nmT3n:"高级 · 面谈",
+ nmT3d:"当面60分钟 · 咖啡厅等协商",
+ nmWon:"韩元",
+ nmWon2:"韩元",
+ nmWon3:"韩元",
+ nmBest:"最多人选择",
+ nmNote:"首份报告<b>72小时</b>内交付 · 名字定下之前<b>2~3次补充免费</b> · 也可按预产期先行，实际出生时辰确定后<b>免费重新校验</b>。<br>面谈因办公室迁址中，将<b>约在咖啡厅等地</b>协商进行。",
+ nmGo:"申请取名 →",
+ nmAsk:"先问问看 (KakaoTalk)",
+ nmOther:"改名、艺名/活动名、商号/公司名也走同样流程，在申请表里写下即可。",
+ sv5n:"取名三件套",
+ sv5d:"报告 · 命名书 · 释义",
+ tagNm:"20万韩元起",
+ navNaming:"取名",
  brand:'AI<span>四柱Lab</span>.com', brandSub:'AI × 命理学',
  voc:'AIsajuLab.com 将始终倾听客户的声音，持续改进分析与报告质量，努力提升您的满意度与生活品质。',
  voc2:'AIsajuLab.com 将始终倾听客户的声音，持续改进分析与报告质量，努力提升您的满意度与生活品质。',
@@ -608,6 +795,44 @@ zh: {
 },
 
 fr: {
+ nmH2:"Le prénom d'un enfant est le mot qu'il entendra <b>plus que tout autre</b>",
+ nmSub:"Il ne doit donc pas seulement être joli. Il doit convenir.",
+ nmKick:"Nomination du nouveau-né, premium",
+ nmTitle:"L'ensemble de trois pièces",
+ nmLead:"Nous analysons le Saju de l'enfant jusqu'à l'élément utile, l'élément de soutien et les cycles décennaux, afin de dégager les phases dont il aura besoin toute sa vie. Seuls les noms qui passent les trois vérifications — éléments des caractères, flux phonétique et numérologie des 81 — deviennent candidats. Les caractères sont aussi vérifiés sur la liste officielle de la Cour suprême de Corée.",
+ nmInc1t:"Rapport détaillé, 20 à 25 pages",
+ nmInc1d:"De l'analyse complète du Saju au tableau comparant cinq ou six noms candidats",
+ nmInc2t:"Certificat de nomination encadrable (命名書)",
+ nmInc2d:"Le thème, les éléments prescrits, les trois vérifications, un vœu et la signature du représentant. Original A4 haute résolution.",
+ nmInc3t:"Livret explicatif à conserver, 8 pages",
+ nmInc3d:"Ce que porte chaque caractère, la raison des sons et des traits, et une lettre à l'enfant",
+ nmSmp1:"L'ensemble réel",
+ nmSmp2:"Le certificat",
+ nmS1t:"Étape 1 · Analyse du Saju",
+ nmS1d:"La force du Maître du Jour, les phases en excès ou en manque, les dix dieux, les cycles de dix ans. Nous en tirons la phase dont l'enfant aura besoin, et le canal pour évacuer ce qui déborde.",
+ nmS2t:"Étape 2 · Trois vérifications",
+ nmS2d:"Les éléments des caractères comblent-ils ce qui manque au thème ? Le nom et le prénom s'enchaînent-ils sans conflit ? Les quatre segments numérologiques sont-ils tous favorables ? Seuls les noms qui passent les trois deviennent candidats.",
+ nmS3t:"Étape 3 · L'ensemble de trois",
+ nmS3d:"Pas seulement un nom, mais la trace écrite de la raison de ce nom.",
+ nmSame:"Les trois formules comprennent <b>le même ensemble de trois</b>. Seule la consultation change.",
+ nmT1n:"Essentiel · rapport seul",
+ nmT1d:"Sans consultation · questions par messagerie",
+ nmT2n:"Standard · échange ou téléphone",
+ nmT2d:"30 minutes par messagerie ou téléphone",
+ nmT3n:"Premium · en personne",
+ nmT3d:"60 minutes en personne · dans un café, d'un commun accord",
+ nmWon:" KRW",
+ nmWon2:" KRW",
+ nmWon3:" KRW",
+ nmBest:"Le plus choisi",
+ nmNote:"Premier rapport remis sous <b>72 heures</b> · <b>deux à trois révisions offertes</b> jusqu'à ce que le nom soit arrêté · possible dès la date prévue d'accouchement, avec <b>revérification gratuite</b> une fois l'heure réelle connue.<br>Les rencontres se tiennent dans un café, d'un commun accord, le temps que notre bureau change d'adresse.",
+ nmGo:"Demander une nomination →",
+ nmAsk:"Poser une question (KakaoTalk)",
+ nmOther:"Changement de nom, nom de scène et nom d'entreprise suivent le même processus. Indiquez-le sur le formulaire.",
+ sv5n:"Ensemble de trois",
+ sv5d:"Rapport · certificat · livret",
+ tagNm:"Dès 200 000 KRW",
+ navNaming:"Nomination",
  brand:'AI<span>sajuLab</span>.com', brandSub:'IA × Myeongnihak (命理学)',
  voc:"AIsajuLab.com écoute chaque retour de ses clients et continue d'affiner ses analyses et la qualité de ses rapports, pour votre satisfaction et votre qualité de vie.",
  voc2:"AIsajuLab.com écoute chaque retour de ses clients et continue d'affiner ses analyses et la qualité de ses rapports, pour votre satisfaction et votre qualité de vie.",
@@ -812,6 +1037,9 @@ const HTML = String.raw`
       <button class="sv" data-go="report" data-from="svc" data-ev="report_open"><span class="tag pay" data-i="tagPay">990원 · 즉시</span>
         <div class="si">📊</div><div class="sn" data-i="sv4n">AI 심층 리포트</div>
         <div class="sd" data-i="sv4d">고민 반영 맞춤 해석 · 카카오페이</div></button>
+      <button class="sv sv-wide" data-go="naming" data-from="svc"><span class="tag pay" data-i="tagNm">20만원부터</span>
+        <div class="si">✍️</div><div class="sn" data-i="sv5n">작명 3종 세트</div>
+        <div class="sd" data-i="sv5d">리포트 · 명명서 · 풀이서</div></button>
     </div>
 
     <!-- 상담 — 간편(채움) 우선, 정밀(투명+테두리) -->
@@ -824,6 +1052,81 @@ const HTML = String.raw`
       </div>
       <div class="pricenote" data-i="priceNote">맞춤 상담은 기존 상담 신청서로 접수 후 범위·비용을 안내드립니다</div>
     </div>
+  </section>
+
+  <!-- ═══════ 상품 진열 · 작명 3종 세트 ═══════
+       구조는 상품 종류와 무관하다. 사주 리포트 10~12종을 붙일 때는
+       이 <section> 을 복제하고 data-i 키만 새로 만들면 된다. -->
+  <section id="naming">
+    <div class="sec-label">NAMING</div>
+    <h2 data-i="nmH2">아이의 이름은 <b>평생 가장 많이</b> 불리는 단어입니다</h2>
+    <p class="sec-sub" data-i="nmSub">그래서 예쁜 이름이 아니라, 맞는 이름이어야 합니다.</p>
+
+    <div class="prod">
+      <img class="prod-hero" src="/img/naming-3set.jpg" alt="" loading="lazy" width="1200" height="750">
+      <div class="prod-body">
+        <div class="prod-kick" data-i="nmKick">신생아 작명 프리미엄</div>
+        <div class="prod-h" data-i="nmTitle">작명 3종 세트</div>
+        <p class="prod-lead" data-i="nmLead">아기의 사주를 용신·희신·대운까지 정밀 분석해 평생 최적의 오행을 도출하고, 자원오행 · 발음오행 · 81수리 삼중 검증을 모두 통과한 이름만 후보로 올립니다. 대법원 인명용 한자와 불용문자도 함께 확인합니다.</p>
+
+        <div class="prod-inc">
+          <div class="prod-inc-i"><div class="prod-inc-n">1</div><div>
+            <div class="prod-inc-t" data-i="nmInc1t">정밀 리포트 20~25P</div>
+            <div class="prod-inc-d" data-i="nmInc1d">사주 정밀 분석부터 이름 후보 5~6개를 점수로 비교한 스코어보드까지</div></div></div>
+          <div class="prod-inc-i"><div class="prod-inc-n">2</div><div>
+            <div class="prod-inc-t" data-i="nmInc2t">액자용 명명서(命名書)</div>
+            <div class="prod-inc-d" data-i="nmInc2d">명조 · 처방 오행 · 삼중 검증 결과 · 축원문 · 대표 서명. A4 고해상도 원본</div></div></div>
+          <div class="prod-inc-i"><div class="prod-inc-n">3</div><div>
+            <div class="prod-inc-t" data-i="nmInc3t">소장용 이름 풀이서 8P</div>
+            <div class="prod-inc-d" data-i="nmInc3d">글자별 자원 풀이, 소리와 획수의 근거, 아이에게 보내는 편지</div></div></div>
+        </div>
+
+        <div class="prod-samples">
+          <figure><img src="/img/naming-3set-sq.jpg" alt="" loading="lazy" width="900" height="900">
+            <figcaption data-i="nmSmp1">실제 3종 세트</figcaption></figure>
+          <figure><img src="/img/naming-cert-sq.jpg" alt="" loading="lazy" width="900" height="900">
+            <figcaption data-i="nmSmp2">액자용 명명서</figcaption></figure>
+        </div>
+
+        <div class="prod-steps">
+          <div class="prod-step"><b data-i="nmS1t">1단계 · 사주 정밀 분석</b>
+            <span data-i="nmS1d">일간의 강약, 오행의 과부족, 십신 구조, 10년 단위 대운까지. 이 아이에게 평생 필요한 오행과 넘치는 기운을 흘려보낼 통로를 찾습니다.</span></div>
+          <div class="prod-step"><b data-i="nmS2t">2단계 · 삼중 검증</b>
+            <span data-i="nmS2d">자원오행이 사주의 부족을 채우는가, 성과 이름의 소리가 상극 없이 흐르는가, 81수리 네 구간이 모두 길수인가. 셋을 모두 통과한 이름만 후보에 올립니다.</span></div>
+          <div class="prod-step"><b data-i="nmS3t">3단계 · 3종 세트로 완성</b>
+            <span data-i="nmS3d">이름 하나가 아니라, 그 이름이 왜 이 이름인지에 대한 기록을 함께 드립니다.</span></div>
+        </div>
+
+        <div class="prod-same" data-i="nmSame">세 등급 모두 <b>결과물 3종은 동일</b>합니다. 차이는 상담 방식뿐입니다.</div>
+        <div class="prod-tiers">
+          <div class="prod-tier">
+            <div class="prod-tier-l"><div class="n" data-i="nmT1n">기본 · 리포트만</div>
+              <div class="d" data-i="nmT1d">상담 없음 · 궁금한 건 톡으로</div></div>
+            <div class="prod-tier-p">200,000<span data-i="nmWon">원</span></div>
+          </div>
+          <div class="prod-tier best">
+            <span class="prod-best-tag" data-i="nmBest">가장 많이 선택</span>
+            <div class="prod-tier-l"><div class="n" data-i="nmT2n">표준 · 톡/전화 상담</div>
+              <div class="d" data-i="nmT2d">톡 또는 전화 30분 포함</div></div>
+            <div class="prod-tier-p">250,000<span data-i="nmWon2">원</span></div>
+          </div>
+          <div class="prod-tier">
+            <div class="prod-tier-l"><div class="n" data-i="nmT3n">프리미엄 · 대면 상담</div>
+              <div class="d" data-i="nmT3d">직접 만나 60분 · 카페 등 협의</div></div>
+            <div class="prod-tier-p">300,000<span data-i="nmWon3">원</span></div>
+          </div>
+        </div>
+
+        <div class="prod-note" data-i="nmNote">1차 리포트 <b>72시간</b> 내 전달 · 이름 확정까지 <b>2~3차 보완 무료</b> · 출생 전 예정일시로도 진행 가능하며 실제 출생일시 확정 시 <b>무료 재검증</b>합니다.<br>대면 상담은 사무실 이전 중이라 <b>카페 등 협의</b>로 진행합니다.</div>
+
+        <div class="prod-cta">
+          <a class="go" href="/consult" data-i="nmGo">작명 신청하기 →</a>
+          <button class="sub" data-go="kakao" data-from="naming" data-i="nmAsk">먼저 물어보기 (카카오톡)</button>
+        </div>
+      </div>
+    </div>
+
+    <p class="sec-sub" style="margin-top:13px;font-size:12.4px" data-i="nmOther">개명 · 예명/활동명 · 상호/사업체명도 동일한 프로세스로 진행됩니다. 상담 신청서에 남겨 주세요.</p>
   </section>
 
   <!-- 결과 카드 -->
@@ -1117,6 +1420,10 @@ export default function HomeV6() {
       else if (go === "today")  { track("svc_click", { to: "today", from });  window.location.href = "/ohaeng/#today"; }
       else if (go === "match")  { track("svc_click", { to: "match", from });  window.location.href = "/ohaeng/#match"; }
       else if (go === "report") { track("svc_click", { to: "report", from }); window.location.href = "/ohaeng/#report"; }
+      else if (go === "naming") {
+        track("svc_click", { to: "naming", from });
+        document.getElementById("naming")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
       else if (go === "top") { window.scrollTo({ top: 0, behavior: "smooth" }); }
     };
     root.addEventListener("click", onClick);
