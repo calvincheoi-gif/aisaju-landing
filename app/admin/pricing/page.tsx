@@ -94,6 +94,29 @@ export default function AdminPricingPage() {
     }
   }
 
+  /* 항목 추가·삭제 — 상담 목적과 추가 옵션 양쪽에서 함께 쓴다.
+     key 는 저장·집계의 기준이라 한 번 만들면 바꾸지 않는다. */
+  function newKey(prefix: string, existing: PricedItem[]) {
+    let n = existing.length + 1;
+    while (existing.some((x) => x.key === `${prefix}${n}`)) n += 1;
+    return `${prefix}${n}`;
+  }
+  function addRow(field: "detail_purposes" | "detail_addons") {
+    if (!config) return;
+    const list = config[field];
+    const prefix = field === "detail_purposes" ? "item" : "addon";
+    setConfig({
+      ...config,
+      [field]: [...list, { key: newKey(prefix, list), label: "", price: 0 }],
+    });
+  }
+  function removeRow(field: "detail_purposes" | "detail_addons", i: number) {
+    if (!config) return;
+    const list = config[field];
+    if (!window.confirm(`"${list[i].label || "이름 없는 항목"}" 을(를) 삭제할까요?`)) return;
+    setConfig({ ...config, [field]: list.filter((_, k) => k !== i) });
+  }
+
   if (!authed || !config) {
     return (
       <main className="section max-w-sm">
@@ -187,7 +210,7 @@ export default function AdminPricingPage() {
         <h2 className="mb-3 text-[15px] font-bold text-ink-900">디테일 신청 - 상담 목적</h2>
         <div className="space-y-2">
           {config.detail_purposes.map((p, i) => (
-            <div key={p.key} className="grid grid-cols-[1fr_110px] gap-2">
+            <div key={p.key} className="grid grid-cols-[1fr_110px_38px] gap-2">
               <input
                 className={rowInput}
                 value={p.label}
@@ -207,16 +230,31 @@ export default function AdminPricingPage() {
                   setConfig({ ...config, detail_purposes: next });
                 }}
               />
+              <button
+                type="button"
+                aria-label="이 항목 삭제"
+                onClick={() => removeRow("detail_purposes", i)}
+                className="rounded-md border border-line text-[16px] leading-none text-body transition hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+              >
+                ×
+              </button>
             </div>
           ))}
         </div>
+        <button
+          type="button"
+          onClick={() => addRow("detail_purposes")}
+          className="mt-3 w-full rounded-md border border-dashed border-line py-2.5 text-[13px] font-semibold text-body transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600"
+        >
+          + 상담 목적 추가
+        </button>
       </section>
 
       <section className="card mb-6">
         <h2 className="mb-3 text-[15px] font-bold text-ink-900">디테일 신청 - 추가 옵션</h2>
         <div className="space-y-2">
           {config.detail_addons.map((a, i) => (
-            <div key={a.key} className="grid grid-cols-[1fr_110px] gap-2">
+            <div key={a.key} className="grid grid-cols-[1fr_110px_38px] gap-2">
               <input
                 className={rowInput}
                 value={a.label}
@@ -236,9 +274,24 @@ export default function AdminPricingPage() {
                   setConfig({ ...config, detail_addons: next });
                 }}
               />
+              <button
+                type="button"
+                aria-label="이 항목 삭제"
+                onClick={() => removeRow("detail_addons", i)}
+                className="rounded-md border border-line text-[16px] leading-none text-body transition hover:border-red-300 hover:bg-red-50 hover:text-red-600"
+              >
+                ×
+              </button>
             </div>
           ))}
         </div>
+        <button
+          type="button"
+          onClick={() => addRow("detail_addons")}
+          className="mt-3 w-full rounded-md border border-dashed border-line py-2.5 text-[13px] font-semibold text-body transition hover:border-indigo-300 hover:bg-indigo-50 hover:text-indigo-600"
+        >
+          + 추가 옵션 추가
+        </button>
       </section>
 
       <button onClick={handleSave} disabled={saving} className="btn-primary w-full justify-center">
