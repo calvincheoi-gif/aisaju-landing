@@ -357,6 +357,9 @@ footer .lg{display:inline-block;margin:6px 12px 0 0;color:rgba(255,255,255,.85);
 .prod-fold.on{max-height:4200px;opacity:1}
 .prod-pdf{margin-top:15px;border-top:1px dashed var(--line);padding-top:14px}
 .prod-pdf-t{font-size:12.6px;font-weight:800;color:var(--navy);margin-bottom:9px}
+.prod-pdf-n{font-size:11.6px;line-height:1.6;color:var(--body);background:var(--bg-alt);
+  border-radius:9px;padding:8px 11px;margin-bottom:9px;word-break:keep-all}
+.prod-pdf-n b{color:var(--navy)}
 .prod-pdf-g{display:grid;gap:7px}
 .prod-pdf-g a{display:flex;align-items:center;justify-content:center;gap:6px;
   border:1.5px solid var(--line);border-radius:11px;padding:11px;background:#fff;
@@ -456,6 +459,8 @@ en: {
  nmPdf1:"Detailed report (PDF)",
  nmPdf2:"Certificate (PDF)",
  nmPdf3:"Name commentary (PDF)",
+ nmPdfN:"These samples are <b>fictional examples</b>, not real customer data.",
+ nmPdfN2:"These samples are <b>fictional examples</b>, not real customer data.",
  nmH2:"A child's name is the word they will hear <b>more than any other</b>",
  nmSub:"So it should not merely be pretty. It should fit.",
  nmKick:"Newborn naming, premium",
@@ -589,6 +594,8 @@ ja: {
  nmPdf1:"精密レポート (PDF)",
  nmPdf2:"命名書 (PDF)",
  nmPdf3:"名前解説書 (PDF)",
+ nmPdfN:"こちらのサンプルは<b>架空の例</b>であり、実際のお客様の情報ではありません。",
+ nmPdfN2:"こちらのサンプルは<b>架空の例</b>であり、実際のお客様の情報ではありません。",
  nmH2:"子どもの名前は、<b>生涯もっとも多く</b>呼ばれる言葉です",
  nmSub:"だから、きれいな名前ではなく、合う名前であるべきです。",
  nmKick:"新生児の命名 プレミアム",
@@ -722,6 +729,8 @@ zh: {
  nmPdf1:"精密报告 (PDF)",
  nmPdf2:"命名书 (PDF)",
  nmPdf3:"名字释义 (PDF)",
+ nmPdfN:"以下样本为<b>虚构示例</b>，并非真实客户信息。",
+ nmPdfN2:"以下样本为<b>虚构示例</b>，并非真实客户信息。",
  nmH2:"孩子的名字，是<b>一生被叫得最多</b>的那个词",
  nmSub:"所以它不该只是好听，而该是合适。",
  nmKick:"新生儿取名 高级版",
@@ -855,6 +864,8 @@ fr: {
  nmPdf1:"Rapport détaillé (PDF)",
  nmPdf2:"Certificat (PDF)",
  nmPdf3:"Livret explicatif (PDF)",
+ nmPdfN:"Ces exemples sont <b>fictifs</b> et ne correspondent à aucun client réel.",
+ nmPdfN2:"Ces exemples sont <b>fictifs</b> et ne correspondent à aucun client réel.",
  nmH2:"Le prénom d'un enfant est le mot qu'il entendra <b>plus que tout autre</b>",
  nmSub:"Il ne doit donc pas seulement être joli. Il doit convenir.",
  nmKick:"Nomination du nouveau-né, premium",
@@ -1150,6 +1161,8 @@ const HTML = String.raw`
             <figcaption data-i="nmSmp2">액자용 명명서</figcaption></figure>
         </div>
 
+        <div class="prod-pdf-n" style="margin:9px 0 0" data-i="nmPdfN2">아래 샘플은 <b>가상의 예시</b>입니다. 실제 고객 정보가 아닙니다.</div>
+
         <div class="prod-steps">
           <div class="prod-step"><b data-i="nmS1t">1단계 · 사주 정밀 분석</b>
             <span data-i="nmS1d">일간의 강약, 오행의 과부족, 십신 구조, 10년 단위 대운까지. 이 아이에게 평생 필요한 오행과 넘치는 기운을 흘려보낼 통로를 찾습니다.</span></div>
@@ -1162,6 +1175,7 @@ const HTML = String.raw`
         </div>
         <div class="prod-pdf">
           <div class="prod-pdf-t" data-i="nmPdfT">실제 결과물을 직접 확인해 보세요</div>
+          <div class="prod-pdf-n" data-i="nmPdfN">아래 샘플은 <b>가상의 예시</b>입니다. 실제 고객 정보가 아닙니다.</div>
           <div class="prod-pdf-g">
             <a href="/sample/naming-report.pdf" target="_blank" rel="noopener" data-i="nmPdf1">정밀 리포트 (PDF)</a>
             <a href="/sample/naming-certificate.pdf" target="_blank" rel="noopener" data-i="nmPdf2">명명서 (PDF)</a>
