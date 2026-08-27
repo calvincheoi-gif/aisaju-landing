@@ -58,6 +58,7 @@ export default function RootLayout({
         <LanguageProvider>{children}</LanguageProvider>
         <script src="/card-sheets.js" defer></script>
         <script src="/visitor.js" defer></script>
+        <script src="/pwa.js" defer></script>
       </body>
     </html>
   );
