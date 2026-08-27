@@ -119,6 +119,21 @@ html:not([lang="ko"]) .btn .t1{font-size:12.6px;letter-spacing:-.03em;line-heigh
 html:not([lang="ko"]) .btn .t2{font-size:9.2px;margin-top:3px;line-height:1.3}
 /* 아주 좁은 화면에서만 세로로 쌓는다 */
 @media(max-width:342px){ html:not([lang="ko"]) .cta-pair{grid-template-columns:1fr} }
+/* 폰에서는 아이콘을 줄이고 화살표를 감춰 글자 자리를 넓힌다.
+   큰 글씨가 두 줄로 접히면 버튼 전체가 3줄이 되어 높이가 커진다.
+   화살표(›)는 버튼 자체가 이미 눌리는 요소라 없어도 뜻이 통한다. */
+@media(max-width:470px){
+  .cta-pair .btn{padding:12px 8px;gap:7px}
+  .cta-pair .btn .ico{flex:0 0 24px;height:24px;font-size:13px}
+  .cta-pair .btn .go{display:none}
+}
+/* 「무료」는 이 버튼에서 가장 강한 단어다.
+   작은 줄로 내려간 대신 굵기와 밝기로 눈에 남게 한다. */
+.btn-free .t2 b{font-weight:900;opacity:1;letter-spacing:0}
+.btn-free .t2{opacity:.82}
+@media(max-width:360px){
+  .cta-pair .btn .t2{font-size:9.4px;letter-spacing:-.03em}
+}
 html:not([lang="ko"]) .sv .sn{white-space:normal;overflow-wrap:anywhere}
 html:not([lang="ko"]) .trust .n,html:not([lang="ko"]) .trust .l{white-space:normal;overflow-wrap:anywhere}
 html:not([lang="ko"]) .card-title{font-size:26px;line-height:1.2}
@@ -138,8 +153,41 @@ html:not([lang="ko"]) .biz{overflow-wrap:anywhere}
 .btn-pro .go{background:var(--navy);color:#fff}
 .btn:active{transform:translateY(1px)}
 
+/* 오늘의 기운 스트립 — 홈에서 /ohaeng/#today 로 보내는 한 줄 버튼 */
+.todaybar{display:flex;align-items:center;gap:10px;width:100%;
+  margin:4px 0;padding:8px 12px;border:1px solid var(--line);border-radius:12px;
+  background:linear-gradient(180deg,#F7FAFF,#EDF4FF);color:var(--navy);
+  text-align:left;cursor:pointer;box-shadow:0 2px 8px rgba(20,50,110,.05);transition:.15s}
+.todaybar:hover{background:#E7F0FF;border-color:var(--blue-l)}
+.todaybar .tb-tx{flex:1;min-width:0}
+.todaybar .tb-lab{display:block;font-size:10.5px;font-weight:700;color:var(--gray);
+  letter-spacing:-.03em;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.todaybar .tb-han{display:block;font-size:14px;font-weight:900;color:var(--blue-d);
+  letter-spacing:-.02em;line-height:1.3;margin-top:1px}
+.todaybar .tb-go{flex:0 0 auto;padding:5px 11px;border-radius:999px;
+  background:var(--blue);color:#fff;font-size:11.5px;font-weight:800;
+  letter-spacing:-.03em;white-space:nowrap}
+@media(max-width:360px){.todaybar{padding:7px 10px;gap:8px}
+  .todaybar .tb-han{font-size:13px}.todaybar .tb-go{padding:5px 9px;font-size:11px}}
+
+/* 홈 화면 추가 안내 — 조건이 맞을 때만 나타나고, 닫으면 다시 안 나온다 */
+.pwabar{display:none;align-items:center;gap:8px;width:100%;
+  margin:4px 0 0;padding:7px 10px;border:1px dashed #C9DBF5;border-radius:11px;
+  background:#FBFDFF}
+.pwabar.on{display:flex}
+.pwabar .pw-ic{flex:0 0 auto;font-size:13px;line-height:1}
+.pwabar .pw-tx{flex:1;min-width:0;font-size:10.8px;font-weight:700;color:var(--gray);
+  letter-spacing:-.03em;line-height:1.35}
+.pwabar .pw-go{flex:0 0 auto;padding:4px 10px;border-radius:999px;border:1px solid var(--blue);
+  background:#fff;color:var(--blue);font-size:10.8px;font-weight:800;
+  letter-spacing:-.03em;white-space:nowrap;cursor:pointer}
+.pwabar .pw-go:hover{background:var(--blue);color:#fff}
+.pwabar .pw-x{flex:0 0 auto;width:20px;height:20px;padding:0;border:0;background:transparent;
+  color:#9FB3CE;font-size:15px;line-height:1;cursor:pointer}
+.pwabar .pw-x:hover{color:var(--gray)}
+
 /* 신뢰 스트립 */
-.trust{position:relative;display:flex;margin-top:12px;background:#fff;border:1px solid var(--line);
+.trust{position:relative;display:flex;margin-top:4px;background:#fff;border:1px solid var(--line);
   border-radius:15px;overflow:hidden;box-shadow:0 4px 12px rgba(20,50,110,.05)}
 .trust div.cell{flex:1;padding:10px 4px;text-align:center;border-right:1px solid #ECF2FB}
 .trust div.cell:last-child{border-right:0}
@@ -1100,7 +1148,7 @@ const HTML = String.raw`
     <div class="cta-pair">
       <button class="btn btn-free" data-go="ohaeng" data-from="hero">
         <span class="ico">🤖</span>
-        <span class="tx"><span class="t1" data-i="ctaFree1">무료 오행 성격 진단</span><span class="t2" data-i="ctaFree2">가입 없이 바로</span></span>
+        <span class="tx"><span class="t1" data-i="ctaFree1">오행 성격 진단</span><span class="t2" data-i="ctaFree2">가입 없이 바로 · <b>무료</b></span></span>
         <span class="go">›</span>
       </button>
       <button class="btn btn-pro" data-go="consult" data-from="hero">
@@ -1108,6 +1156,21 @@ const HTML = String.raw`
         <span class="tx"><span class="t1" data-i="ctaPro1">전문가 상담</span><span class="t2" data-i="ctaPro2">리포트 20,000원부터</span></span>
         <span class="go">›</span>
       </button>
+    </div>
+
+    <button class="todaybar" id="todaybar" data-go="today" data-from="todaybar" aria-label="오늘의 기운 보기">
+      <span class="tb-tx">
+        <span class="tb-lab" id="tb-lab">오늘의 기운</span>
+        <span class="tb-han" id="tb-han">—</span>
+      </span>
+      <span class="tb-go" id="tb-go">오늘의 행동 ›</span>
+    </button>
+
+    <div class="pwabar" id="pwabar">
+      <span class="pw-ic">📲</span>
+      <span class="pw-tx" id="pw-tx">매일 아침 오늘의 기운을 보시려면 홈 화면에 추가하세요</span>
+      <button class="pw-go" id="pw-go" type="button">추가</button>
+      <button class="pw-x" id="pw-x" type="button" aria-label="안내 닫기">×</button>
     </div>
 
     <div class="trust">
@@ -1491,6 +1554,126 @@ export default function HomeV6() {
 
     let LANG: Lang = readLang();
 
+    /* ══════════ 오늘의 기운 스트립 ══════════
+       · 계산식은 오행 앱(public/ohaeng/index.html)의 dayGanji · seasonEl 과 동일하다.
+         한쪽만 고치면 홈과 앱의 값이 어긋나므로 반드시 두 곳을 함께 고칠 것.
+       · 이동은 data-go="today" → /ohaeng/#today (기존 라우팅 그대로 사용) */
+    const renderTodayBar = (() => {
+      const GAN10 = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"];
+      const JI12 = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
+      const GAN_EL = ["wood", "wood", "fire", "fire", "earth", "earth", "metal", "metal", "water", "water"];
+      const EL_HAN: Record<string, string> = { wood: "木", fire: "火", earth: "土", metal: "金", water: "水" };
+      const LAB: Record<string, [string, string]> = {
+        ko: ["오늘", "오늘의 행동"],
+        en: ["Today", "What to do"],
+        ja: ["今日", "今日の動き"],
+        zh: ["今天", "今天怎么做"],
+        fr: ["Auj.", "À faire"],
+      };
+      const LOC: Record<string, string> = { ko: "ko-KR", en: "en-US", ja: "ja-JP", zh: "zh-CN", fr: "fr-FR" };
+      const jdn = (y: number, m: number, d: number) => {
+        const a = Math.floor((14 - m) / 12), yy = y + 4800 - a, mm = m + 12 * a - 3;
+        return d + Math.floor((153 * mm + 2) / 5) + 365 * yy
+          + Math.floor(yy / 4) - Math.floor(yy / 100) + Math.floor(yy / 400) - 32045;
+      };
+      /* 절기 근사(입춘·입하·입추·입동) + 각 계절 끝 18일은 토(土用) */
+      const seasonEl = (dt: Date) => {
+        const md = (dt.getMonth() + 1) * 100 + dt.getDate();
+        const inR = (a: number, b: number) => md >= a && md < b;
+        let base = "water";
+        if (inR(204, 505)) base = "wood";
+        else if (inR(505, 807)) base = "fire";
+        else if (inR(807, 1107)) base = "metal";
+        const soil = inR(417, 505) || inR(720, 807) || inR(1020, 1107) || inR(117, 204);
+        return soil ? "earth" : base;
+      };
+      return (lang: string) => {
+        const dt = new Date();
+        const i = ((jdn(dt.getFullYear(), dt.getMonth() + 1, dt.getDate()) - 11) % 60 + 60) % 60;
+        const gz = GAN10[i % 10] + JI12[i % 12];
+        const dayEl = EL_HAN[GAN_EL[i % 10]];
+        const seaEl = EL_HAN[seasonEl(dt)];
+        const [lab, go] = LAB[lang] || LAB.ko;
+        /* 요일 이름만 각 언어에서 가져오고, 형식은 M/D(요일) 로 통일한다 */
+        let when = (dt.getMonth() + 1) + "/" + dt.getDate();
+        try {
+          const wd = new Intl.DateTimeFormat(LOC[lang] || "ko-KR", { weekday: "short" }).format(dt);
+          when = when + "(" + wd.replace(/^周/, "周") + ")";
+        } catch { /* 구형 브라우저는 숫자 표기로 둔다 */ }
+        const put = (id: string, t: string) => { const e = document.getElementById(id); if (e) e.textContent = t; };
+        put("tb-lab", lab + " " + when);
+        put("tb-han", seaEl + " · " + gz + "(" + dayEl + ")");
+        put("tb-go", go + " ›");
+      };
+    })();
+
+    /* ══════════ 홈 화면 추가 안내 ══════════
+       화면이 길어지지 않도록 다음을 모두 만족할 때만 나타난다.
+         ① 이미 설치해 실행 중이 아님  ② 닫은 적 없음  ③ 두 번째 방문부터
+       안드로이드는 실제 설치 버튼을, iOS 는 사파리 수동 절차를 안내한다.
+       (iOS 는 beforeinstallprompt 를 지원하지 않아 버튼으로 설치시킬 방법이 없다) */
+    const renderPwaBar = (() => {
+      const TXT: Record<string, { and: string; ios: string; go: string }> = {
+        ko: { and: "매일 아침 보시려면 홈 화면에 추가하세요", ios: "공유 → 「홈 화면에 추가」로 매일 아침 확인하세요", go: "추가" },
+        en: { and: "Add to your home screen to check each morning", ios: "Share → “Add to Home Screen” to check each morning", go: "Add" },
+        ja: { and: "毎朝見るにはホーム画面に追加してください", ios: "共有 →「ホーム画面に追加」で毎朝どうぞ", go: "追加" },
+        zh: { and: "添加到主屏幕，每天早上都能看", ios: "分享 →「添加到主屏幕」，每天早上都能看", go: "添加" },
+        fr: { and: "Ajoutez à l'écran d'accueil pour le voir chaque matin", ios: "Partager → « Sur l'écran d'accueil »", go: "Ajouter" },
+      };
+      const bar = document.getElementById("pwabar");
+      const tx = document.getElementById("pw-tx");
+      const go = document.getElementById("pw-go") as HTMLButtonElement | null;
+      const xb = document.getElementById("pw-x");
+      if (!bar || !tx || !go || !xb) return () => { /* 요소가 없으면 아무것도 하지 않는다 */ };
+
+      const nav = navigator as Navigator & { standalone?: boolean };
+      const installed = window.matchMedia("(display-mode: standalone)").matches || nav.standalone === true;
+      const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+
+      let visits = 1;
+      let dismissed = false;
+      try {
+        dismissed = localStorage.getItem("pwa_hide") === "1";
+        visits = (parseInt(localStorage.getItem("pwa_visits") || "0", 10) || 0) + 1;
+        localStorage.setItem("pwa_visits", String(visits));
+      } catch { /* 저장이 막혀 있으면 첫 방문으로 본다 */ }
+
+      const eligible = !installed && !dismissed && visits >= 2;
+
+      const hide = () => bar.classList.remove("on");
+      xb.addEventListener("click", (e) => {
+        e.stopPropagation();
+        try { localStorage.setItem("pwa_hide", "1"); } catch { /* noop */ }
+        hide();
+        track("pwa_dismiss");
+      });
+      go.addEventListener("click", async (e) => {
+        e.stopPropagation();
+        const p = (window as unknown as { __pwaPrompt?: { prompt: () => void; userChoice: Promise<{ outcome: string }> } }).__pwaPrompt;
+        if (!p) return;
+        track("pwa_click");
+        p.prompt();
+        try {
+          const r = await p.userChoice;
+          track("pwa_result", { outcome: r.outcome });
+          if (r.outcome === "accepted") hide();
+        } catch { /* 사용자가 그냥 닫은 경우 */ }
+      });
+      window.addEventListener("pwa-installed", hide);
+
+      return (lang: string) => {
+        if (!eligible) return;
+        const t = TXT[lang] || TXT.ko;
+        const hasPrompt = !!(window as unknown as { __pwaPrompt?: unknown }).__pwaPrompt;
+        /* 안드로이드에서 설치 프롬프트가 아직 안 왔으면 조용히 기다린다 */
+        if (!hasPrompt && !isIOS) { hide(); return; }
+        tx.textContent = isIOS ? t.ios : t.and;
+        go.textContent = t.go;
+        go.style.display = isIOS ? "none" : "";
+        bar.classList.add("on");
+      };
+    })();
+
     const applyLang = () => {
       const dict = I18N[LANG] || {};
       nodes.forEach(el => {
@@ -1511,7 +1694,14 @@ export default function HomeV6() {
       /* 순환 안내문의 기준 문장도 새 언어로 갱신한다 */
       const note = document.getElementById("cycnote");
       if (note) cycBase = note.innerHTML;
+      /* 오늘의 기운 스트립도 같은 언어로 다시 그린다 */
+      renderTodayBar(LANG);
+      renderPwaBar(LANG);
     };
+
+    /* 설치 프롬프트가 화면을 그린 뒤에 도착하는 경우를 위해 한 번 더 그린다 */
+    const onPwaReady = () => renderPwaBar(LANG);
+    window.addEventListener("pwa-ready", onPwaReady);
 
     const setLang = (l: Lang) => {
       LANG = l;
@@ -1642,6 +1832,7 @@ export default function HomeV6() {
     return () => {
       root.removeEventListener("click", onClick);
       document.removeEventListener("click", onDocClick);
+      window.removeEventListener("pwa-ready", onPwaReady);
       if (timer) clearTimeout(timer);
     };
   }, []);
