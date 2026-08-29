@@ -1233,10 +1233,10 @@ const HTML = String.raw`
       <div class="cs" data-i="ctS">경영지도사 최형철 · 30년 경력이 직접 해석합니다</div>
       <div class="openbar" data-i="openBar"><b>오픈기념 · 9월 30일까지</b> &nbsp;<s>20,000원</s> → <em>9,900원</em></div>
       <div class="cbtns">
-        <button class="cb cb-open cb-wide" data-go="consult" data-from="svc_open" data-ev="open_price_click"><span class="b1" data-i="cbO1">개인 종합 리포트 20장 · 9,900원</span><span class="b2" data-i="cbO2">전문가가 직접 작성 · 상담 없이 리포트만</span></button>
-        <button class="cb cb-quick" data-go="consult" data-from="svc_quick"><span class="b1" data-i="cbQ1">Special · 50,000원</span><span class="b2" data-i="cbQ2">리포트 + 전화·톡 상담</span></button>
-        <button class="cb cb-deep" data-go="consult" data-from="svc_deep"><span class="b1" data-i="cbD1">Premium · 100,000원</span><span class="b2" data-i="cbD2">리포트 + 대면 상담 60분</span></button>
-        <button class="cb cb-visit cb-wide" data-go="consult" data-from="svc_visit"><span class="b1" data-i="cbV1">방문 상담 · 140,000원</span><span class="b2" data-i="cbV2">고객 근처로 찾아갑니다 · 서울·수도권</span></button>
+        <button class="cb cb-open cb-wide" data-go="consult" data-from="svc_open" data-ev="open_price_click" data-q="mode=simple&item=reportOnly"><span class="b1" data-i="cbO1">개인 종합 리포트 20장 · 9,900원</span><span class="b2" data-i="cbO2">전문가가 직접 작성 · 상담 없이 리포트만</span></button>
+        <button class="cb cb-quick" data-go="consult" data-from="svc_quick" data-q="mode=simple&item=reportPlusCall"><span class="b1" data-i="cbQ1">Special · 50,000원</span><span class="b2" data-i="cbQ2">리포트 + 전화·톡 상담</span></button>
+        <button class="cb cb-deep" data-go="consult" data-from="svc_deep" data-q="mode=simple&item=reportPlusMeeting"><span class="b1" data-i="cbD1">Premium · 100,000원</span><span class="b2" data-i="cbD2">리포트 + 대면 상담 60분</span></button>
+        <button class="cb cb-visit cb-wide" data-go="consult" data-from="svc_visit" data-q="mode=detail&naming=140000"><span class="b1" data-i="cbV1">방문 상담 · 140,000원</span><span class="b2" data-i="cbV2">고객 근처로 찾아갑니다 · 서울·수도권</span></button>
       </div>
       <div class="pricenote" data-i="priceNote">리포트는 네 가지 모두 같은 20장입니다 · 차이는 상담 방식뿐입니다</div>
     </div>
@@ -1826,7 +1826,14 @@ export default function HomeV6() {
       const go = b.dataset.go, from = b.dataset.from || "home";
       if (b.dataset.ev === "report_open") track("report_open", { kind: "report", from });
       if (go === "kakao") { track("consult_open", { from }); window.open(KAKAO, "_blank"); }
-      else if (go === "consult") { track("consult_open", { from, kind: "custom" }); window.location.href = "/consult"; }
+      else if (go === "consult") {
+        /* data-q 가 있으면 고객유형·신청방식 두 화면을 건너뛰고 바로 신청서를 연다.
+           상품과 가격을 보고 마음먹은 사람에게 다시 분류를 묻는 건 이탈 지점이다.
+           item= 은 키로, price= 는 금액으로 항목을 맞춘다(관리자 추가 항목은 키가 자동 생성됨). */
+        const q = b.dataset.q || "";
+        track("consult_open", { from, kind: q ? "direct" : "custom" });
+        window.location.href = q ? `/consult?${q}` : "/consult";
+      }
       else if (go === "ohaeng") { window.location.href = "/ohaeng/"; }
       else if (go === "menu") { track("menu_click", { from }); window.location.href = "/ohaeng/#me"; }
       else if (go === "today")  { track("svc_click", { to: "today", from });  window.location.href = "/ohaeng/#today"; }
