@@ -355,6 +355,45 @@ footer .lg{display:inline-block;margin:6px 12px 0 0;color:rgba(255,255,255,.85);
   box-shadow:0 6px 16px rgba(21,80,180,.30)}
 .cb-visit{background:#fff;border:1.5px solid #D7E6FB;color:#2B4A78;
   box-shadow:0 2px 6px rgba(20,50,110,.05)}
+
+/* ── 실제 리포트 미리보기 ──────────────────────────────
+   상품을 사기 전에 품질을 확인할 방법이 없다는 것이 이 상품의 가장 큰 장벽이다.
+   그래서 감추지 않고 전부 보여준다. 다운로드는 주지 않고 화면으로만 넘긴다. */
+.smpwrap{margin-top:11px;border-top:1px dashed #DCE7F5;padding-top:11px}
+.smptit{font-size:11.5px;font-weight:800;color:var(--gray);letter-spacing:-.03em;margin-bottom:7px}
+.smpgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.smpcard{display:flex;flex-direction:column;align-items:flex-start;gap:0;padding:0;
+  border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;
+  cursor:pointer;text-align:left;transition:.15s;box-shadow:0 2px 8px rgba(20,50,110,.05)}
+.smpcard:hover{border-color:var(--blue-l);box-shadow:0 6px 16px rgba(20,50,110,.12)}
+.smpcard img{width:100%;aspect-ratio:16/9;object-fit:cover;object-position:top;display:block;background:#EEF3FA}
+.smpcard .sc-b{padding:8px 9px 9px}
+.smpcard .sc-w{display:block;font-size:10.2px;font-weight:800;color:var(--blue);letter-spacing:-.03em}
+.smpcard .sc-t{display:block;font-size:12px;font-weight:800;color:var(--navy);letter-spacing:-.035em;margin-top:2px;line-height:1.3}
+.smpcard .sc-n{display:block;font-size:10px;font-weight:700;color:var(--gray);margin-top:3px}
+.smpnote{margin-top:7px;font-size:10px;color:var(--gray);letter-spacing:-.03em;text-align:center;line-height:1.5}
+/* 전체화면 뷰어 */
+.sv{position:fixed;inset:0;z-index:80;background:rgba(8,18,38,.94);display:none;
+  flex-direction:column;-webkit-user-select:none;user-select:none}
+.sv.on{display:flex}
+.sv-top{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:11px 13px;color:#fff}
+.sv-ttl{flex:1;min-width:0;font-size:12px;font-weight:800;letter-spacing:-.03em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sv-cnt{flex:0 0 auto;font-size:11.5px;font-weight:800;opacity:.85;font-variant-numeric:tabular-nums}
+.sv-x{flex:0 0 auto;width:30px;height:30px;border:0;border-radius:9px;background:rgba(255,255,255,.14);
+  color:#fff;font-size:17px;line-height:1;cursor:pointer}
+.sv-x:hover{background:rgba(255,255,255,.26)}
+.sv-stage{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;padding:0 8px;position:relative}
+.sv-stage img{max-width:100%;max-height:100%;object-fit:contain;border-radius:8px;
+  background:#fff;-webkit-user-drag:none;pointer-events:none}
+.sv-nav{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:52px;border:0;
+  border-radius:10px;background:rgba(255,255,255,.16);color:#fff;font-size:20px;cursor:pointer}
+.sv-nav:hover{background:rgba(255,255,255,.3)}
+.sv-nav:disabled{opacity:.2;cursor:default}
+.sv-prev{left:6px}.sv-next{right:6px}
+.sv-bot{flex:0 0 auto;padding:9px 13px 14px;text-align:center;color:rgba(255,255,255,.72);
+  font-size:10.5px;letter-spacing:-.02em;line-height:1.5}
+@media(max-width:400px){.sv-nav{width:32px;height:46px;font-size:17px}}
 .cb{border-radius:14px;padding:12px 10px;text-align:center;font-family:inherit;cursor:pointer}
 .cb .b1{display:block;font-size:13.5px;font-weight:800;letter-spacing:-.3px}
 .cb .b2{display:block;font-size:11px;margin-top:3px;font-weight:600;opacity:.92}
@@ -613,6 +652,11 @@ en: {
  ctT:'👨‍🏫 One-on-one expert consultation',
  ctS:'Choi Hyungchul, certified management consultant · 30 years of experience, reading it himself',
  openBar:'<b>Opening offer · until Sep 30</b> &nbsp;<s>20,000 KRW</s> → <em>9,900 KRW</em>',
+ smpTit:'📄 We show you the actual report, in full',
+ smpAw:'40s–50s · work and money', smpAt:'A gem waiting for water', smpAn:'See all 20 pages →',
+ smpBw:'20s–30s · career and relationships', smpBt:'A lamp waiting for firewood', smpBn:'See 7 key pages →',
+ smpNote:'The people are fictional. Your own report is written from your own chart',
+ svNote:'The people are fictional. Your own report is written from your own chart',
  cbO1:'Full 20-page report · 9,900 KRW', cbO2:'Written by the expert · report only, no consultation',
  cbQ1:'Special · 50,000 KRW', cbQ2:'Report + phone or KakaoTalk reading',
  cbD1:'Premium · 100,000 KRW', cbD2:'Report + 60-minute in-person reading',
@@ -753,6 +797,11 @@ ja: {
  ctT:'👨‍🏫 専門家との1対1相談',
  ctS:'経営指導士 チェ・ヒョンチョル · 30年の経験で直接読み解きます',
  openBar:'<b>オープン記念 · 9月30日まで</b> &nbsp;<s>20,000ウォン</s> → <em>9,900ウォン</em>',
+ smpTit:'📄 実際のレポートをそのままお見せします',
+ smpAw:'40〜50代 · 仕事とお金', smpAt:'水を待つ宝石', smpAn:'全20枚を見る →',
+ smpBw:'20〜30代 · 仕事と関係', smpBt:'薪を待つ灯り', smpBn:'主要7枚を見る →',
+ smpNote:'登場人物は架空です。お届けするレポートはご本人の四柱で新たに作成します',
+ svNote:'登場人物は架空です。お届けするレポートはご本人の四柱で新たに作成します',
  cbO1:'個人総合レポート20枚 · 9,900ウォン', cbO2:'専門家が直接作成 · 相談なしレポートのみ',
  cbQ1:'Special · 50,000ウォン', cbQ2:'レポート + 電話・カカオトーク相談',
  cbD1:'Premium · 100,000ウォン', cbD2:'レポート + 対面相談60分',
@@ -893,6 +942,11 @@ zh: {
  ctT:'👨‍🏫 专家一对一咨询',
  ctS:'经营指导师 崔炯哲 · 30年经验亲自解读',
  openBar:'<b>开业纪念 · 至9月30日</b> &nbsp;<s>20,000韩元</s> → <em>9,900韩元</em>',
+ smpTit:'📄 实际报告，原样呈现',
+ smpAw:'40〜50岁 · 事业与财运', smpAt:'等水的宝石', smpAn:'查看全部20页 →',
+ smpBw:'20〜30岁 · 职业与关系', smpBt:'等柴的灯火', smpBn:'查看重点7页 →',
+ smpNote:'人物为虚构。您收到的报告将依据本人四柱重新撰写',
+ svNote:'人物为虚构。您收到的报告将依据本人四柱重新撰写',
  cbO1:'个人综合报告20页 · 9,900韩元', cbO2:'专家亲自撰写 · 仅报告，不含咨询',
  cbQ1:'Special · 50,000韩元', cbQ2:'报告 + 电话/KakaoTalk 解读',
  cbD1:'Premium · 100,000韩元', cbD2:'报告 + 面谈60分钟',
@@ -1033,6 +1087,11 @@ fr: {
  ctT:"👨‍🏫 Consultation individuelle avec un expert",
  ctS:"Choi Hyungchul, consultant en gestion agréé · 30 ans d'expérience, lecture personnelle",
  openBar:"<b>Offre d'ouverture · jusqu'au 30 septembre</b> &nbsp;<s>20 000 KRW</s> → <em>9 900 KRW</em>",
+ smpTit:'📄 Nous montrons le rapport réel, en entier',
+ smpAw:'40–50 ans · travail et argent', smpAt:"Un joyau qui attend l'eau", smpAn:'Voir les 20 pages →',
+ smpBw:'20–30 ans · carrière et liens', smpBt:'Une lampe qui attend son bois', smpBn:'Voir 7 pages clés →',
+ smpNote:'Les personnes sont fictives. Votre rapport est rédigé à partir de votre propre thème',
+ svNote:'Les personnes sont fictives. Votre rapport est rédigé à partir de votre propre thème',
  cbO1:'Rapport complet 20 pages · 9 900 KRW', cbO2:"Rédigé par l'expert · rapport seul, sans consultation",
  cbQ1:'Special · 50 000 KRW', cbQ2:'Rapport + échange par téléphone ou KakaoTalk',
  cbD1:'Premium · 100 000 KRW', cbD2:'Rapport + 60 minutes en personne',
@@ -1189,6 +1248,20 @@ const HTML = String.raw`
       <span class="tb-go" id="tb-go">오늘의 행동 ›</span>
     </button>
 
+    <div class="sv" id="sv" role="dialog" aria-modal="true" aria-label="리포트 미리보기">
+      <div class="sv-top">
+        <span class="sv-ttl" id="sv-ttl"></span>
+        <span class="sv-cnt" id="sv-cnt"></span>
+        <button class="sv-x" id="sv-x" type="button" aria-label="닫기">×</button>
+      </div>
+      <div class="sv-stage" id="sv-stage">
+        <button class="sv-nav sv-prev" id="sv-prev" type="button" aria-label="이전 장">‹</button>
+        <img id="sv-img" alt="">
+        <button class="sv-nav sv-next" id="sv-next" type="button" aria-label="다음 장">›</button>
+      </div>
+      <div class="sv-bot" id="sv-bot"></div>
+    </div>
+
     <div class="pwabar" id="pwabar">
       <span class="pw-ic">📲</span>
       <span class="pw-tx" id="pw-tx">매일 아침 오늘의 기운을 보시려면 홈 화면에 추가하세요</span>
@@ -1239,6 +1312,20 @@ const HTML = String.raw`
         <button class="cb cb-visit cb-wide" data-go="consult" data-from="svc_visit" data-q="mode=detail&naming=140000"><span class="b1" data-i="cbV1">방문 상담 · 140,000원</span><span class="b2" data-i="cbV2">고객 근처로 찾아갑니다 · 서울·수도권</span></button>
       </div>
       <div class="pricenote" data-i="priceNote">리포트는 네 가지 모두 같은 20장입니다 · 차이는 상담 방식뿐입니다</div>
+      <div class="smpwrap">
+        <div class="smptit" data-i="smpTit">📄 실제 리포트를 그대로 보여드립니다</div>
+        <div class="smpgrid">
+          <button class="smpcard" data-smp="a" data-from="consult">
+            <img src="/img/report-sample/a01.webp" alt="" loading="lazy" width="1280" height="720">
+            <span class="sc-b"><span class="sc-w" data-i="smpAw">40~50대 · 일과 재물</span><span class="sc-t" data-i="smpAt">물을 기다리는 보석</span><span class="sc-n" data-i="smpAn">전체 20장 모두 보기 →</span></span>
+          </button>
+          <button class="smpcard" data-smp="b" data-from="consult">
+            <img src="/img/report-sample/b01.webp" alt="" loading="lazy" width="1280" height="720">
+            <span class="sc-b"><span class="sc-w" data-i="smpBw">20~30대 · 커리어와 관계</span><span class="sc-t" data-i="smpBt">장작을 기다리는 등불</span><span class="sc-n" data-i="smpBn">주요 7장 보기 →</span></span>
+          </button>
+        </div>
+        <div class="smpnote" data-i="smpNote">등장인물은 가상이며, 받으시는 리포트는 본인 사주로 새로 작성됩니다</div>
+      </div>
     </div>
   </section>
 
@@ -1700,6 +1787,104 @@ export default function HomeV6() {
       };
     })();
 
+    /* ══════════ 리포트 미리보기 뷰어 ══════════
+       PPT 발표처럼 한 장씩 넘겨 본다. 다운로드는 주지 않는다.
+       · 이미지는 미리 다 받지 않는다 — 현재 장과 다음 장만 가져와
+         20장을 다 봐도 전송량이 1MB 를 넘지 않는다.
+       · 몇 장까지 보는지 계측한다(sample_page). 이탈 지점이 곧 리포트 개선 근거다. */
+    const SMP: Record<string, { n: number; pre: string; key: string }> = {
+      a: { n: 20, pre: "a", key: "smpAt" },
+      b: { n: 7, pre: "b", key: "smpBt" },
+    };
+    const sv = document.getElementById("sv");
+    const svImg = document.getElementById("sv-img") as HTMLImageElement | null;
+    const svTtl = document.getElementById("sv-ttl");
+    const svCnt = document.getElementById("sv-cnt");
+    const svBot = document.getElementById("sv-bot");
+    const svPrev = document.getElementById("sv-prev") as HTMLButtonElement | null;
+    const svNext = document.getElementById("sv-next") as HTMLButtonElement | null;
+    let svSet = "a";
+    let svAt = 1;
+    let svMax = 1;
+
+    const svSrc = (pre: string, i: number) =>
+      "/img/report-sample/" + pre + String(i).padStart(2, "0") + ".webp";
+
+    const svDraw = () => {
+      const m = SMP[svSet];
+      if (!m || !svImg) return;
+      svImg.src = svSrc(m.pre, svAt);
+      if (svCnt) svCnt.textContent = svAt + " / " + m.n;
+      if (svPrev) svPrev.disabled = svAt <= 1;
+      if (svNext) svNext.disabled = svAt >= m.n;
+      /* 다음 장을 미리 받아 두면 넘길 때 흰 화면이 보이지 않는다 */
+      if (svAt < m.n) { const p = new Image(); p.src = svSrc(m.pre, svAt + 1); }
+      if (svAt > svMax) {
+        svMax = svAt;
+        if (svAt === Math.ceil(m.n / 2) || svAt === m.n) {
+          track("sample_page", { set: svSet, page: svAt, of: m.n });
+        }
+      }
+    };
+
+    const svGo = (d: number) => {
+      const m = SMP[svSet];
+      if (!m) return;
+      const next = svAt + d;
+      if (next < 1 || next > m.n) return;
+      svAt = next;
+      svDraw();
+    };
+
+    const svOpen = (set: string) => {
+      if (!SMP[set] || !sv) return;
+      svSet = set; svAt = 1; svMax = 1;
+      const dict = I18N[LANG] || {};
+      const t = document.querySelector('[data-i="' + SMP[set].key + '"]');
+      if (svTtl) svTtl.textContent = (t && t.textContent) || "";
+      if (svBot) svBot.textContent = (dict.svNote as string) || "등장인물은 가상이며, 받으시는 리포트는 본인 사주로 새로 작성됩니다";
+      sv.classList.add("on");
+      document.body.style.overflow = "hidden";
+      svDraw();
+      track("sample_open", { set });
+    };
+
+    const svClose = () => {
+      if (!sv) return;
+      sv.classList.remove("on");
+      document.body.style.overflow = "";
+      track("sample_close", { set: svSet, reached: svMax, of: SMP[svSet].n });
+    };
+
+    document.getElementById("sv-x")?.addEventListener("click", svClose);
+    svPrev?.addEventListener("click", () => svGo(-1));
+    svNext?.addEventListener("click", () => svGo(1));
+    sv?.addEventListener("click", (e) => { if (e.target === sv) svClose(); });
+
+    const svKey = (e: KeyboardEvent) => {
+      if (!sv || !sv.classList.contains("on")) return;
+      if (e.key === "Escape") svClose();
+      else if (e.key === "ArrowLeft") svGo(-1);
+      else if (e.key === "ArrowRight") svGo(1);
+    };
+    window.addEventListener("keydown", svKey);
+
+    /* 손가락으로 넘기기 */
+    let tx = 0, ty = 0;
+    const stage = document.getElementById("sv-stage");
+    const onTS = (e: TouchEvent) => { tx = e.changedTouches[0].clientX; ty = e.changedTouches[0].clientY; };
+    const onTE = (e: TouchEvent) => {
+      const dx = e.changedTouches[0].clientX - tx;
+      const dy = e.changedTouches[0].clientY - ty;
+      if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy)) svGo(dx < 0 ? 1 : -1);
+    };
+    stage?.addEventListener("touchstart", onTS, { passive: true });
+    stage?.addEventListener("touchend", onTE, { passive: true });
+
+    /* 저장·드래그 억제 — 완전한 차단은 불가능하지만 대부분 걸러진다 */
+    sv?.addEventListener("contextmenu", (e) => e.preventDefault());
+    sv?.addEventListener("dragstart", (e) => e.preventDefault());
+
     const applyLang = () => {
       const dict = I18N[LANG] || {};
       nodes.forEach(el => {
@@ -1788,6 +1973,8 @@ export default function HomeV6() {
     applyLang();
 
     const onClick = (e: Event) => {
+      const smp = (e.target as HTMLElement)?.closest?.("[data-smp]") as HTMLElement | null;
+      if (smp) { e.preventDefault(); svOpen(smp.dataset.smp || "a"); return; }
       const t = e.target as HTMLElement;
 
       /* 언어 드롭다운 */
@@ -1866,6 +2053,10 @@ export default function HomeV6() {
       root.removeEventListener("click", onClick);
       document.removeEventListener("click", onDocClick);
       window.removeEventListener("pwa-ready", onPwaReady);
+      window.removeEventListener("keydown", svKey);
+      stage?.removeEventListener("touchstart", onTS);
+      stage?.removeEventListener("touchend", onTE);
+      document.body.style.overflow = "";
       if (timer) clearTimeout(timer);
     };
   }, []);
