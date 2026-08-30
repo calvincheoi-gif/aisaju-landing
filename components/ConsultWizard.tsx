@@ -201,6 +201,10 @@ export default function ConsultWizard() {
   const [refNo, setRefNo] = useState("");
   const [copied, setCopied] = useState(false);
   const [concern, setConcern] = useState("");
+  /* 궁합 신청용 — 상대방 정보와 동의. 궁합 목적이 선택된 경우에만 쓰인다 */
+  const [partnerBirth, setPartnerBirth] = useState("");
+  const [partnerRel, setPartnerRel] = useState("");
+  const [gunghapAgree, setGunghapAgree] = useState(false);
 
   // 간편 버전
   const [selectedPackage, setSelectedPackage] = useState<string>(simplePackages[0]?.key ?? "");
@@ -309,6 +313,12 @@ export default function ConsultWizard() {
     return !!p && p.label.includes("작명");
   });
 
+  /* 궁합 목적이 선택됐는지 — 상대방 정보 입력과 동의가 필요해진다 */
+  const isGunghap = selectedPurposes.some((k) => {
+    const p = detailPurposes.find((x) => x.key === k);
+    return !!p && (p.label.includes("궁합") || p.label.toLowerCase().includes("compat") || p.label.includes("合婚") || p.label.includes("相性"));
+  });
+
   useEffect(() => {
     if (!pendingPick || !pricingLoaded || detailPurposes.length === 0) return;
     let hit: PricedItem | undefined;
@@ -348,6 +358,10 @@ export default function ConsultWizard() {
       setBirthError(t.consultWizard.birthTimeRequired);
       return;
     }
+    if (isGunghap && (!partnerBirth.trim() || !gunghapAgree)) {
+      setBirthError(t.consultWizard.gunghapNeedInfo);
+      return;
+    }
     setBirthError(null);
 
     const typeLabel = customerType === "member" ? t.consultWizard.badgeMember : t.consultWizard.badgeGeneral;
@@ -380,6 +394,12 @@ export default function ConsultWizard() {
       `${itemLines.join(", ")}`,
       `${t.consultWizard.totalLabel}: ${fmt(total)}`,
       "",
+      ...(isGunghap
+        ? [
+            `${t.consultWizard.gunghapPartnerLabel}: ${partnerBirth}`,
+            `${t.consultWizard.gunghapRelLabel}: ${partnerRel || "-"}`,
+          ]
+        : []),
       `${t.consultWizard.concernLabel}: ${concern}`,
     ].join("\n");
 
@@ -401,6 +421,9 @@ export default function ConsultWizard() {
           purposes: mode === "detail" ? selectedPurposes : undefined,
           addons: mode === "detail" ? selectedAddons : undefined,
           concern,
+          partnerBirth: isGunghap ? partnerBirth : undefined,
+          partnerRelation: isGunghap ? partnerRel : undefined,
+          gunghapConsent: isGunghap ? gunghapAgree : undefined,
           estimatedPrice: total,
           ...readTracking(),
         }),
@@ -611,6 +634,46 @@ export default function ConsultWizard() {
         <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3">
           <p className="text-[12.5px] font-semibold text-amber-900">{t.consultWizard.namingNoticeT}</p>
           <p className="mt-1 text-[12px] leading-relaxed text-amber-900/90">{t.consultWizard.namingNoticeD}</p>
+        </div>
+      )}
+
+      {isGunghap && (
+        <div className="space-y-3 rounded-md border border-rose-200 bg-rose-50 px-4 py-3">
+          <div>
+            <p className="text-[12.5px] font-semibold text-rose-900">{t.consultWizard.gunghapNoticeT}</p>
+            <p
+              className="mt-1 text-[12px] leading-relaxed text-rose-900/90"
+              dangerouslySetInnerHTML={{ __html: t.consultWizard.gunghapNoticeD }}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>{t.consultWizard.gunghapPartnerLabel} *</label>
+            <input
+              type="text"
+              className={inputClass}
+              placeholder={t.consultWizard.gunghapPartnerPH}
+              value={partnerBirth}
+              onChange={(e) => setPartnerBirth(e.target.value)}
+            />
+          </div>
+          <div>
+            <label className={labelClass}>{t.consultWizard.gunghapRelLabel}</label>
+            <select className={inputClass} value={partnerRel} onChange={(e) => setPartnerRel(e.target.value)}>
+              <option value="">—</option>
+              {t.consultWizard.gunghapRelOpts.map((o) => (
+                <option key={o} value={o}>{o}</option>
+              ))}
+            </select>
+          </div>
+          <label className="flex cursor-pointer items-start gap-2">
+            <input
+              type="checkbox"
+              className="mt-0.5"
+              checked={gunghapAgree}
+              onChange={(e) => setGunghapAgree(e.target.checked)}
+            />
+            <span className="text-[12px] leading-relaxed text-rose-900/90">{t.consultWizard.gunghapConsent} *</span>
+          </label>
         </div>
       )}
 
