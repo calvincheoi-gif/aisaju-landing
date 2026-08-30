@@ -732,6 +732,62 @@ h1.big{font-size:41.1px;margin-bottom:6px}
 .lockblur{font-size:14.2px;font-weight:700;color:#33445F;filter:blur(2.6px);user-select:none}
 .a4lock .lockd{font-size:13.2px;line-height:1.6;color:var(--ink2);margin:0 0 11px}
 .a4lock .btn{width:100%}
+
+/* ═══ 고정 내비 — 어느 화면에서든 한 번에 빠져나갈 수 있어야 한다 ═══
+   상단 appbar 가 있는 화면과 없는 화면이 섞여 있어, 화면마다 고치는 대신
+   화면 위에 떠 있는 방식으로 통일했다. 엄지가 닿는 오른쪽 아래에 둔다. */
+.navfab{position:fixed;right:14px;bottom:calc(16px + env(safe-area-inset-bottom));
+  z-index:60;display:flex;flex-direction:column;gap:8px}
+.navfab button{width:46px;height:46px;border-radius:50%;border:1px solid #DCE7F8;
+  background:rgba(255,255,255,.95);backdrop-filter:blur(10px);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  box-shadow:0 4px 14px rgba(20,50,110,.16);transition:.15s;padding:0}
+.navfab button:hover{background:#EEF5FF;border-color:#9CC3F5;transform:translateY(-1px)}
+.navfab button:active{transform:scale(.94)}
+.navfab .nf-ic{font-size:16px;line-height:1;color:#1D4FA8}
+.navfab .nf-tx{font-size:8.5px;font-weight:800;color:#4A6A9C;letter-spacing:-.03em;line-height:1}
+.navfab .nf-home{background:linear-gradient(135deg,#2F7FF0,#1D5FD0);border:0}
+.navfab .nf-home .nf-ic,.navfab .nf-home .nf-tx{color:#fff}
+@media(max-width:360px){.navfab{right:10px;gap:7px}.navfab button{width:42px;height:42px}}
+
+/* ═══ 결과 카드 스킨 ═══════════════════════════════════
+   A안(skin-a) = 기본. 흰 바탕에 금색 액자 — 차분하고 신뢰 중심.
+   B안(skin-b) = 오행 색 그라데이션 — 공유했을 때 눈에 띄는 쪽.
+   기존 .hero-res 규칙은 그대로 두고 위에 덧씌운다. 문제가 생기면 클래스만 지우면 된다. */
+.hero-res{position:relative;border-radius:22px;transition:.25s}
+
+/* ── A안 : 클래식 ── */
+body.skin-a .hero-res{
+  background:linear-gradient(180deg,#FFFDF8,#FFF9EF);
+  border:1px solid #EADFC4;
+  box-shadow:0 10px 30px rgba(150,120,50,.10);
+  padding:24px 16px 14px}
+body.skin-a .hero-res::before{content:"";position:absolute;inset:7px;border-radius:16px;
+  border:1px solid rgba(201,164,76,.42);pointer-events:none}
+body.skin-a .kick{color:#9C7A2E;letter-spacing:.2em}
+body.skin-a .tname{color:#1E2761;text-shadow:none}
+body.skin-a .tbadge{border-color:#D9C48A !important;background:#FFF6E2 !important}
+body.skin-a .emb{filter:drop-shadow(0 6px 14px rgba(150,120,50,.20))}
+
+/* ── B안 : 그라데이션 ── */
+body.skin-b .hero-res{
+  background:linear-gradient(160deg,var(--sk1,#EEF4FF),var(--sk2,#DCE8FF) 55%,#fff);
+  border:0;box-shadow:0 14px 36px rgba(30,50,110,.16);padding:26px 16px 16px;overflow:hidden}
+body.skin-b .hero-res::after{content:"";position:absolute;top:-70px;right:-60px;
+  width:220px;height:220px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.75),transparent 70%);pointer-events:none}
+body.skin-b .kick{color:#42527A;letter-spacing:.18em}
+body.skin-b .tname{font-size:44px;text-shadow:0 3px 14px rgba(255,255,255,.9)}
+body.skin-b .tbadge{border-color:rgba(255,255,255,.9) !important;
+  background:rgba(255,255,255,.72) !important;backdrop-filter:blur(6px)}
+body.skin-b .emb{filter:drop-shadow(0 8px 18px rgba(30,50,110,.22))}
+
+/* 스킨 선택 스위치 */
+.skinsw{display:flex;justify-content:center;gap:6px;margin:10px auto 0}
+.skinsw button{padding:5px 13px;border-radius:999px;border:1px solid var(--line);
+  background:#fff;color:var(--ink3);font-size:11.5px;font-weight:800;cursor:pointer;
+  letter-spacing:-.03em;transition:.15s}
+.skinsw button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 </style>
 </head>
 <body>
@@ -849,6 +905,14 @@ h1.big{font-size:41.1px;margin-bottom:6px}
       <button class="btn btn-p sm" id="sh1"></button>
       <button class="btn btn-k sm" id="kk1"></button>
     </div>
+  <div class="skinsw" id="skinsw">
+    <button type="button" data-skin="a">클래식</button>
+    <button type="button" data-skin="b">그라데이션</button>
+  </div>
+  </div>
+  <div class="skinsw" id="skinsw">
+    <button type="button" data-skin="a">클래식</button>
+    <button type="button" data-skin="b">그라데이션</button>
   </div>
   <div class="matebar" id="mb1"></div>
   <div class="chartTabs"><button data-c="bar" class="on" data-i="barTab"></button><button data-c="radar" data-i="radarTab"></button></div>
@@ -7291,5 +7355,58 @@ setTimeout(demo,60);
 </div>
 <button id="gback" onclick="goBack()" aria-label="뒤로">←</button>
 <script src="./track.js"></script>
+
+<div class="navfab" id="navfab">
+  <button type="button" onclick="try{history.back()}catch(e){}" aria-label="뒤로 가기">
+    <span class="nf-ic">‹</span><span class="nf-tx">뒤로</span>
+  </button>
+  <button type="button" onclick="location.href='/ohaeng/'" aria-label="오행 진단 처음으로">
+    <span class="nf-ic">☯</span><span class="nf-tx">오행</span>
+  </button>
+  <button type="button" class="nf-home" onclick="location.href='/'" aria-label="AI사주랩 홈으로">
+    <span class="nf-ic">⌂</span><span class="nf-tx">홈</span>
+  </button>
+</div>
+
+<script>
+/* 결과 카드 스킨 — A안이 기본, 선택은 다음 방문에도 유지된다.
+   오행 색은 결과 배지 색을 읽어 B안 배경에 반영한다(없으면 기본 파랑). */
+(function(){
+  var KEY="aj_card_skin";
+  function paint(sk){
+    document.body.classList.remove("skin-a","skin-b");
+    document.body.classList.add(sk==="b"?"skin-b":"skin-a");
+    var sw=document.getElementById("skinsw");
+    if(sw) Array.prototype.forEach.call(sw.querySelectorAll("button"),function(b){
+      b.classList.toggle("on", b.getAttribute("data-skin")===(sk==="b"?"b":"a"));
+    });
+    try{ localStorage.setItem(KEY, sk==="b"?"b":"a"); }catch(e){}
+    if(sk==="b") tint();
+  }
+  function tint(){
+    try{
+      var b=document.getElementById("t1b");
+      if(!b) return;
+      var c=getComputedStyle(b).borderColor||"";
+      if(c && c.indexOf("rgb")===0){
+        document.documentElement.style.setProperty("--sk1", c.replace(")",", .18)").replace("rgb(","rgba("));
+        document.documentElement.style.setProperty("--sk2", c.replace(")",", .34)").replace("rgb(","rgba("));
+      }
+    }catch(e){}
+  }
+  var saved="a";
+  try{ saved=localStorage.getItem(KEY)||"a"; }catch(e){}
+  function init(){
+    paint(saved);
+    var sw=document.getElementById("skinsw");
+    if(sw) sw.addEventListener("click", function(e){
+      var t=e.target.closest?e.target.closest("[data-skin]"):null;
+      if(t) paint(t.getAttribute("data-skin"));
+    });
+  }
+  if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+</script>
 </body>
 </html>
