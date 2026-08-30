@@ -186,6 +186,33 @@ html:not([lang="ko"]) .biz{overflow-wrap:anywhere}
   color:#9FB3CE;font-size:15px;line-height:1;cursor:pointer}
 .pwabar .pw-x:hover{color:var(--gray)}
 
+/* 궁합 리포트 — 개인 종합과 값이 크게 달라 같은 줄에 세우지 않는다.
+   두 사람 몫이라 분량과 작업이 두 배라는 근거를 함께 보여야 가격이 납득된다. */
+.gh{margin-top:12px;padding:14px 13px 13px;border-radius:16px;
+  background:linear-gradient(180deg,#FFF7FA,#FFEEF4);border:1px solid #F3D3DF}
+.gh .gh-t{display:flex;align-items:center;gap:6px;font-size:14.5px;font-weight:900;
+  color:#8E2B4E;letter-spacing:-.04em}
+.gh .gh-s{margin-top:3px;font-size:11.5px;font-weight:700;color:#A8748A;letter-spacing:-.03em}
+.gh .gh-why{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.gh .gh-w{padding:9px 11px;border-radius:11px;background:#fff;border:1px solid #F0DCE4}
+.gh .gh-w b{display:block;font-size:11.5px;font-weight:900;color:#8E2B4E;letter-spacing:-.03em}
+.gh .gh-w span{display:block;margin-top:2px;font-size:10.8px;color:var(--gray);letter-spacing:-.03em;line-height:1.4}
+.gh .gh-cta{display:flex;align-items:center;gap:10px;width:100%;margin-top:10px;
+  padding:12px 14px;border:0;border-radius:13px;cursor:pointer;text-align:left;
+  background:linear-gradient(135deg,#C0396B,#8E2B4E);box-shadow:0 6px 16px rgba(142,43,78,.28)}
+.gh .gh-cta .g1{display:block;font-size:14px;font-weight:900;color:#fff;letter-spacing:-.04em}
+.gh .gh-cta .g2{display:block;margin-top:2px;font-size:11px;font-weight:700;
+  color:#FBD9E5;letter-spacing:-.03em}
+.gh .gh-cta .g3{margin-left:auto;flex:0 0 auto;padding:5px 11px;border-radius:999px;
+  background:rgba(255,255,255,.18);color:#fff;font-size:11px;font-weight:800;white-space:nowrap}
+.gh .gh-note{margin-top:8px;font-size:10px;color:#A8748A;letter-spacing:-.03em;
+  text-align:center;line-height:1.5}
+.smpcard.smp-gh{border-color:#8E2B4E;background:#5A1B31}
+.smpcard.smp-gh .sc-ph,.smpcard.smp-gh .sc-b{background:#5A1B31}
+.smpcard.smp-gh .sc-w{color:#F3B6CB}
+.smpcard.smp-gh .sc-n{background:#C0396B}
+.smpcard.smp-gh .sc-pg{background:#F5B301;color:#3A2A00}
+
 /* 신뢰 스트립 */
 .trust{position:relative;display:flex;margin-top:4px;background:#fff;border:1px solid var(--line);
   border-radius:15px;overflow:hidden;box-shadow:0 4px 12px rgba(20,50,110,.05)}
@@ -670,6 +697,14 @@ en: {
  ctT:'👨‍🏫 One-on-one expert consultation',
  ctS:'Choi Hyungchul, certified management consultant · 30 years of experience, reading it himself',
  openBar:'<b>Opening offer · until Sep 30</b> &nbsp;<s>20,000 KRW</s> → <em>9,900 KRW</em>',
+ tagGh:'100,000 KRW', sv6n:'Couple compatibility report', sv6d:'Two charts · 20 pages · how to talk',
+ ghT:'💞 Couple compatibility report', ghS:'No scores — we look at why you connect and why you clash',
+ ghW1:'Two charts, not one', ghW1d:'We read both charts and what happens between them',
+ ghW2:'And how to use it', ghW2d:'The words that land, and the words that never do',
+ ghC1:'Compatibility report · 20 pages · 100,000 KRW', ghC2:'Two charts → attraction and friction → how to talk',
+ ghC3:'Request →', ghX1:'Who it is for', ghX1d:'· Couples who keep having the same argument<br>· Couples about to marry<br>· When your partner’s silence makes no sense',
+ ghNote:'We need your partner’s birth date and time · we can proceed without the time',
+ smpCw:'Couple compatibility', smpCt:'The river and the lamp', smpCn:'See all →',
  smpTit:'📄 We show you the actual report, in full',
  smpAw:'40s–50s · work and money', smpAt:'A gem waiting for water', smpAn:'See all →',
  smpBw:'20s–30s · career and relationships', smpBt:'A lamp waiting for firewood', smpBn:'Key pages →',
@@ -815,6 +850,14 @@ ja: {
  ctT:'👨‍🏫 専門家との1対1相談',
  ctS:'経営指導士 チェ・ヒョンチョル · 30年の経験で直接読み解きます',
  openBar:'<b>オープン記念 · 9月30日まで</b> &nbsp;<s>20,000ウォン</s> → <em>9,900ウォン</em>',
+ tagGh:'10万ウォン', sv6n:'恋愛・夫婦 相性レポート', sv6d:'二人の命式20枚 · 関係の使い方',
+ ghT:'💞 恋愛・夫婦 相性レポート', ghS:'点数はつけません — なぜ惹かれ、なぜぶつかるのかを読みます',
+ ghW1:'二人分の分析です', ghW1d:'二つの命式を読み、その間に起きることを見ます',
+ ghW2:'使い方までお渡しします', ghW2d:'通じる言葉と、通じない言葉をお伝えします',
+ ghC1:'相性レポート20枚 · 100,000ウォン', ghC2:'二人の命式 → 惹かれと摩擦 → 関係の使い方',
+ ghC3:'申し込む →', ghX1:'こんな方へ', ghX1d:'· 同じことで繰り返し揉めるお二人<br>· 結婚を控えたお二人<br>· 相手の沈黙が理解できない方',
+ ghNote:'お相手の生年月日時が必要です · 時間が不明でも進められます',
+ smpCw:'恋愛・夫婦の相性', smpCt:'川と灯り', smpCn:'すべて見る →',
  smpTit:'📄 実際のレポートをそのままお見せします',
  smpAw:'40〜50代 · 仕事とお金', smpAt:'水を待つ宝石', smpAn:'すべて見る →',
  smpBw:'20〜30代 · 仕事と関係', smpBt:'薪を待つ灯り', smpBn:'主要ページを見る →',
@@ -960,6 +1003,14 @@ zh: {
  ctT:'👨‍🏫 专家一对一咨询',
  ctS:'经营指导师 崔炯哲 · 30年经验亲自解读',
  openBar:'<b>开业纪念 · 至9月30日</b> &nbsp;<s>20,000韩元</s> → <em>9,900韩元</em>',
+ tagGh:'10万韩元', sv6n:'恋爱·夫妻 合婚报告', sv6d:'两人命式20页 · 关系使用法',
+ ghT:'💞 恋爱·夫妻 合婚报告', ghS:'不打分 — 我们看的是为何吸引、为何冲突',
+ ghW1:'两个人的分析', ghW1d:'解读两份命式，并看两者之间发生了什么',
+ ghW2:'还给出使用方法', ghW2d:'告诉你哪些话说得通，哪些说不通',
+ ghC1:'合婚报告20页 · 100,000韩元', ghC2:'两人命式 → 吸引与摩擦 → 关系使用法',
+ ghC3:'立即申请 →', ghX1:'适合这样的两位', ghX1d:'· 总为同一件事争吵的两位<br>· 即将结婚的两位<br>· 无法理解对方沉默的人',
+ ghNote:'需要对方的出生年月日时 · 不知道时辰也可以进行',
+ smpCw:'恋爱·夫妻合婚', smpCt:'江水与灯火', smpCn:'查看全部 →',
  smpTit:'📄 实际报告，原样呈现',
  smpAw:'40〜50岁 · 事业与财运', smpAt:'等水的宝石', smpAn:'查看全部 →',
  smpBw:'20〜30岁 · 职业与关系', smpBt:'等柴的灯火', smpBn:'查看重点 →',
@@ -1105,6 +1156,14 @@ fr: {
  ctT:"👨‍🏫 Consultation individuelle avec un expert",
  ctS:"Choi Hyungchul, consultant en gestion agréé · 30 ans d'expérience, lecture personnelle",
  openBar:"<b>Offre d'ouverture · jusqu'au 30 septembre</b> &nbsp;<s>20 000 KRW</s> → <em>9 900 KRW</em>",
+ tagGh:'100 000 KRW', sv6n:'Rapport de compatibilité', sv6d:'Deux thèmes · 20 pages · mode d’emploi',
+ ghT:'💞 Rapport de compatibilité', ghS:'Aucune note — nous regardons pourquoi ça attire et pourquoi ça frotte',
+ ghW1:'Deux thèmes, pas un', ghW1d:'Nous lisons les deux thèmes et ce qui se joue entre eux',
+ ghW2:'Et le mode d’emploi', ghW2d:'Les mots qui passent, et ceux qui ne passent jamais',
+ ghC1:'Compatibilité · 20 pages · 100 000 KRW', ghC2:'Deux thèmes → attirance et friction → mode d’emploi',
+ ghC3:'Demander →', ghX1:'Pour qui', ghX1d:'· Les couples qui refont la même dispute<br>· Avant un mariage<br>· Quand le silence de l’autre reste opaque',
+ ghNote:'La date et l’heure de naissance de votre partenaire sont nécessaires · possible sans l’heure',
+ smpCw:'Compatibilité de couple', smpCt:'La rivière et la lampe', smpCn:'Tout voir →',
  smpTit:'📄 Nous montrons le rapport réel, en entier',
  smpAw:'40–50 ans · travail et argent', smpAt:"Un joyau qui attend l'eau", smpAn:'Tout voir →',
  smpBw:'20–30 ans · carrière et liens', smpBt:'Une lampe qui attend son bois', smpBn:'Pages clés →',
@@ -1310,6 +1369,9 @@ const HTML = String.raw`
       <button class="sv" data-go="match" data-from="svc"><span class="tag free" data-i="tagFree2">무료</span>
         <div class="si">🤝</div><div class="sn" data-i="sv3n">친구와 오행 궁합</div>
         <div class="sd" data-i="sv3d">링크 보내면 둘의 궁합 공개</div></button>
+      <button class="sv" data-go="gunghap" data-from="svc" data-ev="gunghap_open"><span class="tag pay" data-i="tagGh">10만원</span>
+        <div class="si">💞</div><div class="sn" data-i="sv6n">연애·부부 궁합 리포트</div>
+        <div class="sd" data-i="sv6d">두 사람 명식 20장 · 관계 사용법</div></button>
       <button class="sv" data-go="report" data-from="svc" data-ev="report_open"><span class="tag pay" data-i="tagPay">990원 · 즉시</span>
         <div class="si">📊</div><div class="sn" data-i="sv4n">AI 오행 해설</div>
         <div class="sd" data-i="sv4d">진단 결과 자동 해설 · 즉시 발급</div></button>
@@ -1343,6 +1405,30 @@ const HTML = String.raw`
           </button>
         </div>
         <div class="smpnote" data-i="smpNote">등장인물은 가상이며, 받으시는 리포트는 본인 사주로 새로 작성됩니다</div>
+      </div>
+
+      <div class="gh" id="gunghap">
+        <div class="gh-t" data-i="ghT">💞 연애 · 부부 궁합 리포트</div>
+        <div class="gh-s" data-i="ghS">점수를 매기지 않습니다 — 왜 끌리고 왜 부딪히는지를 봅니다</div>
+        <div class="gh-why">
+          <div class="gh-w"><b data-i="ghW1">두 사람 몫입니다</b><span data-i="ghW1d">명식을 두 벌 분석하고 그 사이를 봅니다</span></div>
+          <div class="gh-w"><b data-i="ghW2">관계 사용법까지</b><span data-i="ghW2d">통하는 말과 통하지 않는 말을 드립니다</span></div>
+        </div>
+        <button class="gh-cta" data-go="consult" data-from="svc_gunghap" data-ev="gunghap_click" data-q="mode=detail&naming=100000">
+          <span><span class="g1" data-i="ghC1">궁합 리포트 20장 · 100,000원</span><span class="g2" data-i="ghC2">두 분의 명식 → 끌림과 마찰 → 관계 사용법</span></span>
+          <span class="g3" data-i="ghC3">신청하기 →</span>
+        </button>
+        <div class="smpgrid" style="margin-top:9px">
+          <button class="smpcard smp-gh" data-smp="c" data-from="gunghap">
+            <span class="sc-ph"><span class="sc-fr"><img src="/img/report-sample/c01.webp" alt="" loading="lazy" width="1280" height="720"></span><span class="sc-pg">20장</span></span>
+            <span class="sc-b"><span class="sc-w" data-i="smpCw">연애 · 부부 궁합</span><span class="sc-t" data-i="smpCt">강물과 등불</span><span class="sc-n" data-i="smpCn">전체 보기 →</span></span>
+          </button>
+          <div class="gh-w" style="display:flex;flex-direction:column;justify-content:center;gap:5px">
+            <b data-i="ghX1">이런 분께 드립니다</b>
+            <span data-i="ghX1d">· 같은 일로 반복해 다투는 두 분<br>· 결혼을 앞두고 확인하고 싶은 두 분<br>· 상대의 침묵이 이해되지 않는 분</span>
+          </div>
+        </div>
+        <div class="gh-note" data-i="ghNote">상대의 생년월일시가 필요합니다 · 시간을 모르셔도 진행할 수 있습니다</div>
       </div>
     </div>
   </section>
@@ -1813,6 +1899,7 @@ export default function HomeV6() {
     const SMP: Record<string, { n: number; pre: string; key: string }> = {
       a: { n: 20, pre: "a", key: "smpAt" },
       b: { n: 7, pre: "b", key: "smpBt" },
+      c: { n: 20, pre: "c", key: "smpCt" },
     };
     const sv = document.getElementById("sv");
     const svImg = document.getElementById("sv-img") as HTMLImageElement | null;
@@ -2031,6 +2118,11 @@ export default function HomeV6() {
       const go = b.dataset.go, from = b.dataset.from || "home";
       if (b.dataset.ev === "report_open") track("report_open", { kind: "report", from });
       if (go === "kakao") { track("consult_open", { from }); window.open(KAKAO, "_blank"); }
+      else if (go === "gunghap") {
+        /* 서비스 카드에서 누르면 아래 궁합 블록으로 데려간다 — 상품 설명을 건너뛰지 않게 */
+        track("gunghap_open", { from });
+        document.getElementById("gunghap")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
       else if (go === "consult") {
         /* data-q 가 있으면 고객유형·신청방식 두 화면을 건너뛰고 바로 신청서를 연다.
            상품과 가격을 보고 마음먹은 사람에게 다시 분류를 묻는 건 이탈 지점이다.
