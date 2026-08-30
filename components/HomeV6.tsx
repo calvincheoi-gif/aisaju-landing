@@ -154,21 +154,23 @@ html:not([lang="ko"]) .biz{overflow-wrap:anywhere}
 .btn:active{transform:translateY(1px)}
 
 /* 오늘의 기운 스트립 — 홈에서 /ohaeng/#today 로 보내는 한 줄 버튼 */
+/* 박스 없이 배경 위에 그대로 — 날짜·기운은 글씨로, 행동 안내만 버튼으로 */
 .todaybar{display:flex;align-items:center;gap:10px;width:100%;
-  margin:4px 0;padding:8px 12px;border:1px solid var(--line);border-radius:12px;
-  background:linear-gradient(180deg,#F7FAFF,#EDF4FF);color:var(--navy);
-  text-align:left;cursor:pointer;box-shadow:0 2px 8px rgba(20,50,110,.05);transition:.15s}
-.todaybar:hover{background:#E7F0FF;border-color:var(--blue-l)}
+  margin:8px 0 6px;padding:0;border:0;background:none;color:var(--navy);
+  text-align:left;cursor:pointer;transition:.15s}
+.todaybar:hover .tb-go{filter:brightness(1.06)}
 .todaybar .tb-tx{flex:1;min-width:0}
-.todaybar .tb-lab{display:block;font-size:10.5px;font-weight:700;color:var(--gray);
+.todaybar .tb-lab{display:block;font-size:11.5px;font-weight:800;color:var(--blue-d);
   letter-spacing:-.03em;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.todaybar .tb-han{display:block;font-size:14px;font-weight:900;color:var(--blue-d);
-  letter-spacing:-.02em;line-height:1.3;margin-top:1px}
-.todaybar .tb-go{flex:0 0 auto;padding:5px 11px;border-radius:999px;
-  background:var(--blue);color:#fff;font-size:11.5px;font-weight:800;
-  letter-spacing:-.03em;white-space:nowrap}
-@media(max-width:360px){.todaybar{padding:7px 10px;gap:8px}
-  .todaybar .tb-han{font-size:13px}.todaybar .tb-go{padding:5px 9px;font-size:11px}}
+.todaybar .tb-han{display:block;font-size:14px;font-weight:900;color:#C4392C;
+  letter-spacing:-.02em;line-height:1.3;margin-top:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.todaybar .tb-go{flex:0 0 auto;padding:9px 15px;border-radius:999px;
+  background:linear-gradient(135deg,#FF6152,#E0362A);color:#fff;font-size:12px;font-weight:900;
+  letter-spacing:-.04em;white-space:nowrap;box-shadow:0 4px 12px rgba(224,54,42,.34)}
+@media(max-width:360px){.todaybar{gap:8px}
+  .todaybar .tb-lab{font-size:10.8px}.todaybar .tb-han{font-size:13px}
+  .todaybar .tb-go{padding:8px 12px;font-size:11px}}
 
 /* 홈 화면 추가 안내 — 조건이 맞을 때만 나타나고, 닫으면 다시 안 나온다 */
 .pwabar{display:none;align-items:center;gap:8px;width:100%;
@@ -1780,12 +1782,13 @@ export default function HomeV6() {
       const JI12 = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"];
       const GAN_EL = ["wood", "wood", "fire", "fire", "earth", "earth", "metal", "metal", "water", "water"];
       const EL_HAN: Record<string, string> = { wood: "木", fire: "火", earth: "土", metal: "金", water: "水" };
-      const LAB: Record<string, [string, string]> = {
-        ko: ["오늘", "오늘의 행동"],
-        en: ["Today", "What to do"],
-        ja: ["今日", "今日の動き"],
-        zh: ["今天", "今天怎么做"],
-        fr: ["Auj.", "À faire"],
+      /* 질문을 앞세운다 — 「오늘의 행동」보다 「내 행동 방향은?」이 매일 눌리게 만든다 */
+      const LAB: Record<string, [string, string, string]> = {
+        ko: ["나의 오늘 행동 방향은?", "지금 보기", "오늘"],
+        en: ["What should I do today?", "See now", "Today"],
+        ja: ["今日の私の動き方は?", "今すぐ見る", "今日"],
+        zh: ["我今天该怎么做?", "立即查看", "今天"],
+        fr: ["Ma direction du jour ?", "Voir", "Auj."],
       };
       const LOC: Record<string, string> = { ko: "ko-KR", en: "en-US", ja: "ja-JP", zh: "zh-CN", fr: "fr-FR" };
       const jdn = (y: number, m: number, d: number) => {
@@ -1810,7 +1813,7 @@ export default function HomeV6() {
         const gz = GAN10[i % 10] + JI12[i % 12];
         const dayEl = EL_HAN[GAN_EL[i % 10]];
         const seaEl = EL_HAN[seasonEl(dt)];
-        const [lab, go] = LAB[lang] || LAB.ko;
+        const [ask, , todayWord] = LAB[lang] || LAB.ko;
         /* 요일 이름만 각 언어에서 가져오고, 형식은 M/D(요일) 로 통일한다 */
         let when = (dt.getMonth() + 1) + "/" + dt.getDate();
         try {
@@ -1818,9 +1821,9 @@ export default function HomeV6() {
           when = when + "(" + wd.replace(/^周/, "周") + ")";
         } catch { /* 구형 브라우저는 숫자 표기로 둔다 */ }
         const put = (id: string, t: string) => { const e = document.getElementById(id); if (e) e.textContent = t; };
-        put("tb-lab", lab + " " + when);
+        put("tb-lab", todayWord + " " + when);
         put("tb-han", seaEl + " · " + gz + "(" + dayEl + ")");
-        put("tb-go", go + " ›");
+        put("tb-go", ask + " ›");
       };
     })();
 
