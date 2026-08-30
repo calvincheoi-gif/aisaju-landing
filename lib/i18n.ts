@@ -143,6 +143,14 @@ interface Dictionary {
     payVat: string;
     namingNoticeT: string;
     namingNoticeD: string;
+    gunghapNoticeT: string;
+    gunghapNoticeD: string;
+    gunghapPartnerLabel: string;
+    gunghapPartnerPH: string;
+    gunghapRelLabel: string;
+    gunghapRelOpts: string[];
+    gunghapConsent: string;
+    gunghapNeedInfo: string;
   };
   reportPage: { eyebrow: string; title: string; desc: string };
   reportForm: {
@@ -340,6 +348,14 @@ const ko: Dictionary = {
     payVat: "부가세 포함 금액입니다.",
     namingNoticeT: "작명 신청 전 꼭 확인해 주세요",
     namingNoticeD: "아기의 <b>성씨</b>가 있어야 작명이 가능합니다. 아래 「더 알려주실 내용」에 성씨를 적어 주세요. 아직 태어나기 전이라면 <b>예정일시</b>를 넣어 주시면 되고, 실제 출생일시가 확정되면 무료로 다시 검증해 드립니다.",
+    gunghapNoticeT: "궁합 신청 전 꼭 확인해 주세요",
+    gunghapNoticeD: "궁합 리포트는 <b>상대방의 생년월일시</b>가 필요합니다. 시간을 모르시면 「모름」이라고 적어 주세요 — 날짜만으로도 진행할 수 있습니다.",
+    gunghapPartnerLabel: "상대방 생년월일시",
+    gunghapPartnerPH: "예: 1992-07-15 오후 2시 (양력) · 시간 모르면 '모름'",
+    gunghapRelLabel: "두 분의 관계",
+    gunghapRelOpts: ["연애 중", "결혼 준비 중", "부부", "재회 고민", "기타"],
+    gunghapConsent: "이 리포트는 두 분의 관계를 돕기 위한 것으로, 상대를 판단하거나 설득하는 근거로 쓰지 않기를 권합니다. 이에 동의합니다.",
+    gunghapNeedInfo: "상대방 생년월일시와 동의 확인이 필요합니다.",
   },
   reportPage: {
     eyebrow: "AI 명리 리포트",
@@ -547,6 +563,14 @@ const en: Dictionary = {
     payVat: "VAT included.",
     namingNoticeT: "Before you request a naming",
     namingNoticeD: "We need the child's <b>family name</b> to begin. Please write it in the box below. If the child has not been born yet, enter the <b>expected date and time</b> — we re-verify free of charge once the actual time is known.",
+    gunghapNoticeT: "Before you request a compatibility report",
+    gunghapNoticeD: "We need your <b>partner's birth date and time</b>. If you don't know the time, write 'unknown' — the date alone is enough to proceed.",
+    gunghapPartnerLabel: "Partner's birth date and time",
+    gunghapPartnerPH: "e.g. 1992-07-15 2 PM (solar) · 'unknown' if not sure",
+    gunghapRelLabel: "Your relationship",
+    gunghapRelOpts: ["Dating", "Preparing to marry", "Married", "Considering reunion", "Other"],
+    gunghapConsent: "This report is meant to help the relationship, not to judge or persuade the other person. I agree.",
+    gunghapNeedInfo: "Please fill in your partner's birth info and check the consent box.",
   },
   reportPage: {
     eyebrow: "AI Saju Report",
@@ -754,6 +778,14 @@ const ja: Dictionary = {
     payVat: "消費税込みの金額です。",
     namingNoticeT: "命名のお申込み前にご確認ください",
     namingNoticeD: "お子さまの<b>姓</b>がないと命名を進められません。下の「ほかにお伝えいただきたいこと」に姓をお書きください。まだお生まれ前でしたら<b>予定日時</b>をご入力いただければ、実際の出生日時が確定した時点で無料で再検証いたします。",
+    gunghapNoticeT: "相性レポートのお申込み前にご確認ください",
+    gunghapNoticeD: "<b>お相手の生年月日時</b>が必要です。時間が分からない場合は「不明」とご記入ください — 日付だけでも進められます。",
+    gunghapPartnerLabel: "お相手の生年月日時",
+    gunghapPartnerPH: "例: 1992-07-15 午後2時 (陽暦) · 不明なら「不明」",
+    gunghapRelLabel: "お二人の関係",
+    gunghapRelOpts: ["交際中", "結婚準備中", "夫婦", "復縁を検討", "その他"],
+    gunghapConsent: "このレポートは関係を助けるためのもので、相手を判断・説得する根拠には使わないことに同意します。",
+    gunghapNeedInfo: "お相手の生年月日時と同意の確認が必要です。",
   },
   reportPage: {
     eyebrow: "AI四柱レポート",
@@ -961,6 +993,14 @@ const zh: Dictionary = {
     payVat: "含增值税。",
     namingNoticeT: "申请取名前请务必确认",
     namingNoticeD: "需要孩子的<b>姓氏</b>才能开始取名，请写在下方的「还想告诉我们的内容」里。若尚未出生，填写<b>预产期与时辰</b>即可；实际出生时辰确定后我们会免费重新校验。",
+    gunghapNoticeT: "申请合婚报告前请务必确认",
+    gunghapNoticeD: "需要<b>对方的出生年月日时</b>。如果不知道时辰，请写「不详」— 仅凭日期也可以进行。",
+    gunghapPartnerLabel: "对方的出生年月日时",
+    gunghapPartnerPH: "例: 1992-07-15 下午2点 (阳历) · 不知道就写「不详」",
+    gunghapRelLabel: "两位的关系",
+    gunghapRelOpts: ["恋爱中", "准备结婚", "夫妻", "考虑复合", "其他"],
+    gunghapConsent: "本报告旨在帮助两人的关系，我同意不将其用作评判或说服对方的依据。",
+    gunghapNeedInfo: "请填写对方的出生信息并勾选同意。",
   },
   reportPage: {
     eyebrow: "AI命理报告",
@@ -1168,6 +1208,14 @@ const fr: Dictionary = {
     payVat: "TVA incluse.",
     namingNoticeT: "Avant de demander une nomination",
     namingNoticeD: "Nous avons besoin du <b>nom de famille</b> de l'enfant. Indiquez-le dans le champ ci-dessous. S'il n'est pas encore né, saisissez la <b>date et l'heure prévues</b> : nous revérifions gratuitement une fois l'heure réelle connue.",
+    gunghapNoticeT: "Avant de demander un rapport de compatibilité",
+    gunghapNoticeD: "Nous avons besoin de la <b>date et l'heure de naissance de votre partenaire</b>. Si l'heure est inconnue, écrivez « inconnue » — la date suffit pour avancer.",
+    gunghapPartnerLabel: "Naissance de votre partenaire",
+    gunghapPartnerPH: "ex. 1992-07-15 14h (solaire) · « inconnue » si besoin",
+    gunghapRelLabel: "Votre relation",
+    gunghapRelOpts: ["En couple", "Mariage en préparation", "Mariés", "Réflexion sur une reprise", "Autre"],
+    gunghapConsent: "Ce rapport vise à aider la relation, non à juger ou convaincre l'autre. J'accepte.",
+    gunghapNeedInfo: "Renseignez la naissance de votre partenaire et cochez la case d'accord.",
   },
   reportPage: {
     eyebrow: "Rapport IA Saju",
