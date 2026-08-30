@@ -359,19 +359,37 @@ footer .lg{display:inline-block;margin:6px 12px 0 0;color:rgba(255,255,255,.85);
 /* ── 실제 리포트 미리보기 ──────────────────────────────
    상품을 사기 전에 품질을 확인할 방법이 없다는 것이 이 상품의 가장 큰 장벽이다.
    그래서 감추지 않고 전부 보여준다. 다운로드는 주지 않고 화면으로만 넘긴다. */
-.smpwrap{margin-top:11px;border-top:1px dashed #DCE7F5;padding-top:11px}
-.smptit{font-size:11.5px;font-weight:800;color:var(--gray);letter-spacing:-.03em;margin-bottom:7px}
-.smpgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.smpcard{display:flex;flex-direction:column;align-items:flex-start;gap:0;padding:0;
-  border:1px solid var(--line);border-radius:12px;background:#fff;overflow:hidden;
-  cursor:pointer;text-align:left;transition:.15s;box-shadow:0 2px 8px rgba(20,50,110,.05)}
-.smpcard:hover{border-color:var(--blue-l);box-shadow:0 6px 16px rgba(20,50,110,.12)}
-.smpcard img{width:100%;aspect-ratio:16/9;object-fit:cover;object-position:top;display:block;background:#EEF3FA}
-.smpcard .sc-b{padding:8px 9px 9px}
-.smpcard .sc-w{display:block;font-size:10.2px;font-weight:800;color:var(--blue);letter-spacing:-.03em}
-.smpcard .sc-t{display:block;font-size:12px;font-weight:800;color:var(--navy);letter-spacing:-.035em;margin-top:2px;line-height:1.3}
-.smpcard .sc-n{display:block;font-size:10px;font-weight:700;color:var(--gray);margin-top:3px}
-.smpnote{margin-top:7px;font-size:10px;color:var(--gray);letter-spacing:-.03em;text-align:center;line-height:1.5}
+/* 흰 배경 위에 흰 표지를 얹으면 배경에 묻힌다.
+   카드에 진한 남색 판을 깔아 썸네일을 띄우고, 위쪽 파란 버튼들과
+   겹치지 않도록 색은 남색 계열로 눌러 위계를 지킨다. */
+.smpwrap{margin-top:12px;padding:12px 11px 11px;border-radius:14px;
+  background:linear-gradient(180deg,#F2F7FF,#E8F0FE);border:1px solid #D3E4FB}
+.smptit{display:flex;align-items:center;justify-content:center;gap:5px;
+  font-size:12px;font-weight:900;color:#1A3E7A;letter-spacing:-.035em;margin-bottom:9px}
+.smpgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.smpcard{position:relative;display:flex;flex-direction:column;align-items:stretch;gap:0;padding:0;
+  border:2px solid #1F4E96;border-radius:13px;background:#12305F;overflow:hidden;
+  cursor:pointer;text-align:left;transition:.16s;box-shadow:0 5px 14px rgba(18,48,95,.24)}
+.smpcard:hover{transform:translateY(-2px);border-color:#2F7FF0;box-shadow:0 10px 22px rgba(18,48,95,.34)}
+.smpcard .sc-ph{position:relative;display:block;padding:6px 6px 0;background:#12305F}
+/* 표지는 16:9 그대로 다 보여야 한다 — 잘라내면 제목이 날아간다.
+   높이를 폭에 비례해 고정(padding-top 56.25%)하고 그 안에 이미지를 채운다.
+   aspect-ratio 만 믿으면 일부 브라우저에서 세로로 늘어난다. */
+.smpcard .sc-fr{position:relative;display:block;width:100%;padding-top:56.25%;
+  border-radius:7px;overflow:hidden;background:#fff;box-shadow:0 2px 7px rgba(0,0,0,.28)}
+.smpcard img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;
+  display:block;background:#fff}
+/* 장수 배지는 표지 왼쪽 위 — 오른쪽·아래는 표지 자체의 정보가 들어차 있다 */
+.smpcard .sc-pg{position:absolute;left:11px;top:11px;z-index:2;padding:3px 8px;border-radius:999px;
+  background:#F5B301;color:#3A2A00;font-size:9.6px;font-weight:900;letter-spacing:-.02em;
+  box-shadow:0 2px 6px rgba(0,0,0,.28)}
+.smpcard .sc-b{padding:8px 9px 10px;background:#12305F}
+.smpcard .sc-w{display:block;font-size:10px;font-weight:800;color:#8FC0FF;letter-spacing:-.03em}
+.smpcard .sc-t{display:block;font-size:12.4px;font-weight:900;color:#fff;letter-spacing:-.04em;margin-top:2px;line-height:1.3}
+.smpcard .sc-n{display:inline-block;margin-top:6px;padding:3px 9px;border-radius:999px;
+  background:#2F7FF0;color:#fff;font-size:9.8px;font-weight:800;letter-spacing:-.03em}
+.smpnote{margin-top:9px;font-size:10px;color:#4E6E9C;letter-spacing:-.03em;text-align:center;line-height:1.5}
+@media(max-width:352px){.smpcard .sc-t{font-size:11.4px}.smpcard .sc-w{font-size:9.4px}}
 /* 전체화면 뷰어 */
 .sv{position:fixed;inset:0;z-index:80;background:rgba(8,18,38,.94);display:none;
   flex-direction:column;-webkit-user-select:none;user-select:none}
@@ -653,8 +671,8 @@ en: {
  ctS:'Choi Hyungchul, certified management consultant · 30 years of experience, reading it himself',
  openBar:'<b>Opening offer · until Sep 30</b> &nbsp;<s>20,000 KRW</s> → <em>9,900 KRW</em>',
  smpTit:'📄 We show you the actual report, in full',
- smpAw:'40s–50s · work and money', smpAt:'A gem waiting for water', smpAn:'See all 20 pages →',
- smpBw:'20s–30s · career and relationships', smpBt:'A lamp waiting for firewood', smpBn:'See 7 key pages →',
+ smpAw:'40s–50s · work and money', smpAt:'A gem waiting for water', smpAn:'See all →',
+ smpBw:'20s–30s · career and relationships', smpBt:'A lamp waiting for firewood', smpBn:'Key pages →',
  smpNote:'The people are fictional. Your own report is written from your own chart',
  svNote:'The people are fictional. Your own report is written from your own chart',
  cbO1:'Full 20-page report · 9,900 KRW', cbO2:'Written by the expert · report only, no consultation',
@@ -798,8 +816,8 @@ ja: {
  ctS:'経営指導士 チェ・ヒョンチョル · 30年の経験で直接読み解きます',
  openBar:'<b>オープン記念 · 9月30日まで</b> &nbsp;<s>20,000ウォン</s> → <em>9,900ウォン</em>',
  smpTit:'📄 実際のレポートをそのままお見せします',
- smpAw:'40〜50代 · 仕事とお金', smpAt:'水を待つ宝石', smpAn:'全20枚を見る →',
- smpBw:'20〜30代 · 仕事と関係', smpBt:'薪を待つ灯り', smpBn:'主要7枚を見る →',
+ smpAw:'40〜50代 · 仕事とお金', smpAt:'水を待つ宝石', smpAn:'すべて見る →',
+ smpBw:'20〜30代 · 仕事と関係', smpBt:'薪を待つ灯り', smpBn:'主要ページを見る →',
  smpNote:'登場人物は架空です。お届けするレポートはご本人の四柱で新たに作成します',
  svNote:'登場人物は架空です。お届けするレポートはご本人の四柱で新たに作成します',
  cbO1:'個人総合レポート20枚 · 9,900ウォン', cbO2:'専門家が直接作成 · 相談なしレポートのみ',
@@ -943,8 +961,8 @@ zh: {
  ctS:'经营指导师 崔炯哲 · 30年经验亲自解读',
  openBar:'<b>开业纪念 · 至9月30日</b> &nbsp;<s>20,000韩元</s> → <em>9,900韩元</em>',
  smpTit:'📄 实际报告，原样呈现',
- smpAw:'40〜50岁 · 事业与财运', smpAt:'等水的宝石', smpAn:'查看全部20页 →',
- smpBw:'20〜30岁 · 职业与关系', smpBt:'等柴的灯火', smpBn:'查看重点7页 →',
+ smpAw:'40〜50岁 · 事业与财运', smpAt:'等水的宝石', smpAn:'查看全部 →',
+ smpBw:'20〜30岁 · 职业与关系', smpBt:'等柴的灯火', smpBn:'查看重点 →',
  smpNote:'人物为虚构。您收到的报告将依据本人四柱重新撰写',
  svNote:'人物为虚构。您收到的报告将依据本人四柱重新撰写',
  cbO1:'个人综合报告20页 · 9,900韩元', cbO2:'专家亲自撰写 · 仅报告，不含咨询',
@@ -1088,8 +1106,8 @@ fr: {
  ctS:"Choi Hyungchul, consultant en gestion agréé · 30 ans d'expérience, lecture personnelle",
  openBar:"<b>Offre d'ouverture · jusqu'au 30 septembre</b> &nbsp;<s>20 000 KRW</s> → <em>9 900 KRW</em>",
  smpTit:'📄 Nous montrons le rapport réel, en entier',
- smpAw:'40–50 ans · travail et argent', smpAt:"Un joyau qui attend l'eau", smpAn:'Voir les 20 pages →',
- smpBw:'20–30 ans · carrière et liens', smpBt:'Une lampe qui attend son bois', smpBn:'Voir 7 pages clés →',
+ smpAw:'40–50 ans · travail et argent', smpAt:"Un joyau qui attend l'eau", smpAn:'Tout voir →',
+ smpBw:'20–30 ans · carrière et liens', smpBt:'Une lampe qui attend son bois', smpBn:'Pages clés →',
  smpNote:'Les personnes sont fictives. Votre rapport est rédigé à partir de votre propre thème',
  svNote:'Les personnes sont fictives. Votre rapport est rédigé à partir de votre propre thème',
  cbO1:'Rapport complet 20 pages · 9 900 KRW', cbO2:"Rédigé par l'expert · rapport seul, sans consultation",
@@ -1313,15 +1331,15 @@ const HTML = String.raw`
       </div>
       <div class="pricenote" data-i="priceNote">리포트는 네 가지 모두 같은 20장입니다 · 차이는 상담 방식뿐입니다</div>
       <div class="smpwrap">
-        <div class="smptit" data-i="smpTit">📄 실제 리포트를 그대로 보여드립니다</div>
+        <div class="smptit" data-i="smpTit">📄 실제 리포트를 한 장도 빼지 않고 보여드립니다</div>
         <div class="smpgrid">
           <button class="smpcard" data-smp="a" data-from="consult">
-            <img src="/img/report-sample/a01.webp" alt="" loading="lazy" width="1280" height="720">
-            <span class="sc-b"><span class="sc-w" data-i="smpAw">40~50대 · 일과 재물</span><span class="sc-t" data-i="smpAt">물을 기다리는 보석</span><span class="sc-n" data-i="smpAn">전체 20장 모두 보기 →</span></span>
+            <span class="sc-ph"><span class="sc-fr"><img src="/img/report-sample/a01.webp" alt="" loading="lazy" width="1280" height="720"></span><span class="sc-pg">20장</span></span>
+            <span class="sc-b"><span class="sc-w" data-i="smpAw">40~50대 · 일과 재물</span><span class="sc-t" data-i="smpAt">물을 기다리는 보석</span><span class="sc-n" data-i="smpAn">전체 보기 →</span></span>
           </button>
           <button class="smpcard" data-smp="b" data-from="consult">
-            <img src="/img/report-sample/b01.webp" alt="" loading="lazy" width="1280" height="720">
-            <span class="sc-b"><span class="sc-w" data-i="smpBw">20~30대 · 커리어와 관계</span><span class="sc-t" data-i="smpBt">장작을 기다리는 등불</span><span class="sc-n" data-i="smpBn">주요 7장 보기 →</span></span>
+            <span class="sc-ph"><span class="sc-fr"><img src="/img/report-sample/b01.webp" alt="" loading="lazy" width="1280" height="720"></span><span class="sc-pg">7장</span></span>
+            <span class="sc-b"><span class="sc-w" data-i="smpBw">20~30대 · 커리어와 관계</span><span class="sc-t" data-i="smpBt">장작을 기다리는 등불</span><span class="sc-n" data-i="smpBn">주요 장 보기 →</span></span>
           </button>
         </div>
         <div class="smpnote" data-i="smpNote">등장인물은 가상이며, 받으시는 리포트는 본인 사주로 새로 작성됩니다</div>
