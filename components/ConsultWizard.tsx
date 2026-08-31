@@ -29,6 +29,9 @@ const inputClass =
 const labelClass = "mb-1.5 block text-[13px] font-medium text-ink-700";
 
 const HOUR_OPTIONS = Array.from({ length: 24 }, (_, i) => i);
+/* 분은 5분 단위. 사주는 시(時)로 보지만 자시·오시 경계에서는 분이 기둥을 가른다.
+   1분 단위까지 고르게 하면 입력이 번거로워져, 5분 간격에 '모름'을 함께 둔다. */
+const MINUTE_OPTIONS = Array.from({ length: 12 }, (_, i) => i * 5);
 const BIRTH_INFO_STORAGE_KEY = "aisajulab_birth_info";
 
 const CURRENT_YEAR = new Date().getFullYear();
@@ -45,9 +48,10 @@ function parseBirthManualText(text: string): {
   month?: string;
   day?: string;
   hour?: string;
+  minute?: string;
   unknown?: boolean;
 } {
-  const result: { year?: string; month?: string; day?: string; hour?: string; unknown?: boolean } = {};
+  const result: { year?: string; month?: string; day?: string; hour?: string; minute?: string; unknown?: boolean } = {};
   if (/시간\s*모름|시간\s*불명|시간\s*미상/.test(text)) {
     result.unknown = true;
   }
@@ -67,6 +71,12 @@ function parseBirthManualText(text: string): {
     if (ampm && /오전|AM|am/.test(ampm) && hourVal === 12) hourVal = 0;
     if (!Number.isNaN(hourVal) && hourVal >= 0 && hourVal <= 23) {
       result.hour = String(hourVal);
+    }
+    /* 「14:35」 「오후 2시 35분」 두 형태에서 분을 읽는다 */
+    const minMatch = rest.match(/:\s*(\d{1,2})/) || rest.match(/시\s*(\d{1,2})\s*분/);
+    if (minMatch) {
+      const minVal = parseInt(minMatch[1], 10);
+      if (!Number.isNaN(minVal) && minVal >= 0 && minVal <= 59) result.minute = String(minVal);
     }
   }
   return result;
@@ -155,6 +165,7 @@ export default function ConsultWizard() {
   const [birthInputMode, setBirthInputMode] = useState<"select" | "manual">("select");
   const [birthManualText, setBirthManualText] = useState("");
   const [birthHour, setBirthHour] = useState("");
+  const [birthMinute, setBirthMinute] = useState("");
   const [birthTimeUnknown, setBirthTimeUnknown] = useState(false);
   const [calendarType, setCalendarType] = useState<"solar" | "lunar">("solar");
   const [isLeapMonth, setIsLeapMonth] = useState(false);
@@ -190,8 +201,10 @@ export default function ConsultWizard() {
     if (parsed.unknown) {
       setBirthTimeUnknown(true);
       setBirthHour("");
+      setBirthMinute("");
     } else if (parsed.hour !== undefined) {
       setBirthHour(parsed.hour);
+      setBirthMinute(parsed.minute ?? "");
       setBirthTimeUnknown(false);
     }
   }
@@ -241,14 +254,14 @@ export default function ConsultWizard() {
     const hourText = birthTimeUnknown
       ? t.consultWizard.birthTimeUnknownLabel
       : birthHour !== ""
-        ? `${birthHour.padStart(2, "0")}:00`
+        ? `${birthHour.padStart(2, "0")}:${(birthMinute || "0").padStart(2, "0")}`
         : "";
     const calendarText =
       calendarType === "lunar"
         ? `${t.consultWizard.lunarLabel}${isLeapMonth ? ` · ${t.consultWizard.leapMonthLabel}` : ""}`
         : t.consultWizard.solarLabel;
     return `${y}-${m}-${d}${hourText ? ` ${hourText}` : ""} (${calendarText})`;
-  }, [birthDate, birthHour, birthTimeUnknown, calendarType, isLeapMonth, t]);
+  }, [birthDate, birthHour, birthMinute, birthTimeUnknown, calendarType, isLeapMonth, t]);
 
   // 최근에 입력한 생년월일시를 기억해뒀다가 재방문 시 자동으로 불러옵니다.
   useEffect(() => {
@@ -260,6 +273,7 @@ export default function ConsultWizard() {
         birthMonthNum?: string;
         birthDayNum?: string;
         birthHour?: string;
+        birthMinute?: string;
         birthTimeUnknown?: boolean;
         calendarType?: "solar" | "lunar";
         isLeapMonth?: boolean;
@@ -268,6 +282,7 @@ export default function ConsultWizard() {
       if (parsed.birthMonthNum) setBirthMonthNum(parsed.birthMonthNum);
       if (parsed.birthDayNum) setBirthDayNum(parsed.birthDayNum);
       if (parsed.birthHour !== undefined) setBirthHour(parsed.birthHour);
+      if (parsed.birthMinute !== undefined) setBirthMinute(parsed.birthMinute);
       if (parsed.birthTimeUnknown !== undefined) setBirthTimeUnknown(parsed.birthTimeUnknown);
       if (parsed.calendarType) setCalendarType(parsed.calendarType);
       if (parsed.isLeapMonth !== undefined) setIsLeapMonth(parsed.isLeapMonth);
@@ -280,12 +295,12 @@ export default function ConsultWizard() {
     try {
       localStorage.setItem(
         BIRTH_INFO_STORAGE_KEY,
-        JSON.stringify({ birthYear, birthMonthNum, birthDayNum, birthHour, birthTimeUnknown, calendarType, isLeapMonth })
+        JSON.stringify({ birthYear, birthMonthNum, birthDayNum, birthHour, birthMinute, birthTimeUnknown, calendarType, isLeapMonth })
       );
     } catch {
       // ignore
     }
-  }, [birthYear, birthMonthNum, birthDayNum, birthHour, birthTimeUnknown, calendarType, isLeapMonth]);
+  }, [birthYear, birthMonthNum, birthDayNum, birthHour, birthMinute, birthTimeUnknown, calendarType, isLeapMonth]);
 
   const total = useMemo(() => {
     if (!customerType) return 0;
@@ -864,7 +879,20 @@ export default function ConsultWizard() {
               <option value="">{t.consultWizard.birthHourPlaceholder}</option>
               {HOUR_OPTIONS.map((h) => (
                 <option key={h} value={h}>
-                  {h}
+                  {h}{t.consultWizard.birthHourSuffix}
+                </option>
+              ))}
+            </select>
+            <select
+              className={`${inputClass} w-auto min-w-[104px]`}
+              value={birthMinute}
+              onChange={(e) => setBirthMinute(e.target.value)}
+              disabled={birthTimeUnknown || birthHour === ""}
+            >
+              <option value="">{t.consultWizard.birthMinutePlaceholder}</option>
+              {MINUTE_OPTIONS.map((mi) => (
+                <option key={mi} value={mi}>
+                  {String(mi).padStart(2, "0")}{t.consultWizard.birthMinuteSuffix}
                 </option>
               ))}
             </select>
@@ -874,7 +902,7 @@ export default function ConsultWizard() {
                 checked={birthTimeUnknown}
                 onChange={(e) => {
                   setBirthTimeUnknown(e.target.checked);
-                  if (e.target.checked) setBirthHour("");
+                  if (e.target.checked) { setBirthHour(""); setBirthMinute(""); }
                 }}
               />
               {t.consultWizard.birthTimeUnknownLabel}
