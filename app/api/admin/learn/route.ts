@@ -24,11 +24,44 @@ function normalizeSlug(raw: string) {
   return raw
     .trim()
     .toLowerCase()
-    .replace(/[^a-z0-9가-힣\s-]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")
     .replace(/^-|-$/g, "");
 }
+
+/** 주소를 비워두면 만들어 준다. 한글 제목이면 날짜 기반으로 — 주소에 한글이 섞이면 링크가 지저분해진다 */
+function autoSlug(title: string) {
+  const fromTitle = normalizeSlug(title);
+  if (fromTitle.length >= 3) return fromTitle.slice(0, 60);
+  const d = new Date();
+  const stamp = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(
+    d.getDate()
+  ).padStart(2, "0")}`;
+  return `post-${stamp}-${Math.random().toString(36).slice(2, 6)}`;
+}
+
+/** 본문 첫 문단에서 요약을 만든다 (요약을 안 넣었을 때의 대비) */
+function autoDescription(body: string) {
+  const first =
+    body
+      .split("\n")
+      .map((l) => l.trim())
+      .find((l) => l && !l.startsWith("#") && !l.startsWith("-") && !l.startsWith(">") && !l.startsWith("※")) ??
+    "";
+  const plain = first.replace(/<[^>]+>/g, "");
+  return plain.length > 130 ? plain.slice(0, 128) + "…" : plain;
+}
+
+/** 분류에 어울리는 아이콘 */
+const CATEGORY_EMOJI: Record<string, string> = {
+  "명리학 입문": "🌱",
+  궁합: "💞",
+  오행: "🌿",
+  "대운·세운": "🕰️",
+  작명: "✍️",
+  "사주 상식": "📖",
+};
 
 /** 관리자용: 모든 글 목록 (비공개 포함) */
 export async function GET(req: Request) {
@@ -72,13 +105,7 @@ export async function POST(req: Request) {
   if (!title) return NextResponse.json({ error: "제목을 입력해 주세요." }, { status: 400 });
   if (!body) return NextResponse.json({ error: "본문을 입력해 주세요." }, { status: 400 });
 
-  const slug = normalizeSlug(str("slug") || title);
-  if (!slug) {
-    return NextResponse.json(
-      { error: "주소(slug)를 영문으로 입력해 주세요. 예: ilgan" },
-      { status: 400 }
-    );
-  }
+  const slug = normalizeSlug(str("slug")) || autoSlug(title);
 
   const supabase = getSupabaseAdminClient();
   if (!supabase) return noAdmin();
@@ -128,10 +155,10 @@ export async function POST(req: Request) {
       id,
       slug,
       title,
-      description: str("description") || title,
-      excerpt: str("excerpt") || str("description") || title,
+      description: str("description") || autoDescription(body) || title,
+      excerpt: str("excerpt") || str("description") || autoDescription(body) || title,
       category: str("category") || "명리학 입문",
-      emoji: str("emoji") || "📖",
+      emoji: str("emoji") || CATEGORY_EMOJI[str("category")] || "📖",
       body,
       card_paths: cardPaths,
       keywords,
