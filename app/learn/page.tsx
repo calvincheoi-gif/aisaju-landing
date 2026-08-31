@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { LEARN_POSTS } from "@/lib/learn-posts";
+import { getPublishedLearnPosts, learnImageUrl } from "@/lib/learn-posts";
 
 export const metadata: Metadata = {
   title: "읽을거리 | AI사주 Lab",
@@ -17,18 +17,22 @@ export const metadata: Metadata = {
   },
 };
 
-export default function LearnListPage() {
-  /* 목록 구조화 데이터 — 검색결과에 글 묶음으로 인식되게 한다 */
+/* 관리자에서 글을 올리면 한 시간 안에 반영된다 */
+export const revalidate = 3600;
+
+export default async function LearnListPage() {
+  const posts = await getPublishedLearnPosts();
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: "읽을거리 — 사주 명리학 입문",
     url: "https://aisajulab.com/learn",
-    hasPart: LEARN_POSTS.map((p) => ({
+    hasPart: posts.map((p) => ({
       "@type": "Article",
       headline: p.title,
       url: `https://aisajulab.com/learn/${p.slug}`,
-      datePublished: p.published,
+      datePublished: p.published_at,
     })),
   };
 
@@ -51,27 +55,45 @@ export default function LearnListPage() {
           </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          {LEARN_POSTS.map((post) => (
-            <Link key={post.slug} href={`/learn/${post.slug}`} className="card block">
-              <div className="flex items-start gap-3">
-                <span className="text-[26px] leading-none" aria-hidden>
-                  {post.emoji}
-                </span>
-                <div className="min-w-0">
-                  <span className="text-[12px] font-semibold text-indigo-600">{post.category}</span>
-                  <h2 className="mt-1 text-[17px] font-bold leading-snug tracking-[-0.02em] text-ink-900">
-                    {post.title}
-                  </h2>
-                  <p className="mt-2 text-[13.5px] leading-relaxed text-body">{post.excerpt}</p>
-                  <p className="mt-3 text-[12px] text-body/70">
-                    {post.published} · 약 {post.readMin}분
-                  </p>
-                </div>
-              </div>
-            </Link>
-          ))}
-        </div>
+        {posts.length === 0 ? (
+          <p className="text-center text-[14px] text-body">아직 등록된 글이 없습니다.</p>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2">
+            {posts.map((post) => {
+              const thumb = learnImageUrl(post.card_paths?.[0]);
+              return (
+                <Link key={post.slug} href={`/learn/${post.slug}`} className="card block">
+                  {thumb && (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={thumb}
+                      alt=""
+                      className="mb-4 aspect-[4/3] w-full rounded-md object-cover"
+                      loading="lazy"
+                    />
+                  )}
+                  <div className="flex items-start gap-3">
+                    <span className="text-[26px] leading-none" aria-hidden>
+                      {post.emoji}
+                    </span>
+                    <div className="min-w-0">
+                      <span className="text-[12px] font-semibold text-indigo-600">
+                        {post.category}
+                      </span>
+                      <h2 className="mt-1 text-[17px] font-bold leading-snug tracking-[-0.02em] text-ink-900">
+                        {post.title}
+                      </h2>
+                      <p className="mt-2 text-[13.5px] leading-relaxed text-body">{post.excerpt}</p>
+                      <p className="mt-3 text-[12px] text-body/70">
+                        {post.published_at} · 약 {post.read_min}분
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        )}
 
         {/* 이미 있는 텍스트 자산도 같은 자리에서 만나게 한다 */}
         <div className="mt-10 grid gap-4 sm:grid-cols-2">
