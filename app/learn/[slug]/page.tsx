@@ -3,13 +3,22 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { LEARN_POSTS, getLearnPost, getRelatedPosts } from "@/lib/learn-posts";
+import {
+  getLearnPost,
+  getPublishedLearnPosts,
+  getRelatedLearnPosts,
+  parseLearnBody,
+  learnImageUrl,
+} from "@/lib/learn-posts";
 
 const BASE = "https://aisajulab.com";
 
-/** 글이 늘어나도 이 함수 덕분에 라우트를 따로 만들 필요가 없다 */
-export function generateStaticParams() {
-  return LEARN_POSTS.map((p) => ({ slug: p.slug }));
+export const revalidate = 3600;
+
+/** 관리자에서 글을 올리면 새 주소가 자동으로 생긴다 */
+export async function generateStaticParams() {
+  const posts = await getPublishedLearnPosts();
+  return posts.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({
@@ -18,9 +27,10 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const post = getLearnPost(slug);
+  const post = await getLearnPost(slug);
   if (!post) return { title: "읽을거리 | AI사주 Lab" };
   const url = `${BASE}/learn/${post.slug}`;
+  const ogImage = learnImageUrl(post.card_paths?.[0]);
   return {
     title: `${post.title} | AI사주 Lab`,
     description: post.description,
@@ -31,8 +41,9 @@ export async function generateMetadata({
       description: post.description,
       url,
       type: "article",
-      publishedTime: post.published,
-      modifiedTime: post.updated || post.published,
+      publishedTime: post.published_at,
+      modifiedTime: post.updated_at,
+      ...(ogImage ? { images: [ogImage] } : {}),
     },
   };
 }
@@ -43,22 +54,24 @@ export default async function LearnPostPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = getLearnPost(slug);
+  const post = await getLearnPost(slug);
   if (!post) notFound();
 
-  const related = getRelatedPosts(slug, 2);
-  const headings = post.body.filter((b): b is { h2: string } => "h2" in b);
+  const blocks = parseLearnBody(post.body);
+  const related = await getRelatedLearnPosts(slug, 2);
+  const headings = blocks.filter((b) => b.kind === "h2");
+  const cards = (post.card_paths || []).map(learnImageUrl).filter(Boolean) as string[];
 
-  /* Article 구조화 데이터 — 검색엔진과 AI가 글의 성격을 알아보게 한다 */
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Article",
     headline: post.title,
     description: post.description,
-    datePublished: post.published,
-    dateModified: post.updated || post.published,
+    datePublished: post.published_at,
+    dateModified: post.updated_at,
     inLanguage: "ko",
     keywords: post.keywords.join(", "),
+    ...(cards.length ? { image: cards } : {}),
     mainEntityOfPage: { "@type": "WebPage", "@id": `${BASE}/learn/${post.slug}` },
     author: {
       "@type": "Person",
@@ -72,6 +85,8 @@ export default async function LearnPostPage({
       url: BASE,
     },
   };
+
+  let hIdx = -1;
 
   return (
     <>
@@ -98,9 +113,24 @@ export default async function LearnPostPage({
             </h1>
             <p className="mt-3 text-[15px] leading-relaxed text-body">{post.description}</p>
             <p className="mt-4 text-[12.5px] text-body/70">
-              최형철 사주명리 연구소 · {post.published} · 약 {post.readMin}분
+              최형철 사주명리 연구소 · {post.published_at} · 약 {post.read_min}분
             </p>
           </header>
+
+          {cards.length > 0 && (
+            <div className="mb-9 grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {cards.map((src, i) => (
+                /* eslint-disable-next-line @next/next/no-img-element */
+                <img
+                  key={i}
+                  src={src}
+                  alt=""
+                  className="w-full rounded-md border border-border"
+                  loading="lazy"
+                />
+              ))}
+            </div>
+          )}
 
           {headings.length > 1 && (
             <div className="mb-9 rounded-lg border border-border bg-bg-alt px-5 py-4">
@@ -109,7 +139,7 @@ export default async function LearnPostPage({
                 {headings.map((h, i) => (
                   <li key={i} className="text-[13.5px] text-body">
                     <a href={`#h-${i}`} className="hover:text-indigo-600">
-                      {i + 1}. {h.h2}
+                      {i + 1}. {h.kind === "h2" ? h.text : ""}
                     </a>
                   </li>
                 ))}
@@ -118,32 +148,32 @@ export default async function LearnPostPage({
           )}
 
           <div className="space-y-5">
-            {post.body.map((block, i) => {
-              if ("h2" in block) {
-                const idx = headings.indexOf(block);
+            {blocks.map((block, i) => {
+              if (block.kind === "h2") {
+                hIdx += 1;
                 return (
                   <h2
                     key={i}
-                    id={`h-${idx}`}
+                    id={`h-${hIdx}`}
                     className="scroll-mt-24 pt-4 text-[20px] font-bold tracking-[-0.02em] text-ink-900"
                   >
-                    {block.h2}
+                    {block.text}
                   </h2>
                 );
               }
-              if ("p" in block) {
+              if (block.kind === "p") {
                 return (
                   <p
                     key={i}
                     className="text-[15.5px] leading-[1.85] text-ink-900/90"
-                    dangerouslySetInnerHTML={{ __html: block.p }}
+                    dangerouslySetInnerHTML={{ __html: block.text }}
                   />
                 );
               }
-              if ("list" in block) {
+              if (block.kind === "list") {
                 return (
                   <ul key={i} className="space-y-2 rounded-lg bg-bg-alt px-5 py-4">
-                    {block.list.map((li, j) => (
+                    {block.items.map((li, j) => (
                       <li
                         key={j}
                         className="flex gap-2 text-[14.5px] leading-relaxed text-ink-900/90"
@@ -155,19 +185,19 @@ export default async function LearnPostPage({
                   </ul>
                 );
               }
-              if ("quote" in block) {
+              if (block.kind === "quote") {
                 return (
                   <p
                     key={i}
                     className="rounded-lg bg-indigo-50 px-5 py-4 text-[15.5px] font-semibold leading-relaxed text-indigo-600"
                   >
-                    {block.quote}
+                    {block.text}
                   </p>
                 );
               }
               return (
                 <p key={i} className="text-[12.5px] leading-relaxed text-body/80">
-                  ※ {block.note}
+                  ※ {block.text}
                 </p>
               );
             })}
