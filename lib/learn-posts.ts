@@ -1,276 +1,132 @@
+import { getSupabaseServerClient } from "@/lib/supabase";
+
 /**
- * 읽을거리(/learn) 글 데이터.
+ * 읽을거리(/learn) 글 데이터 — Supabase `learn_posts` 테이블에서 읽는다.
  *
- * 새 글을 올리는 방법은 하나뿐이다 — 아래 LEARN_POSTS 배열에 항목을 추가한다.
- * 그러면 목록 페이지, 개별 글 페이지, sitemap.xml, 구조화 데이터가 모두 따라온다.
- * 파일을 새로 만들거나 라우트를 건드릴 필요가 없다.
+ * 글을 올리는 방법: 관리자 화면(/admin/learn)에서 등록한다.
+ * 코드를 고칠 필요가 없고, 등록하는 순간 목록·상세·홈·sitemap 에 모두 반영된다.
  *
- * body 는 블록 배열이다. 지원하는 종류:
- *   { h2 }        소제목 (목차에 자동으로 잡힌다)
- *   { p }         본문 문단. <b> <a> 정도의 태그를 쓸 수 있다
- *   { list }      점 목록
- *   { quote }     인용/강조 한 줄
- *   { note }      각주·용어 설명 (작은 회색 글씨)
- *
- * 글 쓰는 원칙 — AI 답변에 인용되려면 형식이 중요하다.
- *   ① 첫 문단에서 질문에 곧바로 답한다(결론부터).
- *   ② 소제목은 검색어를 그대로 쓴다.
- *   ③ 한 문단은 한 가지만 말한다.
+ * body 표기법 — 한 줄에 한 블록:
+ *   ## 소제목   → 소제목(목차에 자동으로 잡힘)
+ *   - 항목      → 점 목록
+ *   > 문장      → 강조 인용
+ *   ※ 문장      → 각주·용어 설명
+ *   그 외       → 본문 문단 (<b> <a> 태그 사용 가능)
  */
 
-export type LearnBlock =
-  | { h2: string }
-  | { p: string }
-  | { list: string[] }
-  | { quote: string }
-  | { note: string };
+export const LEARN_BUCKET = "learn";
 
 export interface LearnPost {
+  id: string;
   slug: string;
   title: string;
-  /** 검색결과에 뜨는 요약. 80~120자 권장 */
   description: string;
-  /** 목록 카드에 뜨는 한 줄 */
   excerpt: string;
   category: string;
-  /** 카드 왼쪽 아이콘 */
   emoji: string;
-  published: string;
-  updated?: string;
-  /** 검색 키워드 */
+  body: string;
+  card_paths: string[];
   keywords: string[];
-  /** 읽는 데 걸리는 분 */
-  readMin: number;
-  body: LearnBlock[];
+  read_min: number;
+  published: boolean;
+  featured: boolean;
+  published_at: string;
+  updated_at: string;
 }
 
-export const LEARN_POSTS: LearnPost[] = [
-  {
-    slug: "ilgan",
-    title: "일간이 뭔가요 — 사주 여덟 글자 중 나를 뜻하는 한 글자",
-    description:
-      "사주 여덟 글자 가운데 '나 자신'을 뜻하는 글자가 일간입니다. 태어난 날의 천간 한 글자로, 사주 해석은 여기서 시작합니다.",
-    excerpt: "여덟 글자 중 딱 한 글자가 '나'입니다. 나머지 일곱은 그 한 글자를 둘러싼 환경입니다.",
-    category: "명리학 입문",
-    emoji: "🌱",
-    published: "2026-08-30",
-    keywords: ["일간", "일간이란", "사주 일간", "천간", "사주팔자 보는 법", "명리학 입문"],
-    readMin: 4,
-    body: [
-      {
-        p: "<b>일간(日干)은 태어난 날의 천간, 사주 여덟 글자 중 '나 자신'을 뜻하는 한 글자입니다.</b> 사주를 본다는 것은 이 한 글자가 나머지 일곱 글자 사이에서 어떤 처지에 놓여 있는지를 읽는 일입니다.",
-      },
-      { h2: "여덟 글자는 어떻게 만들어지나" },
-      {
-        p: "사주는 태어난 연·월·일·시를 각각 두 글자씩 적은 것입니다. 연에 두 자, 월에 두 자, 일에 두 자, 시에 두 자 — 그래서 여덟 글자, 사주팔자입니다.",
-      },
-      {
-        p: "각 기둥의 위 글자를 천간(天干), 아래 글자를 지지(地支)라고 부릅니다. 천간은 갑·을·병·정·무·기·경·신·임·계 열 개, 지지는 자·축·인·묘·진·사·오·미·신·유·술·해 열두 개입니다.",
-      },
-      {
-        p: "이 여덟 글자 가운데 <b>태어난 날의 천간</b>, 즉 일주의 위 글자가 일간입니다. 자리로 보면 여덟 중 다섯 번째쯤이지만, 해석에서는 언제나 첫 번째입니다.",
-      },
-      { h2: "왜 하필 태어난 날인가" },
-      {
-        p: "연은 내가 속한 세대, 월은 내가 자란 환경, 시는 내가 향하는 곳을 나타냅니다. 그 사이에서 날은 나 자신입니다. 부모에게서 받은 조건도 아니고 앞으로의 방향도 아닌, 지금 여기 서 있는 나입니다.",
-      },
-      {
-        quote: "나머지 일곱 글자는 전부 이 한 글자를 둘러싼 환경입니다.",
-      },
-      {
-        p: "그래서 같은 글자라도 일간이 무엇이냐에 따라 뜻이 완전히 달라집니다. 물(水)은 어떤 사람에게는 목마름을 채우는 단비이고, 어떤 사람에게는 불을 꺼뜨리는 위협입니다. 좋은 글자와 나쁜 글자가 따로 있는 게 아니라, <b>내 일간에게 좋은 글자와 나쁜 글자</b>가 있을 뿐입니다.",
-      },
-      { h2: "열 개의 일간, 열 가지 성질" },
-      {
-        p: "천간 열 글자는 오행(목·화·토·금·수)을 음양으로 나눈 것입니다. 같은 불이라도 병화(丙火)는 태양이고 정화(丁火)는 등불입니다. 크기와 쓰임이 다릅니다.",
-      },
-      {
-        list: [
-          "갑(甲) 큰 나무 · 을(乙) 풀과 덩굴 — 뻗어 나가는 기운",
-          "병(丙) 태양 · 정(丁) 등불 — 밝히고 드러내는 기운",
-          "무(戊) 큰 산 · 기(己) 밭흙 — 품고 중재하는 기운",
-          "경(庚) 무쇠 · 신(辛) 보석 — 자르고 다듬는 기운",
-          "임(壬) 큰 강 · 계(癸) 이슬비 — 흐르고 스미는 기운",
-        ],
-      },
-      {
-        p: "「나는 병화입니다」라고 하면 태양처럼 밝고 숨김이 없는 기질을, 「나는 신금입니다」라고 하면 이미 세공을 마친 보석처럼 예리하고 단정한 기질을 먼저 떠올립니다. 다만 이것은 출발점일 뿐입니다.",
-      },
-      { h2: "일간만으로는 사주를 알 수 없습니다" },
-      {
-        p: "같은 병화라도 한여름에 태어났으면 넘치는 불이고, 한겨울에 태어났으면 귀한 불입니다. 하나는 식혀야 하고 하나는 지켜야 합니다. <b>정반대의 처방</b>이 나옵니다.",
-      },
-      {
-        p: "일간이 어느 계절에 태어났는지(조후), 도와주는 글자가 많은지 적은지(억부) — 이 둘을 함께 봐야 비로소 해석이 시작됩니다. 인터넷에서 「일간별 성격」만 읽고 자기 사주를 다 안다고 여기면 절반도 못 본 것입니다.",
-      },
-      {
-        note: "조후(調候) = 계절의 춥고 더움으로 균형을 보는 방법 · 억부(抑扶) = 일간의 힘이 센지 약한지로 균형을 보는 방법",
-      },
-      { h2: "정리하면" },
-      {
-        list: [
-          "일간 = 태어난 날의 천간 = 사주에서 '나 자신'",
-          "나머지 일곱 글자는 나를 둘러싼 환경",
-          "좋은 글자는 따로 없고, 내 일간에게 좋은 글자가 있을 뿐",
-          "일간만으로는 부족하고 계절과 세력을 함께 봐야 한다",
-        ],
-      },
-    ],
-  },
+export type LearnBlock =
+  | { kind: "h2"; text: string }
+  | { kind: "p"; text: string }
+  | { kind: "list"; items: string[] }
+  | { kind: "quote"; text: string }
+  | { kind: "note"; text: string };
 
-  {
-    slug: "missing-element",
-    title: "오행에 없는 기운이 있으면 나쁜 건가요",
-    description:
-      "사주에 특정 오행이 없어도 그 자체로 나쁘지 않습니다. 없는 것보다 중요한 것은 내 일간에게 그 기운이 필요한지 여부입니다.",
-    excerpt: "「목이 0개예요」는 나쁜 소식이 아닙니다. 필요한데 없을 때만 문제가 됩니다.",
-    category: "명리학 입문",
-    emoji: "🌿",
-    published: "2026-08-30",
-    keywords: ["오행 없음", "목 0개", "화 없는 사주", "오행 균형", "무재사주", "오행 보완"],
-    readMin: 4,
-    body: [
-      {
-        p: "<b>사주에 없는 오행이 있다고 해서 그 자체로 나쁜 것은 아닙니다.</b> 여덟 글자로 다섯 기운을 모두 담으려면 애초에 자리가 모자랍니다. 하나쯤 비는 것이 오히려 흔한 일입니다.",
-      },
-      { h2: "다섯 기운을 여덟 칸에 담을 수는 없습니다" },
-      {
-        p: "오행은 목·화·토·금·수 다섯 가지인데 사주는 여덟 글자뿐입니다. 다섯이 고르게 들어가려면 산술적으로도 무리이고, 실제로 다섯 오행이 모두 갖춰진 사주는 흔하지 않습니다.",
-      },
-      {
-        p: "그런데도 「목이 0개」라는 말을 들으면 덜컥합니다. 없다는 말이 결핍으로 들리기 때문입니다. 명리에서 없다는 것은 결핍이 아니라 <b>그 방식으로 살지 않는다</b>에 가깝습니다.",
-      },
-      { h2: "없는 게 문제가 되는 경우" },
-      {
-        p: "판단 기준은 하나입니다. <b>내 일간에게 그 기운이 필요한가.</b>",
-      },
-      {
-        p: "한겨울에 태어난 등불(丁火)을 예로 들겠습니다. 이 사주에 나무가 없으면 태울 것이 없습니다. 불은 나무를 먹고 타는데 땔감이 없으니 힘을 못 씁니다. 이때는 나무가 없는 것이 실제로 아쉬운 일입니다.",
-      },
-      {
-        p: "반대로 한여름 태양(丙火)에게 나무가 없다면 어떨까요. 나무는 불을 더 키우는 기운입니다. 이미 뜨거운 사주에 땔감이 없는 것은 다행입니다. <b>같은 「없음」이 한쪽에는 아쉬움이고 한쪽에는 다행입니다.</b>",
-      },
-      { quote: "없는 게 문제가 아니라, 필요한데 없는 게 문제입니다." },
-      { h2: "없어서 오히려 뚜렷해지는 것" },
-      {
-        p: "특정 오행이 없는 사주는 그 방향의 고민이 적습니다. 재성(재물)이 없는 사주를 무재사주라고 하는데, 돈이 없다는 뜻이 아니라 <b>돈을 좇는 방식으로 살지 않는다</b>는 뜻에 가깝습니다. 오히려 한 가지에 몰입해 이름을 얻는 사람이 많습니다.",
-      },
-      {
-        p: "실제 상담에서도 오행 하나가 비어 있는 분들이 그 분야에서 뚜렷한 색을 갖는 경우를 자주 봅니다. 골고루 갖춘 사주가 좋은 사주라는 생각은 명리의 오해 중 하나입니다.",
-      },
-      { h2: "비어 있는 자리는 어떻게 채우나" },
-      {
-        p: "정말 필요한 기운이 비어 있다면, 그 기운은 바깥에서 들어옵니다. 들어오는 경로는 셋입니다.",
-      },
-      {
-        list: [
-          "<b>대운·세운</b> — 10년 단위, 한 해 단위로 흐름이 그 기운을 실어 옵니다",
-          "<b>사람</b> — 그 기운을 가진 사람 곁에서 없던 힘이 생깁니다. 궁합을 보는 이유입니다",
-          "<b>환경과 습관</b> — 방향, 색, 하는 일, 사는 곳으로 보완합니다",
-        ],
-      },
-      {
-        p: "이름에 그 기운을 담는 것도 같은 원리입니다. 평생 불리는 소리와 글자에 필요한 오행을 넣어두는 방식입니다.",
-      },
-      {
-        note: "대운(大運) = 10년 단위로 바뀌는 인생의 큰 흐름 · 세운(歲運) = 한 해 단위의 흐름 · 재성(財星) = 내가 다루는 것, 재물을 뜻하는 십성",
-      },
-      { h2: "정리하면" },
-      {
-        list: [
-          "여덟 글자에 다섯 기운이 다 들어가기는 어렵다 — 비는 게 정상",
-          "없는 것이 아니라 「필요한데 없는 것」이 문제",
-          "같은 없음도 일간에 따라 아쉬움이 되기도, 다행이 되기도 한다",
-          "필요한 기운은 흐름·사람·환경으로 들어온다",
-        ],
-      },
-    ],
-  },
+/** Storage 상대경로 → 공개 URL */
+export function learnImageUrl(path: string | null | undefined) {
+  if (!path) return null;
+  if (path.startsWith("http")) return path;
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!url) return null;
+  return `${url}/storage/v1/object/public/${LEARN_BUCKET}/${path}`;
+}
 
-  {
-    slug: "gunghap-score",
-    title: "궁합은 점수로 나오지 않습니다",
-    description:
-      "궁합을 100점 만점으로 매기는 방식은 관계를 설명하지 못합니다. 왜 끌리는지와 왜 부딪히는지가 같은 뿌리에서 나오기 때문입니다.",
-    excerpt: "78점이라는 답은 받아도 할 게 없습니다. 필요한 건 점수가 아니라 사용법입니다.",
-    category: "궁합",
-    emoji: "💞",
-    published: "2026-08-30",
-    keywords: ["궁합", "궁합 점수", "사주 궁합", "천간합", "정임합", "부부 궁합", "연애 궁합"],
-    readMin: 5,
-    body: [
-      {
-        p: "<b>궁합을 점수로 매기는 방식은 관계에 대해 거의 아무것도 알려주지 않습니다.</b> 78점이라는 답을 받아도 오늘 저녁에 무엇을 다르게 해야 할지는 여전히 모릅니다.",
-      },
-      { h2: "점수가 답이 되지 못하는 이유" },
-      {
-        p: "점수는 관계를 하나의 축 위에 세웁니다. 잘 맞음과 안 맞음 사이 어딘가에 점을 찍는 방식입니다. 그런데 실제 관계는 그렇게 생기지 않았습니다.",
-      },
-      {
-        p: "같은 사람에게 가장 크게 끌리면서 가장 자주 부딪히는 일이 흔합니다. 이걸 하나의 점수로 누르면 <b>끌림과 마찰이 서로 상쇄되어</b> 아무 정보도 남지 않습니다.",
-      },
-      { quote: "높은 점수는 안심을 주고, 낮은 점수는 불안을 줍니다. 둘 다 관계를 바꾸지는 못합니다." },
-      { h2: "끌림과 마찰은 대개 같은 뿌리에서 나옵니다" },
-      {
-        p: "명리에서 두 사람을 볼 때 먼저 확인하는 것 중 하나가 천간합(天干合)입니다. 열 개의 천간 중 특정 두 글자가 만나면 성질이 바뀌어 다른 오행이 됩니다.",
-      },
-      {
-        p: "정화(丁)와 임수(壬)가 만나면 나무(木)로 바뀝니다. 정임합목이라고 합니다. 등불인 정화에게 나무는 <b>땔감</b>이고, 큰 강인 임수에게 나무는 <b>물이 빠져나갈 길</b>입니다. 각자에게 없던 것이 상대를 만나야만 생깁니다. 끌리지 않을 수가 없습니다.",
-      },
-      {
-        p: "그런데 물은 불을 끕니다. 수극화(水剋火)입니다. 같은 사람이 나를 타오르게 하면서 동시에 나를 식힙니다. <b>가장 살리는 사람이 가장 식히는 사람</b>인 셈입니다.",
-      },
-      {
-        p: "이 구조를 점수로 바꾸면 몇 점일까요. 합이 있으니 더하고 극이 있으니 빼면, 남는 것은 밋밋한 중간 점수뿐입니다. 정작 중요한 사실은 사라집니다.",
-      },
-      { h2: "그러면 무엇을 봐야 하나" },
-      {
-        p: "관계를 실제로 바꾸는 정보는 세 가지입니다.",
-      },
-      {
-        list: [
-          "<b>왜 끌리는가</b> — 서로에게 없는 것이 무엇이고, 상대가 그것을 어떻게 채우는가",
-          "<b>왜 반복해 다투는가</b> — 매번 내용은 달라도 갈등이 지나는 경로는 대개 하나다",
-          "<b>어떻게 말해야 통하는가</b> — 이 사람에게 통하는 말과 통하지 않는 말",
-        ],
-      },
-      {
-        p: "특히 세 번째가 실제로 쓰입니다. 어떤 사람에게는 「무슨 생각 해?」가 가장 안 통하는 질문이고, 「둘 중 뭐가 나아?」가 가장 잘 통하는 질문입니다. 표현을 만드는 데 시간이 걸리는 구조라면 감정을 묻는 것보다 선택지를 주는 편이 낫습니다.",
-      },
-      { h2: "성격이 아니라 구조입니다" },
-      {
-        p: "반복되는 갈등을 성격 탓으로 돌리면 해결이 없습니다. 성격은 바꾸기 어렵기 때문입니다. 그런데 갈등이 매번 같은 경로를 지난다면, 그것은 성격이 아니라 <b>구조</b>입니다.",
-      },
-      {
-        p: "구조는 순서를 바꾸는 것으로 우회할 수 있습니다. 말이 늦는 쪽이 「생각 중이야」 한마디를 먼저 하고, 반응이 필요한 쪽이 답을 그 자리에서 받지 않기로 하면, 같은 대화가 다른 결말로 끝납니다.",
-      },
-      {
-        note: "천간합(天干合) = 특정 두 천간이 만나 다른 오행으로 성질이 바뀌는 관계 · 수극화(水剋火) = 물이 불을 끄는 오행의 상극 관계",
-      },
-      { h2: "정리하면" },
-      {
-        list: [
-          "점수는 끌림과 마찰을 상쇄시켜 정보를 지운다",
-          "끌리는 이유와 부딪히는 이유는 대개 같은 뿌리에서 나온다",
-          "필요한 것은 판정이 아니라 관계 사용법",
-          "반복되는 갈등은 성격이 아니라 구조 — 순서를 바꾸면 달라진다",
-        ],
-      },
-    ],
-  },
-];
+/** 본문 텍스트를 블록 배열로 바꾼다. 연속된 「- 」 줄은 하나의 목록으로 묶는다. */
+export function parseLearnBody(body: string): LearnBlock[] {
+  const out: LearnBlock[] = [];
+  for (const raw of (body || "").split("\n")) {
+    const line = raw.trim();
+    if (!line) continue;
+    if (line.startsWith("## ")) {
+      out.push({ kind: "h2", text: line.slice(3).trim() });
+    } else if (line.startsWith("- ")) {
+      const item = line.slice(2).trim();
+      const last = out[out.length - 1];
+      if (last && last.kind === "list") last.items.push(item);
+      else out.push({ kind: "list", items: [item] });
+    } else if (line.startsWith("> ")) {
+      out.push({ kind: "quote", text: line.slice(2).trim() });
+    } else if (line.startsWith("※")) {
+      out.push({ kind: "note", text: line.replace(/^※\s*/, "") });
+    } else {
+      out.push({ kind: "p", text: line });
+    }
+  }
+  return out;
+}
 
-/** 슬러그로 글 하나를 찾는다 */
-export function getLearnPost(slug: string): LearnPost | undefined {
-  return LEARN_POSTS.find((p) => p.slug === slug);
+/** 공개된 글 전체 (최신순) */
+export async function getPublishedLearnPosts(): Promise<LearnPost[]> {
+  const supabase = getSupabaseServerClient();
+  if (!supabase) return [];
+  const { data, error } = await supabase
+    .from("learn_posts")
+    .select("*")
+    .eq("published", true)
+    .order("published_at", { ascending: false })
+    .order("created_at", { ascending: false });
+  if (error || !data) return [];
+  return data as LearnPost[];
+}
+
+/** 슬러그로 글 하나 */
+export async function getLearnPost(slug: string): Promise<LearnPost | null> {
+  const supabase = getSupabaseServerClient();
+  if (!supabase) return null;
+  const { data, error } = await supabase
+    .from("learn_posts")
+    .select("*")
+    .eq("slug", slug)
+    .eq("published", true)
+    .maybeSingle();
+  if (error || !data) return null;
+  return data as LearnPost;
+}
+
+/**
+ * 홈에 띄울 「이번 주 읽을거리」.
+ * featured 로 지정한 글이 있으면 그것을, 없으면 가장 최근 글을 쓴다.
+ */
+export async function getFeaturedLearnPost(): Promise<LearnPost | null> {
+  const supabase = getSupabaseServerClient();
+  if (!supabase) return null;
+  const { data } = await supabase
+    .from("learn_posts")
+    .select("*")
+    .eq("published", true)
+    .eq("featured", true)
+    .maybeSingle();
+  if (data) return data as LearnPost;
+  const posts = await getPublishedLearnPosts();
+  return posts[0] ?? null;
 }
 
 /** 같은 분류를 우선해 관련 글을 고른다 */
-export function getRelatedPosts(slug: string, limit = 2): LearnPost[] {
-  const current = getLearnPost(slug);
-  if (!current) return LEARN_POSTS.slice(0, limit);
-  const others = LEARN_POSTS.filter((p) => p.slug !== slug);
-  const sameCategory = others.filter((p) => p.category === current.category);
+export async function getRelatedLearnPosts(slug: string, limit = 2): Promise<LearnPost[]> {
+  const all = await getPublishedLearnPosts();
+  const current = all.find((p) => p.slug === slug);
+  const others = all.filter((p) => p.slug !== slug);
+  if (!current) return others.slice(0, limit);
+  const same = others.filter((p) => p.category === current.category);
   const rest = others.filter((p) => p.category !== current.category);
-  return [...sameCategory, ...rest].slice(0, limit);
+  return [...same, ...rest].slice(0, limit);
 }
