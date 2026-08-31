@@ -17,16 +17,6 @@ interface PostRow {
 
 const STORAGE_KEY = "aisaju_admin_password";
 
-/* 본문 표기법 안내 — 화면에서 바로 보이게 둔다 */
-const BODY_HINT = `## 소제목        → 소제목 (목차에 자동으로 잡힙니다)
-- 항목           → 점 목록
-> 문장           → 강조 인용
-※ 문장           → 각주 · 용어 설명
-그 외 줄         → 본문 문단
-
-첫 문단에서 질문에 곧바로 답해 주세요.
-검색과 AI 인용에 가장 크게 작용합니다.`;
-
 export default function AdminLearnPage() {
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
@@ -34,25 +24,28 @@ export default function AdminLearnPage() {
   const [checking, setChecking] = useState(false);
 
   const [posts, setPosts] = useState<PostRow[]>([]);
-  const [loadingList, setLoadingList] = useState(false);
 
-  const [slug, setSlug] = useState("");
+  /* 필수 세 가지 */
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [excerpt, setExcerpt] = useState("");
-  const [category, setCategory] = useState("명리학 입문");
-  const [emoji, setEmoji] = useState("📖");
-  const [keywords, setKeywords] = useState("");
   const [body, setBody] = useState("");
-  const [featured, setFeatured] = useState(true);
   const [cards, setCards] = useState<(File | null)[]>([null, null, null, null]);
+  const [featured, setFeatured] = useState(true);
 
+  /* 접어두는 항목 — 비워두면 자동으로 채워진다 */
+  const [more, setMore] = useState(false);
+  const [slug, setSlug] = useState("");
+  const [excerpt, setExcerpt] = useState("");
+  const [category, setCategory] = useState("");
+  const [keywords, setKeywords] = useState("");
+
+  const [polishing, setPolishing] = useState(false);
+  const [polishMsg, setPolishMsg] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
   const [saveOk, setSaveOk] = useState(false);
 
   async function fetchList(pw: string) {
-    setLoadingList(true);
     try {
       const res = await fetch("/api/admin/learn", {
         headers: { "x-admin-password": pw },
@@ -75,7 +68,6 @@ export default function AdminLearnPage() {
     } catch {
       setAuthError("네트워크 오류가 발생했습니다.");
     } finally {
-      setLoadingList(false);
       setChecking(false);
     }
   }
@@ -95,14 +87,46 @@ export default function AdminLearnPage() {
     fetchList(password);
   }
 
+  /* 카드뉴스 캡션을 웹 글로 다시 써 준다 */
+  async function polish() {
+    setPolishing(true);
+    setPolishMsg(null);
+    try {
+      const res = await fetch("/api/admin/learn/polish", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password, raw: body }),
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        setPolishMsg(json.error ?? "다듬기에 실패했습니다.");
+        return;
+      }
+      if (json.body) setBody(json.body);
+      if (json.title && !title) setTitle(json.title);
+      if (json.description) setDescription(json.description);
+      if (json.excerpt) setExcerpt(json.excerpt);
+      if (json.category) setCategory(json.category);
+      if (Array.isArray(json.keywords) && json.keywords.length)
+        setKeywords(json.keywords.join(", "));
+      setPolishMsg("다듬었습니다. 내용을 확인하고 고쳐 주세요.");
+    } catch {
+      setPolishMsg("네트워크 오류가 발생했습니다.");
+    } finally {
+      setPolishing(false);
+    }
+  }
+
   function resetForm() {
-    setSlug("");
     setTitle("");
     setDescription("");
-    setExcerpt("");
-    setKeywords("");
     setBody("");
+    setSlug("");
+    setExcerpt("");
+    setCategory("");
+    setKeywords("");
     setCards([null, null, null, null]);
+    setPolishMsg(null);
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -113,14 +137,13 @@ export default function AdminLearnPage() {
     try {
       const fd = new FormData();
       fd.append("password", password);
-      fd.append("slug", slug);
       fd.append("title", title);
       fd.append("description", description);
+      fd.append("body", body);
+      fd.append("slug", slug);
       fd.append("excerpt", excerpt);
       fd.append("category", category);
-      fd.append("emoji", emoji);
       fd.append("keywords", keywords);
-      fd.append("body", body);
       fd.append("featured", featured ? "true" : "false");
       cards.forEach((f, i) => {
         if (f) fd.append(`card${i + 1}`, f);
@@ -151,8 +174,8 @@ export default function AdminLearnPage() {
     fetchList(password);
   }
 
-  async function remove(id: string, title: string) {
-    if (!confirm(`「${title}」 글을 삭제할까요? 되돌릴 수 없습니다.`)) return;
+  async function remove(id: string, t: string) {
+    if (!confirm(`「${t}」 글을 삭제할까요? 되돌릴 수 없습니다.`)) return;
     await fetch("/api/admin/learn", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
@@ -187,7 +210,7 @@ export default function AdminLearnPage() {
   }
 
   return (
-    <main className="mx-auto max-w-4xl px-6 py-16">
+    <main className="mx-auto max-w-3xl px-6 py-16">
       <div className="flex items-center justify-between">
         <h1 className="text-[24px] font-bold text-ink-900">읽을거리 관리</h1>
         <a href="/admin" className="text-[13px] text-body hover:text-indigo-600">
@@ -195,79 +218,54 @@ export default function AdminLearnPage() {
         </a>
       </div>
 
-      {/* ── 새 글 ── */}
       <form onSubmit={handleSubmit} className="mt-8 rounded-lg border border-border bg-white p-6">
         <h2 className="text-[17px] font-bold text-ink-900">새 글 올리기</h2>
+        <p className="mt-1.5 text-[12.5px] leading-relaxed text-body">
+          인스타 카드뉴스 캡션을 아래 본문에 그대로 붙여넣고 <b>「AI로 다듬기」</b>를 누르면
+          제목·요약·키워드까지 한 번에 채워집니다.
+        </p>
 
-        <div className="mt-5 grid gap-4 sm:grid-cols-2">
-          <div>
-            <label className={label}>제목 *</label>
-            <input className={input} value={title} onChange={(e) => setTitle(e.target.value)} />
-          </div>
-          <div>
-            <label className={label}>주소(영문) *</label>
-            <input
-              className={input}
-              value={slug}
-              onChange={(e) => setSlug(e.target.value)}
-              placeholder="예: ilgan → /learn/ilgan"
-            />
+        {/* ── 1. 본문(캡션) ── */}
+        <div className="mt-6">
+          <label className={label}>① 카드뉴스 캡션 붙여넣기 *</label>
+          <textarea
+            className={`${input} min-h-[220px] leading-relaxed`}
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            placeholder={"인스타그램에 올린 캡션을 그대로 붙여넣으세요.\n해시태그가 섞여 있어도 괜찮습니다."}
+          />
+          <div className="mt-2 flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={polish}
+              disabled={polishing || body.trim().length < 30}
+              className="rounded-pill bg-indigo-100 px-4 py-2 text-[13px] font-semibold text-indigo-600 disabled:opacity-40"
+            >
+              {polishing ? "다듬는 중…" : "✨ AI로 다듬기"}
+            </button>
+            {polishMsg && <span className="text-[12.5px] text-body">{polishMsg}</span>}
           </div>
         </div>
 
+        {/* ── 2. 제목 · 요약 ── */}
+        <div className="mt-6">
+          <label className={label}>② 제목 *</label>
+          <input className={input} value={title} onChange={(e) => setTitle(e.target.value)} />
+        </div>
+
         <div className="mt-4">
-          <label className={label}>검색결과 요약 (80~120자 권장)</label>
+          <label className={label}>③ 검색결과 요약</label>
           <input
             className={input}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="이 글이 답하는 내용을 한 문장으로"
+            placeholder="비워두면 본문 첫 문단을 씁니다"
           />
         </div>
 
+        {/* ── 3. 카드 이미지 ── */}
         <div className="mt-4">
-          <label className={label}>목록 카드 한 줄</label>
-          <input className={input} value={excerpt} onChange={(e) => setExcerpt(e.target.value)} />
-        </div>
-
-        <div className="mt-4 grid gap-4 sm:grid-cols-3">
-          <div>
-            <label className={label}>분류</label>
-            <input
-              className={input}
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              placeholder="명리학 입문"
-            />
-          </div>
-          <div>
-            <label className={label}>아이콘</label>
-            <input className={input} value={emoji} onChange={(e) => setEmoji(e.target.value)} />
-          </div>
-          <div className="flex items-end">
-            <label className="flex cursor-pointer items-center gap-2 pb-2 text-[13px] text-ink-900">
-              <input
-                type="checkbox"
-                checked={featured}
-                onChange={(e) => setFeatured(e.target.checked)}
-              />
-              홈에 「이번 주 읽을거리」로 띄우기
-            </label>
-          </div>
-        </div>
-
-        <div className="mt-4">
-          <label className={label}>검색 키워드 (쉼표로 구분)</label>
-          <input
-            className={input}
-            value={keywords}
-            onChange={(e) => setKeywords(e.target.value)}
-            placeholder="일간, 일간이란, 사주 일간"
-          />
-        </div>
-
-        <div className="mt-4">
-          <label className={label}>카드뉴스 이미지 (최대 4장)</label>
+          <label className={label}>④ 카드뉴스 이미지 (최대 4장)</label>
           <div className="mt-1 grid grid-cols-2 gap-2 sm:grid-cols-4">
             {[0, 1, 2, 3].map((i) => (
               <input
@@ -285,32 +283,88 @@ export default function AdminLearnPage() {
           </div>
         </div>
 
-        <div className="mt-4">
-          <label className={label}>본문 *</label>
-          <textarea
-            className={`${input} min-h-[280px] font-mono text-[13px] leading-relaxed`}
-            value={body}
-            onChange={(e) => setBody(e.target.value)}
-            placeholder={BODY_HINT}
+        <label className="mt-5 flex cursor-pointer items-center gap-2 text-[13px] text-ink-900">
+          <input
+            type="checkbox"
+            checked={featured}
+            onChange={(e) => setFeatured(e.target.checked)}
           />
-          <pre className="mt-2 whitespace-pre-wrap rounded-md bg-bg-alt px-4 py-3 text-[11.5px] leading-relaxed text-body">
-            {BODY_HINT}
-          </pre>
-        </div>
+          홈에 「이번 주 읽을거리」로 띄우기
+        </label>
+
+        {/* ── 접어두는 항목 ── */}
+        <button
+          type="button"
+          onClick={() => setMore(!more)}
+          className="mt-5 text-[12.5px] font-semibold text-body hover:text-indigo-600"
+        >
+          {more ? "▾" : "▸"} 자세히 설정 (비워두면 자동으로 채워집니다)
+        </button>
+
+        {more && (
+          <div className="mt-3 space-y-4 rounded-md bg-bg-alt p-4">
+            <div>
+              <label className={label}>주소(영문)</label>
+              <input
+                className={input}
+                value={slug}
+                onChange={(e) => setSlug(e.target.value)}
+                placeholder="예: ilgan → aisajulab.com/learn/ilgan"
+              />
+            </div>
+            <div>
+              <label className={label}>목록 카드 한 줄</label>
+              <input
+                className={input}
+                value={excerpt}
+                onChange={(e) => setExcerpt(e.target.value)}
+              />
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className={label}>분류</label>
+                <input
+                  className={input}
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  placeholder="명리학 입문"
+                />
+              </div>
+              <div>
+                <label className={label}>검색 키워드 (쉼표로 구분)</label>
+                <input
+                  className={input}
+                  value={keywords}
+                  onChange={(e) => setKeywords(e.target.value)}
+                />
+              </div>
+            </div>
+            <pre className="whitespace-pre-wrap text-[11.5px] leading-relaxed text-body">
+{`본문 표기법 — 직접 쓰실 때만 참고하세요
+## 소제목   → 소제목 (목차 자동)
+- 항목      → 점 목록
+> 문장      → 강조
+※ 문장      → 각주
+그 외 줄    → 본문 문단`}
+            </pre>
+          </div>
+        )}
 
         {saveError && <p className="mt-4 text-[13px] text-red-600">{saveError}</p>}
         {saveOk && <p className="mt-4 text-[13px] text-indigo-600">올라갔습니다.</p>}
 
-        <button type="submit" className="btn-primary mt-5" disabled={saving}>
+        <button
+          type="submit"
+          className="btn-primary mt-6"
+          disabled={saving || !title.trim() || !body.trim()}
+        >
           {saving ? "올리는 중…" : "글 올리기"}
         </button>
       </form>
 
       {/* ── 목록 ── */}
       <div className="mt-10">
-        <h2 className="text-[17px] font-bold text-ink-900">
-          올라간 글 {loadingList ? "" : `(${posts.length})`}
-        </h2>
+        <h2 className="text-[17px] font-bold text-ink-900">올라간 글 ({posts.length})</h2>
         <div className="mt-4 space-y-2">
           {posts.map((p) => (
             <div
@@ -342,6 +396,7 @@ export default function AdminLearnPage() {
                 홈 노출
               </label>
               <button
+                type="button"
                 onClick={() => remove(p.id, p.title)}
                 className="text-[12px] text-red-600 hover:underline"
               >
@@ -354,4 +409,3 @@ export default function AdminLearnPage() {
     </main>
   );
 }
-
