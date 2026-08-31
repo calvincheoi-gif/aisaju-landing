@@ -17,6 +17,49 @@ interface PostRow {
 
 const STORAGE_KEY = "aisaju_admin_password";
 
+/** 카드 한 장의 목표 크기 — 화면에서는 이 정도면 충분하고, 4장을 합쳐도 서버 한도에 걸리지 않는다 */
+const MAX_EDGE = 1080;
+const JPEG_QUALITY = 0.82;
+
+/**
+ * 올리기 전에 브라우저에서 이미지를 줄인다.
+ * 폰으로 저장한 카드뉴스는 한 장에 2~4MB인 경우가 많은데,
+ * 서버(Netlify)는 한 번에 약 6MB까지만 받는다. 4장이면 그대로 한도를 넘어
+ * 요청이 서버에 닿기도 전에 끊기고 「네트워크 오류」로만 보인다.
+ * 여기서 긴 변을 1080px로 맞추면 한 장이 대개 200KB 안쪽으로 줄어든다.
+ */
+async function shrinkImage(file: File): Promise<File> {
+  if (!file.type.startsWith("image/")) return file;
+  try {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, MAX_EDGE / Math.max(bitmap.width, bitmap.height));
+    const w = Math.round(bitmap.width * scale);
+    const h = Math.round(bitmap.height * scale);
+
+    const canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return file;
+    ctx.drawImage(bitmap, 0, 0, w, h);
+    bitmap.close?.();
+
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, "image/jpeg", JPEG_QUALITY)
+    );
+    if (!blob || blob.size >= file.size) return file; // 줄지 않으면 원본을 쓴다
+    return new File([blob], file.name.replace(/\.[^.]+$/, "") + ".jpg", {
+      type: "image/jpeg",
+    });
+  } catch {
+    return file; // 구형 브라우저 등에서 실패하면 원본 그대로
+  }
+}
+
+function kb(n: number) {
+  return n < 1024 * 1024 ? `${Math.round(n / 1024)}KB` : `${(n / 1024 / 1024).toFixed(1)}MB`;
+}
+
 export default function AdminLearnPage() {
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
@@ -30,6 +73,8 @@ export default function AdminLearnPage() {
   const [description, setDescription] = useState("");
   const [body, setBody] = useState("");
   const [cards, setCards] = useState<(File | null)[]>([null, null, null, null]);
+  const [cardInfo, setCardInfo] = useState<string[]>(["", "", "", ""]);
+  const [shrinking, setShrinking] = useState(false);
   const [featured, setFeatured] = useState(true);
 
   /* 접어두는 항목 — 비워두면 자동으로 채워진다 */
@@ -149,7 +194,19 @@ export default function AdminLearnPage() {
         if (f) fd.append(`card${i + 1}`, f);
       });
 
+      const total = cards.reduce((sum, f) => sum + (f?.size ?? 0), 0);
+      if (total > 4.5 * 1024 * 1024) {
+        setSaveError(
+          `이미지 용량이 ${kb(total)}로 너무 큽니다. 장수를 줄이거나 더 작은 이미지를 써 주세요.`
+        );
+        return;
+      }
+
       const res = await fetch("/api/admin/learn", { method: "POST", body: fd });
+      if (!res.ok && res.status === 413) {
+        setSaveError("이미지 용량이 너무 큽니다. 장수를 줄여서 다시 시도해 주세요.");
+        return;
+      }
       const json = await res.json();
       if (!res.ok) {
         setSaveError(json.error ?? "저장에 실패했습니다.");
@@ -159,7 +216,9 @@ export default function AdminLearnPage() {
       resetForm();
       fetchList(password);
     } catch {
-      setSaveError("네트워크 오류가 발생했습니다.");
+      setSaveError(
+        "전송에 실패했습니다. 이미지 용량이 크거나 연결이 끊겼을 수 있습니다. 장수를 줄여 다시 시도해 주세요."
+      );
     } finally {
       setSaving(false);
     }
@@ -266,21 +325,39 @@ export default function AdminLearnPage() {
         {/* ── 3. 카드 이미지 ── */}
         <div className="mt-4">
           <label className={label}>④ 카드뉴스 이미지 (최대 4장)</label>
+          <p className="mt-0.5 text-[11.5px] text-body">
+            올리기 전에 자동으로 줄입니다. 큰 사진도 그대로 고르시면 됩니다.
+          </p>
           <div className="mt-1 grid grid-cols-2 gap-2 sm:grid-cols-4">
             {[0, 1, 2, 3].map((i) => (
+              <div key={i}>
               <input
-                key={i}
                 type="file"
                 accept="image/*"
-                className="text-[11.5px]"
-                onChange={(e) => {
-                  const next = [...cards];
-                  next[i] = e.target.files?.[0] ?? null;
-                  setCards(next);
+                className="w-full text-[11.5px]"
+                onChange={async (e) => {
+                  const raw = e.target.files?.[0] ?? null;
+                  if (!raw) {
+                    const nc = [...cards]; nc[i] = null; setCards(nc);
+                    const ni = [...cardInfo]; ni[i] = ""; setCardInfo(ni);
+                    return;
+                  }
+                  setShrinking(true);
+                  const small = await shrinkImage(raw);
+                  const nc = [...cards]; nc[i] = small; setCards(nc);
+                  const ni = [...cardInfo];
+                  ni[i] = raw.size === small.size ? kb(small.size) : `${kb(raw.size)} → ${kb(small.size)}`;
+                  setCardInfo(ni);
+                  setShrinking(false);
                 }}
               />
+              {cardInfo[i] && (
+                <p className="mt-0.5 text-[10.5px] text-body/70">{cardInfo[i]}</p>
+              )}
+              </div>
             ))}
           </div>
+          {shrinking && <p className="mt-1 text-[12px] text-indigo-600">이미지 줄이는 중…</p>}
         </div>
 
         <label className="mt-5 flex cursor-pointer items-center gap-2 text-[13px] text-ink-900">
@@ -356,7 +433,7 @@ export default function AdminLearnPage() {
         <button
           type="submit"
           className="btn-primary mt-6"
-          disabled={saving || !title.trim() || !body.trim()}
+          disabled={saving || shrinking || !title.trim() || !body.trim()}
         >
           {saving ? "올리는 중…" : "글 올리기"}
         </button>
@@ -409,3 +486,4 @@ export default function AdminLearnPage() {
     </main>
   );
 }
+
