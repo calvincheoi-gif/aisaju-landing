@@ -735,8 +735,8 @@ en: {
  sl2tag:'New', sl2h:'Five Elements personality check',
  sl2p:'14 questions, one minute. Your temperament as a card, named by season and symbol.',
  sl2a:'Start the check',
- sl3tag:'Reading', sl3h:'Asking AI about your Saju —<br>how much should you type in?',
- sl3p:'What to check before you hand over your birth date and time.', sl3a:'Read the article',
+ sl3tag:'Reading', sl3h:'Compatibility does not<br>come out as a score',
+ sl3p:'Why you connect and why you clash come from the same root.', sl3a:'Read the article',
  h2Needs:'Have you ever <b>wondered these things too?</b>',
  needsSub:'Once the check has given you a direction, a person takes it from there.',
  need1:'Should I change jobs now?', need2:'Are we actually a good match?',
@@ -888,8 +888,8 @@ ja: {
  sl2tag:'新着', sl2h:'(自然) 五行性格の診断',
  sl2p:'質問14問、1分。季節とシンボルで読む自分の気質カード。',
  sl2a:'すぐに診断する',
- sl3tag:'読みもの', sl3h:'AIに四柱を見てもらうとき<br>どこまで入力してよい?',
- sl3p:'生年月日時を渡す前に必ず確かめたいこと。', sl3a:'記事を読む',
+ sl3tag:'読みもの', sl3h:'相性は<br>点数では出ません',
+ sl3p:'惹かれる理由と、ぶつかる理由は同じ根から出ています。', sl3a:'記事を読む',
  h2Needs:'あなたにも、こんな悩み<br><b>ありませんでしたか?</b>',
  needsSub:'診断で方向が定まったら、人が直接見る相談へつながります。',
  need1:'いま、転職すべきだろうか?', need2:'この人と相性は合うだろうか?',
@@ -1041,8 +1041,8 @@ zh: {
  sl2tag:'新上线', sl2h:'(自然) 五行性格测试',
  sl2p:'14 道题，1分钟。用季节与象征读出你的气质卡。',
  sl2a:'马上测试',
- sl3tag:'读物', sl3h:'让 AI 看八字时<br>可以填到什么程度?',
- sl3p:'交出出生年月日时之前，务必先确认的几件事。', sl3a:'阅读文章',
+ sl3tag:'读物', sl3h:'合婚<br>不是用分数说话的',
+ sl3p:'为何吸引、为何冲突，出自同一个根。', sl3a:'阅读文章',
  h2Needs:'这些事，<b>你是不是也想过?</b>',
  needsSub:'测试帮你定下方向之后，就交给真人来看。',
  need1:'现在该换工作吗?', need2:'和这个人合得来吗?',
@@ -1194,8 +1194,8 @@ fr: {
  sl2tag:'Nouveau', sl2h:'Diagnostic des Cinq Phases',
  sl2p:'14 questions, une minute. Votre tempérament sur une carte, nommée par saison et symbole.',
  sl2a:'Commencer le diagnostic',
- sl3tag:'À lire', sl3h:"Demander son Saju à une IA :<br>jusqu'où peut-on aller ?",
- sl3p:"Ce qu'il faut vérifier avant de livrer sa date et son heure de naissance.", sl3a:"Lire l'article",
+ sl3tag:'À lire', sl3h:'La compatibilité ne se<br>résume pas à une note',
+ sl3p:'Ce qui attire et ce qui frotte viennent de la même racine.', sl3a:"Lire l'article",
  h2Needs:"Vous aussi, <b>vous êtes-vous déjà demandé ceci ?</b>",
  needsSub:"Une fois la direction trouvée, un humain prend le relais.",
  need1:'Dois-je changer de travail maintenant ?', need2:'Sommes-nous vraiment compatibles ?',
@@ -1608,9 +1608,9 @@ const HTML = String.raw`
       </div>
       <div class="slide warm">
         <div class="tag" data-i="sl3tag">읽을거리</div>
-        <h3 data-i="sl3h">AI에게 사주 볼 때<br>어디까지 입력해도 될까?</h3>
-        <p data-i="sl3p">생년월일시를 넘기기 전에 꼭 확인할 것들.</p>
-        <a href="#" data-i="sl3a">글 읽기</a>
+        <h3 data-i="sl3h">궁합은<br>점수로 나오지 않습니다</h3>
+        <p data-i="sl3p">왜 끌리고 왜 부딪히는지는 같은 뿌리에서 나옵니다.</p>
+        <a href="/learn/gunghap-score" data-i="sl3a">글 읽기</a>
       </div>
     </div>
   </section>
