@@ -188,6 +188,27 @@ html:not([lang="ko"]) .biz{overflow-wrap:anywhere}
   color:#9FB3CE;font-size:15px;line-height:1;cursor:pointer}
 .pwabar .pw-x:hover{color:var(--gray)}
 
+/* 이번 주 읽을거리 — 매일 들어올 이유를 하나 더 만든다.
+   「오늘의 기운」이 나에 대한 것이라면 이쪽은 배우는 것이다. */
+.lh{margin-top:14px;padding:14px 13px;border-radius:16px;
+  background:linear-gradient(180deg,#FFFDF6,#FFF7E8);border:1px solid #F0E2C0}
+.lh .lh-t{display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:900;
+  color:#8A6A18;letter-spacing:-.04em}
+.lh .lh-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:10px}
+.lh .lh-cards img{width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;
+  border:1px solid #EADFC4;background:#fff;display:block;cursor:pointer}
+.lh .lh-cat{display:inline-block;margin-top:11px;font-size:10.8px;font-weight:800;color:#B08428}
+.lh .lh-h{margin-top:3px;font-size:15.5px;font-weight:900;color:var(--navy);
+  letter-spacing:-.04em;line-height:1.35}
+.lh .lh-p{margin-top:5px;font-size:11.8px;color:var(--gray);letter-spacing:-.03em;line-height:1.5}
+.lh .lh-row{display:flex;align-items:center;gap:8px;margin-top:11px}
+.lh .lh-go{flex:1;padding:10px 12px;border-radius:11px;text-align:center;
+  background:linear-gradient(135deg,#C9A44C,#A8842E);color:#fff;font-size:12.5px;font-weight:900;
+  letter-spacing:-.03em;text-decoration:none;box-shadow:0 4px 12px rgba(168,132,46,.28)}
+.lh .lh-all{flex:0 0 auto;padding:10px 12px;border-radius:11px;border:1px solid #E3D3AC;
+  background:#fff;color:#8A6A18;font-size:11.8px;font-weight:800;letter-spacing:-.03em;
+  text-decoration:none;white-space:nowrap}
+
 /* 궁합 리포트 — 개인 종합과 값이 크게 달라 같은 줄에 세우지 않는다.
    두 사람 몫이라 분량과 작업이 두 배라는 근거를 함께 보여야 가격이 납득된다. */
 .gh{margin-top:12px;padding:14px 13px 13px;border-radius:16px;
@@ -1615,6 +1636,8 @@ const HTML = String.raw`
     </div>
   </section>
 
+  <!--LEARN_SLOT-->
+
   <!-- 고민 -->
   <section>
     <div class="sec-label">CONSULTING</div>
@@ -1740,7 +1763,46 @@ function track(name: string, props: Record<string, unknown> = {}) {
   } catch {}
 }
 
-export default function HomeV6() {
+/** 홈에 띄울 이번 주 읽을거리 — app/page.tsx 가 DB에서 읽어 넘겨준다 */
+export interface HomeLearn {
+  slug: string;
+  title: string;
+  excerpt: string;
+  category: string;
+  cards: string[];
+}
+
+/** 자리 표시(<!--LEARN_SLOT-->)에 넣을 블록을 만든다. 글이 없으면 빈 문자열 → 블록 자체가 사라진다 */
+function learnBlockHtml(learn?: HomeLearn | null) {
+  if (!learn) return "";
+  const esc = (t: string) =>
+    t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  const cards = (learn.cards || []).slice(0, 4);
+  const cardHtml = cards.length
+    ? `<div class="lh-cards">${cards
+        .map(
+          (src, i) =>
+            `<img src="${esc(src)}" alt="" loading="lazy" data-lh="${i}">`
+        )
+        .join("")}</div>`
+    : "";
+  return `
+  <section>
+    <div class="lh">
+      <div class="lh-t">📖 이번 주 읽을거리</div>
+      ${cardHtml}
+      <span class="lh-cat">${esc(learn.category)}</span>
+      <div class="lh-h">${esc(learn.title)}</div>
+      <div class="lh-p">${esc(learn.excerpt)}</div>
+      <div class="lh-row">
+        <a class="lh-go" href="/learn/${esc(learn.slug)}">글 읽기 →</a>
+        <a class="lh-all" href="/learn">모든 글 보기</a>
+      </div>
+    </div>
+  </section>`;
+}
+
+export default function HomeV6({ learn }: { learn?: HomeLearn | null }) {
   useEffect(() => {
     track("home_view");
     const root = document.querySelector(".v6"); if (!root) return;
@@ -2177,7 +2239,11 @@ export default function HomeV6() {
   return (
     <div className="v6">
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
-      <div dangerouslySetInnerHTML={{ __html: HTML }} />
+      <div
+        dangerouslySetInnerHTML={{
+          __html: HTML.replace("<!--LEARN_SLOT-->", learnBlockHtml(learn)),
+        }}
+      />
     </div>
   );
 }
