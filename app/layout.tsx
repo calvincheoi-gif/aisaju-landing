@@ -36,6 +36,46 @@ export const metadata: Metadata = {
   },
 };
 
+/**
+ * 조직·웹사이트 구조화 데이터.
+ * 검색엔진과 AI가 「최형철 사주명리 연구소」를 하나의 사업자로 인식하게 한다.
+ * 사업자 정보(상호·번호·주소)는 푸터 표기와 반드시 같아야 한다.
+ */
+const SITE_JSONLD = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://aisajulab.com/#organization",
+      name: "라이프앤비즈(Life & Biz) 성장 연구소",
+      alternateName: ["최형철 사주명리 연구소", "AI사주랩", "AI사주 Lab"],
+      url: "https://aisajulab.com",
+      email: "calvincheoi@gmail.com",
+      telephone: "+82-10-6789-1341",
+      address: {
+        "@type": "PostalAddress",
+        addressCountry: "KR",
+        addressRegion: "서울특별시",
+        addressLocality: "강동구",
+        streetAddress: "올림픽로78길 60, 103동 602호",
+      },
+      founder: {
+        "@type": "Person",
+        name: "최형철",
+        jobTitle: "경영지도사 · 사주명리 연구가",
+      },
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://aisajulab.com/#website",
+      url: "https://aisajulab.com",
+      name: "AI사주 Lab",
+      inLanguage: "ko",
+      publisher: { "@id": "https://aisajulab.com/#organization" },
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -47,6 +87,10 @@ export default function RootLayout({
         {/* 자체 5개 국어 전환을 쓰므로 브라우저 자동번역을 끈다.
             켜져 있으면 크롬이 우리 화면을 다시 기계번역해 덮어쓴다. */}
         <meta name="google" content="notranslate" />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(SITE_JSONLD) }}
+        />
         <link
           rel="stylesheet"
           as="style"
