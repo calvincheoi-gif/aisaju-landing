@@ -97,6 +97,9 @@ interface Dictionary {
     birthDateLabel: string;
     birthHourLabel: string;
     birthHourPlaceholder: string;
+    birthMinutePlaceholder: string;
+    birthHourSuffix: string;
+    birthMinuteSuffix: string;
     birthTimeUnknownLabel: string;
     calendarTypeLabel: string;
     solarLabel: string;
@@ -302,6 +305,9 @@ const ko: Dictionary = {
     birthDateLabel: "생년월일",
     birthHourLabel: "태어난 시간",
     birthHourPlaceholder: "시간 선택",
+    birthMinutePlaceholder: "분 선택",
+    birthHourSuffix: "시",
+    birthMinuteSuffix: "분",
     birthTimeUnknownLabel: "태어난 시간 모름",
     calendarTypeLabel: "음력 / 양력",
     solarLabel: "양력",
@@ -517,6 +523,9 @@ const en: Dictionary = {
     birthDateLabel: "Date of birth",
     birthHourLabel: "Time of birth",
     birthHourPlaceholder: "Select time",
+    birthMinutePlaceholder: "Minutes",
+    birthHourSuffix: "h",
+    birthMinuteSuffix: "min",
     birthTimeUnknownLabel: "Unknown birth time",
     calendarTypeLabel: "Calendar type",
     solarLabel: "Solar",
@@ -732,6 +741,9 @@ const ja: Dictionary = {
     birthDateLabel: "生年月日",
     birthHourLabel: "生まれた時間",
     birthHourPlaceholder: "時間を選択",
+    birthMinutePlaceholder: "分を選択",
+    birthHourSuffix: "時",
+    birthMinuteSuffix: "分",
     birthTimeUnknownLabel: "生まれた時間が不明",
     calendarTypeLabel: "新暦 / 旧暦",
     solarLabel: "新暦",
@@ -947,6 +959,9 @@ const zh: Dictionary = {
     birthDateLabel: "出生日期",
     birthHourLabel: "出生时间",
     birthHourPlaceholder: "选择时间",
+    birthMinutePlaceholder: "选择分钟",
+    birthHourSuffix: "点",
+    birthMinuteSuffix: "分",
     birthTimeUnknownLabel: "出生时间不详",
     calendarTypeLabel: "阳历 / 农历",
     solarLabel: "阳历",
@@ -1162,6 +1177,9 @@ const fr: Dictionary = {
     birthDateLabel: "Date de naissance",
     birthHourLabel: "Heure de naissance",
     birthHourPlaceholder: "Choisir l'heure",
+    birthMinutePlaceholder: "Minutes",
+    birthHourSuffix: "h",
+    birthMinuteSuffix: "min",
     birthTimeUnknownLabel: "Heure de naissance inconnue",
     calendarTypeLabel: "Calendrier solaire / lunaire",
     solarLabel: "Solaire",
