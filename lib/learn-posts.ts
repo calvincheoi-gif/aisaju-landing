@@ -120,6 +120,43 @@ export async function getFeaturedLearnPost(): Promise<LearnPost | null> {
   return posts[0] ?? null;
 }
 
+/**
+ * 홈 히어로의 오행 카드에서 「더 읽기」로 연결할 글의 슬러그 약속.
+ *
+ * 이 슬러그로 /admin/learn 에 글을 등록하면, 해당 오행 카드에 「더 읽기」 버튼이
+ * 자동으로 생긴다. 글이 없으면 버튼은 그냥 나타나지 않는다(코드 수정 불필요).
+ * 슬러그를 바꾸면 연결이 끊기므로 아래 값을 그대로 쓸 것.
+ */
+export const OHAENG_SLUGS: Record<string, string> = {
+  wood: "ohaeng-mok",
+  fire: "ohaeng-hwa",
+  earth: "ohaeng-to",
+  metal: "ohaeng-geum",
+  water: "ohaeng-su",
+};
+
+/** 오행별 읽을거리가 실제로 공개돼 있는지 확인해 { wood: "/learn/…" | null, … } 형태로 돌려준다 */
+export async function getOhaengLearnLinks(): Promise<Record<string, string | null>> {
+  const empty: Record<string, string | null> = {
+    wood: null, fire: null, earth: null, metal: null, water: null,
+  };
+  const supabase = getSupabaseServerClient();
+  if (!supabase) return empty;
+
+  const { data, error } = await supabase
+    .from("learn_posts")
+    .select("slug")
+    .eq("published", true)
+    .in("slug", Object.values(OHAENG_SLUGS));
+  if (error || !data) return empty;
+
+  const have = new Set(data.map((r) => (r as { slug: string }).slug));
+  for (const [key, slug] of Object.entries(OHAENG_SLUGS)) {
+    if (have.has(slug)) empty[key] = `/learn/${slug}`;
+  }
+  return empty;
+}
+
 /** 같은 분류를 우선해 관련 글을 고른다 */
 export async function getRelatedLearnPosts(slug: string, limit = 2): Promise<LearnPost[]> {
   const all = await getPublishedLearnPosts();

@@ -86,6 +86,29 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 .cycnote{margin-top:7px;font-size:11px;font-weight:700;color:var(--blue-d);letter-spacing:-.02em;
   display:flex;align-items:center;justify-content:center;gap:5px;min-height:17px}
 .cycnote .arrow{color:#9FC5FF}
+.cycnote.hint{color:var(--crim)}
+
+/* 오행 카드 상세 패널 — 카드를 누르면 열린다 */
+.ohpanel{margin-top:9px;background:#fff;border:1px solid #C9DDFB;border-radius:16px;padding:13px 14px 12px;
+  box-shadow:0 8px 22px rgba(20,50,110,.10);text-align:left;animation:ohpop .22s ease-out}
+.ohpanel[hidden]{display:none}
+@keyframes ohpop{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:translateY(0)}}
+.ohp-head{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.ohp-han{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;
+  font-size:12px;font-weight:800;color:#fff;flex:0 0 22px}
+.ohp-name{font-size:14.5px;font-weight:800;color:var(--navy);letter-spacing:-.04em}
+.ohp-x{margin-left:auto;border:0;background:none;font-size:15px;color:var(--geum);cursor:pointer;padding:2px 4px;line-height:1}
+.ohp-d{margin:0;font-size:12.5px;line-height:1.62;color:var(--ink);font-weight:600}
+.ohp-who{margin:5px 0 0;font-size:12px;line-height:1.55;color:var(--gray);font-weight:600}
+.ohp-today{margin-top:9px;background:var(--blue-p);border-radius:12px;padding:9px 11px;
+  font-size:12px;line-height:1.6;color:var(--navy-2);font-weight:600}
+.ohp-today b{color:var(--blue-d);font-weight:800}
+.ohp-btns{display:flex;gap:7px;margin-top:11px}
+.ohp-read{flex:1;text-align:center;text-decoration:none;border:1.5px solid var(--line);border-radius:12px;
+  padding:10px 6px;font-size:12.5px;font-weight:800;color:var(--navy-2);background:#fff}
+.ohp-read[hidden]{display:none}
+.ohp-go{flex:1.25;border:0;border-radius:12px;padding:10px 6px;font-size:12.5px;font-weight:800;color:#fff;
+  background:linear-gradient(135deg,#2F7FF0,#1D6DE3);cursor:pointer;font-family:inherit}
 
 /* 시간 + 화살표 */
 .timeline{position:relative;display:flex;align-items:center;justify-content:center;gap:9px;margin-bottom:12px}
@@ -1341,18 +1364,38 @@ const HTML = String.raw`
         </div>
       </div>
       <div class="cycnote" id="cycnote" data-i="cyc">木 <span class="arrow">→</span> 火 <span class="arrow">→</span> 土 <span class="arrow">→</span> 金 <span class="arrow">→</span> 水 <span class="arrow">→</span> 다시 木</div>
+
+      <!-- 카드를 누르면 열리는 상세 패널.
+           읽고 끝나지 않도록 항상 「내 오행 진단하기」로 끝맺는다.
+           「더 읽기」는 해당 오행 글이 실제로 있을 때만 나타난다(app/page.tsx 가 넘겨줌). -->
+      <div class="ohpanel" id="ohpanel" hidden>
+        <div class="ohp-head">
+          <span class="ohp-han" id="ohp-han">木</span>
+          <span class="ohp-name" id="ohp-name">목(木)</span>
+          <button type="button" class="ohp-x" id="ohp-x" aria-label="닫기">✕</button>
+        </div>
+        <p class="ohp-d" id="ohp-d"></p>
+        <p class="ohp-who" id="ohp-who"></p>
+        <div class="ohp-today" id="ohp-today"></div>
+        <div class="ohp-btns">
+          <a class="ohp-read" id="ohp-read" href="/learn" hidden>더 읽기 →</a>
+          <button type="button" class="ohp-go" id="ohp-go" data-go="ohaeng" data-from="ohpanel">내 오행 진단하기 →</button>
+        </div>
+      </div>
     </div>
 
-    <!-- 시간 + CTA를 가리키는 화살표 -->
+    <!-- 시간 + CTA를 가리키는 화살표
+         화살표는 무료 진입점인 「오행 성격 진단」(왼쪽 버튼)을 가리켜야 한다.
+         오른쪽에 두면 유료인 「전문가 상담」쪽을 가리키게 되므로 왼쪽 배치를 유지할 것. -->
     <div class="timeline">
+      <svg class="hook-arrow" width="34" height="40" viewBox="0 0 34 40" fill="none" aria-hidden="true">
+        <path d="M30 4 C12 6, 6 14, 7 30" stroke="#9FC5FF" stroke-width="2.4" stroke-linecap="round" fill="none"/>
+        <path d="M13 25 L7 33 L1 25" stroke="#9FC5FF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+      </svg>
       <div class="txt">
         <div class="q" data-i="tlQ">질문 14개</div>
         <div class="a" data-i="tlA"><em>1분</em>이면 나와요!</div>
       </div>
-      <svg class="hook-arrow" width="34" height="40" viewBox="0 0 34 40" fill="none" aria-hidden="true">
-        <path d="M4 4 C22 6, 28 14, 27 30" stroke="#9FC5FF" stroke-width="2.4" stroke-linecap="round" fill="none"/>
-        <path d="M21 25 L27 33 L33 25" stroke="#9FC5FF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      </svg>
     </div>
 
     <div class="cta-pair">
@@ -1898,7 +1941,10 @@ function reviewsBlockHtml(reviews?: HomeReview[] | null) {
     .join("");
 }
 
-export default function HomeV6({ learn, reviews }: { learn?: HomeLearn | null; reviews?: HomeReview[] | null }) {
+export default function HomeV6(
+  { learn, reviews, ohaengLinks }:
+  { learn?: HomeLearn | null; reviews?: HomeReview[] | null; ohaengLinks?: Record<string, string | null> | null }
+) {
   useEffect(() => {
     track("home_view");
     const root = document.querySelector(".v6"); if (!root) return;
@@ -2232,6 +2278,241 @@ export default function HomeV6({ learn, reviews }: { learn?: HomeLearn | null; r
       };
     })();
 
+    /* 순환 안내줄(cycnote)의 기준 문장. applyLang 이 언어가 바뀔 때마다 다시 채운다. */
+    let cycBase = "";
+    /* 언마운트 때 힌트 타이머를 멈추기 위한 고리 */
+    let stopHint: () => void = () => { /* 패널이 없으면 할 일 없음 */ };
+
+    /* ══════════ 오행 카드 상세 패널 ══════════
+       카드를 누르면 ① 그 오행의 성격 ② 오늘 기운과의 관계 ③ 읽을거리·진단 버튼이 열린다.
+       · ②는 매일 바뀐다 — 다시 찾아올 이유를 만드는 부분이다.
+       · 문구는 전부 「좋은 하루입니다」식 방향 제시형으로만 쓴다.
+         단정("~하면 안 됩니다")이나 불안을 부르는 표현, 특정 오행을 나쁘게 말하는 표현은 금지.
+       · 상극은 「나쁜 관계」가 아니라 「다듬어 주는 관계」로 쓴다.
+       · 일진 계산식은 renderTodayBar / 오행 앱(public/ohaeng)과 반드시 같아야 한다.
+         한 곳만 고치면 홈의 오늘 기운과 값이 어긋난다. */
+    const renderOhPanel = (() => {
+      const KEYS = ["wood", "fire", "earth", "metal", "water"] as const;
+      type ElKey = (typeof KEYS)[number];
+      const HAN: Record<ElKey, string> = { wood: "木", fire: "火", earth: "土", metal: "金", water: "水" };
+      const COLOR: Record<ElKey, string> = { wood: "#22A06B", fire: "#EF4444", earth: "#8B5E3C", metal: "#94A3B8", water: "#2B7FEF" };
+      /* 상생: 木→火→土→金→水→木 */
+      const GEN: Record<ElKey, ElKey> = { wood: "fire", fire: "earth", earth: "metal", metal: "water", water: "wood" };
+      /* 상극: 木→土→水→火→金→木 */
+      const CTRL: Record<ElKey, ElKey> = { wood: "earth", earth: "water", water: "fire", fire: "metal", metal: "wood" };
+      type Rel = "same" | "genMe" | "meGen" | "meCtrl" | "ctrlMe";
+
+      const NAME: Record<string, Record<ElKey, string>> = {
+        ko: { wood: "목(木)", fire: "화(火)", earth: "토(土)", metal: "금(金)", water: "수(水)" },
+        en: { wood: "Wood", fire: "Fire", earth: "Earth", metal: "Metal", water: "Water" },
+        ja: { wood: "木", fire: "火", earth: "土", metal: "金", water: "水" },
+        zh: { wood: "木", fire: "火", earth: "土", metal: "金", water: "水" },
+        fr: { wood: "Bois", fire: "Feu", earth: "Terre", metal: "Métal", water: "Eau" },
+      };
+      /* 「이런 분들」 — 공감 한 줄. 우열을 매기지 않는다. */
+      const WHO: Record<string, Record<ElKey, string>> = {
+        ko: {
+          wood: "“일단 시작하고 보자”가 편한 분들입니다.",
+          fire: "“말로 풀어야 정리가 된다”는 분들입니다.",
+          earth: "주변이 먼저 기대게 되는 분들입니다.",
+          metal: "“아닌 건 아니다”가 분명한 분들입니다.",
+          water: "결정 전에 끝까지 생각해 보는 분들입니다.",
+        },
+        en: {
+          wood: "People at ease with “let's just start and see”.",
+          fire: "People who sort things out by talking them through.",
+          earth: "People others lean on first.",
+          metal: "People clear about what they will not accept.",
+          water: "People who think it all the way through before deciding.",
+        },
+        ja: {
+          wood: "「まず始めてみよう」が楽な方です。",
+          fire: "「話してこそ整理がつく」という方です。",
+          earth: "周りが自然と頼ってくる方です。",
+          metal: "「違うものは違う」がはっきりしている方です。",
+          water: "決める前にとことん考える方です。",
+        },
+        zh: {
+          wood: "习惯「先做了再说」的人。",
+          fire: "「说出来才理得清」的人。",
+          earth: "周围人会先来依靠的人。",
+          metal: "「不行就是不行」很分明的人。",
+          water: "决定前会想到底的人。",
+        },
+        fr: {
+          wood: "Celles et ceux à l'aise avec « commençons, on verra ».",
+          fire: "Celles et ceux qui s'éclaircissent les idées en parlant.",
+          earth: "Celles et ceux sur qui l'entourage s'appuie en premier.",
+          metal: "Celles et ceux qui savent dire ce qu'ils refusent.",
+          water: "Celles et ceux qui réfléchissent jusqu'au bout avant de décider.",
+        },
+      };
+      /* 오늘 기운과의 관계 — {T}=오늘 기운, {M}=내 기운. 조사 문제를 피하려 「에/에서」로 통일했다. */
+      const REL: Record<string, Record<Rel, string>> = {
+        ko: {
+          same: "오늘은 <b>{T}</b>의 날 — {M}에 같은 기운이 겹칩니다. 밀어붙이는 힘이 세지니 속도만 한 번 살펴보세요.",
+          genMe: "오늘은 <b>{T}</b>의 날 — {M}에 힘을 실어 주는 기운입니다. 배우고 채우기에 좋은 하루입니다.",
+          meGen: "오늘은 <b>{T}</b>의 날 — {M}에서 내보내는 기운입니다. 표현하고 결과로 만들기에 좋은 하루입니다.",
+          meCtrl: "오늘은 <b>{T}</b>의 날 — {M}에서 다루는 기운입니다. 챙기고 관리하기에 좋은 하루입니다.",
+          ctrlMe: "오늘은 <b>{T}</b>의 날 — {M}에 기준을 세워 주는 기운입니다. 점검하고 정리하기에 좋은 하루입니다.",
+        },
+        en: {
+          same: "Today is a <b>{T}</b> day — the same energy doubles up on {M}. Momentum runs high, so keep an eye on your pace.",
+          genMe: "Today is a <b>{T}</b> day — it feeds {M}. A good day to learn and take things in.",
+          meGen: "Today is a <b>{T}</b> day — {M} gives outward. A good day to express and to finish things.",
+          meCtrl: "Today is a <b>{T}</b> day — {M} handles it. A good day to tend and manage.",
+          ctrlMe: "Today is a <b>{T}</b> day — it sets a standard for {M}. A good day to review and tidy up.",
+        },
+        ja: {
+          same: "今日は<b>{T}</b>の日 — {M}に同じ気が重なります。勢いが増す分、ペースだけ確かめてみてください。",
+          genMe: "今日は<b>{T}</b>の日 — {M}に力を貸してくれる気です。学び、満たすのに良い一日です。",
+          meGen: "今日は<b>{T}</b>の日 — {M}から出ていく気です。表現し、形にするのに良い一日です。",
+          meCtrl: "今日は<b>{T}</b>の日 — {M}が扱う気です。整え、管理するのに良い一日です。",
+          ctrlMe: "今日は<b>{T}</b>の日 — {M}に基準を与えてくれる気です。見直し、整理するのに良い一日です。",
+        },
+        zh: {
+          same: "今天是<b>{T}</b>之日 — 与{M}同气相叠。势头会更强，留意一下节奏就好。",
+          genMe: "今天是<b>{T}</b>之日 — 为{M}添力的气。适合学习与充实自己。",
+          meGen: "今天是<b>{T}</b>之日 — 由{M}向外发的气。适合表达，也适合把事情做出成果。",
+          meCtrl: "今天是<b>{T}</b>之日 — {M}所掌管的气。适合打理与管理。",
+          ctrlMe: "今天是<b>{T}</b>之日 — 为{M}立下标准的气。适合检视与整理。",
+        },
+        fr: {
+          same: "Aujourd'hui est un jour <b>{T}</b> — la même énergie se superpose à {M}. L'élan est fort : surveillez seulement le rythme.",
+          genMe: "Aujourd'hui est un jour <b>{T}</b> — il nourrit {M}. Une bonne journée pour apprendre et se remplir.",
+          meGen: "Aujourd'hui est un jour <b>{T}</b> — {M} donne vers l'extérieur. Une bonne journée pour s'exprimer et concrétiser.",
+          meCtrl: "Aujourd'hui est un jour <b>{T}</b> — {M} le gère. Une bonne journée pour entretenir et organiser.",
+          ctrlMe: "Aujourd'hui est un jour <b>{T}</b> — il pose un cadre pour {M}. Une bonne journée pour revoir et ranger.",
+        },
+      };
+      const UI: Record<string, { read: string; go: string; close: string; hint: string }> = {
+        ko: { read: "더 읽기 →", go: "내 오행 진단하기 →", close: "닫기", hint: "👆 궁금한 기운을 눌러 보세요" },
+        en: { read: "Read more →", go: "Find my element →", close: "Close", hint: "👆 Tap an element to see more" },
+        ja: { read: "もっと読む →", go: "私の五行を診断 →", close: "閉じる", hint: "👆 気になる気をタップ" },
+        zh: { read: "阅读更多 →", go: "测我的五行 →", close: "关闭", hint: "👆 点一下感兴趣的五行" },
+        fr: { read: "Lire la suite →", go: "Trouver mon élément →", close: "Fermer", hint: "👆 Touchez un élément" },
+      };
+
+      /* 오늘 일간의 오행 — renderTodayBar 와 같은 공식 (JDN 기반) */
+      const todayEl = ((): ElKey => {
+        const GAN_EL: ElKey[] = ["wood", "wood", "fire", "fire", "earth", "earth", "metal", "metal", "water", "water"];
+        const dt = new Date();
+        const y = dt.getFullYear(), m = dt.getMonth() + 1, d = dt.getDate();
+        const a = Math.floor((14 - m) / 12), yy = y + 4800 - a, mm = m + 12 * a - 3;
+        const jdn = d + Math.floor((153 * mm + 2) / 5) + 365 * yy
+          + Math.floor(yy / 4) - Math.floor(yy / 100) + Math.floor(yy / 400) - 32045;
+        const i = ((jdn - 11) % 60 + 60) % 60;
+        return GAN_EL[i % 10];
+      })();
+
+      const relOf = (my: ElKey): Rel => {
+        if (my === todayEl) return "same";
+        if (GEN[todayEl] === my) return "genMe";
+        if (GEN[my] === todayEl) return "meGen";
+        if (CTRL[my] === todayEl) return "meCtrl";
+        return "ctrlMe";
+      };
+
+      const wrap = document.getElementById("ohwrap");
+      const note = document.getElementById("cycnote");
+      const panel = document.getElementById("ohpanel");
+      const pHan = document.getElementById("ohp-han");
+      const pName = document.getElementById("ohp-name");
+      const pDesc = document.getElementById("ohp-d");
+      const pWho = document.getElementById("ohp-who");
+      const pToday = document.getElementById("ohp-today");
+      const pRead = document.getElementById("ohp-read") as HTMLAnchorElement | null;
+      const pGo = document.getElementById("ohp-go");
+      const pX = document.getElementById("ohp-x");
+      if (!wrap || !note || !panel || !pHan || !pName || !pDesc || !pWho || !pToday || !pRead || !pGo || !pX) {
+        return () => { /* 요소가 없으면 아무것도 하지 않는다 */ };
+      }
+
+      const cards = Array.from(wrap.querySelectorAll<HTMLElement>(".oh"));
+      let open: ElKey | null = null;
+      let lang = "ko";
+      let tapped = false;
+      let hintTimer: ReturnType<typeof setInterval> | null = null;
+
+      const paint = () => {
+        if (!open) return;
+        const idx = KEYS.indexOf(open);
+        const nm = (NAME[lang] || NAME.ko)[open];
+        const ui = UI[lang] || UI.ko;
+        pHan.textContent = HAN[open];
+        pHan.style.background = COLOR[open];
+        pName.textContent = nm;
+        /* 성격 한 줄은 카드가 이미 5개 언어로 들고 있는 값을 그대로 쓴다.
+           제목에 이름이 이미 있으므로 「목(木) — 」 같은 앞머리는 덜어낸다. */
+        let desc = cards[idx]?.getAttribute("data-d") || "";
+        for (const sep of [" — ", " - ", " · "]) {
+          if (desc.startsWith(nm + sep)) { desc = desc.slice((nm + sep).length); break; }
+        }
+        pDesc.textContent = desc;
+        pWho.textContent = (WHO[lang] || WHO.ko)[open];
+        const nmOf = NAME[lang] || NAME.ko;
+        pToday.innerHTML = (REL[lang] || REL.ko)[relOf(open)]
+          .replace("{T}", nmOf[todayEl])
+          .replace("{M}", nmOf[open]);
+        pGo.textContent = ui.go;
+        pRead.textContent = ui.read;
+        pX.setAttribute("aria-label", ui.close);
+        const href = ohaengLinks?.[open] || null;
+        if (href) { pRead.href = href; pRead.hidden = false; } else { pRead.hidden = true; }
+      };
+
+      const close = () => {
+        open = null;
+        panel.hidden = true;
+        cards.forEach(c => c.classList.remove("on"));
+        wrap.classList.remove("paused");
+      };
+
+      const openCard = (key: ElKey, idx: number) => {
+        if (open === key) { close(); return; }
+        open = key;
+        cards.forEach(c => c.classList.remove("on"));
+        cards[idx]?.classList.add("on");
+        wrap.classList.add("paused");
+        panel.hidden = false;
+        paint();
+        track("ohaeng_card_open", { element: key, today: todayEl });
+      };
+
+      cards.forEach((c, i) => c.addEventListener("click", () => {
+        if (!tapped) {
+          tapped = true;
+          if (hintTimer) { clearInterval(hintTimer); hintTimer = null; }
+          note.classList.remove("hint");
+          note.innerHTML = cycBase;
+        }
+        openCard(KEYS[i], i);
+      }));
+      pX.addEventListener("click", close);
+
+      /* 카드가 눌린다는 사실을 알리는 힌트.
+         새 줄을 만들면 CTA 가 아래로 밀리므로, 기존 순환 안내줄에 번갈아 띄운다. */
+      let hintOn = false;
+      hintTimer = setInterval(() => {
+        if (tapped || open) return;
+        hintOn = !hintOn;
+        if (hintOn) {
+          note.classList.add("hint");
+          note.textContent = (UI[lang] || UI.ko).hint;
+        } else {
+          note.classList.remove("hint");
+          note.innerHTML = cycBase;
+        }
+      }, 4200);
+      stopHint = () => { if (hintTimer) { clearInterval(hintTimer); hintTimer = null; } };
+
+      return (l: string) => {
+        lang = l;
+        /* 언어가 바뀌면 열려 있던 패널도 그 언어로 다시 그린다 */
+        paint();
+      };
+    })();
+
     /* ══════════ 리포트 미리보기 뷰어 ══════════
        PPT 발표처럼 한 장씩 넘겨 본다. 다운로드는 주지 않는다.
        · 이미지는 미리 다 받지 않는다 — 현재 장과 다음 장만 가져와
@@ -2356,6 +2637,8 @@ export default function HomeV6({ learn, reviews }: { learn?: HomeLearn | null; r
       renderPwaBar(LANG);
       /* 후기 폼 문구도 같은 언어로 맞춘다 */
       renderReviewForm(LANG);
+      /* 오행 카드 패널도 같은 언어로 다시 그린다 */
+      renderOhPanel(LANG);
     };
 
     /* 설치 프롬프트가 화면을 그린 뒤에 도착하는 경우를 위해 한 번 더 그린다 */
@@ -2417,7 +2700,6 @@ export default function HomeV6({ learn, reviews }: { learn?: HomeLearn | null; r
     galEl?.addEventListener("click", (e) => { if (e.target === galEl) closeGal(); });
     galEl?.addEventListener("contextmenu", (e) => e.preventDefault());
 
-    let cycBase = "";
     applyLang();
 
     const onClick = (e: Event) => {
@@ -2487,21 +2769,6 @@ export default function HomeV6({ learn, reviews }: { learn?: HomeLearn | null; r
     };
     root.addEventListener("click", onClick);
 
-    const wrap = document.getElementById("ohwrap");
-    const note = document.getElementById("cycnote");
-    let timer: ReturnType<typeof setTimeout> | null = null;
-    if (wrap && note) {
-      cycBase = note.innerHTML;
-      const cards = Array.from(wrap.querySelectorAll<HTMLElement>(".oh"));
-      cards.forEach(c => c.addEventListener("click", () => {
-        cards.forEach(x => x.classList.remove("on"));
-        c.classList.add("on"); wrap.classList.add("paused");
-        note.textContent = c.getAttribute("data-d") || "";
-        if (timer) clearTimeout(timer);
-        timer = setTimeout(() => { c.classList.remove("on"); wrap.classList.remove("paused"); note.innerHTML = cycBase; }, 3500);
-      }));
-    }
-
     return () => {
       root.removeEventListener("click", onClick);
       document.removeEventListener("click", onDocClick);
@@ -2510,7 +2777,7 @@ export default function HomeV6({ learn, reviews }: { learn?: HomeLearn | null; r
       stage?.removeEventListener("touchstart", onTS);
       stage?.removeEventListener("touchend", onTE);
       document.body.style.overflow = "";
-      if (timer) clearTimeout(timer);
+      stopHint();
     };
   }, []);
 

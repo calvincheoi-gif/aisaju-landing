@@ -1,5 +1,5 @@
 import HomeV6 from "@/components/HomeV6";
-import { getFeaturedLearnPost, learnImageUrl } from "@/lib/learn-posts";
+import { getFeaturedLearnPost, getOhaengLearnLinks, learnImageUrl } from "@/lib/learn-posts";
 import { getPublishedReviews } from "@/lib/reviews";
 
 // 홈은 항상 최신본으로 렌더 (CDN이 옛 페이지를 캐시하지 않도록)
@@ -25,5 +25,9 @@ export default async function Home() {
   /* 승인(게시)된 후기만 홈에 내려보낸다. 승인 전 글은 여기 들어오지 않는다. */
   const reviews = await getPublishedReviews(5);
 
-  return <HomeV6 learn={learn} reviews={reviews} />;
+  /* 오행 카드의 「더 읽기」 연결 — 해당 글이 실제로 공개돼 있을 때만 링크가 생긴다.
+     글을 새로 올리면 자동으로 버튼이 붙으므로 코드를 다시 배포할 필요가 없다. */
+  const ohaengLinks = await getOhaengLearnLinks();
+
+  return <HomeV6 learn={learn} reviews={reviews} ohaengLinks={ohaengLinks} />;
 }
