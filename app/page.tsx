@@ -1,5 +1,6 @@
 import HomeV6 from "@/components/HomeV6";
 import { getFeaturedLearnPost, learnImageUrl } from "@/lib/learn-posts";
+import { getPublishedReviews } from "@/lib/reviews";
 
 // 홈은 항상 최신본으로 렌더 (CDN이 옛 페이지를 캐시하지 않도록)
 export const dynamic = "force-dynamic";
@@ -21,5 +22,8 @@ export default async function Home() {
       }
     : null;
 
-  return <HomeV6 learn={learn} />;
+  /* 승인(게시)된 후기만 홈에 내려보낸다. 승인 전 글은 여기 들어오지 않는다. */
+  const reviews = await getPublishedReviews(5);
+
+  return <HomeV6 learn={learn} reviews={reviews} />;
 }

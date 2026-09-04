@@ -339,6 +339,34 @@ h2 b{color:var(--blue)}
 .review .who{font-size:11.5px;color:var(--gray);font-weight:600}
 .review-cta{margin-top:10px;background:var(--blue-p);border:1px solid #C9DDFB;border-radius:13px;padding:11px 13px;font-size:12px;color:var(--navy-2);line-height:1.55;font-weight:600}
 .review-cta b{color:var(--crim);font-weight:800}
+.review + .review{margin-top:9px}
+.review .when{font-size:10.5px;color:var(--geum);font-weight:600;margin-top:3px}
+
+/* 후기 남기기 */
+.rv-open{width:100%;margin-top:10px;background:#fff;border:1.5px solid var(--blue);color:var(--blue-d);
+  border-radius:13px;padding:12px;font-size:13.5px;font-weight:800;cursor:pointer}
+.rv-open:active{background:var(--blue-p)}
+.rv-form{margin-top:10px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;
+  box-shadow:0 4px 12px rgba(20,50,110,.05);display:none}
+.rv-form.on{display:block}
+.rv-form label{display:block;font-size:11.5px;font-weight:700;color:var(--gray);margin:0 0 5px}
+.rv-form input,.rv-form textarea{width:100%;border:1px solid var(--line);border-radius:11px;padding:10px 11px;
+  font-size:13.5px;color:var(--ink);font-family:inherit;background:#FBFDFF;outline:none}
+.rv-form input:focus,.rv-form textarea:focus{border-color:var(--blue);background:#fff}
+.rv-form textarea{resize:vertical;min-height:82px;line-height:1.6}
+.rv-row+.rv-row{margin-top:11px}
+.rv-stars{display:flex;gap:4px}
+.rv-star{background:none;border:none;padding:0;font-size:25px;line-height:1;color:#DDE6F3;cursor:pointer}
+.rv-star.on{color:var(--gold)}
+.rv-count{float:right;font-size:11px;color:var(--geum);font-weight:600}
+.rv-send{width:100%;margin-top:12px;background:linear-gradient(135deg,#2F7FF0,#1D6DE3);color:#fff;border:none;
+  border-radius:13px;padding:13px;font-size:14px;font-weight:800;cursor:pointer}
+.rv-send:disabled{opacity:.55;cursor:default}
+.rv-guide{margin-top:9px;font-size:11px;color:var(--gray);line-height:1.55;text-align:center}
+.rv-msg{margin-top:10px;border-radius:12px;padding:11px 12px;font-size:12.5px;font-weight:700;line-height:1.55;display:none}
+.rv-msg.on{display:block}
+.rv-msg.ok{background:#EAF7EF;border:1px solid #BCE5CC;color:#1B7A45}
+.rv-msg.no{background:var(--crim-l);border:1px solid #F3C9D5;color:var(--crim)}
 
 /* 채널 */
 .channels{display:flex;flex-wrap:wrap;gap:6px}
@@ -1688,12 +1716,35 @@ const HTML = String.raw`
   <section>
     <div class="sec-label">REVIEWS</div>
     <h2 data-i="h2Rev">먼저 만난 분들</h2>
-    <div class="review" style="margin-top:16px">
-      <div class="stars">★★★★★</div>
-      <p data-i="revP">누구에게나 똑같은 8개의 달란트를 주신다고 시작해 주신 상담, 역대급 감동이었습니다. 앞으로도 중요한 결정에 도움 부탁드려요.</p>
-      <div class="who" data-i="revWho">Jennifer · 개인사주</div>
-    </div>
+    <div id="rv-list" style="margin-top:16px"><!--REVIEWS_SLOT--></div>
     <div class="review-cta" data-i="revCta">후기를 남겨 주시면 다음 상담 <b>50% 할인</b>을 드려요.</div>
+
+    <button type="button" class="rv-open" id="rv-open">후기 남기기</button>
+
+    <form class="rv-form" id="rv-form" novalidate>
+      <div class="rv-row">
+        <label id="rv-l-star">얼마나 도움이 되셨나요?</label>
+        <div class="rv-stars" id="rv-stars">
+          <button type="button" class="rv-star" data-v="1" aria-label="1">★</button>
+          <button type="button" class="rv-star" data-v="2" aria-label="2">★</button>
+          <button type="button" class="rv-star" data-v="3" aria-label="3">★</button>
+          <button type="button" class="rv-star" data-v="4" aria-label="4">★</button>
+          <button type="button" class="rv-star" data-v="5" aria-label="5">★</button>
+        </div>
+      </div>
+      <div class="rv-row">
+        <label id="rv-l-name">어떻게 불러 드릴까요?</label>
+        <input id="rv-name" type="text" maxlength="20" autocomplete="off" placeholder="닉네임 또는 성함">
+      </div>
+      <div class="rv-row">
+        <label><span id="rv-l-text">상담은 어떠셨나요?</span><span class="rv-count" id="rv-count">0/400</span></label>
+        <textarea id="rv-text" maxlength="400" placeholder="상담에서 가장 도움이 된 점을 편하게 적어 주세요."></textarea>
+      </div>
+      <button type="submit" class="rv-send" id="rv-send">후기 보내기</button>
+      <div class="rv-guide" id="rv-guide">확인 후 게시되며, 개인정보는 적지 말아 주세요.</div>
+    </form>
+
+    <div class="rv-msg" id="rv-msg"></div>
   </section>
 
   <!-- 채널 -->
@@ -1802,7 +1853,52 @@ function learnBlockHtml(learn?: HomeLearn | null) {
   </section>`;
 }
 
-export default function HomeV6({ learn }: { learn?: HomeLearn | null }) {
+export interface HomeReview {
+  id: string;
+  name: string;
+  content: string;
+  rating: number | null;
+  created_at: string;
+}
+
+/**
+ * 자리 표시(<!--REVIEWS_SLOT-->)에 넣을 후기 목록을 만든다.
+ *
+ * · 여기 들어오는 것은 app/page.tsx 가 승인(is_published=true)된 것만 골라 넘긴 글이다.
+ * · 고객이 쓴 글이 그대로 HTML 에 들어가므로 반드시 esc() 로 막는다.
+ * · 아직 게시된 후기가 없으면 기존 예시 후기를 그대로 보여준다
+ *   (data-i 가 붙어 있어 5개 언어 번역도 그대로 작동한다).
+ */
+function reviewsBlockHtml(reviews?: HomeReview[] | null) {
+  const esc = (t: string) =>
+    String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+  if (!reviews || reviews.length === 0) {
+    return `
+    <div class="review">
+      <div class="stars">★★★★★</div>
+      <p data-i="revP">누구에게나 똑같은 8개의 달란트를 주신다고 시작해 주신 상담, 역대급 감동이었습니다. 앞으로도 중요한 결정에 도움 부탁드려요.</p>
+      <div class="who" data-i="revWho">Jennifer · 개인사주</div>
+    </div>`;
+  }
+
+  return reviews
+    .map((r) => {
+      const n = Math.min(5, Math.max(0, Math.round(Number(r.rating) || 0)));
+      const stars = n > 0 ? `<div class="stars">${"★".repeat(n)}${"☆".repeat(5 - n)}</div>` : "";
+      const when = (r.created_at || "").slice(0, 10).replace(/-/g, ".");
+      return `
+    <div class="review">
+      ${stars}
+      <p>${esc(r.content)}</p>
+      <div class="who">${esc(r.name)}</div>
+      <div class="when">${esc(when)}</div>
+    </div>`;
+    })
+    .join("");
+}
+
+export default function HomeV6({ learn, reviews }: { learn?: HomeLearn | null; reviews?: HomeReview[] | null }) {
   useEffect(() => {
     track("home_view");
     const root = document.querySelector(".v6"); if (!root) return;
@@ -1956,6 +2052,186 @@ export default function HomeV6({ learn }: { learn?: HomeLearn | null }) {
       };
     })();
 
+    /* ══════════ 후기 남기기 ══════════
+       · 보낸 글은 /api/reviews 가 항상 「승인 대기」로 저장한다. 홈에 보이는 목록은
+         서버(app/page.tsx)가 승인된 것만 내려보낸 것이라, 방금 쓴 글은 바로 뜨지 않는다.
+         → 광고·비방 글이 홈에 즉시 노출되는 것을 막기 위한 구조이므로 임의로 바꾸지 말 것.
+       · 50% 할인은 별도 쿠폰 발급 없이, 완료 안내에서 카카오톡으로 말씀해 달라고 안내한다.
+       · 문구는 오늘의 기운·홈화면 안내와 같은 방식으로 5개 언어를 여기서 함께 관리한다. */
+    const renderReviewForm = (() => {
+      interface RvTxt {
+        open: string; close: string; star: string; name: string; namePh: string;
+        text: string; textPh: string; send: string; sending: string; guide: string;
+        ok: string; need: string; short: string; link: string; fail: string;
+      }
+      const TXT: Record<string, RvTxt> = {
+        ko: {
+          open: "후기 남기기", close: "닫기", star: "얼마나 도움이 되셨나요?",
+          name: "어떻게 불러 드릴까요?", namePh: "닉네임 또는 성함",
+          text: "상담은 어떠셨나요?", textPh: "상담에서 가장 도움이 된 점을 편하게 적어 주세요.",
+          send: "후기 보내기", sending: "보내는 중…",
+          guide: "확인 후 게시되며, 개인정보는 적지 말아 주세요.",
+          ok: "후기 감사합니다. 확인 후 게시됩니다. 다음 상담 신청 때 카카오톡으로 「후기 할인」이라고 말씀해 주시면 50% 적용해 드려요.",
+          need: "성함과 후기 내용을 입력해 주세요.", short: "후기는 10자 이상 남겨 주세요.",
+          link: "후기에는 링크를 넣을 수 없습니다.",
+          fail: "잠시 후 다시 시도해 주세요.",
+        },
+        en: {
+          open: "Leave a review", close: "Close", star: "How helpful was it?",
+          name: "What should we call you?", namePh: "Nickname or name",
+          text: "How was your consultation?", textPh: "Tell us what helped you most.",
+          send: "Send review", sending: "Sending…",
+          guide: "Published after a quick check. Please don't include personal details.",
+          ok: "Thank you. Your review will appear after a quick check. Mention “review discount” on KakaoTalk for 50% off your next consultation.",
+          need: "Please enter your name and review.", short: "Please write at least 10 characters.",
+          link: "Links can't be included in a review.",
+          fail: "Something went wrong. Please try again.",
+        },
+        ja: {
+          open: "レビューを書く", close: "閉じる", star: "どのくらい役に立ちましたか?",
+          name: "お名前(ニックネーム可)", namePh: "ニックネームまたはお名前",
+          text: "鑑定はいかがでしたか?", textPh: "一番役に立った点をお気軽にどうぞ。",
+          send: "送信する", sending: "送信中…",
+          guide: "確認後に掲載されます。個人情報は書かないでください。",
+          ok: "ありがとうございます。確認後に掲載されます。次回のご相談時にカカオトークで「レビュー割引」とお伝えいただくと50%割引いたします。",
+          need: "お名前とレビュー内容をご入力ください。", short: "10文字以上でお願いします。",
+          link: "レビューにリンクは入れられません。",
+          fail: "しばらくしてからもう一度お試しください。",
+        },
+        zh: {
+          open: "写评价", close: "关闭", star: "对您有多大帮助?",
+          name: "怎么称呼您?", namePh: "昵称或姓名",
+          text: "这次咨询如何?", textPh: "请写下对您帮助最大的地方。",
+          send: "提交评价", sending: "提交中…",
+          guide: "确认后公开，请勿填写个人信息。",
+          ok: "感谢您的评价，确认后将会公开。下次咨询时在KakaoTalk上说「评价优惠」即可享5折。",
+          need: "请填写姓名和评价内容。", short: "评价请至少写10个字。",
+          link: "评价中不能包含链接。",
+          fail: "请稍后再试。",
+        },
+        fr: {
+          open: "Laisser un avis", close: "Fermer", star: "Cela vous a-t-il aidé ?",
+          name: "Comment vous appeler ?", namePh: "Pseudo ou nom",
+          text: "Comment s'est passée la consultation ?", textPh: "Dites-nous ce qui vous a le plus aidé.",
+          send: "Envoyer", sending: "Envoi…",
+          guide: "Publié après vérification. N'indiquez pas de données personnelles.",
+          ok: "Merci ! Votre avis sera publié après vérification. Mentionnez « avis » sur KakaoTalk pour 50 % de réduction.",
+          need: "Merci d'indiquer votre nom et votre avis.", short: "Merci d'écrire au moins 10 caractères.",
+          link: "Les liens ne sont pas autorisés dans un avis.",
+          fail: "Une erreur est survenue. Réessayez.",
+        },
+      };
+
+      const openBtn = document.getElementById("rv-open") as HTMLButtonElement | null;
+      const form = document.getElementById("rv-form") as HTMLFormElement | null;
+      const starBox = document.getElementById("rv-stars");
+      const nameEl = document.getElementById("rv-name") as HTMLInputElement | null;
+      const textEl = document.getElementById("rv-text") as HTMLTextAreaElement | null;
+      const sendBtn = document.getElementById("rv-send") as HTMLButtonElement | null;
+      const msgEl = document.getElementById("rv-msg");
+      const countEl = document.getElementById("rv-count");
+      const lStar = document.getElementById("rv-l-star");
+      const lName = document.getElementById("rv-l-name");
+      const lText = document.getElementById("rv-l-text");
+      const guideEl = document.getElementById("rv-guide");
+      if (!openBtn || !form || !starBox || !nameEl || !textEl || !sendBtn || !msgEl) {
+        return () => { /* 요소가 없으면 아무것도 하지 않는다 */ };
+      }
+
+      let cur: RvTxt = TXT.ko;
+      let rating = 0;
+      let busy = false;
+      let done = false;
+
+      const paintStars = () => {
+        starBox.querySelectorAll<HTMLElement>(".rv-star").forEach(b => {
+          b.classList.toggle("on", Number(b.dataset.v || "0") <= rating);
+        });
+      };
+      const say = (kind: "ok" | "no", text: string) => {
+        msgEl.textContent = text;
+        msgEl.className = "rv-msg on " + (kind === "ok" ? "ok" : "no");
+      };
+      const clearSay = () => { msgEl.className = "rv-msg"; };
+
+      openBtn.addEventListener("click", () => {
+        if (done) return;
+        const on = form.classList.toggle("on");
+        openBtn.textContent = on ? cur.close : cur.open;
+        if (on) {
+          clearSay();
+          track("review_form_open");
+          form.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      });
+
+      starBox.addEventListener("click", (e) => {
+        const b = (e.target as HTMLElement)?.closest?.(".rv-star") as HTMLElement | null;
+        if (!b) return;
+        rating = Number(b.dataset.v || "0");
+        paintStars();
+      });
+
+      textEl.addEventListener("input", () => {
+        if (countEl) countEl.textContent = textEl.value.length + "/400";
+      });
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (busy) return;
+        const name = nameEl.value.trim();
+        const content = textEl.value.trim();
+        if (!name || !content) { say("no", cur.need); return; }
+        if (content.length < 10) { say("no", cur.short); return; }
+        /* 서버(app/api/reviews)와 같은 규칙 — 여기서 걸러야 안내 문구도 해당 언어로 나간다 */
+        if (/https?:\/\/|www\.|\.com|\.net|\.kr\b/i.test(content)) { say("no", cur.link); return; }
+
+        busy = true;
+        sendBtn.disabled = true;
+        sendBtn.textContent = cur.sending;
+        clearSay();
+        try {
+          const res = await fetch("/api/reviews", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, content, rating: rating || null }),
+          });
+          const json = await res.json().catch(() => ({}));
+          if (!res.ok) {
+            say("no", json?.error || cur.fail);
+            return;
+          }
+          const sentRating = rating;
+          done = true;
+          form.classList.remove("on");
+          form.reset();
+          rating = 0; paintStars();
+          if (countEl) countEl.textContent = "0/400";
+          openBtn.style.display = "none";
+          say("ok", cur.ok);
+          track("review_submit", { rating: sentRating });
+        } catch {
+          say("no", cur.fail);
+        } finally {
+          busy = false;
+          sendBtn.disabled = false;
+          sendBtn.textContent = cur.send;
+        }
+      });
+
+      return (lang: string) => {
+        cur = TXT[lang] || TXT.ko;
+        if (!done) openBtn.textContent = form.classList.contains("on") ? cur.close : cur.open;
+        if (lStar) lStar.textContent = cur.star;
+        if (lName) lName.textContent = cur.name;
+        if (lText) lText.textContent = cur.text;
+        nameEl.placeholder = cur.namePh;
+        textEl.placeholder = cur.textPh;
+        if (!busy) sendBtn.textContent = cur.send;
+        if (guideEl) guideEl.textContent = cur.guide;
+      };
+    })();
+
     /* ══════════ 리포트 미리보기 뷰어 ══════════
        PPT 발표처럼 한 장씩 넘겨 본다. 다운로드는 주지 않는다.
        · 이미지는 미리 다 받지 않는다 — 현재 장과 다음 장만 가져와
@@ -2078,6 +2354,8 @@ export default function HomeV6({ learn }: { learn?: HomeLearn | null }) {
       /* 오늘의 기운 스트립도 같은 언어로 다시 그린다 */
       renderTodayBar(LANG);
       renderPwaBar(LANG);
+      /* 후기 폼 문구도 같은 언어로 맞춘다 */
+      renderReviewForm(LANG);
     };
 
     /* 설치 프롬프트가 화면을 그린 뒤에 도착하는 경우를 위해 한 번 더 그린다 */
@@ -2241,7 +2519,9 @@ export default function HomeV6({ learn }: { learn?: HomeLearn | null }) {
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
       <div
         dangerouslySetInnerHTML={{
-          __html: HTML.replace("<!--LEARN_SLOT-->", learnBlockHtml(learn)),
+          __html: HTML
+            .replace("<!--LEARN_SLOT-->", learnBlockHtml(learn))
+            .replace("<!--REVIEWS_SLOT-->", reviewsBlockHtml(reviews)),
         }}
       />
     </div>
