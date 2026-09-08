@@ -211,6 +211,12 @@ html:not([lang="ko"]) .biz{overflow-wrap:anywhere}
   color:#9FB3CE;font-size:15px;line-height:1;cursor:pointer}
 .pwabar .pw-x:hover{color:var(--gray)}
 
+/* 처음 온 사람을 위한 안내 — 조용하지만 놓치지 않을 자리에 둔다 */
+.guidelink{display:block;width:100%;margin:2px 0 0;padding:7px 0;text-align:center;
+  font-size:11.8px;font-weight:800;color:var(--blue-d);letter-spacing:-.03em;
+  text-decoration:none;border-bottom:1px dashed #CFE0F7}
+.guidelink:hover{color:#0F3E86;border-bottom-color:#9CC3F5}
+
 /* 이번 주 읽을거리 — 매일 들어올 이유를 하나 더 만든다.
    「오늘의 기운」이 나에 대한 것이라면 이쪽은 배우는 것이다. */
 .lh{margin-top:14px;padding:14px 13px;border-radius:16px;
@@ -772,6 +778,7 @@ en: {
  ctS:'Choi Hyungchul, certified management consultant · 30 years of experience, reading it himself',
  openBar:'<b>Opening offer · until Sep 30</b> &nbsp;<s>20,000 KRW</s> → <em>9,900 KRW</em>',
  tagGh:'100,000 KRW', sv6n:'Couple compatibility report', sv6d:'Two charts · 20 pages · how to talk',
+ guideLink:'New here? A 1-minute guide →',
  ghT:'💞 Couple compatibility report', ghS:'No scores — we look at why you connect and why you clash',
  ghW1:'Two charts, not one', ghW1d:'We read both charts and what happens between them',
  ghW2:'And how to use it', ghW2d:'The words that land, and the words that never do',
@@ -925,6 +932,7 @@ ja: {
  ctS:'経営指導士 チェ・ヒョンチョル · 30年の経験で直接読み解きます',
  openBar:'<b>オープン記念 · 9月30日まで</b> &nbsp;<s>20,000ウォン</s> → <em>9,900ウォン</em>',
  tagGh:'10万ウォン', sv6n:'恋愛・夫婦 相性レポート', sv6d:'二人の命式20枚 · 関係の使い方',
+ guideLink:'はじめての方へ · 1分の使い方 →',
  ghT:'💞 恋愛・夫婦 相性レポート', ghS:'点数はつけません — なぜ惹かれ、なぜぶつかるのかを読みます',
  ghW1:'二人分の分析です', ghW1d:'二つの命式を読み、その間に起きることを見ます',
  ghW2:'使い方までお渡しします', ghW2d:'通じる言葉と、通じない言葉をお伝えします',
@@ -1078,6 +1086,7 @@ zh: {
  ctS:'经营指导师 崔炯哲 · 30年经验亲自解读',
  openBar:'<b>开业纪念 · 至9月30日</b> &nbsp;<s>20,000韩元</s> → <em>9,900韩元</em>',
  tagGh:'10万韩元', sv6n:'恋爱·夫妻 合婚报告', sv6d:'两人命式20页 · 关系使用法',
+ guideLink:'第一次来吗？1分钟使用指南 →',
  ghT:'💞 恋爱·夫妻 合婚报告', ghS:'不打分 — 我们看的是为何吸引、为何冲突',
  ghW1:'两个人的分析', ghW1d:'解读两份命式，并看两者之间发生了什么',
  ghW2:'还给出使用方法', ghW2d:'告诉你哪些话说得通，哪些说不通',
@@ -1231,6 +1240,7 @@ fr: {
  ctS:"Choi Hyungchul, consultant en gestion agréé · 30 ans d'expérience, lecture personnelle",
  openBar:"<b>Offre d'ouverture · jusqu'au 30 septembre</b> &nbsp;<s>20 000 KRW</s> → <em>9 900 KRW</em>",
  tagGh:'100 000 KRW', sv6n:'Rapport de compatibilité', sv6d:'Deux thèmes · 20 pages · mode d’emploi',
+ guideLink:'Première visite ? Guide en 1 minute →',
  ghT:'💞 Rapport de compatibilité', ghS:'Aucune note — nous regardons pourquoi ça attire et pourquoi ça frotte',
  ghW1:'Deux thèmes, pas un', ghW1d:'Nous lisons les deux thèmes et ce qui se joue entre eux',
  ghW2:'Et le mode d’emploi', ghW2d:'Les mots qui passent, et ceux qui ne passent jamais',
@@ -1410,6 +1420,8 @@ const HTML = String.raw`
         <span class="go">›</span>
       </button>
     </div>
+
+    <a class="guidelink" href="/guide" data-i="guideLink">처음이신가요? 1분 이용 안내 →</a>
 
     <button class="todaybar" id="todaybar" data-go="today" data-from="todaybar" aria-label="오늘의 기운 보기">
       <span class="tb-tx">
