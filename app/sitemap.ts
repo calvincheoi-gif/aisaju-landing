@@ -22,6 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/ohaeng/`, changeFrequency: "weekly" as const, priority: 0.9 },
     { url: `${BASE_URL}/consult`, changeFrequency: "weekly" as const, priority: 0.9 },
     { url: `${BASE_URL}/learn`, changeFrequency: "weekly" as const, priority: 0.8 },
+    { url: `${BASE_URL}/guide`, changeFrequency: "monthly" as const, priority: 0.8 },
     { url: `${BASE_URL}/report`, changeFrequency: "monthly" as const, priority: 0.7 },
     { url: `${BASE_URL}/cases`, changeFrequency: "weekly" as const, priority: 0.7 },
     { url: `${BASE_URL}/qna`, changeFrequency: "weekly" as const, priority: 0.6 },
@@ -38,3 +39,4 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [...staticPages, ...learnPages];
 }
+
