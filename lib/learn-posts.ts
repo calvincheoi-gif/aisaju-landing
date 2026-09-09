@@ -102,22 +102,50 @@ export async function getLearnPost(slug: string): Promise<LearnPost | null> {
   return data as LearnPost;
 }
 
+/** 홈의 「이번 주 읽을거리」 블록이 실제로 쓰는 항목만 */
+export interface LearnCard {
+  slug: string;
+  title: string;
+  description: string;
+  excerpt: string;
+  category: string;
+  card_paths: string[];
+}
+
+/* 홈에서 select 할 컬럼. body(본문 전체)와 keywords 는 홈에서 쓰지 않으므로 가져오지 않는다.
+   예전에는 select("*") 라서 글이 길어질수록 홈이 같이 무거워졌다. */
+const CARD_COLS = "slug,title,description,excerpt,category,card_paths";
+
 /**
  * 홈에 띄울 「이번 주 읽을거리」.
  * featured 로 지정한 글이 있으면 그것을, 없으면 가장 최근 글을 쓴다.
+ *
+ * 두 질의 모두 limit(1) 이다 — 예전에는 대체본을 구할 때 공개된 글을 전부(본문까지)
+ * 읽어 와서 첫 번째만 쓰고 버렸다. 또 featured 글이 실수로 둘 이상이면
+ * maybeSingle() 이 오류를 냈는데, limit(1) 을 두어 그 경우에도 안전하게 하나를 고른다.
  */
-export async function getFeaturedLearnPost(): Promise<LearnPost | null> {
+export async function getFeaturedLearnCard(): Promise<LearnCard | null> {
   const supabase = getSupabaseServerClient();
   if (!supabase) return null;
-  const { data } = await supabase
+
+  const { data: featured } = await supabase
     .from("learn_posts")
-    .select("*")
+    .select(CARD_COLS)
     .eq("published", true)
     .eq("featured", true)
+    .limit(1)
     .maybeSingle();
-  if (data) return data as LearnPost;
-  const posts = await getPublishedLearnPosts();
-  return posts[0] ?? null;
+  if (featured) return featured as unknown as LearnCard;
+
+  const { data: latest } = await supabase
+    .from("learn_posts")
+    .select(CARD_COLS)
+    .eq("published", true)
+    .order("published_at", { ascending: false })
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return (latest as unknown as LearnCard) ?? null;
 }
 
 /**

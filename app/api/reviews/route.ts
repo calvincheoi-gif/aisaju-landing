@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getSupabaseServerClient, getSupabaseAdminClient } from "@/lib/supabase";
 
 export const runtime = "nodejs";
@@ -7,6 +8,19 @@ interface ReviewBody {
   name: string;
   content: string;
   rating?: number | null;
+}
+
+/**
+ * 홈에 캐시된 화면을 즉시 갈아 끼운다.
+ * 홈은 CDN 캐시를 쓰므로, 후기를 게시·숨김·삭제하면 이 호출로 곧바로 반영시킨다.
+ * 실패해도 저장은 이미 끝났으니 오류로 응답하지 않는다(늦어도 revalidate 시간 뒤 자동 반영).
+ */
+function refreshHome() {
+  try {
+    revalidatePath("/");
+  } catch {
+    /* 무시 */
+  }
 }
 
 const NAME_MAX = 20;
@@ -67,6 +81,7 @@ export async function PATCH(req: Request) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+  refreshHome();
   return NextResponse.json({ ok: true });
 }
 
@@ -89,6 +104,7 @@ export async function DELETE(req: Request) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+  refreshHome();
   return NextResponse.json({ ok: true });
 }
 

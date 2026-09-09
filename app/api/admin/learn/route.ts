@@ -1,10 +1,28 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { getSupabaseAdminClient } from "@/lib/supabase";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const BUCKET = "learn";
+
+/**
+ * 글이 바뀌면 캐시된 화면을 즉시 갈아 끼운다.
+ *
+ * 홈(/)과 읽을거리(/learn)는 CDN 캐시를 쓴다. 캐시를 그냥 두면 관리자에서 글을 올려도
+ * 잠시 옛 화면이 보인다. 이 한 줄이 그 자리를 대신하므로 캐시를 꺼 둘 필요가 없다.
+ * 실패해도 화면 갱신만 늦어질 뿐 저장은 이미 끝났으므로, 오류로 응답하지 않는다.
+ */
+function refreshPublicPages(slug?: string | null) {
+  try {
+    revalidatePath("/");
+    revalidatePath("/learn");
+    if (slug) revalidatePath(`/learn/${slug}`);
+  } catch {
+    /* 갱신 실패는 무시 — 최대 revalidate 시간 뒤에 자동으로 반영된다 */
+  }
+}
 
 function checkPassword(provided: string | null) {
   const expected = process.env.ADMIN_PASSWORD;
@@ -176,6 +194,7 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
+  refreshPublicPages(slug);
   return NextResponse.json({ post: data });
 }
 
@@ -204,6 +223,7 @@ export async function PATCH(req: Request) {
 
   const { error } = await supabase.from("learn_posts").update(patch).eq("id", json.id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  refreshPublicPages();
   return NextResponse.json({ ok: true });
 }
 
@@ -234,5 +254,6 @@ export async function DELETE(req: Request) {
 
   const { error } = await supabase.from("learn_posts").delete().eq("id", json.id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+  refreshPublicPages();
   return NextResponse.json({ ok: true });
 }
