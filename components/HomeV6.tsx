@@ -817,7 +817,7 @@ en: {
  smpBw:'20s–30s · career and relationships', smpBt:'A lamp waiting for firewood', smpBn:'Key pages →',
  smpNote:'The people are fictional. Your own report is written from your own chart',
  svNote:'The people are fictional. Your own report is written from your own chart',
- cbO1:'Full 20-page report · 9,900 KRW', cbO2:'Written by the expert · report only, no consultation',
+ cbO1:'Full 20-page report · 9,900 KRW', cbO2:'Reviewed by the expert · questions welcome via KakaoTalk Q&amp;A',
  cbQ1:'Special · 50,000 KRW', cbQ2:'Report + phone or KakaoTalk reading',
  cbD1:'Premium · 100,000 KRW', cbD2:'Report + 60-minute in-person reading',
  cbV1:'Visit · 140,000 KRW', cbV2:'We come to you · Seoul and the capital area',
@@ -973,7 +973,7 @@ ja: {
  smpBw:'20〜30代 · 仕事と関係', smpBt:'薪を待つ灯り', smpBn:'主要ページを見る →',
  smpNote:'登場人物は架空です。お届けするレポートはご本人の四柱で新たに作成します',
  svNote:'登場人物は架空です。お届けするレポートはご本人の四柱で新たに作成します',
- cbO1:'個人総合レポート20枚 · 9,900ウォン', cbO2:'専門家が直接作成 · 相談なしレポートのみ',
+ cbO1:'個人総合レポート20枚 · 9,900ウォン', cbO2:'専門家が直接監修 · ご質問はカカオトークQ&amp;Aへどうぞ',
  cbQ1:'Special · 50,000ウォン', cbQ2:'レポート + 電話・カカオトーク相談',
  cbD1:'Premium · 100,000ウォン', cbD2:'レポート + 対面相談60分',
  cbV1:'訪問相談 · 140,000ウォン', cbV2:'お近くまで伺います · ソウル首都圏',
@@ -1129,7 +1129,7 @@ zh: {
  smpBw:'20〜30岁 · 职业与关系', smpBt:'等柴的灯火', smpBn:'查看重点 →',
  smpNote:'人物为虚构。您收到的报告将依据本人四柱重新撰写',
  svNote:'人物为虚构。您收到的报告将依据本人四柱重新撰写',
- cbO1:'个人综合报告20页 · 9,900韩元', cbO2:'专家亲自撰写 · 仅报告，不含咨询',
+ cbO1:'个人综合报告20页 · 9,900韩元', cbO2:'专家亲自审核 · 欢迎通过 KakaoTalk Q&amp;A 提问',
  cbQ1:'Special · 50,000韩元', cbQ2:'报告 + 电话/KakaoTalk 解读',
  cbD1:'Premium · 100,000韩元', cbD2:'报告 + 面谈60分钟',
  cbV1:'上门咨询 · 140,000韩元', cbV2:'我们上门 · 首尔及首都圈',
@@ -1285,7 +1285,7 @@ fr: {
  smpBw:'20–30 ans · carrière et liens', smpBt:'Une lampe qui attend son bois', smpBn:'Pages clés →',
  smpNote:'Les personnes sont fictives. Votre rapport est rédigé à partir de votre propre thème',
  svNote:'Les personnes sont fictives. Votre rapport est rédigé à partir de votre propre thème',
- cbO1:'Rapport complet 20 pages · 9 900 KRW', cbO2:"Rédigé par l'expert · rapport seul, sans consultation",
+ cbO1:'Rapport complet 20 pages · 9 900 KRW', cbO2:"Relu par l'expert · vos questions sont bienvenues via KakaoTalk Q&amp;A",
  cbQ1:'Special · 50 000 KRW', cbQ2:'Rapport + échange par téléphone ou KakaoTalk',
  cbD1:'Premium · 100 000 KRW', cbD2:'Rapport + 60 minutes en personne',
  cbV1:'Déplacement · 140 000 KRW', cbV2:'Nous venons à vous · Séoul et sa région',
@@ -1528,7 +1528,7 @@ const HTML = String.raw`
       <div class="cs" data-i="ctS">경영지도사 최형철 · 30년 경력이 직접 해석합니다</div>
       <div class="openbar" data-i="openBar"><b>오픈기념 · 9월 30일까지</b> &nbsp;<s>20,000원</s> → <em>9,900원</em></div>
       <div class="cbtns">
-        <button class="cb cb-open cb-wide" data-go="consult" data-from="svc_open" data-ev="open_price_click" data-q="mode=simple&item=reportOnly"><span class="b1" data-i="cbO1">개인 종합 리포트 20장 · 9,900원</span><span class="b2" data-i="cbO2">전문가가 직접 작성 · 상담 없이 리포트만</span></button>
+        <button class="cb cb-open cb-wide" data-go="consult" data-from="svc_open" data-ev="open_price_click" data-q="mode=simple&item=reportOnly"><span class="b1" data-i="cbO1">개인 종합 리포트 20장 · 9,900원</span><span class="b2" data-i="cbO2">전문가가 직접 감수 · 궁금한 점은 카카오톡 Q&amp;A 환영</span></button>
         <button class="cb cb-quick" data-go="consult" data-from="svc_quick" data-q="mode=simple&item=reportPlusCall"><span class="b1" data-i="cbQ1">Special · 50,000원</span><span class="b2" data-i="cbQ2">리포트 + 전화·톡 상담</span></button>
         <button class="cb cb-deep" data-go="consult" data-from="svc_deep" data-q="mode=simple&item=reportPlusMeeting"><span class="b1" data-i="cbD1">Premium · 100,000원</span><span class="b2" data-i="cbD2">리포트 + 대면 상담 60분</span></button>
         <button class="cb cb-visit cb-wide" data-go="consult" data-from="svc_visit" data-q="mode=detail&naming=140000"><span class="b1" data-i="cbV1">방문 상담 · 140,000원</span><span class="b2" data-i="cbV2">고객 근처로 찾아갑니다 · 서울·수도권</span></button>
