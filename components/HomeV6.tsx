@@ -1900,6 +1900,12 @@ function track(name: string, props: Record<string, unknown> = {}) {
     const q = new URLSearchParams(window.location.search);
     const now: Record<string, string> = {};
     ["utm","utm_source","utm_medium","utm_campaign"].forEach(k => { const v = q.get(k); if (v) now[k] = v; });
+    /* 공유 버튼으로 퍼진 주소(…/#s)로 들어온 방문 — utm=share 로 셈한다.
+       기록한 뒤 #s 는 주소에서 지워, 이 사람이 다시 공유할 때 꼬리표가 겹치지 않게 한다 */
+    if (window.location.hash === "#s") {
+      now.utm = "share";
+      try { history.replaceState(null, "", window.location.pathname + window.location.search); } catch {}
+    }
     if (Object.keys(now).length) ls.setItem("aisaju_utm", JSON.stringify(now));
     let u: Record<string, string> = {}; try { u = JSON.parse(ls.getItem("aisaju_utm") || "{}"); } catch {}
     const w = window.innerWidth;
@@ -2761,9 +2767,11 @@ export default function HomeV6(
 
     /* ══════════ 공유 ══════════
        · 폰은 OS 공유 시트(카톡·문자·메모가 그대로 뜬다), 그게 없는 PC는 주소 복사로 떨어진다
-       · ?utm=share 를 붙여 두면 나중에 「지인 소개로 들어온 사람」을 따로 셀 수 있다
-       · 미리보기에 뜨는 그림·문구는 여기가 아니라 app/layout.tsx 의 openGraph 가 정한다 */
-    const SHARE_URL = "https://aisajulab.com/?utm=share";
+       · 보내는 것은 주소 한 줄뿐이다. 제목·설명을 같이 실으면 카톡이 그냥 글로 취급해
+         미리보기 카드를 만들지 않는 일이 있었다. 카드 안의 제목·그림은 app/layout.tsx 의 openGraph 가 정한다
+       · 추적은 ?utm= 대신 #s 를 쓴다. # 뒤는 서버로 가지 않아 카톡 미리보기에 영향이 없고,
+         들어온 브라우저에서 track() 이 읽어 「지인 소개 유입」으로 기록한 뒤 주소에서 지운다 */
+    const SHARE_URL = "https://aisajulab.com/#s";
     const SHARE_L: Record<Lang, { t: string; d: string; ok: string; no: string }> = {
       ko: { t: "AI사주랩.com", d: "나의 오행 성격, 1분이면 나옵니다 — 가입 없이",
             ok: "주소를 복사했습니다. 붙여넣기로 보내세요", no: "주소: aisajulab.com" },
@@ -2792,7 +2800,7 @@ export default function HomeV6(
       const L = SHARE_L[LANG] || SHARE_L.ko;
       if (typeof navigator !== "undefined" && navigator.share) {
         try {
-          await navigator.share({ title: L.t, text: L.d, url: SHARE_URL });
+          await navigator.share({ url: SHARE_URL });
           track("share_done", { from, how: "sheet" });
         } catch {
           /* 사용자가 공유 시트를 닫은 경우 — 아무 일도 없었던 것처럼 둔다 */
