@@ -25,14 +25,37 @@ export const metadata: Metadata = {
       "naver-site-verification": "b141b457220f4988533588043233f5c325455b07",
     },
   },
+  /**
+   * 카카오톡·문자·SNS에 주소를 붙여넣었을 때 뜨는 미리보기.
+   *
+   * images 를 지정하지 않으면 카톡이 페이지 안에서 아무 그림이나 골라 쓴다.
+   * 실제로 작명 3종 세트 사진이 뽑혀 나오는 일이 있었다. 홈 첫 화면을 담은
+   * /og-home.jpg 를 못 박아 둔다. 이미지를 바꾸면 카톡이 한동안 옛 그림을
+   * 물고 있으므로, 아래 도구에서 캐시를 지워야 새 그림이 보인다.
+   *   https://developers.kakao.com/tool/debugger/sharing
+   */
   openGraph: {
-    title: "AI사주 Lab | AI와 명리학으로 완성하는 인생·비즈니스 의사결정",
+    title: "AI사주랩.com | 나의 오행 성격, 1분이면 나옵니다",
     description:
-      "AI와 명리학으로 인생과 비즈니스의 중요한 의사결정을 돕는 플랫폼",
+      "질문 14개로 보는 나의 오행 성격과 오늘의 기운. 가입 없이 바로 · 무료",
     url: "https://aisajulab.com",
     siteName: "AI사주 Lab",
     locale: "ko_KR",
     type: "website",
+    images: [
+      {
+        url: "/og-home.jpg",
+        width: 1200,
+        height: 630,
+        alt: "AI사주랩.com — 나의 오행 성격, 1분이면 나옵니다",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AI사주랩.com | 나의 오행 성격, 1분이면 나옵니다",
+    description: "질문 14개로 보는 나의 오행 성격과 오늘의 기운. 가입 없이 바로",
+    images: ["/og-home.jpg"],
   },
 };
 
