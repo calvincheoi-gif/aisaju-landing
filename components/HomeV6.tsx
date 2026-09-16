@@ -37,6 +37,28 @@ body{
 .burger{width:32px;height:32px;border:1px solid var(--line);background:#fff;border-radius:9px;display:grid;place-items:center;gap:3.5px}
 .burger i{display:block;width:14px;height:1.7px;background:var(--navy);border-radius:2px}
 
+/* ── 공유 ──
+   지인에게 보낼 길이 없어 카톡 주소창에 직접 치는 일이 있었다.
+   항상 보이는 상단바와, 끝까지 읽은 사람을 위한 채널 섹션 두 곳에 둔다. */
+.shr{width:32px;height:32px;border:1px solid var(--line);background:#fff;border-radius:9px;
+  display:grid;place-items:center;cursor:pointer;padding:0}
+.shr:hover{background:var(--blue-p);border-color:var(--blue-l)}
+.shr svg{width:16px;height:16px;stroke:var(--navy);fill:none;stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round}
+.sharebar{display:inline-flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;
+  padding:12px 20px;border:0;border-radius:99px;cursor:pointer;font-family:inherit;
+  font-size:13.6px;font-weight:800;letter-spacing:-.035em;color:#fff;
+  background:linear-gradient(135deg,#3B82F6,#1D4ED8);box-shadow:0 4px 12px rgba(29,78,216,.26)}
+.sharebar:active{transform:translateY(1px);box-shadow:0 1px 5px rgba(29,78,216,.2)}
+.sharebar svg{width:15px;height:15px;stroke:#fff;fill:none;stroke-width:2;
+  stroke-linecap:round;stroke-linejoin:round}
+/* 공유 시트가 없는 환경에서 「복사했습니다」를 알리는 자리 */
+.toast{position:fixed;left:50%;bottom:76px;transform:translate(-50%,14px);z-index:95;
+  max-width:86%;padding:11px 18px;border-radius:99px;background:rgba(17,33,61,.94);color:#fff;
+  font-size:12.6px;font-weight:700;letter-spacing:-.03em;text-align:center;line-height:1.5;
+  opacity:0;pointer-events:none;transition:opacity .2s,transform .2s}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
 /* ── 히어로 (1화면 안에 CTA까지) ── */
 .hero{position:relative;padding:14px var(--pad) 20px;text-align:center;overflow:hidden;
   background:radial-gradient(120% 66% at 50% -14%,#fff 0%,#E9F1FF 44%,#F5F9FF 100%)}
@@ -495,6 +517,9 @@ footer .lg{display:inline-block;margin:6px 12px 0 0;color:rgba(255,255,255,.85);
 .smpcard .sc-t{display:block;font-size:12.4px;font-weight:900;color:#fff;letter-spacing:-.04em;margin-top:2px;line-height:1.3}
 .smpcard .sc-n{display:inline-block;margin-top:6px;padding:3px 9px;border-radius:999px;
   background:#2F7FF0;color:#fff;font-size:9.8px;font-weight:800;letter-spacing:-.03em}
+.smpsub{margin:-4px 0 9px;font-size:10.8px;line-height:1.6;color:#33558C;
+  letter-spacing:-.035em;text-align:center}
+.smpsub b{color:#12224A}
 .smpnote{margin-top:9px;font-size:10px;color:#4E6E9C;letter-spacing:-.03em;text-align:center;line-height:1.5}
 @media(max-width:352px){.smpcard .sc-t{font-size:11.4px}.smpcard .sc-w{font-size:9.4px}}
 /* 전체화면 뷰어 */
@@ -786,7 +811,8 @@ en: {
  ghC3:'Request →', ghX1:'Who it is for', ghX1d:'· Couples who keep having the same argument<br>· Couples about to marry<br>· When your partner’s silence makes no sense',
  ghNote:'We need your partner’s birth date and time · we can proceed without the time',
  smpCw:'Couple compatibility', smpCt:'The river and the lamp', smpCn:'See all →',
- smpTit:'📄 We show you the actual report, in full',
+ smpTit:'📄 One sharp page beats a hundred — 20 pages, essentials only',
+ smpSub:'We don\'t produce 100–200 page AI reports padded with filler. <b>Below is a real report shown in full, page by page.</b>',
  smpAw:'40s–50s · work and money', smpAt:'A gem waiting for water', smpAn:'See all →',
  smpBw:'20s–30s · career and relationships', smpBt:'A lamp waiting for firewood', smpBn:'Key pages →',
  smpNote:'The people are fictional. Your own report is written from your own chart',
@@ -836,6 +862,7 @@ en: {
  h2Ch:'Find us elsewhere too',
  ch1:'Daangn business profile', ch2:'Naver blog', ch3:'KakaoTalk channel',
  ch4:'Instagram', ch5:'Myeongnihak self-study cafe',
+ shareBtn:'Tell a friend about this site',
  ftBrand:'AIsajuLab.com', ftTag:'AI analyses; myeongnihak finds the direction',
  ftDisc:'Results are AI-generated content grounded in myeongnihak. They are not scientific fact and do not guarantee the future.',
  bizName:'Business name: Life &amp; Biz Growth Institute (라이프앤비즈 성장 연구소) · Representative: Choi Hyungchul',
@@ -940,7 +967,8 @@ ja: {
  ghC3:'申し込む →', ghX1:'こんな方へ', ghX1d:'· 同じことで繰り返し揉めるお二人<br>· 結婚を控えたお二人<br>· 相手の沈黙が理解できない方',
  ghNote:'お相手の生年月日時が必要です · 時間が不明でも進められます',
  smpCw:'恋愛・夫婦の相性', smpCt:'川と灯り', smpCn:'すべて見る →',
- smpTit:'📄 実際のレポートをそのままお見せします',
+ smpTit:'📄 寸鉄活人 — 要点だけを20ページに',
+ smpSub:'分量だけを重ねた100〜200ページのAIレポートは作りません。<b>以下は実際のレポートを一枚も省かずお見せするサンプルです。</b>',
  smpAw:'40〜50代 · 仕事とお金', smpAt:'水を待つ宝石', smpAn:'すべて見る →',
  smpBw:'20〜30代 · 仕事と関係', smpBt:'薪を待つ灯り', smpBn:'主要ページを見る →',
  smpNote:'登場人物は架空です。お届けするレポートはご本人の四柱で新たに作成します',
@@ -990,6 +1018,7 @@ ja: {
  h2Ch:'ほかの場所でも会えます',
  ch1:'タンジン ビジネスプロフィール', ch2:'NAVER ブログ', ch3:'カカオトークチャンネル',
  ch4:'Instagram', ch5:'命理学 Self-study カフェ',
+ shareBtn:'友だちにこのサイトを教える',
  ftBrand:'AIsajuLab.com', ftTag:'AIが分析し、命理学が方向を見つけます',
  ftDisc:'診断結果は命理学にもとづくAI生成コンテンツであり、科学的事実や未来を保証するものではありません。',
  bizName:'商号 ライフアンドビズ(Life &amp; Biz) 成長研究所 · 代表 チェ・ヒョンチョル',
@@ -1094,7 +1123,8 @@ zh: {
  ghC3:'立即申请 →', ghX1:'适合这样的两位', ghX1d:'· 总为同一件事争吵的两位<br>· 即将结婚的两位<br>· 无法理解对方沉默的人',
  ghNote:'需要对方的出生年月日时 · 不知道时辰也可以进行',
  smpCw:'恋爱·夫妻合婚', smpCt:'江水与灯火', smpCn:'查看全部 →',
- smpTit:'📄 实际报告，原样呈现',
+ smpTit:'📄 寸铁活人 — 只留精华，20页',
+ smpSub:'我们不做用篇幅堆砌的100～200页AI报告。<b>以下为实际报告，一页不删，原样呈现。</b>',
  smpAw:'40〜50岁 · 事业与财运', smpAt:'等水的宝石', smpAn:'查看全部 →',
  smpBw:'20〜30岁 · 职业与关系', smpBt:'等柴的灯火', smpBn:'查看重点 →',
  smpNote:'人物为虚构。您收到的报告将依据本人四柱重新撰写',
@@ -1144,6 +1174,7 @@ zh: {
  h2Ch:'在别的地方也能找到我们',
  ch1:'Daangn 商家主页', ch2:'NAVER 博客', ch3:'KakaoTalk 频道',
  ch4:'Instagram', ch5:'命理学 Self-study 社群',
+ shareBtn:'把这个网站告诉朋友',
  ftBrand:'AIsajuLab.com', ftTag:'AI 做分析，命理学找方向',
  ftDisc:'测试结果是以命理学为基础的 AI 生成内容，并非科学事实，也不保证未来。',
  bizName:'商号 Life &amp; Biz 成长研究所 (라이프앤비즈 성장 연구소) · 代表 崔炯哲',
@@ -1248,7 +1279,8 @@ fr: {
  ghC3:'Demander →', ghX1:'Pour qui', ghX1d:'· Les couples qui refont la même dispute<br>· Avant un mariage<br>· Quand le silence de l’autre reste opaque',
  ghNote:'La date et l’heure de naissance de votre partenaire sont nécessaires · possible sans l’heure',
  smpCw:'Compatibilité de couple', smpCt:'La rivière et la lampe', smpCn:'Tout voir →',
- smpTit:'📄 Nous montrons le rapport réel, en entier',
+ smpTit:'📄 L\'essentiel en 20 pages, rien de plus',
+ smpSub:'Nous ne produisons pas de rapports IA de 100 à 200 pages remplis de remplissage. <b>Voici un rapport réel, montré page par page.</b>',
  smpAw:'40–50 ans · travail et argent', smpAt:"Un joyau qui attend l'eau", smpAn:'Tout voir →',
  smpBw:'20–30 ans · carrière et liens', smpBt:'Une lampe qui attend son bois', smpBn:'Pages clés →',
  smpNote:'Les personnes sont fictives. Votre rapport est rédigé à partir de votre propre thème',
@@ -1298,6 +1330,7 @@ fr: {
  h2Ch:'On se retrouve aussi ailleurs',
  ch1:'Profil pro Daangn', ch2:'Blog Naver', ch3:'Chaîne KakaoTalk',
  ch4:'Instagram', ch5:'Café Self-study myeongnihak',
+ shareBtn:'Parler du site à un ami',
  ftBrand:'AIsajuLab.com', ftTag:"L'IA analyse ; le myeongnihak trouve la direction",
  ftDisc:"Les résultats sont un contenu généré par IA fondé sur le myeongnihak. Ils ne constituent pas un fait scientifique et ne garantissent pas l'avenir.",
  bizName:'Raison sociale : Life &amp; Biz Growth Institute (라이프앤비즈 성장 연구소) · Représentant : Choi Hyungchul',
@@ -1319,6 +1352,9 @@ const HTML = String.raw`
     <div class="brand"><span class="bn" data-i="brand">AI<span>사주랩</span>.com</span> <small data-i="brandSub">AI × 명리학</small></div>
     <div class="util">
       <span class="ver">v1.0.0</span>
+      <button class="shr" type="button" data-go="share" data-from="top" aria-label="공유하기" title="친구에게 공유하기">
+        <svg viewBox="0 0 24 24"><circle cx="18" cy="5.5" r="2.8"/><circle cx="6" cy="12" r="2.8"/><circle cx="18" cy="18.5" r="2.8"/><path d="M8.5 10.6 15.5 6.9M8.5 13.4l7 3.7"/></svg>
+      </button>
       <div class="langbox" id="langbox">
         <button class="langbtn" id="langbtn" type="button" aria-haspopup="true" aria-expanded="false">
           <span id="langnow">한국어</span><i>▾</i>
@@ -1499,7 +1535,8 @@ const HTML = String.raw`
       </div>
       <div class="pricenote" data-i="priceNote">리포트는 네 가지 모두 같은 20장입니다 · 차이는 상담 방식뿐입니다</div>
       <div class="smpwrap">
-        <div class="smptit" data-i="smpTit">📄 실제 리포트를 한 장도 빼지 않고 보여드립니다</div>
+        <div class="smptit" data-i="smpTit">📄 촌철활인(寸鐵活人) · 핵심만 20장에 담습니다</div>
+        <div class="smpsub" data-i="smpSub">분량으로 채운 100~200장짜리 AI 리포트는 만들지 않습니다. 읽고 바로 쓸 수 있는 말만 남깁니다. <b>아래는 실제 리포트를 한 장도 빼지 않고 그대로 보여드리는 샘플입니다.</b></div>
         <div class="smpgrid">
           <button class="smpcard" data-smp="a" data-from="consult">
             <span class="sc-ph"><span class="sc-fr"><img src="/img/report-sample/a01.webp" alt="" loading="lazy" width="1280" height="720"></span><span class="sc-pg">20장</span></span>
@@ -1813,6 +1850,12 @@ const HTML = String.raw`
       <a class="ch-btn hot insta" href="https://www.instagram.com/choi_calvin" target="_blank" rel="noopener" data-i="ch4">인스타그램</a>
       <a class="ch-btn" href="https://cafe.daangn.com/sajupalja-myeon?utm_medium=copy_link" target="_blank" rel="noopener" data-i="ch5">명리학 Self-study 카페</a>
     </div>
+    <div style="text-align:center">
+      <button class="sharebar" type="button" data-go="share" data-from="channels">
+        <svg viewBox="0 0 24 24"><circle cx="18" cy="5.5" r="2.8"/><circle cx="6" cy="12" r="2.8"/><circle cx="18" cy="18.5" r="2.8"/><path d="M8.5 10.6 15.5 6.9M8.5 13.4l7 3.7"/></svg>
+        <span data-i="shareBtn">친구에게 이 사이트 알려주기</span>
+      </button>
+    </div>
   </section>
 
   <div class="voc bot" data-i="voc2">AI사주랩.com은 항상 고객님의 VOC와 지속적인 분석, 리포트 Quality 개선을 통해 고객 만족도, 삶의 질 향상에 최선을 다하겠습니다.</div>
@@ -1835,6 +1878,8 @@ const HTML = String.raw`
     <span data-i="copy">© 2026 최형철 사주명리 연구소</span>
   </footer>
 </div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <nav class="tabbar">
   <button class="tb on" data-go="top" data-from="tab"><span class="ti"><svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10.5V20h13v-9.5"/></svg></span><span data-i="tabHome">홈</span></button>
@@ -2714,6 +2759,55 @@ export default function HomeV6(
 
     applyLang();
 
+    /* ══════════ 공유 ══════════
+       · 폰은 OS 공유 시트(카톡·문자·메모가 그대로 뜬다), 그게 없는 PC는 주소 복사로 떨어진다
+       · ?utm=share 를 붙여 두면 나중에 「지인 소개로 들어온 사람」을 따로 셀 수 있다
+       · 미리보기에 뜨는 그림·문구는 여기가 아니라 app/layout.tsx 의 openGraph 가 정한다 */
+    const SHARE_URL = "https://aisajulab.com/?utm=share";
+    const SHARE_L: Record<Lang, { t: string; d: string; ok: string; no: string }> = {
+      ko: { t: "AI사주랩.com", d: "나의 오행 성격, 1분이면 나옵니다 — 가입 없이",
+            ok: "주소를 복사했습니다. 붙여넣기로 보내세요", no: "주소: aisajulab.com" },
+      en: { t: "AIsajuLab.com", d: "Your Five-Element type in one minute — no sign-up",
+            ok: "Link copied. Paste it to share", no: "Link: aisajulab.com" },
+      ja: { t: "AIsajuLab.com", d: "私の五行タイプ、1分でわかります — 登録不要",
+            ok: "リンクをコピーしました", no: "リンク: aisajulab.com" },
+      zh: { t: "AIsajuLab.com", d: "我的五行性格，1分钟出结果 — 无需注册",
+            ok: "已复制链接", no: "链接: aisajulab.com" },
+      fr: { t: "AIsajuLab.com", d: "Votre type des cinq éléments en une minute — sans inscription",
+            ok: "Lien copié", no: "Lien : aisajulab.com" },
+    };
+
+    const toastEl = root.querySelector<HTMLElement>("#toast");
+    let toastTimer = 0;
+    const showToast = (msg: string) => {
+      if (!toastEl) return;
+      toastEl.textContent = msg;
+      toastEl.classList.add("on");
+      window.clearTimeout(toastTimer);
+      toastTimer = window.setTimeout(() => toastEl.classList.remove("on"), 2400);
+    };
+
+    const doShare = async (from: string) => {
+      track("share_click", { from });
+      const L = SHARE_L[LANG] || SHARE_L.ko;
+      if (typeof navigator !== "undefined" && navigator.share) {
+        try {
+          await navigator.share({ title: L.t, text: L.d, url: SHARE_URL });
+          track("share_done", { from, how: "sheet" });
+        } catch {
+          /* 사용자가 공유 시트를 닫은 경우 — 아무 일도 없었던 것처럼 둔다 */
+        }
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(SHARE_URL);
+        showToast(L.ok);
+        track("share_done", { from, how: "copy" });
+      } catch {
+        showToast(L.no);
+      }
+    };
+
     const onClick = (e: Event) => {
       const smp = (e.target as HTMLElement)?.closest?.("[data-smp]") as HTMLElement | null;
       if (smp) { e.preventDefault(); svOpen(smp.dataset.smp || "a"); return; }
@@ -2777,6 +2871,7 @@ export default function HomeV6(
         track("svc_click", { to: "naming", from });
         document.getElementById("naming")?.scrollIntoView({ behavior: "smooth", block: "start" });
       }
+      else if (go === "share") { void doShare(from); }
       else if (go === "top") { window.scrollTo({ top: 0, behavior: "smooth" }); }
     };
     root.addEventListener("click", onClick);
