@@ -42,11 +42,13 @@ export const metadata: Metadata = {
     siteName: "AI사주 Lab",
     locale: "ko_KR",
     type: "website",
+    /* 정사각(1:1)을 주면 카톡이 큰 카드 대신 작은 썸네일로 보여준다 — 폰에서 아담하게.
+       가로판(/og-home.jpg)은 트위터·슬랙 등 큰 카드가 어울리는 곳에만 쓴다. */
     images: [
       {
-        url: "/og-home.jpg",
-        width: 1200,
-        height: 630,
+        url: "/og-home-sq.jpg",
+        width: 800,
+        height: 800,
         alt: "AI사주랩.com — 나의 오행 성격, 1분이면 나옵니다",
       },
     ],
