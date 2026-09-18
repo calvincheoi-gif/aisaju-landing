@@ -142,6 +142,9 @@ interface Dictionary {
     payLawBody: string;
     payRefundLink: string;
     payCopyBtn: string;
+    kakaoSendBtn: string;
+    kakaoSendHint: string;
+    kakaoSendCopied: string;
     payCopied: string;
     payVat: string;
     namingNoticeT: string;
@@ -350,6 +353,9 @@ const ko: Dictionary = {
     payLawBody: "리포트는 발송이 시작된 뒤에는 전자상거래법 제17조 제2항 제5호에 따라 청약철회가 제한됩니다. 상담은 시작 전까지 전액 환불됩니다.",
     payRefundLink: "환불·청약철회 규정 보기",
     payCopyBtn: "신청 내용 복사",
+    kakaoSendBtn: "카카오톡으로 접수번호 보내기",
+    kakaoSendHint: "누르면 접수번호가 복사되고 대화창이 열립니다. 붙여넣어 보내 주세요 — 입금이 확인되면 이 대화창으로 안내드립니다.",
+    kakaoSendCopied: "접수번호를 복사했습니다 · 카카오톡 대화창에 붙여넣어 보내 주세요",
     payCopied: "복사했습니다",
     payVat: "부가세 포함 금액입니다.",
     namingNoticeT: "작명 신청 전 꼭 확인해 주세요",
@@ -568,6 +574,9 @@ const en: Dictionary = {
     payLawBody: "Once delivery of the report has begun, withdrawal is restricted under Article 17(2)5 of the Korean E-Commerce Act. Consultations are fully refundable until they begin.",
     payRefundLink: "See the refund policy",
     payCopyBtn: "Copy this request",
+    kakaoSendBtn: "Send my reference no. via KakaoTalk",
+    kakaoSendHint: "Copies your reference number and opens the chat. Paste and send it — once payment is confirmed, we reply in that same chat.",
+    kakaoSendCopied: "Reference number copied · paste it into the KakaoTalk chat",
     payCopied: "Copied",
     payVat: "VAT included.",
     namingNoticeT: "Before you request a naming",
@@ -786,6 +795,9 @@ const ja: Dictionary = {
     payLawBody: "レポートは発送が開始された後、韓国の電子商取引法第17条第2項第5号により申込みの撤回が制限されます。相談は開始前であれば全額返金いたします。",
     payRefundLink: "返金・撤回規定を見る",
     payCopyBtn: "申込内容をコピー",
+    kakaoSendBtn: "カカオトークで受付番号を送る",
+    kakaoSendHint: "押すと受付番号がコピーされ、トーク画面が開きます。貼り付けて送信してください。入金確認後、同じトークでご案内します。",
+    kakaoSendCopied: "受付番号をコピーしました · トーク画面に貼り付けて送信してください",
     payCopied: "コピーしました",
     payVat: "消費税込みの金額です。",
     namingNoticeT: "命名のお申込み前にご確認ください",
@@ -1004,6 +1016,9 @@ const zh: Dictionary = {
     payLawBody: "报告一旦开始发送，依据韩国《电子商务法》第17条第2款第5项，撤销申请将受到限制。咨询在开始之前可全额退款。",
     payRefundLink: "查看退款与撤销规定",
     payCopyBtn: "复制申请内容",
+    kakaoSendBtn: "通过 KakaoTalk 发送受理编号",
+    kakaoSendHint: "点击后会复制受理编号并打开聊天窗口，粘贴发送即可。确认到款后，我们在同一聊天窗口回复您。",
+    kakaoSendCopied: "已复制受理编号 · 请粘贴到 KakaoTalk 聊天窗口发送",
     payCopied: "已复制",
     payVat: "含增值税。",
     namingNoticeT: "申请取名前请务必确认",
@@ -1222,6 +1237,9 @@ const fr: Dictionary = {
     payLawBody: "Une fois l'envoi du rapport commencé, la rétractation est limitée par l'article 17(2)5 de la loi coréenne sur le commerce électronique. Les consultations sont intégralement remboursables tant qu'elles n'ont pas commencé.",
     payRefundLink: "Voir la politique de remboursement",
     payCopyBtn: "Copier ma demande",
+    kakaoSendBtn: "Envoyer mon n° de dossier via KakaoTalk",
+    kakaoSendHint: "Copie votre numéro de dossier et ouvre la discussion. Collez-le et envoyez — dès réception du paiement, nous répondons dans cette même discussion.",
+    kakaoSendCopied: "Numéro copié · collez-le dans la discussion KakaoTalk",
     payCopied: "Copié",
     payVat: "TVA incluse.",
     namingNoticeT: "Avant de demander une nomination",

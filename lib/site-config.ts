@@ -38,6 +38,10 @@ export const siteConfig = {
     daangn: "https://www.daangn.com/kr/local-profile/yhqzhrhmoopf/?referrer=share",
     naverBlog: "https://m.blog.naver.com/naming_supporter",
     kakaoChannel: "https://open.kakao.com/o/gj3iUKai",
+    /* 신청 완료 화면의 「카카오톡으로 접수번호 보내기」 버튼이 여는 대화창.
+       AI사주랩.com 카카오톡 채널(2026-09-18 개설, 검색 ID aisajulab)의 1:1 대화창이다.
+       채널은 환영 메시지·자동응답이 되고, 오픈채팅(위 kakaoChannel)은 대화만 된다. */
+    kakaoIntake: "https://pf.kakao.com/_cERaX/chat",
     instagram: "https://www.instagram.com/choi_calvin?igsh=OWQwdjR4MDV6Nnln",
     cafe: "https://cafe.daangn.com/sajupalja-myeon?utm_medium=copy_link",
   },
