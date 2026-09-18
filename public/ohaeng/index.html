@@ -3927,7 +3927,7 @@ const prev1=()=>goBack();
 function doReveal(){
   $("revels").innerHTML=ORDER.map(k=>`<span style="color:${EL[k].tc}">${EL[k].han}</span>`).join("");
   showRaw("reveal");            /* 히스토리에 남기지 않는다 — 결과에서 뒤로 = 마지막 문항 */
-  setTimeout(finish1,1450);
+  setTimeout(finish1,900);   /* 1.45초는 폰에서 길게 느껴졌다 */
 }
 
 /* ═══════════ 계산 · 음양 · 상징 ═══════════ */
@@ -4131,7 +4131,9 @@ function finish1(reRender){
   if(!reRender){R1=analyze(baseScore());bump("d",R1.nameKo);window.AJ&&AJ.track("ohaeng_complete",{props:{type:R1.nameKo,balance:R1.bal}})}
   else R1=analyze(R1.s,true);
   rateReset();
-  setTimeout(function(){ try{ window.AJ_skinPreview&&window.AJ_skinPreview(); }catch(e){} },400);
+  /* 스킨 미리보기(1080px 캔버스 한 장)는 여기서 그리지 않는다 — 결과가 뜨는 순간 화면을 멈추게 했다.
+     스킨 스위치가 화면에 들어올 때 스킨 모듈이 그린다 */
+  if(window.AJ_skinPreviewReset) window.AJ_skinPreviewReset();
   steps4($("sx1"),1);
   const S=EL[R1.strong],W=EL[R1.weak];
   $("t1m").textContent=R1.mod||"";
@@ -7753,7 +7755,7 @@ setTimeout(demo,60);
     });
     try{ localStorage.setItem(KEY, sk); }catch(e){}
     if(sk==="gradient") tint();
-    preview();
+    if(pvDrawn) preview();      /* 첫 진입에서는 그리지 않는다 — 스위치가 보일 때 그린다 */
   }
   function tint(){
     try{
@@ -7778,14 +7780,25 @@ setTimeout(demo,60);
   }
   var saved="classic";
   try{ saved=norm(localStorage.getItem(KEY)||"classic"); }catch(e){}
+  /* 미리보기는 스킨 스위치가 화면에 들어올 때 한 번 그린다. 결과가 뜨는 순간에 그리면
+     1080px 캔버스 작업이 화면 전환을 붙들어 '읽는 중'이 길게 느껴졌다. */
+  var pvDrawn=false;
+  function lazySkinPreview(){ if(pvDrawn) return; pvDrawn=true; preview(); }
+  function watchSwitch(){
+    var sw=document.getElementById("skinsw"); if(!sw||!("IntersectionObserver" in window)) return;
+    var io=new IntersectionObserver(function(es){ es.forEach(function(en){ if(en.isIntersecting) lazySkinPreview(); }); },{threshold:0.2});
+    io.observe(sw);
+  }
   function init(){
     paint(saved);
     var sw=document.getElementById("skinsw");
     if(sw) sw.addEventListener("click", function(e){
       var t=e.target.closest?e.target.closest("[data-skin]"):null;
-      if(t) paint(t.getAttribute("data-skin"));
+      if(t){ pvDrawn=true; paint(t.getAttribute("data-skin")); }
     });
+    watchSwitch();
     window.AJ_skinPreview=preview;
+    window.AJ_skinPreviewReset=function(){ pvDrawn=false; var img=document.getElementById("skinPvImg"); if(img) img.classList.remove("on"); };
   }
   if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", init);
   else init();
