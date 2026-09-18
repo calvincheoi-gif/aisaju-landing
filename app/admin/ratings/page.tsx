@@ -13,13 +13,41 @@ interface TypeStat {
   count: number;
   avg: number;
   dist: [number, number, number, number, number];
+  reasons: Record<string, number>;
   notes: { score: number; note: string; at: string }[];
 }
 interface Summary {
   total: number;
   avg: number;
+  reasons: Record<string, number>;
   types: TypeStat[];
   recentNotes: { type: string; score: number; note: string; at: string }[];
+}
+
+/* 앱의 이유 키 → 사람이 읽는 말 (public/ohaeng/index.html 의 RATE_R 과 짝) */
+const REASON_LABEL: Record<string, string> = {
+  diff: "성격이 나와 달라요",
+  vague: "누구에게나 맞는 말 같아요",
+  q: "질문이 애매했어요",
+  name: "유형 이름·표현이 안 와닿아요",
+  design: "카드 디자인이 별로예요",
+  advice: "조언·보완 기운이 와닿지 않아요",
+};
+function ReasonBars({ reasons }: { reasons: Record<string, number> }) {
+  const rows = Object.entries(reasons).sort((a, b) => b[1] - a[1]);
+  if (rows.length === 0) return null;
+  const max = Math.max(1, ...rows.map((r) => r[1]));
+  return (
+    <ul className="space-y-1">
+      {rows.map(([k, n]) => (
+        <li key={k} className="flex items-center gap-2 text-[12.5px]">
+          <span className="w-44 shrink-0 text-body">{REASON_LABEL[k] ?? k}</span>
+          <span className="h-2 rounded-sm bg-red-300" style={{ width: `${(n / max) * 120}px` }} />
+          <span className="text-ink-900">{n}</span>
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 function stars(n: number) {
@@ -125,6 +153,14 @@ export default function AdminRatingsPage() {
         </div>
       </div>
 
+      {/* 낮은 점수의 이유 — 어느 부분을 손볼지 */}
+      {data && Object.keys(data.reasons).length > 0 && (
+        <div className="mt-4 rounded-lg border border-border bg-white p-4">
+          <div className="mb-2 text-[12.5px] font-semibold text-ink-900">3점 이하가 고른 이유 (전체)</div>
+          <ReasonBars reasons={data.reasons} />
+        </div>
+      )}
+
       {/* 유형별 표 */}
       <div className="mt-8 rounded-lg border border-border bg-white">
         <div className="grid grid-cols-[1fr_60px_70px_120px] gap-2 border-b border-border px-4 py-2 text-[12px] font-semibold text-body">
@@ -159,6 +195,12 @@ export default function AdminRatingsPage() {
               </button>
               {isOpen && (
                 <div className="bg-bg-alt px-4 py-3 text-[13px] text-body">
+                  {Object.keys(t.reasons).length > 0 && (
+                    <div className="mb-3">
+                      <div className="mb-1 text-[12px] font-semibold text-ink-900">이 유형의 낮은 점수 이유</div>
+                      <ReasonBars reasons={t.reasons} />
+                    </div>
+                  )}
                   {t.notes.length === 0 ? (
                     <div>남긴 한마디가 아직 없습니다.</div>
                   ) : (

@@ -796,6 +796,10 @@ body.skin-b .emb{filter:drop-shadow(0 8px 18px rgba(30,50,110,.22))}
 .rate-s button{background:none;border:0;font-size:31px;line-height:1;color:#D5DEEA;cursor:pointer;padding:2px 3px;transition:transform .08s}
 .rate-s button:active{transform:scale(.9)}
 .rate-s button.on{color:#F6B73C}
+.rate-r{display:none;flex-wrap:wrap;justify-content:center;gap:6px;margin-top:10px}
+.rate-r.on{display:flex}
+.rate-r button{border:1px solid #D5DEEA;background:#fff;color:var(--ink2);border-radius:99px;padding:6px 11px;font-size:12.4px;font-weight:600;letter-spacing:-.03em;cursor:pointer;font-family:inherit}
+.rate-r button.on{background:#EAF1FF;border-color:#7FB0FF;color:#1D4ED8}
 .rate-m{display:none;margin-top:10px;gap:6px}
 .rate-m.on{display:flex}
 .rate-m .ti{flex:1;min-width:0;font-size:13.5px}
@@ -944,6 +948,7 @@ body.skin-b .emb{filter:drop-shadow(0 8px 18px rgba(30,50,110,.22))}
   <div class="rate-s" id="rateS">
     <button type="button" data-v="1" aria-label="1">★</button><button type="button" data-v="2" aria-label="2">★</button><button type="button" data-v="3" aria-label="3">★</button><button type="button" data-v="4" aria-label="4">★</button><button type="button" data-v="5" aria-label="5">★</button>
   </div>
+  <div class="rate-r" id="rateR"></div>
   <div class="rate-m" id="rateM">
     <input class="ti" id="rateN" maxlength="80" placeholder="어느 부분이 맞았나요, 안 맞았나요? (선택)">
     <button type="button" class="btn btn-p sm" id="rateB">보내기</button>
@@ -4036,40 +4041,80 @@ const SER2=()=>[{s:R1.s,total:R1.total,color:"#B9CBE2",dash:[5,4],w:.11},
                 {s:R2.s,total:R2.total,color:"#058DFB",fill:"rgba(5,141,251,.18)",dots:true,w:.16}];
 
 /* ═══════════ 결과 평가 ═══════════
-   별 하나 누르면 즉시 기록된다(글은 선택). 유형별 평균은 사이트 관리자 「오행 결과 평가」에서 본다.
-   같은 결과에 두 번 매기지 않도록 폰에 표시를 남긴다. */
+   별은 몇 번이든 바꿀 수 있다. 「보내기」를 누르거나 마지막 변경 뒤 6초가 지나면 그때 한 번만 기록하고 잠근다.
+   (처음엔 첫 클릭에 바로 기록했는데, 잘못 눌러도 못 고친다는 지적이 있었다 — 2026-09-18)
+   유형별 평균은 사이트 관리자 「오행 결과 평가」에서 본다. */
 const RATE_KEY="ohaeng_rated_v1";
 const rateStore=()=>store.get(RATE_KEY,{});
-let RATE_V=0;
+let RATE_V=0, RATE_T=0, RATE_LOCK=false;
+const rateMsg=(k)=>{
+  const ko={pick:"이 결과, 얼마나 맞나요?",hint:"바꾸려면 다른 별을 누르세요 · 잠시 뒤 자동으로 저장됩니다",thx:"고맙습니다. 결과를 더 정확하게 다듬는 데 씁니다.",got:"남겨 주신 말씀, 잘 받았습니다.",ph:"어느 부분이 맞았나요, 안 맞았나요? (선택)",send:"보내기"};
+  const en={pick:"How well does this fit you?",hint:"Tap another star to change · saves automatically in a moment",thx:"Thank you — this helps us sharpen the wording.",got:"Got it, thank you.",ph:"What fit, what didn't? (optional)",send:"Send"};
+  return (isEN()?en:ko)[k];
+};
+function ratePaint(v){ [...$("rateS").querySelectorAll("button")].forEach(b=>b.classList.toggle("on",+b.dataset.v<=v)); }
+/* 3점 이하일 때 묻는 이유 — 어느 부분을 고쳐야 하는지 갈라 보기 위한 것 */
+const RATE_R=[
+  ["diff",  "성격이 나와 달라요",            "Doesn't match my personality"],
+  ["vague", "누구에게나 맞는 말 같아요",      "Feels generic, could fit anyone"],
+  ["q",     "질문이 애매했어요",             "The questions were unclear"],
+  ["name",  "유형 이름·표현이 안 와닿아요",  "The type name/wording didn't land"],
+  ["design","카드 디자인이 별로예요",        "Didn't like the card design"],
+  ["advice","조언·보완 기운이 와닿지 않아요","The advice didn't resonate"],
+];
+let RATE_RS=new Set();
+function rateReasons(show){
+  const box=$("rateR"); if(!box) return;
+  if(!show){ box.classList.remove("on"); return; }
+  if(!box.dataset.built){
+    box.innerHTML=RATE_R.map(r=>`<button type="button" data-r="${r[0]}">${isEN()?r[2]:r[1]}</button>`).join("");
+    box.dataset.built="1";
+    box.addEventListener("click",e=>{
+      const b=e.target.closest("button"); if(!b||RATE_LOCK) return;
+      const k=b.dataset.r; if(RATE_RS.has(k)) RATE_RS.delete(k); else RATE_RS.add(k);
+      b.classList.toggle("on",RATE_RS.has(k));
+      clearTimeout(RATE_T); RATE_T=setTimeout(rateCommit,6000);
+    });
+  }
+  box.classList.add("on");
+}
 function rateReset(){
-  const box=$("rate1"); if(!box||!R1) return;
-  RATE_V=0;
-  $("rateQ").textContent=isEN()?"How well does this fit you?":"이 결과, 얼마나 맞나요?";
-  $("rateN").placeholder=isEN()?"What fit, what didn't? (optional)":"어느 부분이 맞았나요, 안 맞았나요? (선택)";
-  $("rateB").textContent=isEN()?"Send":"보내기";
+  if(!$("rate1")||!R1) return;
+  clearTimeout(RATE_T); RATE_V=0; RATE_LOCK=false; RATE_RS=new Set();
+  if($("rateR")){ $("rateR").innerHTML=""; delete $("rateR").dataset.built; $("rateR").classList.remove("on"); }
+  $("rateQ").textContent=rateMsg("pick");
+  $("rateN").placeholder=rateMsg("ph"); $("rateN").value="";
+  $("rateB").textContent=rateMsg("send");
   const done=rateStore()[R1.nameKo];
-  [...$("rateS").querySelectorAll("button")].forEach(b=>b.classList.toggle("on", !!done && +b.dataset.v<=done));
+  ratePaint(done||0);
   $("rateM").classList.remove("on");
   $("rateT").classList.toggle("on", !!done);
-  $("rateT").textContent=done?(isEN()?"Thank you — this helps us sharpen the wording.":"고맙습니다. 결과를 더 정확하게 다듬는 데 씁니다."):"";
+  $("rateT").textContent=done?rateMsg("thx"):"";
   $("rateS").style.pointerEvents=done?"none":"";
+  if(done) RATE_LOCK=true;
+}
+function rateCommit(){
+  if(RATE_LOCK||!RATE_V||!R1) return;
+  RATE_LOCK=true; clearTimeout(RATE_T);
+  const st=rateStore(); st[R1.nameKo]=RATE_V; store.set(RATE_KEY,st);
+  window.AJ&&AJ.track("ohaeng_rating",{props:{type:R1.nameKo,score:RATE_V,reasons:[...RATE_RS],balance:R1.bal,strong:R1.strong,weak:R1.weak,lang:isEN()?"en":"ko"}});
+  if($("rateR")) $("rateR").style.pointerEvents="none";
+  const note=($("rateN").value||"").trim();
+  if(note) window.AJ&&AJ.track("ohaeng_rating_note",{props:{type:R1.nameKo,score:RATE_V,note:note.slice(0,80)}});
+  $("rateS").style.pointerEvents="none";
+  $("rateM").classList.remove("on");
+  $("rateT").classList.add("on"); $("rateT").textContent=note?rateMsg("got"):rateMsg("thx");
 }
 $("rateS").addEventListener("click",e=>{
-  const b=e.target.closest("button"); if(!b||!R1) return;
-  RATE_V=+b.dataset.v;
-  [...$("rateS").querySelectorAll("button")].forEach(x=>x.classList.toggle("on",+x.dataset.v<=RATE_V));
-  const st=rateStore(); st[R1.nameKo]=RATE_V; store.set(RATE_KEY,st);
-  window.AJ&&AJ.track("ohaeng_rating",{props:{type:R1.nameKo,score:RATE_V,balance:R1.bal,strong:R1.strong,weak:R1.weak,lang:isEN()?"en":"ko"}});
-  $("rateS").style.pointerEvents="none";
-  $("rateM").classList.add("on"); $("rateN").focus();
-  $("rateT").classList.add("on"); $("rateT").textContent=isEN()?"Thank you — this helps us sharpen the wording.":"고맙습니다. 결과를 더 정확하게 다듬는 데 씁니다.";
+  const b=e.target.closest("button"); if(!b||!R1||RATE_LOCK) return;
+  RATE_V=+b.dataset.v; ratePaint(RATE_V);
+  rateReasons(RATE_V<=3);
+  $("rateM").classList.add("on");
+  $("rateT").classList.add("on"); $("rateT").textContent=rateMsg("hint");
+  clearTimeout(RATE_T); RATE_T=setTimeout(rateCommit,6000);   // 한마디를 쓰는 중이면 아래에서 타이머를 멈춘다
 });
-$("rateB").addEventListener("click",()=>{
-  const note=($("rateN").value||"").trim(); if(!note||!R1){ $("rateM").classList.remove("on"); return; }
-  window.AJ&&AJ.track("ohaeng_rating_note",{props:{type:R1.nameKo,score:RATE_V,note:note.slice(0,80)}});
-  $("rateM").classList.remove("on");
-  $("rateT").textContent=isEN()?"Got it, thank you.":"남겨 주신 말씀, 잘 받았습니다.";
-});
+$("rateN").addEventListener("input",()=>{ clearTimeout(RATE_T); });   // 글 쓰는 동안은 자동 저장 안 함 — 보내기로 마무리
+$("rateB").addEventListener("click",rateCommit);
 
 /* ═══════════ 1단계 결과 ═══════════ */
 function finish1(reRender){

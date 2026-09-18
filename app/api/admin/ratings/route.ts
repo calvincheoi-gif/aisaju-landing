@@ -29,6 +29,7 @@ export interface TypeStat {
   count: number;
   avg: number;
   dist: [number, number, number, number, number];
+  reasons: Record<string, number>;
   notes: { score: number; note: string; at: string }[];
 }
 
@@ -55,7 +56,7 @@ export async function GET(req: Request) {
   const get = (t: string) => {
     let s = byType.get(t);
     if (!s) {
-      s = { type: t, count: 0, avg: 0, dist: [0, 0, 0, 0, 0], notes: [] };
+      s = { type: t, count: 0, avg: 0, dist: [0, 0, 0, 0, 0], reasons: {}, notes: [] };
       byType.set(t, s);
     }
     return s;
@@ -63,6 +64,7 @@ export async function GET(req: Request) {
 
   let total = 0;
   let sum = 0;
+  const reasonsAll: Record<string, number> = {};
   const allNotes: { type: string; score: number; note: string; at: string }[] = [];
 
   for (const r of rows) {
@@ -76,6 +78,12 @@ export async function GET(req: Request) {
       s.dist[score - 1] += 1;
       total += 1;
       sum += score;
+      /* 3점 이하에서 고른 이유 — 어느 부분을 고칠지 갈라 본다 */
+      const rs = Array.isArray(p.reasons) ? (p.reasons as unknown[]).map(String) : [];
+      for (const k of rs) {
+        s.reasons[k] = (s.reasons[k] ?? 0) + 1;
+        reasonsAll[k] = (reasonsAll[k] ?? 0) + 1;
+      }
     } else if (r.name === "ohaeng_rating_note") {
       const note = String(p.note ?? "").trim();
       if (!note) continue;
@@ -96,6 +104,7 @@ export async function GET(req: Request) {
   return NextResponse.json({
     total,
     avg: total ? Math.round((sum / total) * 100) / 100 : 0,
+    reasons: reasonsAll,
     types,
     recentNotes: allNotes.slice(0, 30),
   });
