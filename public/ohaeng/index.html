@@ -5718,7 +5718,8 @@ function drawBadge(x,cx,y,txt,fill,stroke,col){
   if(stroke){ x.strokeStyle=stroke; x.lineWidth=2; x.stroke(); }
   x.fillStyle=col; x.fillText(txt,cx,y);
 }
-function fitName(x,nt,base,maxw,min){ var f=base; x.font=FONT(900,f); while(x.measureText(nt).width>maxw&&f>min){f-=4;x.font=FONT(900,f)} return f; }
+/* 캔버스용 — 결과 화면의 DOM용 fitName(el,name) 과 이름이 겹쳐 결과가 멈추던 버그가 있었다 (2026-09-19) */
+function fitNameCv(x,nt,base,maxw,min){ var f=base; x.font=FONT(900,f); while(x.measureText(nt).width>maxw&&f>min){f-=4;x.font=FONT(900,f)} return f; }
 function charBox(LP){
   var cw=LP(220,280), ch=cw*(charImg.naturalHeight||187)/(charImg.naturalWidth||120);
   return {ok:!!(charImg.complete&&charImg.naturalWidth), cw:cw, ch:ch};
@@ -5741,7 +5742,7 @@ function cardNews(ratio){
   x.textAlign="left"; x.font=FONT(800,38); x.fillStyle="#33558C"; x.fillText(isEN()?"What is my Element?":"나의 오행 성격은?",64,y);
   y+=LP(104,124);
   var nt=isEN()?A.name:"「"+A.name+"」";
-  var nf=fitName(x,nt,112,W-140-(cb.ok?cb.cw*0.7:0),56);
+  var nf=fitNameCv(x,nt,112,W-140-(cb.ok?cb.cw*0.7:0),56);
   hlText(x,nt,64,y,FONT(900,nf),"#12224A","left");
   y+=LP(66,80);
   x.textAlign="left"; x.font=FONT(700,40); x.fillStyle="#33558C"; x.fillText(A.line,66,y);
@@ -5773,7 +5774,7 @@ function cardSymbol(ratio){
   x.strokeStyle=S.tc+"33"; x.lineWidth=3; x.beginPath(); x.arc(W/2,sy,ss*0.66+18,0,7); x.stroke();
   try{ drawEmblem(x,A.sym.gan,W/2,sy,ss,S.color,gender); }catch(e){}
   var y=sy+ss*0.66+LP(110,110);
-  var nt=isEN()?A.name:"「"+A.name+"」"; var nf=fitName(x,nt,100,W-120,48);
+  var nt=isEN()?A.name:"「"+A.name+"」"; var nf=fitNameCv(x,nt,100,W-120,48);
   x.textAlign="center"; x.fillStyle=S.tc; x.fillText(nt,W/2,y);
   y+=LP(64,64); x.font=FONT(700,40); x.fillStyle="#33558C"; x.fillText(A.line,W/2,y);
   y+=LP(72,72); drawBadge(x,W/2,y,badgeText(A),S.soft,S.tc+"66",S.tc);
@@ -5799,7 +5800,7 @@ function cardNight(ratio){
   x.font=FONT(900,40); x.fillStyle=lg; x.fillText(T("labFull"),W/2,y);
   y+=LP(70,84); x.font=FONT(700,32); x.fillStyle="#B9C7E6"; x.fillText(isEN()?"What is my Element?":"나의 오행 성격은?",W/2,y);
   y+=LP(120,140);
-  var nt=isEN()?A.name:"「"+A.name+"」"; var nf=fitName(x,nt,104,W-120,48);
+  var nt=isEN()?A.name:"「"+A.name+"」"; var nf=fitNameCv(x,nt,104,W-120,48);
   var ng=x.createLinearGradient(W/2-260,0,W/2+260,0); ng.addColorStop(0,"#F6C35B"); ng.addColorStop(1,"#FFE9AE");
   x.fillStyle=ng; x.fillText(nt,W/2,y);
   y+=LP(64,72); x.font=FONT(700,40); x.fillStyle="#DCE4F5"; x.fillText(A.line,W/2,y);
@@ -5830,7 +5831,7 @@ function cardGradient(ratio){
   y+=LP(60,70); x.font=FONT(700,31); x.fillStyle="#54657F"; x.fillText(T("appNamePlain")||(isEN()?"Five-Element Nature Self-Check":"나의 (자연)오행 성격 자가진단"),W/2,y);
   y+=LP(96,108); x.font=FONT(800,43); x.fillStyle="#54657F"; x.fillText(isEN()?"What is my Element?":"나의 오행 성격은?",W/2,y);
   y+=LP(100,112);
-  var nt=isEN()?A.name:"「"+A.name+"」"; var nf=fitName(x,nt,100,W-120,48);
+  var nt=isEN()?A.name:"「"+A.name+"」"; var nf=fitNameCv(x,nt,100,W-120,48);
   x.fillStyle=S.tc; x.fillText(nt,W/2,y);
   y+=LP(60,68); x.font=FONT(700,38); x.fillStyle="#3E5372"; x.fillText(A.line,W/2,y);
   y+=LP(70,80); drawBadge(x,W/2,y,badgeText(A),"rgba(255,255,255,.85)",S.tc+"66",S.tc);
