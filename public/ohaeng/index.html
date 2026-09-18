@@ -788,6 +788,19 @@ body.skin-b .emb{filter:drop-shadow(0 8px 18px rgba(30,50,110,.22))}
   background:#fff;color:var(--ink3);font-size:11.5px;font-weight:800;cursor:pointer;
   letter-spacing:-.03em;transition:.15s}
 .skinsw button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* ── 결과 평가 카드 ── */
+.rate{text-align:center;padding:16px 14px 14px}
+.rate-q{font-size:14.6px;font-weight:800;color:var(--ink);letter-spacing:-.03em;margin-bottom:8px}
+.rate-s{display:flex;justify-content:center;gap:4px}
+.rate-s button{background:none;border:0;font-size:31px;line-height:1;color:#D5DEEA;cursor:pointer;padding:2px 3px;transition:transform .08s}
+.rate-s button:active{transform:scale(.9)}
+.rate-s button.on{color:#F6B73C}
+.rate-m{display:none;margin-top:10px;gap:6px}
+.rate-m.on{display:flex}
+.rate-m .ti{flex:1;min-width:0;font-size:13.5px}
+.rate-t{display:none;margin-top:8px;font-size:13px;color:var(--ink2);line-height:1.5}
+.rate-t.on{display:block}
 </style>
 </head>
 <body>
@@ -925,6 +938,18 @@ body.skin-b .emb{filter:drop-shadow(0 8px 18px rgba(30,50,110,.22))}
     <div class="bal-t"><div class="bal-f" id="balf1"></div></div>
     <p style="font-size:15.2px;color:var(--ink2);line-height:1.68" id="bald1"></p>
   </div>
+<!-- 결과 평가 — 유형 문구를 고객 반응으로 다듬기 위한 한 줄 (2026-09-18) -->
+<div class="card rate" id="rate1">
+  <div class="rate-q" id="rateQ">이 결과, 얼마나 맞나요?</div>
+  <div class="rate-s" id="rateS">
+    <button type="button" data-v="1" aria-label="1">★</button><button type="button" data-v="2" aria-label="2">★</button><button type="button" data-v="3" aria-label="3">★</button><button type="button" data-v="4" aria-label="4">★</button><button type="button" data-v="5" aria-label="5">★</button>
+  </div>
+  <div class="rate-m" id="rateM">
+    <input class="ti" id="rateN" maxlength="80" placeholder="어느 부분이 맞았나요, 안 맞았나요? (선택)">
+    <button type="button" class="btn btn-p sm" id="rateB">보내기</button>
+  </div>
+  <div class="rate-t" id="rateT"></div>
+</div>
   <div class="sec-t" data-i="matchT"></div>
   <div class="match" id="mt1"></div>
   <p class="tiny" style="margin-top:9px;text-align:center" data-i="matchNote"></p>
@@ -4010,10 +4035,47 @@ const SER1=()=>[{s:R1.s,total:R1.total,color:"#058DFB",fill:"rgba(5,141,251,.20)
 const SER2=()=>[{s:R1.s,total:R1.total,color:"#B9CBE2",dash:[5,4],w:.11},
                 {s:R2.s,total:R2.total,color:"#058DFB",fill:"rgba(5,141,251,.18)",dots:true,w:.16}];
 
+/* ═══════════ 결과 평가 ═══════════
+   별 하나 누르면 즉시 기록된다(글은 선택). 유형별 평균은 사이트 관리자 「오행 결과 평가」에서 본다.
+   같은 결과에 두 번 매기지 않도록 폰에 표시를 남긴다. */
+const RATE_KEY="ohaeng_rated_v1";
+const rateStore=()=>store.get(RATE_KEY,{});
+let RATE_V=0;
+function rateReset(){
+  const box=$("rate1"); if(!box||!R1) return;
+  RATE_V=0;
+  $("rateQ").textContent=isEN()?"How well does this fit you?":"이 결과, 얼마나 맞나요?";
+  $("rateN").placeholder=isEN()?"What fit, what didn't? (optional)":"어느 부분이 맞았나요, 안 맞았나요? (선택)";
+  $("rateB").textContent=isEN()?"Send":"보내기";
+  const done=rateStore()[R1.nameKo];
+  [...$("rateS").querySelectorAll("button")].forEach(b=>b.classList.toggle("on", !!done && +b.dataset.v<=done));
+  $("rateM").classList.remove("on");
+  $("rateT").classList.toggle("on", !!done);
+  $("rateT").textContent=done?(isEN()?"Thank you — this helps us sharpen the wording.":"고맙습니다. 결과를 더 정확하게 다듬는 데 씁니다."):"";
+  $("rateS").style.pointerEvents=done?"none":"";
+}
+$("rateS").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b||!R1) return;
+  RATE_V=+b.dataset.v;
+  [...$("rateS").querySelectorAll("button")].forEach(x=>x.classList.toggle("on",+x.dataset.v<=RATE_V));
+  const st=rateStore(); st[R1.nameKo]=RATE_V; store.set(RATE_KEY,st);
+  window.AJ&&AJ.track("ohaeng_rating",{props:{type:R1.nameKo,score:RATE_V,balance:R1.bal,strong:R1.strong,weak:R1.weak,lang:isEN()?"en":"ko"}});
+  $("rateS").style.pointerEvents="none";
+  $("rateM").classList.add("on"); $("rateN").focus();
+  $("rateT").classList.add("on"); $("rateT").textContent=isEN()?"Thank you — this helps us sharpen the wording.":"고맙습니다. 결과를 더 정확하게 다듬는 데 씁니다.";
+});
+$("rateB").addEventListener("click",()=>{
+  const note=($("rateN").value||"").trim(); if(!note||!R1){ $("rateM").classList.remove("on"); return; }
+  window.AJ&&AJ.track("ohaeng_rating_note",{props:{type:R1.nameKo,score:RATE_V,note:note.slice(0,80)}});
+  $("rateM").classList.remove("on");
+  $("rateT").textContent=isEN()?"Got it, thank you.":"남겨 주신 말씀, 잘 받았습니다.";
+});
+
 /* ═══════════ 1단계 결과 ═══════════ */
 function finish1(reRender){
   if(!reRender){R1=analyze(baseScore());bump("d",R1.nameKo);window.AJ&&AJ.track("ohaeng_complete",{props:{type:R1.nameKo,balance:R1.bal}})}
   else R1=analyze(R1.s,true);
+  rateReset();
   steps4($("sx1"),1);
   const S=EL[R1.strong],W=EL[R1.weak];
   $("t1m").textContent=R1.mod||"";

@@ -12,6 +12,7 @@ const ADMIN_NAV = [
   { label: "가격 관리", href: "/admin/pricing" },
   { label: "Q&A 관리", href: "/admin/qna" },
   { label: "후기 관리", href: "/admin/reviews" },
+  { label: "오행 결과 평가", href: "/admin/ratings" },
 ];
 
 /**
