@@ -769,6 +769,12 @@ body.skin-a .tname{color:#1E2761;text-shadow:none}
 body.skin-a .tbadge{border-color:#D9C48A !important;background:#FFF6E2 !important}
 body.skin-a .emb{filter:drop-shadow(0 6px 14px rgba(150,120,50,.20))}
 
+/* ── 카드뉴스 · 상징 · 나이트 (화면 미리보기용 최소 규칙) ── */
+body.skin-news .hero-res{background:#F3F6FC radial-gradient(rgba(96,120,170,.16) 1.6px,transparent 1.6px) 0 0/22px 22px;border:1px solid #DCE3EC}
+body.skin-symbol .hero-res{background:linear-gradient(180deg,#fff,#EAF1FF);border:1px solid #DCE3EC}
+body.skin-night .hero-res{background:linear-gradient(180deg,#0F1B3D,#1E3A8A);border:0}
+body.skin-night .hero-res .kick,body.skin-night .hero-res .youare,body.skin-night .hero-res .tline,body.skin-night .hero-res .tmod{color:#DCE4F5 !important}
+body.skin-night .hero-res .tname{color:#FFE39A !important}
 /* ── B안 : 그라데이션 ── */
 body.skin-b .hero-res{
   background:linear-gradient(160deg,var(--sk1,#EEF4FF),var(--sk2,#DCE8FF) 55%,#fff);
@@ -783,7 +789,11 @@ body.skin-b .tbadge{border-color:rgba(255,255,255,.9) !important;
 body.skin-b .emb{filter:drop-shadow(0 8px 18px rgba(30,50,110,.22))}
 
 /* 스킨 선택 스위치 */
-.skinsw{display:flex;justify-content:center;gap:6px;margin:10px auto 0}
+.skinsw{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;margin:10px auto 0}
+.skinpv{display:flex;align-items:center;justify-content:center;gap:12px;margin:10px auto 0}
+.skinpv img{display:none;width:118px;border-radius:10px;box-shadow:0 6px 18px rgba(20,40,90,.18)}
+.skinpv img.on{display:block}
+.skinpv span{font-size:11.5px;color:var(--ink3);letter-spacing:-.03em;max-width:160px;line-height:1.5}
 .skinsw button{padding:5px 13px;border-radius:999px;border:1px solid var(--line);
   background:#fff;color:var(--ink3);font-size:11.5px;font-weight:800;cursor:pointer;
   letter-spacing:-.03em;transition:.15s}
@@ -923,13 +933,13 @@ body.skin-b .emb{filter:drop-shadow(0 8px 18px rgba(30,50,110,.22))}
       <button class="btn btn-k sm" id="kk1"></button>
     </div>
   <div class="skinsw" id="skinsw">
-    <button type="button" data-skin="a">클래식</button>
-    <button type="button" data-skin="b">그라데이션</button>
+    <button type="button" data-skin="classic">클래식</button>
+    <button type="button" data-skin="news">카드뉴스</button>
+    <button type="button" data-skin="symbol">상징</button>
+    <button type="button" data-skin="night">나이트</button>
+    <button type="button" data-skin="gradient">그라데이션</button>
   </div>
-  </div>
-  <div class="skinsw" id="skinsw">
-    <button type="button" data-skin="a">클래식</button>
-    <button type="button" data-skin="b">그라데이션</button>
+  <div class="skinpv" id="skinpv"><img id="skinPvImg" alt=""><span id="skinPvT"></span></div>
   </div>
   <div class="matebar" id="mb1"></div>
   <div class="chartTabs"><button data-c="bar" class="on" data-i="barTab"></button><button data-c="radar" data-i="radarTab"></button></div>
@@ -4121,6 +4131,7 @@ function finish1(reRender){
   if(!reRender){R1=analyze(baseScore());bump("d",R1.nameKo);window.AJ&&AJ.track("ohaeng_complete",{props:{type:R1.nameKo,balance:R1.bal}})}
   else R1=analyze(R1.s,true);
   rateReset();
+  setTimeout(function(){ try{ window.AJ_skinPreview&&window.AJ_skinPreview(); }catch(e){} },400);
   steps4($("sx1"),1);
   const S=EL[R1.strong],W=EL[R1.weak];
   $("t1m").textContent=R1.mod||"";
@@ -4340,7 +4351,7 @@ function cardSize(ratio){
   r=Math.max(1.25, Math.min(1.778, r));        // SNS 안전 구간
   return {W, H:Math.round(W*r)};
 }
-function card(ratio){
+function cardClassic(ratio){
   const sz=cardSize(ratio), W=sz.W, H=sz.H;
   /* 높이에 따라 간격·차트를 연속적으로 보간한다 (4:5 기준 → 9:16 기준) */
   const t=Math.max(0,Math.min(1,(H-1350)/(1920-1350)));
@@ -4403,6 +4414,7 @@ function card(ratio){
   x.font=FONT(600,24);x.fillStyle="#93A3BA";x.fillText(isEN()?"Choi Hyungchul Saju Institute":"최형철 사주명리 연구소",W/2,fy+92);
   return c;
 }
+
 /* ═══════════ 이미지 공유 · 저장 ═══════════
    iOS·카톡 인앱 브라우저에서 toBlob 콜백 안에서 navigator.share를 부르면
    '사용자 제스처'가 끊겨 실패한다. toDataURL은 동기라 클릭 핸들러 안에서
@@ -5424,7 +5436,7 @@ function drawChips(x,cx,y,W,s,total,k){
     x.fillText(EE.han, bx+cw/2, y+ch+cw*0.84);
   });
 }
-function card(ratio){
+function cardFrame(ratio){
   var W=1080, rh=ratioOf(ratio), H=Math.round(W*rh);
   var c=document.createElement("canvas");c.width=W;c.height=H;
   var x=c.getContext("2d");
@@ -5601,6 +5613,236 @@ function card(ratio){
   });
   return c;
 }
+
+/* ═══════════ 결과 카드 스킨 5종 ═══════════
+   classic  = 현행 카드 그대로 (흰 액자 · 천간 상징 · 숫자 칩)            — cardFrame
+   news     = 인스타 카드뉴스와 같은 결 — 점 격자 · 성좌선 · 노란 형광 강조 · 남색 푸터 띠 · 캐릭터
+   symbol   = 천간 상징 그림을 아주 크게 — 글은 적게, 그림이 주인공
+   night    = 남색 밤하늘 · 금색 이름 — 폰 배경화면용
+   gradient = 강한 오행 색으로 물든 그라데이션 · 캐릭터 — 공유했을 때 눈에 띄는 쪽
+   선택은 localStorage "aj_card_skin" 에 남고, 화면의 스킨 스위치와 같은 값을 쓴다.
+   card() 는 이 파일에서 마지막에 정의되어야 한다 — 앞쪽의 옛 정의(cardClassic)를 덮는다. */
+const CARD_SKINS=["classic","news","symbol","night","gradient"];
+function cardSkin(){
+  var v="classic";
+  try{ v=localStorage.getItem("aj_card_skin")||"classic"; }catch(e){}
+  if(v==="a") v="classic"; if(v==="b") v="gradient";
+  return CARD_SKINS.indexOf(v)>=0?v:"classic";
+}
+function card(ratio){
+  var k=cardSkin();
+  if(k==="news")     return cardNews(ratio);
+  if(k==="symbol")   return cardSymbol(ratio);
+  if(k==="night")    return cardNight(ratio);
+  if(k==="gradient") return cardGradient(ratio);
+  return cardFrame(ratio);
+}
+function cardBase(ratio){
+  /* 배치는 4:5(1350) ~ 9:16(1920) 사이에서 보간한다. 그보다 짧거나 긴 화면(auto)은
+     가상 캔버스에 그린 뒤 통째로 축소·확대해 넣는다 — 글자가 잘리거나 아래가 비지 않게 */
+  var realW=1080, realH=Math.round(realW*ratioOf(ratio));
+  var sc=1, VH=realH;
+  if(realH<1350){ sc=realH/1350; VH=1350; } else if(realH>1920){ sc=realH/1920; VH=1920; }
+  var c=document.createElement("canvas");c.width=realW;c.height=realH;var x=c.getContext("2d");
+  x.scale(sc,sc);
+  var W=realW/sc, H=VH;
+  var t=Math.max(0,Math.min(1,(H-1350)/(1920-1350)));
+  var LP=function(a,b){return Math.round(a+(b-a)*t)};
+  var A=R2||R1, S=EL[A.strong];
+  return {c:c,x:x,W:W,H:H,LP:LP,A:A,S:S};
+}
+function dotGrid(x,W,H,col,step){
+  step=step||38; x.save(); x.fillStyle=col||"rgba(96,120,170,.16)";
+  for(var yy=step;yy<H;yy+=step) for(var xx=step;xx<W;xx+=step){ x.beginPath(); x.arc(xx,yy,2.2,0,7); x.fill(); }
+  x.restore();
+}
+function constellation(x,W,H,col,alpha,region){
+  var r=region||{x0:0.52,x1:0.98,y0:0.04,y1:0.30};
+  var rnd=function(i){var v=Math.sin(i*91.7+13.1)*43758.5453;return v-Math.floor(v)};
+  var pts=[]; for(var i=0;i<7;i++){ pts.push({x:W*(r.x0+(r.x1-r.x0)*(i/6)), y:H*(r.y0+(r.y1-r.y0)*rnd(i))}); }
+  x.save(); x.globalAlpha=alpha==null?.55:alpha; x.strokeStyle=col||"#9DB4E0"; x.fillStyle=col||"#9DB4E0"; x.lineWidth=2.2;
+  x.beginPath(); pts.forEach(function(p,i){ i?x.lineTo(p.x,p.y):x.moveTo(p.x,p.y) }); x.stroke();
+  x.beginPath(); x.moveTo(pts[1].x,pts[1].y); x.lineTo(pts[4].x,pts[4].y); x.stroke();
+  pts.forEach(function(p){ x.beginPath(); x.arc(p.x,p.y,5,0,7); x.fill(); });
+  x.restore();
+}
+function hlText(x,txt,cx,y,font,col,align){
+  x.font=font; x.textAlign=align||"center";
+  var w=x.measureText(txt).width, m=parseInt(font.match(/(\d+)px/)[1]);
+  var x0=align==="left"?cx:cx-w/2;
+  x.save(); x.fillStyle="rgba(255,224,102,.72)"; x.fillRect(x0-6,y-m*0.42,w+12,m*0.5); x.restore();
+  x.fillStyle=col; x.fillText(txt,cx,y);
+}
+function elementRow(x,W,y,strong,dark){
+  var ks=["wood","fire","earth","metal","water"];
+  var col={wood:"#2E9E5B",fire:"#E5484D",earth:"#9A6A2F",metal:"#1D4ED8",water:"#2CA0E0"};
+  var lab=isEN()?{wood:"Start",fire:"Express",earth:"Sustain",metal:"Finish",water:"Discern"}:{wood:"시작",fire:"표현",earth:"지속",metal:"마무리",water:"헤아림"};
+  var gap=W*0.17, x0=W/2-gap*2, r=46;
+  ks.forEach(function(k,i){
+    var cx=x0+gap*i;
+    x.beginPath(); x.arc(cx,y,r,0,7); x.fillStyle=col[k]; x.fill();
+    if(k===strong){ x.lineWidth=6; x.strokeStyle=dark?"#F6C35B":"#FFD84D"; x.stroke(); }
+    x.fillStyle="#fff"; x.font=FONT(900,44); x.textAlign="center"; x.fillText(EL[k].han,cx,y+16);
+    x.fillStyle=dark?"#DCE4F5":"#33558C"; x.font=FONT(800,27); x.fillText(lab[k],cx,y+r+40);
+  });
+}
+function footerBand(x,W,H,h){
+  h=h||150; var y=H-h;
+  x.fillStyle="#12224A"; x.beginPath(); x.roundRect(40,y,W-80,h-40,26); x.fill();
+  x.textAlign="left"; x.fillStyle="#FFD84D"; x.font=FONT(900,38); x.fillText("◆",84,y+h/2-4);
+  var nm=isEN()?"AIsajuLab":"AI사주랩";
+  x.fillStyle="#fff"; x.font=FONT(900,38); x.fillText(nm,134,y+h/2-4);
+  var bw=x.measureText(nm).width;
+  x.fillStyle="#FFD84D"; x.fillText("AIsajuLab.com",134+bw+16,y+h/2-4);
+  x.strokeStyle="rgba(255,255,255,.35)"; x.lineWidth=2; x.beginPath(); x.moveTo(W*0.58,y+30); x.lineTo(W*0.58,y+h-70); x.stroke();
+  x.fillStyle="#DCE4F5"; x.font=FONT(700,25); x.textAlign="left";
+  var s1=isEN()?"AI analyzes,":"AI는 분석하고,", s2=isEN()?"Myeongri finds the way":"명리학은 방향을 찾습니다";
+  x.fillText(s1,W*0.58+26,y+h/2-24); x.fillText(s2,W*0.58+26,y+h/2+12);
+}
+/* 흰 패널 + 숫자 칩(현행 카드와 같은 막대) — 칩 폭을 줄이면 오른쪽에 캐릭터 자리가 생긴다 */
+function chipsPanel(x,X,Y,Wd,Hd,A,S,chipW,dark){
+  x.save(); x.fillStyle=dark?"rgba(255,255,255,.97)":"#fff"; x.shadowColor="rgba(20,40,90,.10)"; x.shadowBlur=24; x.shadowOffsetY=8;
+  x.beginPath(); x.roundRect(X,Y,Wd,Hd,28); x.fill(); x.restore();
+  var cw=chipW||(Wd-60), chipCW=(cw-(cw*0.040)*4)/5, ch=chipCW*1.62+chipCW*1.02;
+  drawChips(x,X+30+cw/2,Y+(Hd-ch)/2,cw,A.s,A.total,S);
+}
+function badgeText(A){
+  var yang=A.yy.sign==="yang";
+  return A.sym.gan+" · "+(yang?(isEN()?"Yang":"양(陽)"):(isEN()?"Yin":"음(陰)"))+" · "+N(A.strong)+" "+Math.round(A.share[A.strong]*100)+"%";
+}
+function drawBadge(x,cx,y,txt,fill,stroke,col){
+  x.font=FONT(800,34); x.textAlign="center"; var w=x.measureText(txt).width+64;
+  x.fillStyle=fill; x.beginPath(); x.roundRect(cx-w/2,y-36,w,62,31); x.fill();
+  if(stroke){ x.strokeStyle=stroke; x.lineWidth=2; x.stroke(); }
+  x.fillStyle=col; x.fillText(txt,cx,y);
+}
+function fitName(x,nt,base,maxw,min){ var f=base; x.font=FONT(900,f); while(x.measureText(nt).width>maxw&&f>min){f-=4;x.font=FONT(900,f)} return f; }
+function charBox(LP){
+  var cw=LP(220,280), ch=cw*(charImg.naturalHeight||187)/(charImg.naturalWidth||120);
+  return {ok:!!(charImg.complete&&charImg.naturalWidth), cw:cw, ch:ch};
+}
+
+/* ── news : 카드뉴스형 ── */
+function cardNews(ratio){
+  var b=cardBase(ratio), c=b.c,x=b.x,W=b.W,H=b.H,LP=b.LP,A=b.A,S=b.S;
+  x.fillStyle="#F3F6FC"; x.fillRect(0,0,W,H);
+  dotGrid(x,W,H,"rgba(96,120,170,.16)",38);
+  constellation(x,W,H,"#9DB4E0",.55,{x0:0.50,x1:0.97,y0:0.03,y1:0.14});
+  var pill=isEN()?"Five-Element Type · Self-check result":"오행 성격 · 자가진단 결과";
+  x.font=FONT(800,28); var pw=x.measureText(pill).width+96;
+  x.fillStyle="#fff"; x.beginPath(); x.roundRect(60,64,pw,64,32); x.fill();
+  x.strokeStyle="#DCE3EC"; x.lineWidth=2; x.stroke();
+  x.fillStyle="#12224A"; x.textAlign="left"; x.fillText("▢  "+pill,86,107);
+  x.fillStyle="#FFD84D"; x.beginPath(); x.arc(60+pw-34,96,8,0,7); x.fill();
+  var cb=charBox(LP);
+  var y=LP(210,290);
+  x.textAlign="left"; x.font=FONT(800,38); x.fillStyle="#33558C"; x.fillText(isEN()?"What is my Element?":"나의 오행 성격은?",64,y);
+  y+=LP(104,124);
+  var nt=isEN()?A.name:"「"+A.name+"」";
+  var nf=fitName(x,nt,112,W-140-(cb.ok?cb.cw*0.7:0),56);
+  hlText(x,nt,64,y,FONT(900,nf),"#12224A","left");
+  y+=LP(66,80);
+  x.textAlign="left"; x.font=FONT(700,40); x.fillStyle="#33558C"; x.fillText(A.line,66,y);
+  y+=LP(70,84);
+  var bt=badgeText(A); x.font=FONT(800,34); var bw=x.measureText(bt).width+64;
+  x.fillStyle=S.soft; x.beginPath(); x.roundRect(64,y-36,bw,62,31); x.fill(); x.strokeStyle=S.tc+"66"; x.lineWidth=2; x.stroke();
+  x.fillStyle=S.tc; x.textAlign="left"; x.fillText(bt,96,y);
+  /* 캐릭터 — 헤드라인 오른쪽, 뱃지 줄에 발을 맞춘다 */
+  if(cb.ok) x.drawImage(charImg,W-cb.cw-56,y+30-cb.ch,cb.cw,cb.ch);
+  var pY=y+LP(50,62), pH=LP(440,700);
+  chipsPanel(x,60,pY,W-120,pH,A,S,null,false);
+  var eY=pY+pH+LP(80,120);
+  elementRow(x,W,eY,A.strong,false);
+  x.textAlign="center"; x.font=FONT(700,30); x.fillStyle="#33558C";
+  x.fillText(T("balance")+" "+A.bal+"  ·  "+T("needEl")+" "+N(A.weak),W/2,eY+LP(130,140));
+  footerBand(x,W,H,150);
+  return c;
+}
+
+/* ── symbol : 상징형 ── */
+function cardSymbol(ratio){
+  var b=cardBase(ratio), c=b.c,x=b.x,W=b.W,H=b.H,LP=b.LP,A=b.A,S=b.S;
+  var g=x.createLinearGradient(0,0,0,H); g.addColorStop(0,"#FFFFFF"); g.addColorStop(1,"#EAF1FF");
+  x.fillStyle=g; x.fillRect(0,0,W,H);
+  dotGrid(x,W,H,"rgba(96,120,170,.10)",42);
+  x.textAlign="center"; x.font=FONT(800,34); x.fillStyle="#7D90AB"; x.fillText(isEN()?"My Five-Element type":"나의 오행 성격",W/2,LP(96,120));
+  var sy=LP(400,620), ss=LP(400,560);
+  x.fillStyle=S.soft; x.beginPath(); x.arc(W/2,sy,ss*0.66,0,7); x.fill();
+  x.strokeStyle=S.tc+"33"; x.lineWidth=3; x.beginPath(); x.arc(W/2,sy,ss*0.66+18,0,7); x.stroke();
+  try{ drawEmblem(x,A.sym.gan,W/2,sy,ss,S.color,gender); }catch(e){}
+  var y=sy+ss*0.66+LP(110,110);
+  var nt=isEN()?A.name:"「"+A.name+"」"; var nf=fitName(x,nt,100,W-120,48);
+  x.textAlign="center"; x.fillStyle=S.tc; x.fillText(nt,W/2,y);
+  y+=LP(64,64); x.font=FONT(700,40); x.fillStyle="#33558C"; x.fillText(A.line,W/2,y);
+  y+=LP(72,72); drawBadge(x,W/2,y,badgeText(A),S.soft,S.tc+"66",S.tc);
+  var eY=y+LP(100,120); elementRow(x,W,eY,A.strong,false);
+  var fy=eY+LP(150,157);
+  x.textAlign="center"; x.font=FONT(700,30); x.fillStyle="#33558C"; x.fillText(T("balance")+" "+A.bal+"  ·  "+T("needEl")+" "+N(A.weak),W/2,fy);
+  x.font=FONT(800,28); x.fillStyle="#0B6BEE"; x.fillText((DB.cfg.shareUrl||CONFIG.shareUrl).replace(/^https?:\/\//,"").replace(/\/$/,""),W/2,fy+52);
+  x.font=FONT(600,24); x.fillStyle="#93A3BA"; x.fillText(isEN()?"Choi Hyungchul Saju Institute":"최형철 사주명리 연구소",W/2,fy+92);
+  return c;
+}
+
+/* ── night : 나이트 ── */
+function cardNight(ratio){
+  var b=cardBase(ratio), c=b.c,x=b.x,W=b.W,H=b.H,LP=b.LP,A=b.A,S=b.S;
+  var g=x.createLinearGradient(0,0,0,H); g.addColorStop(0,"#0F1B3D"); g.addColorStop(1,"#1E3A8A");
+  x.fillStyle=g; x.fillRect(0,0,W,H);
+  constellation(x,W,H,"#BFD0F5",.35,{x0:0.05,x1:0.95,y0:0.03,y1:0.13});
+  constellation(x,W,H,"#BFD0F5",.22,{x0:0.05,x1:0.95,y0:0.88,y1:0.98});
+  dotGrid(x,W,H,"rgba(255,255,255,.06)",46);
+  x.textAlign="center";
+  var y=LP(120,160);
+  var lg=x.createLinearGradient(W/2-140,0,W/2+140,0); lg.addColorStop(0,"#F6C35B"); lg.addColorStop(1,"#FFE39A");
+  x.font=FONT(900,40); x.fillStyle=lg; x.fillText(T("labFull"),W/2,y);
+  y+=LP(70,84); x.font=FONT(700,32); x.fillStyle="#B9C7E6"; x.fillText(isEN()?"What is my Element?":"나의 오행 성격은?",W/2,y);
+  y+=LP(120,140);
+  var nt=isEN()?A.name:"「"+A.name+"」"; var nf=fitName(x,nt,104,W-120,48);
+  var ng=x.createLinearGradient(W/2-260,0,W/2+260,0); ng.addColorStop(0,"#F6C35B"); ng.addColorStop(1,"#FFE9AE");
+  x.fillStyle=ng; x.fillText(nt,W/2,y);
+  y+=LP(64,72); x.font=FONT(700,40); x.fillStyle="#DCE4F5"; x.fillText(A.line,W/2,y);
+  y+=LP(74,84); drawBadge(x,W/2,y,badgeText(A),"rgba(255,255,255,.10)","rgba(246,195,91,.55)","#FFE39A");
+  var pY=y+LP(52,80), pH=LP(440,700);
+  chipsPanel(x,60,pY,W-120,pH,A,S,null,true);
+  var eY=pY+pH+LP(80,120);
+  elementRow(x,W,eY,A.strong,true);
+  var fy=eY+LP(130,156);
+  x.textAlign="center"; x.font=FONT(700,30); x.fillStyle="#DCE4F5"; x.fillText(T("balance")+" "+A.bal+"  ·  "+T("needEl")+" "+N(A.weak),W/2,fy);
+  x.font=FONT(800,28); x.fillStyle="#FFD84D"; x.fillText((DB.cfg.shareUrl||CONFIG.shareUrl).replace(/^https?:\/\//,"").replace(/\/$/,""),W/2,fy+52);
+  x.font=FONT(600,24); x.fillStyle="#9FB0D8"; x.fillText(isEN()?"Choi Hyungchul Saju Institute":"최형철 사주명리 연구소",W/2,fy+92);
+  return c;
+}
+
+/* ── gradient : 오행 색 그라데이션 + 캐릭터 ── */
+function cardGradient(ratio){
+  var b=cardBase(ratio), c=b.c,x=b.x,W=b.W,H=b.H,LP=b.LP,A=b.A,S=b.S;
+  var hex=function(h,a){var n=parseInt(h.slice(1),16);return "rgba("+(n>>16&255)+","+(n>>8&255)+","+(n&255)+","+a+")"};
+  var g=x.createLinearGradient(0,0,W*0.4,H); g.addColorStop(0,hex(S.color,.34)); g.addColorStop(.55,hex(S.color,.10)); g.addColorStop(1,"#FFFFFF");
+  x.fillStyle="#fff"; x.fillRect(0,0,W,H); x.fillStyle=g; x.fillRect(0,0,W,H);
+  x.fillStyle=hex(S.color,.13); x.beginPath(); x.arc(W*0.86,H*0.10,W*0.34,0,7); x.fill();
+  x.fillStyle=hex(S.color,.09); x.beginPath(); x.arc(W*0.12,H*0.62,W*0.26,0,7); x.fill();
+  constellation(x,W,H,"#FFFFFF",.6,{x0:0.50,x1:0.97,y0:0.03,y1:0.14});
+  x.textAlign="center";
+  var y=LP(125,170);
+  x.font=FONT(900,44); x.fillStyle="#12224A"; x.fillText(T("labFull"),W/2,y);
+  y+=LP(60,70); x.font=FONT(700,31); x.fillStyle="#54657F"; x.fillText(T("appNamePlain")||(isEN()?"Five-Element Nature Self-Check":"나의 (자연)오행 성격 자가진단"),W/2,y);
+  y+=LP(96,108); x.font=FONT(800,43); x.fillStyle="#54657F"; x.fillText(isEN()?"What is my Element?":"나의 오행 성격은?",W/2,y);
+  y+=LP(100,112);
+  var nt=isEN()?A.name:"「"+A.name+"」"; var nf=fitName(x,nt,100,W-120,48);
+  x.fillStyle=S.tc; x.fillText(nt,W/2,y);
+  y+=LP(60,68); x.font=FONT(700,38); x.fillStyle="#3E5372"; x.fillText(A.line,W/2,y);
+  y+=LP(70,80); drawBadge(x,W/2,y,badgeText(A),"rgba(255,255,255,.85)",S.tc+"66",S.tc);
+  var cb=charBox(LP);
+  var pY=y+LP(52,80), pH=LP(440,700);
+  chipsPanel(x,60,pY,W-120,pH,A,S,(W-180)-(cb.ok?cb.cw*0.62:0),false);
+  if(cb.ok) x.drawImage(charImg,W-cb.cw-46,pY+pH-cb.ch+14,cb.cw,cb.ch);
+  var fy=pY+pH+LP(84,130);
+  x.textAlign="center"; x.font=FONT(700,32); x.fillStyle="#54657F"; x.fillText(T("balance")+" "+A.bal+"  ·  "+T("needEl")+" "+N(A.weak),W/2,fy);
+  x.font=FONT(800,28); x.fillStyle="#0B6BEE"; x.fillText((DB.cfg.shareUrl||CONFIG.shareUrl).replace(/^https?:\/\//,"").replace(/\/$/,""),W/2,fy+52);
+  x.font=FONT(600,24); x.fillStyle="#7D90AB"; x.fillText(isEN()?"Choi Hyungchul Saju Institute":"최형철 사주명리 연구소",W/2,fy+92);
+  return c;
+}
+
 
 /* 결과 화면에도 같은 엠블럼 표시 */
 function paintEmblem(id,A){
@@ -7492,24 +7734,30 @@ setTimeout(demo,60);
 </div>
 
 <script>
-/* 결과 카드 스킨 — A안이 기본, 선택은 다음 방문에도 유지된다.
-   오행 색은 결과 배지 색을 읽어 B안 배경에 반영한다(없으면 기본 파랑). */
+/* 결과 카드 스킨 — 5종. 선택은 다음 방문에도 유지되고, 저장·공유되는 카드 이미지가 같은 스킨으로 그려진다.
+   버튼을 누르면 아래에 작은 미리보기가 뜬다(결과가 나온 뒤에만). */
 (function(){
-  var KEY="aj_card_skin";
+  var KEY="aj_card_skin", IDS=["classic","news","symbol","night","gradient"];
+  var pvTimer=0;
+  function norm(sk){ if(sk==="a")return "classic"; if(sk==="b")return "gradient"; return IDS.indexOf(sk)>=0?sk:"classic"; }
   function paint(sk){
+    sk=norm(sk);
+    IDS.forEach(function(k){ document.body.classList.remove("skin-"+k); });
     document.body.classList.remove("skin-a","skin-b");
-    document.body.classList.add(sk==="b"?"skin-b":"skin-a");
+    document.body.classList.add("skin-"+sk);
+    if(sk==="classic") document.body.classList.add("skin-a");
+    if(sk==="gradient") document.body.classList.add("skin-b");
     var sw=document.getElementById("skinsw");
     if(sw) Array.prototype.forEach.call(sw.querySelectorAll("button"),function(b){
-      b.classList.toggle("on", b.getAttribute("data-skin")===(sk==="b"?"b":"a"));
+      b.classList.toggle("on", b.getAttribute("data-skin")===sk);
     });
-    try{ localStorage.setItem(KEY, sk==="b"?"b":"a"); }catch(e){}
-    if(sk==="b") tint();
+    try{ localStorage.setItem(KEY, sk); }catch(e){}
+    if(sk==="gradient") tint();
+    preview();
   }
   function tint(){
     try{
-      var b=document.getElementById("t1b");
-      if(!b) return;
+      var b=document.getElementById("t1b"); if(!b) return;
       var c=getComputedStyle(b).borderColor||"";
       if(c && c.indexOf("rgb")===0){
         document.documentElement.style.setProperty("--sk1", c.replace(")",", .18)").replace("rgb(","rgba("));
@@ -7517,8 +7765,19 @@ setTimeout(demo,60);
       }
     }catch(e){}
   }
-  var saved="a";
-  try{ saved=localStorage.getItem(KEY)||"a"; }catch(e){}
+  function preview(){
+    clearTimeout(pvTimer);
+    pvTimer=setTimeout(function(){
+      try{
+        if(typeof R1==="undefined"||!R1||typeof card!=="function") return;
+        var img=document.getElementById("skinPvImg"), t=document.getElementById("skinPvT"); if(!img) return;
+        var cv=card("4:5"); img.src=cv.toDataURL("image/jpeg",.8); img.classList.add("on");
+        if(t) t.textContent=(typeof isEN==="function"&&isEN())?"Saved/shared card looks like this":"저장·공유되는 카드는 이렇게 나옵니다";
+      }catch(e){}
+    },80);
+  }
+  var saved="classic";
+  try{ saved=norm(localStorage.getItem(KEY)||"classic"); }catch(e){}
   function init(){
     paint(saved);
     var sw=document.getElementById("skinsw");
@@ -7526,6 +7785,7 @@ setTimeout(demo,60);
       var t=e.target.closest?e.target.closest("[data-skin]"):null;
       if(t) paint(t.getAttribute("data-skin"));
     });
+    window.AJ_skinPreview=preview;
   }
   if(document.readyState==="loading") document.addEventListener("DOMContentLoaded", init);
   else init();
