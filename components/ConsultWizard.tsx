@@ -213,6 +213,7 @@ export default function ConsultWizard() {
   /* 입금 확인 시 대조하는 접수번호. 신청이 접수된 순간 한 번만 만든다. */
   const [refNo, setRefNo] = useState("");
   const [copied, setCopied] = useState(false);
+  const [kakaoCopied, setKakaoCopied] = useState(false);
   const [concern, setConcern] = useState("");
   /* 궁합 신청용 — 상대방 정보와 동의. 궁합 목적이 선택된 경우에만 쓰인다 */
   const [partnerBirth, setPartnerBirth] = useState("");
@@ -550,6 +551,26 @@ export default function ConsultWizard() {
             <p className="text-[12px] font-semibold text-indigo-700">{t.consultWizard.payRefNo}</p>
             <p className="mt-0.5 text-[19px] font-bold tracking-wide text-ink-900">{refNo}</p>
             <p className="mt-1 text-[11.5px] text-body">{t.consultWizard.payRefNoHint}</p>
+
+            {/* 카톡 대화창 열기 — 접수번호를 미리 복사해 두어 고객은 붙여넣기·전송만 하면 된다.
+                이 대화창이 이후 입금 확인·Q&A·리포트 전달의 한 자리가 된다. */}
+            <button
+              type="button"
+              className="mt-3 block w-full rounded-md bg-[#FEE500] px-4 py-3 text-center text-[14px] font-bold text-[#3C1E1E] transition hover:brightness-95"
+              onClick={() => {
+                try {
+                  navigator.clipboard.writeText(`접수번호 ${refNo} · ${name}`);
+                  setKakaoCopied(true);
+                  setTimeout(() => setKakaoCopied(false), 4000);
+                } catch {}
+                window.open(siteConfig.channels.kakaoIntake, "_blank", "noopener");
+              }}
+            >
+              {t.consultWizard.kakaoSendBtn}
+            </button>
+            <p className="mt-1.5 text-[11.5px] leading-relaxed text-body">
+              {kakaoCopied ? t.consultWizard.kakaoSendCopied : t.consultWizard.kakaoSendHint}
+            </p>
           </div>
 
           <p className="mt-4 text-[13px] text-body">
