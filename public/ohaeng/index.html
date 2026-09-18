@@ -1626,7 +1626,7 @@ body.skin-b .emb{filter:drop-shadow(0 8px 18px rgba(30,50,110,.22))}
 const CONFIG = {
   siteUrl        : "AIsajuLab.com",
   shareUrl       : "https://AIsajuLab.com",
-  kakaoChannelUrl: "https://open.kakao.com/o/gj3iUKai",  // ← 카카오톡 오픈채팅 상담 문의
+  kakaoChannelUrl: "https://pf.kakao.com/_cERaX/chat", // ← AI사주랩.com 카카오톡 채널 1:1 대화창 (2026-09-18, 오픈채팅에서 교체)
   adminPw        : "sagat2026",                            // ← 관리자 비밀번호
   version        : "v3.0",
   // Supabase 연결됨 → 전체 방문자 서버 집계 (테이블 ohaeng_events · 함수 ohaeng_stats)
@@ -3571,7 +3571,7 @@ const saveDB=()=>store.set(DB_KEY,DB);
 /* ── 데이터 버전 마이그레이션 ─────────────────────────────
    예전에 저장된 문항·상징이 새 버전을 덮어써 버리는 문제 방지.
    문항/상징/수식어만 최신 기본값으로 되돌리고, Q&A·설정은 유지한다. */
-const DATA_VER="4.9";
+const DATA_VER="4.10";
 if(DB.dataVer!==DATA_VER){
   DB.Q=clone(DEFAULT_Q); DB.SYM=clone(DEFAULT_SYM); DB.MOD=clone(DEFAULT_MOD);
   DB.cfg.kakaoChannelUrl=CONFIG.kakaoChannelUrl;
