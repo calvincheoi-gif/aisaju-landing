@@ -5401,7 +5401,7 @@ function ratioOf(r){
   var n=parseFloat(r); return (n&&n>0.6&&n<2.4)?n:1.25;
 }
 /* 숫자 칩 막대 — 칩을 넉넉히 키우고, 숫자와 막대 사이 여백을 다섯 칸 모두 같게 */
-function drawChips(x,cx,y,W,s,total,k){
+function drawChips(x,cx,y,W,s,total,k,dark){
   var n=ORDER.length, gap=W*0.040, cw=(W-gap*(n-1))/n, ch=cw*1.62, r=cw*0.28;
   var mx=Math.max.apply(null,ORDER.map(function(e){return s[e]/total}).concat([0.001]));
   var x0=cx-W/2;
@@ -5414,9 +5414,9 @@ function drawChips(x,cx,y,W,s,total,k){
   ORDER.forEach(function(e,i){
     var bx=x0+i*(cw+gap), sh=s[e]/total, EE=EL[e];
     /* 칩 */
-    x.save();x.shadowColor="rgba(11,79,209,.11)";x.shadowBlur=18;x.shadowOffsetY=5;
-    x.fillStyle="#FFFFFF";x.beginPath();x.roundRect(bx,y,cw,ch,r);x.fill();x.restore();
-    x.strokeStyle="#EEF3FA";x.lineWidth=2;x.beginPath();x.roundRect(bx,y,cw,ch,r);x.stroke();
+    x.save();x.shadowColor=dark?"rgba(0,0,0,.30)":"rgba(11,79,209,.11)";x.shadowBlur=18;x.shadowOffsetY=5;
+    x.fillStyle=dark?"rgba(255,255,255,.10)":"#FFFFFF";x.beginPath();x.roundRect(bx,y,cw,ch,r);x.fill();x.restore();
+    x.strokeStyle=dark?"rgba(191,208,245,.22)":"#EEF3FA";x.lineWidth=2;x.beginPath();x.roundRect(bx,y,cw,ch,r);x.stroke();
     /* 막대 — 아래에서 차오르고, 숫자는 그 위에 같은 간격으로 따라 올라간다 */
     var t=Math.min(1, sh/Math.max(mx,MAX_SHARE));
     var ph=phMin+Math.pow(t,0.75)*(phMax-phMin);
@@ -5430,11 +5430,11 @@ function drawChips(x,cx,y,W,s,total,k){
     var vt=String(Math.round(s[e]*10)/10), f=vf;
     x.font=FONT(900,f);
     while(x.measureText(vt).width>cw*0.74&&f>cw*0.26){f-=1;x.font=FONT(900,f)}
-    x.fillStyle=EE.tc;x.fillText(vt, bx+cw/2, py-gapNB);
+    x.fillStyle=dark?lighten(EE.color,.45):EE.tc;x.fillText(vt, bx+cw/2, py-gapNB);
     /* % · 한자 */
-    x.font=FONT(800,cw*0.225);x.fillStyle="#9DAEC4";
+    x.font=FONT(800,cw*0.225);x.fillStyle=dark?"#A8B8D8":"#9DAEC4";
     x.fillText(Math.round(sh*100)+"%", bx+cw/2, y+ch+cw*0.32);
-    x.font=FONT(900,cw*0.44);x.fillStyle=EE.tc;
+    x.font=FONT(900,cw*0.44);x.fillStyle=dark?lighten(EE.color,.45):EE.tc;
     x.fillText(EE.han, bx+cw/2, y+ch+cw*0.84);
   });
 }
@@ -5653,20 +5653,28 @@ function cardBase(ratio){
   var A=R2||R1, S=EL[A.strong];
   return {c:c,x:x,W:W,H:H,LP:LP,A:A,S:S};
 }
-function dotGrid(x,W,H,col,step){
-  step=step||38; x.save(); x.fillStyle=col||"rgba(96,120,170,.16)";
-  for(var yy=step;yy<H;yy+=step) for(var xx=step;xx<W;xx+=step){ x.beginPath(); x.arc(xx,yy,2.2,0,7); x.fill(); }
-  x.restore();
+/* 배경 장식이 본문(수치 패널) 위를 지나면 지저분해진다. band=[y0,y1](세로 비율)은 '비워 둘 구간'이고, 그 바깥에만 그린다. */
+function decoClip(x,W,H,band){
+  if(!band) return;
+  x.beginPath();
+  x.rect(0,0,W,H*band[0]);
+  x.rect(0,H*band[1],W,H*(1-band[1]));
+  x.clip();
 }
-function constellation(x,W,H,col,alpha,region){
+function dotGrid(x,W,H,col,step,band){
+  step=step||38; x.save(); decoClip(x,W,H,band); x.fillStyle=col||"rgba(96,120,170,.16)";
+  for(var yy=step;yy<H;yy+=step) for(var xx=step;xx<W;xx+=step){ x.beginPath(); x.arc(xx,yy,2.2,0,7); x.fill(); }
+  x.restore(); x.beginPath();   /* 남은 경로를 비운다 — 뒤에 오는 fill/stroke 에 섞이지 않게 */
+}
+function constellation(x,W,H,col,alpha,region,band){
   var r=region||{x0:0.52,x1:0.98,y0:0.04,y1:0.30};
   var rnd=function(i){var v=Math.sin(i*91.7+13.1)*43758.5453;return v-Math.floor(v)};
   var pts=[]; for(var i=0;i<7;i++){ pts.push({x:W*(r.x0+(r.x1-r.x0)*(i/6)), y:H*(r.y0+(r.y1-r.y0)*rnd(i))}); }
-  x.save(); x.globalAlpha=alpha==null?.55:alpha; x.strokeStyle=col||"#9DB4E0"; x.fillStyle=col||"#9DB4E0"; x.lineWidth=2.2;
+  x.save(); decoClip(x,W,H,band); x.globalAlpha=alpha==null?.55:alpha; x.strokeStyle=col||"#9DB4E0"; x.fillStyle=col||"#9DB4E0"; x.lineWidth=2.2;
   x.beginPath(); pts.forEach(function(p,i){ i?x.lineTo(p.x,p.y):x.moveTo(p.x,p.y) }); x.stroke();
   x.beginPath(); x.moveTo(pts[1].x,pts[1].y); x.lineTo(pts[4].x,pts[4].y); x.stroke();
   pts.forEach(function(p){ x.beginPath(); x.arc(p.x,p.y,5,0,7); x.fill(); });
-  x.restore();
+  x.restore(); x.beginPath();
 }
 function hlText(x,txt,cx,y,font,col,align){
   x.font=font; x.textAlign=align||"center";
@@ -5703,10 +5711,15 @@ function footerBand(x,W,H,h){
 }
 /* 흰 패널 + 숫자 칩(현행 카드와 같은 막대) — 칩 폭을 줄이면 오른쪽에 캐릭터 자리가 생긴다 */
 function chipsPanel(x,X,Y,Wd,Hd,A,S,chipW,dark){
-  x.save(); x.fillStyle=dark?"rgba(255,255,255,.97)":"#fff"; x.shadowColor="rgba(20,40,90,.10)"; x.shadowBlur=24; x.shadowOffsetY=8;
+  /* 밤하늘(dark)에 흰 패널을 얹으면 그 부분만 낮처럼 튄다 — 어두운 유리판으로 깐다 */
+  x.save();
+  x.fillStyle = dark ? "rgba(255,255,255,.07)" : "#fff";
+  x.shadowColor = dark ? "rgba(0,0,0,.28)" : "rgba(20,40,90,.10)";
+  x.shadowBlur=24; x.shadowOffsetY=8;
   x.beginPath(); x.roundRect(X,Y,Wd,Hd,28); x.fill(); x.restore();
+  if(dark){ x.strokeStyle="rgba(191,208,245,.28)"; x.lineWidth=2; x.beginPath(); x.roundRect(X,Y,Wd,Hd,28); x.stroke(); }
   var cw=chipW||(Wd-60), chipCW=(cw-(cw*0.040)*4)/5, ch=chipCW*1.62+chipCW*1.02;
-  drawChips(x,X+30+cw/2,Y+(Hd-ch)/2,cw,A.s,A.total,S);
+  drawChips(x,X+30+cw/2,Y+(Hd-ch)/2,cw,A.s,A.total,S,dark);
 }
 function badgeText(A){
   var yang=A.yy.sign==="yang";
@@ -5729,8 +5742,8 @@ function charBox(LP){
 function cardNews(ratio){
   var b=cardBase(ratio), c=b.c,x=b.x,W=b.W,H=b.H,LP=b.LP,A=b.A,S=b.S;
   x.fillStyle="#F3F6FC"; x.fillRect(0,0,W,H);
-  dotGrid(x,W,H,"rgba(96,120,170,.16)",38);
-  constellation(x,W,H,"#9DB4E0",.55,{x0:0.50,x1:0.97,y0:0.03,y1:0.14});
+  dotGrid(x,W,H,"rgba(96,120,170,.16)",38,[0.33,0.78]);
+  constellation(x,W,H,"#9DB4E0",.55,{x0:0.50,x1:0.97,y0:0.03,y1:0.12},[0.33,0.78]);
   var pill=isEN()?"Five-Element Type · Self-check result":"오행 성격 · 자가진단 결과";
   x.font=FONT(800,28); var pw=x.measureText(pill).width+96;
   x.fillStyle="#fff"; x.beginPath(); x.roundRect(60,64,pw,64,32); x.fill();
@@ -5750,8 +5763,9 @@ function cardNews(ratio){
   var bt=badgeText(A); x.font=FONT(800,34); var bw=x.measureText(bt).width+64;
   x.fillStyle=S.soft; x.beginPath(); x.roundRect(64,y-36,bw,62,31); x.fill(); x.strokeStyle=S.tc+"66"; x.lineWidth=2; x.stroke();
   x.fillStyle=S.tc; x.textAlign="left"; x.fillText(bt,96,y);
-  /* 캐릭터 — 헤드라인 오른쪽, 뱃지 줄에 발을 맞춘다 */
-  if(cb.ok) x.drawImage(charImg,W-cb.cw-56,y+30-cb.ch,cb.cw,cb.ch);
+  /* 캐릭터 — 헤드라인 오른쪽, 뱃지 줄에 발을 맞춘다.
+     위로 너무 올리면 말풍선이 상단 라벨과 겹친다 — 라벨 아래(y=150)부터 시작하게 막아 둔다 */
+  if(cb.ok){ var chY=Math.max(LP(150,172), y+30-cb.ch); x.drawImage(charImg,W-cb.cw-56,chY,cb.cw,cb.ch); }
   var pY=y+LP(50,62), pH=LP(440,700);
   chipsPanel(x,60,pY,W-120,pH,A,S,null,false);
   var eY=pY+pH+LP(80,120);
@@ -5791,9 +5805,9 @@ function cardNight(ratio){
   var b=cardBase(ratio), c=b.c,x=b.x,W=b.W,H=b.H,LP=b.LP,A=b.A,S=b.S;
   var g=x.createLinearGradient(0,0,0,H); g.addColorStop(0,"#0F1B3D"); g.addColorStop(1,"#1E3A8A");
   x.fillStyle=g; x.fillRect(0,0,W,H);
-  constellation(x,W,H,"#BFD0F5",.35,{x0:0.05,x1:0.95,y0:0.03,y1:0.13});
-  constellation(x,W,H,"#BFD0F5",.22,{x0:0.05,x1:0.95,y0:0.88,y1:0.98});
-  dotGrid(x,W,H,"rgba(255,255,255,.06)",46);
+  constellation(x,W,H,"#BFD0F5",.35,{x0:0.05,x1:0.95,y0:0.03,y1:0.13},[0.33,0.78]);
+  constellation(x,W,H,"#BFD0F5",.22,{x0:0.05,x1:0.95,y0:0.88,y1:0.98},[0.33,0.78]);
+  dotGrid(x,W,H,"rgba(255,255,255,.06)",46,[0.33,0.78]);
   x.textAlign="center";
   var y=LP(120,160);
   var lg=x.createLinearGradient(W/2-140,0,W/2+140,0); lg.addColorStop(0,"#F6C35B"); lg.addColorStop(1,"#FFE39A");
@@ -5824,7 +5838,7 @@ function cardGradient(ratio){
   x.fillStyle="#fff"; x.fillRect(0,0,W,H); x.fillStyle=g; x.fillRect(0,0,W,H);
   x.fillStyle=hex(S.color,.13); x.beginPath(); x.arc(W*0.86,H*0.10,W*0.34,0,7); x.fill();
   x.fillStyle=hex(S.color,.09); x.beginPath(); x.arc(W*0.12,H*0.62,W*0.26,0,7); x.fill();
-  constellation(x,W,H,"#FFFFFF",.6,{x0:0.50,x1:0.97,y0:0.03,y1:0.14});
+  constellation(x,W,H,"#FFFFFF",.6,{x0:0.50,x1:0.97,y0:0.03,y1:0.12},[0.33,0.78]);
   x.textAlign="center";
   var y=LP(125,170);
   x.font=FONT(900,44); x.fillStyle="#12224A"; x.fillText(T("labFull"),W/2,y);
@@ -5837,8 +5851,10 @@ function cardGradient(ratio){
   y+=LP(70,80); drawBadge(x,W/2,y,badgeText(A),"rgba(255,255,255,.85)",S.tc+"66",S.tc);
   var cb=charBox(LP);
   var pY=y+LP(52,80), pH=LP(440,700);
-  chipsPanel(x,60,pY,W-120,pH,A,S,(W-180)-(cb.ok?cb.cw*0.62:0),false);
-  if(cb.ok) x.drawImage(charImg,W-cb.cw-46,pY+pH-cb.ch+14,cb.cw,cb.ch);
+  /* 캐릭터는 패널 안으로 들어오면 마지막 칸(水)을 가린다 — 패널 폭은 그대로 두고
+     캐릭터를 패널 아래 오른쪽에 세운다 */
+  chipsPanel(x,60,pY,W-120,pH,A,S,null,false);
+  if(cb.ok){ var gw=cb.cw*0.82, gh=cb.ch*0.82; x.drawImage(charImg,W-gw-40,pY+pH+LP(6,18),gw,gh); }
   var fy=pY+pH+LP(84,130);
   x.textAlign="center"; x.font=FONT(700,32); x.fillStyle="#54657F"; x.fillText(T("balance")+" "+A.bal+"  ·  "+T("needEl")+" "+N(A.weak),W/2,fy);
   x.font=FONT(800,28); x.fillStyle="#0B6BEE"; x.fillText((DB.cfg.shareUrl||CONFIG.shareUrl).replace(/^https?:\/\//,"").replace(/\/$/,""),W/2,fy+52);
