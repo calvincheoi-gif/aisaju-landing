@@ -1,0 +1,28 @@
+# ─────────────────────────────────────────────────────────────
+# Netlify 설정
+#
+# 빌드는 @netlify/plugin-nextjs 가 알아서 한다. 여기서는 캐시 규칙만 정한다.
+#
+# 왜 필요한가 (2026-09-19):
+#   오행 앱(/ohaeng/)은 한 덩어리짜리 index.html 이다. 새로 배포해도 폰 브라우저가
+#   옛 파일을 계속 들고 있어서, 고친 내용이 며칠 뒤에나 반영되는 일이 있었다.
+#   실제로 결과 화면이 뜨지 않는 버그를 고쳐 배포했는데도 폰에서는 그대로였다.
+#   아래 규칙은 "매번 서버에 물어보고 바뀌었을 때만 새로 받는다"는 뜻이다.
+#   파일이 그대로면 통신량은 거의 없고, 바뀌었으면 즉시 새 파일을 받는다.
+# ─────────────────────────────────────────────────────────────
+
+[[headers]]
+  for = "/ohaeng/*"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+# 홈에 걸어 둔 미리보기 이미지도 바꿨을 때 바로 반영되게 한다
+[[headers]]
+  for = "/og-home.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+  for = "/og-home-sq.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"
