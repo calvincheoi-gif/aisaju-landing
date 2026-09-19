@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { siteConfig } from "@/lib/site-config";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
@@ -269,7 +270,25 @@ export default async function LearnPostPage({
             </div>
           )}
 
-          <div className="mt-10 text-center">
+          {/* 다 읽은 사람에게만 권한다 — 가입도 연락처도 받지 않으니, 다시 만날 길은 이것뿐이다.
+              「채널 추가」는 한 번 누르는 것으로 끝나고, 우리 쪽에 남는 개인정보는 없다. */}
+          <div className="mt-10 rounded-xl border border-border bg-bg-alt px-5 py-6 text-center">
+            <p className="text-[15px] font-semibold text-ink-900">다음 글도 챙겨 보시겠어요?</p>
+            <p className="mt-1 text-[13.5px] text-body">
+              월·목 아침, 그 주의 읽을거리와 오늘의 행동 방향을 카카오톡으로 보내드립니다.
+            </p>
+            <a
+              href={siteConfig.channels.kakaoChannelAdd}
+              target="_blank"
+              rel="noopener"
+              className="mt-4 inline-flex items-center justify-center rounded-lg bg-[#FEE500] px-5 py-3 text-[14px] font-bold text-[#3C1E1E] transition hover:brightness-95"
+            >
+              이번 주 읽을거리를 카톡으로 받기
+            </a>
+            <p className="mt-2 text-[12px] text-body/80">채널 추가 한 번 · 주 2회 · 가입 없이</p>
+          </div>
+
+          <div className="mt-8 text-center">
             <Link href="/learn" className="btn-ghost">
               읽을거리 목록으로
             </Link>

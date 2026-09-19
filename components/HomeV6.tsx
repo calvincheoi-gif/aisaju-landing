@@ -308,6 +308,7 @@ body{padding-bottom:86px}
 .ch-btn.hot::after{content:" →";font-weight:900}
 .ch-btn.naver{background:linear-gradient(135deg,rgba(56,150,255,.92),rgba(29,110,225,.92));
   box-shadow:0 3px 11px rgba(29,124,242,.28)}
+.ch-btn.kko{background:#FEE500;border:0;color:#3C1E1E;font-weight:800}
 .ch-btn.insta{background:linear-gradient(135deg,rgba(96,196,255,.92),rgba(45,160,240,.92));
   box-shadow:0 3px 11px rgba(45,160,240,.26)}
 .ch-btn.hot:active{transform:translateY(0);box-shadow:0 1px 4px rgba(20,60,120,.2)}
@@ -862,6 +863,7 @@ en: {
  h2Ch:'Find us elsewhere too',
  ch1:'Daangn business profile', ch2:'Naver blog', ch3:'KakaoTalk channel',
  ch4:'Instagram', ch5:'Myeongnihak self-study cafe',
+ chAdd:'Get this week’s readings on KakaoTalk',
  shareBtn:'Tell a friend about this site',
  ftBrand:'AIsajuLab.com', ftTag:'AI analyses; myeongnihak finds the direction',
  ftDisc:'Results are AI-generated content grounded in myeongnihak. They are not scientific fact and do not guarantee the future.',
@@ -1018,6 +1020,7 @@ ja: {
  h2Ch:'ほかの場所でも会えます',
  ch1:'タンジン ビジネスプロフィール', ch2:'NAVER ブログ', ch3:'カカオトークチャンネル',
  ch4:'Instagram', ch5:'命理学 Self-study カフェ',
+ chAdd:'今週の読みものをカカオトークで受け取る',
  shareBtn:'友だちにこのサイトを教える',
  ftBrand:'AIsajuLab.com', ftTag:'AIが分析し、命理学が方向を見つけます',
  ftDisc:'診断結果は命理学にもとづくAI生成コンテンツであり、科学的事実や未来を保証するものではありません。',
@@ -1174,6 +1177,7 @@ zh: {
  h2Ch:'在别的地方也能找到我们',
  ch1:'Daangn 商家主页', ch2:'NAVER 博客', ch3:'KakaoTalk 频道',
  ch4:'Instagram', ch5:'命理学 Self-study 社群',
+ chAdd:'用 KakaoTalk 接收本周读物',
  shareBtn:'把这个网站告诉朋友',
  ftBrand:'AIsajuLab.com', ftTag:'AI 做分析，命理学找方向',
  ftDisc:'测试结果是以命理学为基础的 AI 生成内容，并非科学事实，也不保证未来。',
@@ -1330,6 +1334,7 @@ fr: {
  h2Ch:'On se retrouve aussi ailleurs',
  ch1:'Profil pro Daangn', ch2:'Blog Naver', ch3:'Chaîne KakaoTalk',
  ch4:'Instagram', ch5:'Café Self-study myeongnihak',
+ chAdd:'Recevoir les lectures de la semaine sur KakaoTalk',
  shareBtn:'Parler du site à un ami',
  ftBrand:'AIsajuLab.com', ftTag:"L'IA analyse ; le myeongnihak trouve la direction",
  ftDisc:"Les résultats sont un contenu généré par IA fondé sur le myeongnihak. Ils ne constituent pas un fait scientifique et ne garantissent pas l'avenir.",
@@ -1849,6 +1854,7 @@ const HTML = String.raw`
       <a class="ch-btn" href="https://open.kakao.com/o/gj3iUKai" target="_blank" rel="noopener" data-i="ch3">카카오톡 채널</a>
       <a class="ch-btn hot insta" href="https://www.instagram.com/choi_calvin" target="_blank" rel="noopener" data-i="ch4">인스타그램</a>
       <a class="ch-btn" href="https://cafe.daangn.com/sajupalja-myeon?utm_medium=copy_link" target="_blank" rel="noopener" data-i="ch5">명리학 Self-study 카페</a>
+      <a class="ch-btn kko" href="https://pf.kakao.com/_cERaX/friend" target="_blank" rel="noopener" data-go="chadd" data-from="home_ch" data-i="chAdd">이번 주 읽을거리를 카톡으로 받기</a>
     </div>
     <div style="text-align:center">
       <button class="sharebar" type="button" data-go="share" data-from="channels">

@@ -42,6 +42,10 @@ export const siteConfig = {
        AI사주랩.com 카카오톡 채널(2026-09-18 개설, 검색 ID aisajulab)의 1:1 대화창이다.
        채널은 환영 메시지·자동응답이 되고, 오픈채팅(위 kakaoChannel)은 대화만 된다. */
     kakaoIntake: "https://pf.kakao.com/_cERaX/chat",
+    /* 「채널 추가」 — 누르면 카톡이 추가 여부를 묻는다. 고객이 입력할 것이 없고,
+       추가하는 행위 자체가 수신 동의라 연락처를 받아 둘 필요가 없다.
+       (개인정보를 한 줄도 갖지 않으면서 연결을 유지하는 길 — 2026-09-19) */
+    kakaoChannelAdd: "https://pf.kakao.com/_cERaX/friend",
     instagram: "https://www.instagram.com/choi_calvin?igsh=OWQwdjR4MDV6Nnln",
     cafe: "https://cafe.daangn.com/sajupalja-myeon?utm_medium=copy_link",
   },

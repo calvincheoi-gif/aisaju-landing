@@ -799,6 +799,16 @@ body.skin-b .emb{filter:drop-shadow(0 8px 18px rgba(30,50,110,.22))}
   letter-spacing:-.03em;transition:.15s}
 .skinsw button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
 
+/* ── 채널 추가 버튼 ──
+   가입도 연락처도 받지 않는 서비스라, 다시 만날 길이 이것뿐이다.
+   결과·오늘의 기운·읽을거리 끝에 두어 "한 번 쓰고 사라지는" 흐름을 끊는다. */
+.kkoadd{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;
+  margin-top:12px;padding:13px 16px;border:0;border-radius:12px;cursor:pointer;
+  background:#FEE500;color:#3C1E1E;font-family:inherit;font-size:14px;font-weight:800;letter-spacing:-.035em}
+.kkoadd:active{transform:translateY(1px)}
+.kkoadd small{display:block;font-size:11.5px;font-weight:600;opacity:.72;margin-top:2px}
+.kkoadd b{font-size:14.4px}
+
 /* ── 결과 평가 카드 ── */
 .rate{text-align:center;padding:16px 14px 14px}
 .rate-q{font-size:14.6px;font-weight:800;color:var(--ink);letter-spacing:-.03em;margin-bottom:8px}
@@ -965,6 +975,11 @@ body.skin-b .emb{filter:drop-shadow(0 8px 18px rgba(30,50,110,.22))}
   </div>
   <div class="rate-t" id="rateT"></div>
 </div>
+
+<!-- 채널 추가 — 결과를 본 직후가 가장 반응이 좋다 -->
+<button class="kkoadd" type="button" data-go="chadd" data-from="r1" id="kkoadd1">
+  <span><b>이번 주 읽을거리를 카톡으로 받기</b><small>채널 추가 한 번 · 주 2회, 가입 없이</small></span>
+</button>
   <div class="sec-t" data-i="matchT"></div>
   <div class="match" id="mt1"></div>
   <p class="tiny" style="margin-top:9px;text-align:center" data-i="matchNote"></p>
@@ -1244,6 +1259,9 @@ body.skin-b .emb{filter:drop-shadow(0 8px 18px rgba(30,50,110,.22))}
       <button class="btn btn-p" id="tdSol" data-i="tdSol"></button>
       <button class="btn btn-g sm" id="tdBack" data-i="mateBack"></button>
     </div>
+    <button class="kkoadd" type="button" data-go="chadd" data-from="today" id="kkoadd2">
+      <span><b>이번 주 읽을거리를 카톡으로 받기</b><small>채널 추가 한 번 · 주 2회, 가입 없이</small></span>
+    </button>
     <p class="tiny" style="margin-top:11px;text-align:center" data-i="tdNote"></p>
     <div class="foot"><p data-i="footer"></p><p class="bizf" data-i="bizInfo"></p></div>
   </div>
@@ -1666,7 +1684,8 @@ body.skin-b .emb{filter:drop-shadow(0 8px 18px rgba(30,50,110,.22))}
 const CONFIG = {
   siteUrl        : "AIsajuLab.com",
   shareUrl       : "https://AIsajuLab.com",
-  kakaoChannelUrl: "https://pf.kakao.com/_cERaX/chat", // ← AI사주랩.com 카카오톡 채널 1:1 대화창 (2026-09-18, 오픈채팅에서 교체)
+  kakaoChannelUrl: "https://pf.kakao.com/_cERaX/chat",
+  kakaoAddUrl:     "https://pf.kakao.com/_cERaX/friend",   // 「채널 추가」 — 고객이 누르는 것 자체가 수신 동의다 // ← AI사주랩.com 카카오톡 채널 1:1 대화창 (2026-09-18, 오픈채팅에서 교체)
   adminPw        : "sagat2026",                            // ← 관리자 비밀번호
   version        : "v3.0",
   // Supabase 연결됨 → 전체 방문자 서버 집계 (테이블 ohaeng_events · 함수 ohaeng_stats)
@@ -3862,7 +3881,16 @@ function applyLang(){
     if($("mate").classList.contains("on")) renderMate(); }
   if(typeof renderRepLen==="function"&&$("r4").classList.contains("on")){ renderRepLen(); buildReport() }
 }
-function setLang(l){ LANG=l; store.set("ohaeng_lang",l);
+function kkoAddLabel(){
+  var t=isEN()?["Get this week’s readings on KakaoTalk","One tap to add · twice a week, no sign-up"]
+              :["이번 주 읽을거리를 카톡으로 받기","채널 추가 한 번 · 주 2회, 가입 없이"];
+  ["kkoadd1","kkoadd2"].forEach(function(id){
+    var el=document.getElementById(id); if(!el) return;
+    el.innerHTML="<span><b>"+t[0]+"</b><small>"+t[1]+"</small></span>";
+  });
+}
+function setLang(l){ LANG=l;
+  try{ kkoAddLabel(); }catch(e){} store.set("ohaeng_lang",l);
   /* Next.js 쪽(홈·상담·법적)은 raw 문자열 aisaju_lang 을 쓰므로 함께 기록한다 */
   try{ localStorage.setItem("aisaju_lang", l) }catch(e){}
   applyLang() }
@@ -7782,6 +7810,12 @@ document.querySelectorAll("[data-go]").forEach(b=>b.onclick=()=>{
   if(g==="mate") return goQuick("mate");
   if(g==="log")  return openMates();
   if(g==="inst") return openInstall();
+  if(g==="chadd"){
+    /* 「채널 추가」 — 카톡이 추가 여부를 묻는 화면을 연다. 우리 쪽에 남는 개인정보는 없다 */
+    window.AJ&&AJ.track("channel_add_click",{props:{from:b.dataset.from||""}});
+    window.open(CONFIG.kakaoAddUrl,"_blank","noopener");
+    return;
+  }
 });
 $("mlAdd").onclick=()=>{ if(R2||R1)shareMate(); else goQuick("mate") };
 $("tdBack").onclick=()=>show("intro");
