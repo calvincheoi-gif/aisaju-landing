@@ -38,7 +38,9 @@ create index if not exists daily_iching_status_date_idx
 
 -- updated_at 자동 갱신 (함수명은 이 테이블 전용으로 고유하게)
 create or replace function public.daily_iching_touch_updated_at()
-returns trigger language plpgsql as $$
+returns trigger language plpgsql
+set search_path = public
+as $$
 begin
   new.updated_at := now();
   if new.status = 'approved' and (old.status is distinct from 'approved') then
