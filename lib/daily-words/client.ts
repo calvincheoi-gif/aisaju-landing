@@ -6,6 +6,20 @@
  *  · 한국어 화면에서만 보이고, 다른 언어에서는 원래 VOC 문구를 보여 준다
  */
 const INTERVAL = 12_000;
+const FONT_MAX = 19;   /* 문구가 짧으면 크게 */
+const FONT_MIN = 12;   /* 길어도 이 밑으로는 줄이지 않음 */
+
+/** 문구마다 칸(높이 고정)에 꽉 차는 가장 큰 글자 크기를 찾는다 — 짧은 속담은 크게, 긴 경구는 작게 */
+function fitWords(box: HTMLElement) {
+  if (box.hidden) return;
+  box.querySelectorAll<HTMLElement>(".dw-txt").forEach((t) => {
+    const fits = (px: number) => { t.style.fontSize = px + "px"; return t.scrollHeight <= t.clientHeight + 1; };
+    if (fits(FONT_MAX)) return;
+    let lo = FONT_MIN, hi = FONT_MAX;
+    while (hi - lo > 0.25) { const mid = (lo + hi) / 2; if (fits(mid)) lo = mid; else hi = mid; }
+    t.style.fontSize = lo + "px";
+  });
+}
 const ORDER = ["wood", "fire", "earth", "metal", "water"];
 
 export interface DailyWordsHandle {
@@ -72,7 +86,13 @@ export function mountDailyWords(root: HTMLElement): DailyWordsHandle {
   const onTouch = () => start();                       /* 만지면 12초를 새로 센다 */
   const onVis = () => (document.hidden ? stop() : start());
 
+  let rz: ReturnType<typeof setTimeout> | null = null;
+  const onResize = () => { if (rz) clearTimeout(rz); rz = setTimeout(() => fitWords(box), 150); };
+
   dots.forEach((d) => d.addEventListener("click", onDot));
+  window.addEventListener("resize", onResize);
+  /* 웹폰트가 늦게 들어오면 글자 폭이 바뀌므로 한 번 더 맞춘다 */
+  try { (document as Document & { fonts?: FontFaceSet }).fonts?.ready.then(() => fitWords(box)); } catch {}
   box.addEventListener("mouseenter", onEnter);
   box.addEventListener("mouseleave", onLeave);
   box.addEventListener("touchstart", onTouch, { passive: true });
@@ -83,11 +103,14 @@ export function mountDailyWords(root: HTMLElement): DailyWordsHandle {
       const ko = lang === "ko";
       box.hidden = !ko;
       if (voc) voc.hidden = ko;
+      fitWords(box);
       start();
     },
     destroy() {
       stop();
       dots.forEach((d) => d.removeEventListener("click", onDot));
+      window.removeEventListener("resize", onResize);
+      if (rz) clearTimeout(rz);
       box.removeEventListener("mouseenter", onEnter);
       box.removeEventListener("mouseleave", onLeave);
       box.removeEventListener("touchstart", onTouch);
