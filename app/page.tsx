@@ -1,6 +1,7 @@
 import HomeV6 from "@/components/HomeV6";
 import { getFeaturedLearnCard, getOhaengLearnLinks, learnImageUrl } from "@/lib/learn-posts";
 import { getPublishedReviews } from "@/lib/reviews";
+import { getTodayWords } from "@/lib/daily-words/server";
 
 /**
  * 홈은 CDN에 5분간 캐시한다.
@@ -23,11 +24,13 @@ export default async function Home() {
 
        (1) 관리자에서 「홈 노출」로 지정한 글 하나 — 없으면 최근 글, 글이 없으면 블록 자체가 사라진다
        (2) 승인(게시)된 후기만 — 승인 전 글은 여기 들어오지 않는다
-       (3) 오행 카드의 「더 읽기」 연결 — 글이 공개돼 있을 때만 버튼이 붙는다 */
-  const [post, reviews, ohaengLinks] = await Promise.all([
+       (3) 오행 카드의 「더 읽기」 연결 — 글이 공개돼 있을 때만 버튼이 붙는다
+       (4) Today's 촌철활인 한마디 — 오늘(한국 시간) 날짜의 오행별 5문구, 없으면 기존 VOC 문구 */
+  const [post, reviews, ohaengLinks, words] = await Promise.all([
     getFeaturedLearnCard(),
     getPublishedReviews(5),
     getOhaengLearnLinks(),
+    getTodayWords(),
   ]);
 
   const learn = post
@@ -42,5 +45,5 @@ export default async function Home() {
       }
     : null;
 
-  return <HomeV6 learn={learn} reviews={reviews} ohaengLinks={ohaengLinks} />;
+  return <HomeV6 learn={learn} reviews={reviews} ohaengLinks={ohaengLinks} words={words} />;
 }

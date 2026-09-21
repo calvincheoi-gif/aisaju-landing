@@ -1,5 +1,6 @@
 "use client";
 import { useEffect } from "react";
+import { wordsBlockHtml, WORDS_CSS, mountDailyWords, type DailyWord } from "@/lib/daily-words";
 
 const KAKAO = "https://open.kakao.com/o/gj3iUKai";
 const SB_URL = "https://urazdkvkanjnquqhnrvo.supabase.co";
@@ -1377,6 +1378,7 @@ const HTML = String.raw`
   </div>
 
   <div class="voc top" data-i="voc">AI사주랩.com은 항상 고객님의 VOC와 지속적인 분석, 리포트 Quality 개선을 통해 고객 만족도, 삶의 질 향상에 최선을 다하겠습니다.</div>
+  <!--WORDS_SLOT-->
 
   <!-- 히어로 : 여기까지가 첫 화면 -->
   <div class="hero">
@@ -2011,12 +2013,14 @@ function reviewsBlockHtml(reviews?: HomeReview[] | null) {
 }
 
 export default function HomeV6(
-  { learn, reviews, ohaengLinks }:
-  { learn?: HomeLearn | null; reviews?: HomeReview[] | null; ohaengLinks?: Record<string, string | null> | null }
+  { learn, reviews, ohaengLinks, words }:
+  { learn?: HomeLearn | null; reviews?: HomeReview[] | null; ohaengLinks?: Record<string, string | null> | null; words?: DailyWord[] | null }
 ) {
   useEffect(() => {
     track("home_view");
     const root = document.querySelector(".v6"); if (!root) return;
+    /* Today's 촌철활인 한마디 — 12초 순환·보완 오행 강조 (lib/daily-words) */
+    const dailyWords = mountDailyWords(root as HTMLElement);
 
     /* ══════════ 언어 전환 ══════════
        · 원본(한국어)은 첫 실행 때 요소마다 기억해 둔다 — ko 사전을 따로 두지 않아도 된다
@@ -2708,6 +2712,8 @@ export default function HomeV6(
       renderReviewForm(LANG);
       /* 오행 카드 패널도 같은 언어로 다시 그린다 */
       renderOhPanel(LANG);
+      /* 촌철활인 한마디는 한국어에서만, 다른 언어는 VOC 문구 */
+      dailyWords.setLang(LANG);
     };
 
     /* 설치 프롬프트가 화면을 그린 뒤에 도착하는 경우를 위해 한 번 더 그린다 */
@@ -2894,6 +2900,7 @@ export default function HomeV6(
       root.removeEventListener("click", onClick);
       document.removeEventListener("click", onDocClick);
       window.removeEventListener("pwa-ready", onPwaReady);
+      dailyWords.destroy();
       window.removeEventListener("keydown", svKey);
       stage?.removeEventListener("touchstart", onTS);
       stage?.removeEventListener("touchend", onTE);
@@ -2904,10 +2911,13 @@ export default function HomeV6(
 
   return (
     <div className="v6">
-      <style dangerouslySetInnerHTML={{ __html: CSS }} />
+      <style dangerouslySetInnerHTML={{ __html: CSS + WORDS_CSS }} />
       <div
         dangerouslySetInnerHTML={{
           __html: HTML
+            /* 촌철활인이 있으면 상단 VOC 문구는 숨겨 두고(한국어 외 언어에서 다시 보임) 그 자리에 한마디를 넣는다 */
+            .replace('<div class="voc top" data-i="voc">', words && words.length ? '<div class="voc top" data-i="voc" hidden>' : '<div class="voc top" data-i="voc">')
+            .replace("<!--WORDS_SLOT-->", wordsBlockHtml(words))
             .replace("<!--LEARN_SLOT-->", learnBlockHtml(learn))
             .replace("<!--REVIEWS_SLOT-->", reviewsBlockHtml(reviews)),
         }}
