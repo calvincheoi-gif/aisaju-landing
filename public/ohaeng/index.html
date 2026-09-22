@@ -44,6 +44,10 @@ html,body{height:100%}
 /* 한글 단어가 글자 단위로 쪼개져 줄바뀜되지 않게 — 사이트 전체 공통 규칙(2026-09-22).
    단어 단위로만 줄을 바꾸고, 한 단어가 칸보다 길 때만 예외로 끊는다 */
 body,button,input,select,textarea{word-break:keep-all;overflow-wrap:break-word;line-break:strict}
+/* 두 줄 이상 넘어가는 짧은 글은 윗줄·아랫줄 길이를 맞추고(balance),
+   긴 본문은 마지막 줄에 한 단어만 남지 않게 한다(pretty) — 사이트 전체 공통(2026-09-22) */
+body *{text-wrap:balance}
+p,li,dd,blockquote,textarea{text-wrap:pretty}
 body{background:var(--bg);color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;
   line-height:1.62;letter-spacing:-.015em;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom)}

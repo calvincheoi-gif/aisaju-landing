@@ -17,6 +17,13 @@
     word-break: keep-all;
     overflow-wrap: break-word;
   }
+  /* 짧은 글은 윗줄·아랫줄 길이 균형, 긴 본문은 마지막 줄 한 단어 방지 (2026-09-22) */
+  body * {
+    text-wrap: balance;
+  }
+  p, li, dd, blockquote, textarea {
+    text-wrap: pretty;
+  }
 }
 
 @layer components {
