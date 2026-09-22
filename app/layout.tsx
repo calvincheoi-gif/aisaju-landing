@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import LanguageProvider from "@/components/LanguageProvider";
+import FloatNav from "@/components/FloatNav";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://aisajulab.com"),
@@ -125,6 +126,8 @@ export default function RootLayout({
       </head>
       <body className="font-sans">
         <LanguageProvider>{children}</LanguageProvider>
+        {/* 뒤로·목록·오행·홈 떠 있는 버튼 — 홈·관리자 화면에서는 스스로 숨는다 */}
+        <FloatNav />
         <script src="/card-sheets.js" defer></script>
         <script src="/visitor.js" defer></script>
         <script src="/pwa.js" defer></script>
