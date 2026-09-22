@@ -635,6 +635,7 @@ h1.big{font-size:41.1px;margin-bottom:6px}
   border-radius:10px;background:#FFF8E8;border:1px solid #F0DDB0;font-size:13.4px;
   font-weight:800;color:#7A6634;cursor:pointer}
 .bd-leap input{width:17px;height:17px;accent-color:#1D7CF2}
+.bd-leap{flex-wrap:wrap}.bd-leap.off{opacity:.6;cursor:default}.bd-leap-tip{flex-basis:100%;margin-top:2px;font-size:11.8px;font-weight:700;color:#9A8550}
 .bd-row{display:flex;gap:7px;margin-bottom:13px}
 .bd-row select{flex:1;min-width:0;padding:12px 8px;border-radius:10px;border:1.5px solid #D5E1F2;
   background:#fff;font-family:inherit;font-size:16.1px;font-weight:800;color:#1D3E75;
@@ -7351,17 +7352,54 @@ $("go2").onclick=()=>{window.AJ&&AJ.track("ohaeng_calibration_start");render2();
    사주를 이미 계산했으면 바로 4단계, 아니면 생년월일부터 받는다.
    ※ 최상위 함수 선언이어야 afterQuick 등 다른 곳에서도 보인다. */
 $("go3").onclick=()=>goReport();
+/* ═══ 음력 입력 보조 (생년월일·상담 신청 공용, pre = "bd" | "cs") ═══
+   ① 그해 윤달이 몇 월인지 알려 주고, 그 달일 때만 「윤달」을 고를 수 있게 한다(KASI 만세력 기준)
+   ② 날짜 칸을 달력에 맞춘다 — 양력은 그달 말일까지, 음력은 30일까지 */
+const LEAP_TXT={ko:["윤","(윤달)"],en:["leap ","(leap)"],ja:["閏","(閏月)"],zh:["闰","(闰月)"],fr:["intercalaire ","(intercalaire)"]};
+function calIsLunar(pre){ const c=$(pre+"Cal"); const on=c&&c.querySelector("[data-c].on"); return !!on&&on.dataset.c==="lunar"; }
+function calDayFix(pre){
+  const Y=$(pre+"Y"),M=$(pre+"M"),D=$(pre+"D"); if(!Y||!M||!D) return;
+  const y=+Y.value,m=+M.value,cur=+D.value||1;
+  const max=calIsLunar(pre)?30:new Date(y,m,0).getDate();
+  if(D.options.length===max) return;
+  const suf=(D.options[0]&&D.options[0].textContent.replace(/^\d+/,""))||"";
+  let h=""; for(let v=1;v<=max;v++) h+=`<option value="${v}"${v===Math.min(cur,max)?" selected":""}>${v}${suf}</option>`;
+  D.innerHTML=h;
+}
+function calLeapMonth(y){
+  const M=window.Manseryeok||window.manseryeok;
+  if(M&&M.lunarToSolar){ for(let m=1;m<=12;m++){ try{ const r=M.lunarToSolar(y,m,1,true); if(r&&r.solar) return m; }catch(e){} } return 0; }
+  try{ return window.LunarYear?window.LunarYear.fromYear(y).getLeapMonth():-1 }catch(e){ return -1 }
+}
+function calLeapInfo(pre){
+  const wrap=$(pre+"LeapWrap"), box=$(pre+"Leap"); if(!wrap||!box) return;
+  if(!calIsLunar(pre)){ wrap.style.display="none"; box.checked=false; return; }
+  wrap.style.display="";
+  let tip=wrap.querySelector(".bd-leap-tip");
+  if(!tip){ tip=document.createElement("small"); tip.className="bd-leap-tip"; wrap.appendChild(tip); }
+  const y=+$(pre+"Y").value, m=+$(pre+"M").value, W=LEAP_TXT[LANG]||LEAP_TXT.ko;
+  loadManse().then(()=>{
+    const lm=calLeapMonth(y);
+    if(lm<0){ box.disabled=false; wrap.classList.remove("off"); tip.textContent=""; return; }
+    const ok=lm>0&&lm===m;
+    box.disabled=!ok; if(!ok) box.checked=false; wrap.classList.toggle("off",!ok);
+    tip.textContent = LANG==="ko"
+      ? (lm ? `${y}년은 윤${lm}월이 있는 해입니다${ok?"":` · ${lm}월을 고르면 선택할 수 있어요`}` : `${y}년에는 윤달이 없습니다`)
+      : (lm ? `${y}: ${W[0]}${lm}` : `${y}: —`);
+  }).catch(()=>{ box.disabled=false; wrap.classList.remove("off"); tip.textContent=""; });
+}
+["bd","cs"].forEach(pre=>[pre+"Y",pre+"M"].forEach(id=>{ const e=$(id); if(e) e.addEventListener("change",()=>{ calDayFix(pre); calLeapInfo(pre); }); }));
 {const g=$("bdGo"); if(g) g.onclick=bdSubmit;}
 {const c=$("bdCal"); if(c) c.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{
   BD.cal=b.dataset.c;
   c.querySelectorAll("[data-c]").forEach(e=>e.classList.toggle("on",e===b));
-  const w=$("bdLeapWrap"); if(w) w.style.display = BD.cal==="lunar" ? "" : "none";
+  calDayFix("bd"); calLeapInfo("bd");
 });}
 {const k=$("bdConsult"); if(k) k.onclick=(e)=>{e.preventDefault(); goConsult();};}
 {const g=$("csGo"); if(g) g.onclick=csSubmit;}
 {const c=$("csCal"); if(c) c.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{
   c.querySelectorAll("[data-c]").forEach(e=>e.classList.toggle("on",e===b));
-  const w=$("csLeapWrap"); if(w) w.style.display = b.dataset.c==="lunar" ? "" : "none";
+  calDayFix("cs"); calLeapInfo("cs");
 });}
 /* ═══════════ 마이페이지 ═══════════ */
 const U=()=>window.AJUser||null;
@@ -7459,6 +7497,7 @@ function renderCS(){
   if(t){ let h='<option value="">모름 / 확실하지 않음</option>';
     for(let i=0;i<24;i++) h+=`<option value="${i}">${String(i).padStart(2,"0")}시</option>`;
     t.innerHTML=h; }
+  calDayFix("cs"); calLeapInfo("cs");
   const tp=$("csTopic");
   if(tp) tp.innerHTML=CS_TOPICS.map(v=>`<option value="${v}">${v}</option>`).join("");
   const ok=$("csOk"), go=$("csGo"), done=$("csDone");
@@ -7529,10 +7568,12 @@ function renderBD(){
     const lw=$("bdLeapWrap"); if(lw) lw.style.display = BD.cal==="lunar" ? "" : "none";
     const lk=$("bdLeap"); if(lk) lk.checked=!!df.leap;
   }
+  calDayFix("bd"); calLeapInfo("bd");
 }
 function bdSync(){
   BD.y=+$("bdY").value; BD.m=+$("bdM").value; BD.d=+$("bdD").value;
-  BD.leap=!!($("bdLeap")||{}).checked;
+  BD.cal=calIsLunar("bd")?"lunar":"solar";
+  BD.leap=BD.cal==="lunar"&&!!($("bdLeap")||{}).checked;
 }
 async function bdSubmit(){
   bdSync();
@@ -7568,7 +7609,7 @@ function showSajuResult(r){
   box.innerHTML=`
     <div class="bdr-h">${T("bdDone")}</div>
     <div class="bdr-p">${T("bdSrc")} <b>${r.pillars.y} · ${r.pillars.m} · ${r.pillars.d}</b>
-      ${r.solar?`<span class="s">(양력 ${r.solar.y}.${r.solar.m}.${r.solar.d})</span>`:""}</div>
+      ${r.solar?`<span class="s">(${r.input&&r.input.calendar==="lunar"?`${T("bdLunar")} ${r.input.y}.${r.input.m}.${r.input.d}${r.input.leap?" "+(LEAP_TXT[LANG]||LEAP_TXT.ko)[1]:""} → `:""}${T("bdSolar")} ${r.solar.y}.${r.solar.m}.${r.solar.d})</span>`:""}</div>
     ${r.boundary?`<div class="bdr-w">${T("bdBoundary")}</div>`:""}
     <div class="bdr-l">${T("bdNative")}</div>
     ${ORDER.map(k=>bar(k,r.score[k],mx)).join("")}
@@ -7580,7 +7621,8 @@ function showSajuResult(r){
   box.style.display="";
   const g1=$("bdGo"); if(g1) g1.style.display="none";
   $("bdNext").onclick=()=>{ p3=0; pick3={cat:null,blk:null,goal:null,note:""}; render3(); show("s3") };
-  $("bdRe").onclick=()=>{ SAJU=null; box.style.display="none"; if(g1) g1.style.display=""; };
+  $("bdRe").onclick=()=>{ SAJU=null; box.style.display="none"; if(g1) g1.style.display="";
+    const cd=document.querySelector("#bd .bd-card"); if(cd) cd.scrollIntoView({behavior:"smooth",block:"start"}); };
   box.scrollIntoView({behavior:"smooth",block:"nearest"});
 }
 
@@ -7619,12 +7661,13 @@ addEventListener("popstate",e=>{
   if(st.sc==="mate"&&MC) renderMate();
 });
 try{history.replaceState({sc:"intro",step:0,p3:0,g:gender},"")}catch(e){}
-document.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{
+/* 차트 탭만 대상으로 한다 — 전체 [data-c]를 잡으면 생년월일 화면의 양력/음력 버튼까지 덮어써 음력이 무시됐다(2026-09-22 수정) */
+document.querySelectorAll(".chartTabs [data-c]").forEach(b=>b.onclick=()=>{
   chartMode.r1=b.dataset.c;
   b.parentElement.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));
   paint("ch1",chartMode.r1,SER1());
 });
-document.querySelectorAll("[data-c2]").forEach(b=>b.onclick=()=>{
+document.querySelectorAll(".chartTabs [data-c2]").forEach(b=>b.onclick=()=>{
   chartMode.r2=b.dataset.c2;
   b.parentElement.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b));
   paint("ch2",chartMode.r2,chartMode.r2==="bar"?[{s:R2.s,total:R2.total}]:SER2());
