@@ -8050,7 +8050,9 @@ setTimeout(demo,60);
   var _mateLink=mateLink;
   mateLink=function(){
     var u=_mateLink(); if(!on()) return u;
-    return u.indexOf("#")>=0 ? u.replace("#","?utm="+RELAY.tag+"#") : u+"?utm="+RELAY.tag;
+    /* 추석 전용 입구(/chuseok/)로 보내 카톡 미리보기 카드가 추석용으로 뜨게 한다. 입구는 곧바로 /ohaeng/ 로 넘겨 준다 */
+    var h=u.indexOf("#")>=0 ? u.slice(u.indexOf("#")) : "";
+    return location.origin+"/chuseok/?utm="+RELAY.tag+h;
   };
   var _invite=inviteText;
   inviteText=function(){
