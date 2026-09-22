@@ -79,6 +79,32 @@
 
   w.AJ = { track: track };
 
+  /* 봇·미리보기 크롤러·자동화 브라우저는 세지 않는다 (2026-09-22) */
+  var UA = navigator.userAgent || '';
+  var isBot = navigator.webdriver || /bot|crawl|spider|slurp|facebookexternalhit|kakaotalk-scrap|Yeti|preview|headless|lighthouse/i.test(UA);
+  if (isBot) return;
+
   // 진입 자동 기록
   track('ohaeng_view');
+
+  /* 스크롤 깊이(25·50·75·100%, 각 1회)와 체류 시간 — 첫 화면에서 어디까지 보고 나가는지 재기 위해 */
+  var marks = [25, 50, 75, 100], sent = {};
+  function depth() {
+    var h = d.documentElement.scrollHeight - w.innerHeight; if (h <= 0) return 100;
+    return Math.round(((w.scrollY || d.documentElement.scrollTop) / h) * 100);
+  }
+  function onScroll() {
+    var p = depth();
+    for (var i = 0; i < marks.length; i++) {
+      if (p >= marks[i] && !sent[marks[i]]) { sent[marks[i]] = 1; track('scroll_depth', { step: marks[i] }); }
+    }
+  }
+  var t0 = Date.now(), dwellSent = false;
+  function dwell() {
+    if (dwellSent) return; dwellSent = true;
+    track('dwell', { step: Math.round((Date.now() - t0) / 1000) });
+  }
+  w.addEventListener('scroll', onScroll, { passive: true });
+  w.addEventListener('pagehide', dwell);
+  d.addEventListener('visibilitychange', function () { if (d.visibilityState === 'hidden') dwell(); });
 })(window, document);

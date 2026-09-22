@@ -8,6 +8,14 @@
   }
   body {
     @apply bg-bg text-ink-900 antialiased;
+    /* 한글 단어가 글자 단위로 쪼개져 줄바뀜되지 않게 — 사이트 전체 공통 규칙(2026-09-22) */
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    line-break: strict;
+  }
+  button, input, select, textarea {
+    word-break: keep-all;
+    overflow-wrap: break-word;
   }
 }
 

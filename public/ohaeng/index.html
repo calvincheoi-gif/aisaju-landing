@@ -41,6 +41,9 @@
   --maxw:520px;
 }
 html,body{height:100%}
+/* 한글 단어가 글자 단위로 쪼개져 줄바뀜되지 않게 — 사이트 전체 공통 규칙(2026-09-22).
+   단어 단위로만 줄을 바꾸고, 한 단어가 칸보다 길 때만 예외로 끊는다 */
+body,button,input,select,textarea{word-break:keep-all;overflow-wrap:break-word;line-break:strict}
 body{background:var(--bg);color:var(--ink);
   font-family:-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo','Pretendard','Noto Sans KR','Malgun Gothic',sans-serif;
   line-height:1.62;letter-spacing:-.015em;-webkit-font-smoothing:antialiased;padding-bottom:env(safe-area-inset-bottom)}
@@ -115,7 +118,9 @@ h1.big em{font-style:normal;background:var(--grad);-webkit-background-clip:text;
 .fact{background:#fff;border:1px solid var(--line);border-radius:15px;padding:12px 5px;box-shadow:0 2px 8px rgba(11,79,209,.05)}
 .fact b{display:block;font-size:20.8px;font-weight:900;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .fact span{font-size:13.3px;color:var(--ink3);font-weight:600}
-.freebar{display:inline-flex;align-items:center;gap:7px;background:linear-gradient(135deg,#FFE95C,#FFD400);color:#5B4200;font-size:15.2px;font-weight:900;padding:10px 20px;border-radius:100px;margin:8px 0 0;box-shadow:0 4px 12px rgba(255,205,0,.35)}
+.freebar{display:inline-block;background:linear-gradient(135deg,#FFE95C,#FFD400);color:#5B4200;font-size:14.2px;font-weight:800;padding:9px 18px;border-radius:100px;margin:8px 0 0;box-shadow:0 4px 12px rgba(255,205,0,.35);white-space:nowrap;letter-spacing:-.02em}
+.freebar b{font-weight:900}
+@media(max-width:380px){.freebar{font-size:13px;padding:8px 14px}}
 .flow{display:flex;flex-direction:column;gap:8px;text-align:left;margin-bottom:16px}
 .fl{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:15px;padding:12px 14px;box-shadow:0 2px 8px rgba(11,79,209,.05)}
 .fl i{width:26px;height:26px;border-radius:9px;background:var(--grad);color:#fff;font-style:normal;font-size:13.9px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0}
@@ -665,6 +670,12 @@ h1.big{font-size:41.1px;margin-bottom:6px}
   font-size:12px;font-weight:800;text-decoration:none;flex-shrink:0}
 .homebtn:active{background:#DDEBFF}
 .brandtop{text-decoration:none;color:inherit}
+.topline .brandtop b{white-space:nowrap;font-size:22.4px}.topline .brandtop b i{font-size:17px}
+@media(max-width:380px){.topline .brandtop b{font-size:19.5px}.topline .brandtop b i{font-size:15px}}
+.langsel{flex-shrink:0;appearance:none;-webkit-appearance:none;border:1.5px solid var(--line);border-radius:100px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%235B6B85' stroke-width='1.6'/%3E%3C/svg%3E") no-repeat right 9px center;
+  padding:6px 24px 6px 11px;font-family:inherit;font-size:12.6px;font-weight:800;color:var(--ink2);cursor:pointer}
+/* 첫 화면에서는 떠 있는 뒤로·오행·홈 버튼을 숨긴다 — 시작 버튼 오른쪽을 가렸다(2026-09-22) */
+#intro.on ~ .navfab{display:none}
 .me-go{display:flex;gap:8px;margin-top:2px}
 .me-btn.go{flex:1;width:auto;padding:12px 4px;font-size:13.4px;font-weight:800;
   background:#EEF5FF;color:#1D4FA8;border:1px solid #D6E6FF}
@@ -836,7 +847,7 @@ body.skin-b .emb{filter:drop-shadow(0 8px 18px rgba(30,50,110,.22))}
     <button class="shbtn" data-sh="1" aria-label="share"></button>
     <a class="brandtop" href="/" aria-label="AIsajuLab.com 홈으로"><span class="ck">✓</span><b id="brandT">AI사주랩<i>.com</i></b></a>
         <a class="homebtn" href="/" aria-label="Home" data-i="navHome"></a>
-    <div class="langsw sm"><button data-lang="ko">KO</button><button data-lang="en">EN</button><button data-lang="ja">日</button><button data-lang="zh">中</button><button data-lang="fr">FR</button></div>
+    <select class="langsel" id="langSel" aria-label="Language"><option value="ko">한국어</option><option value="en">EN</option><option value="ja">日本語</option><option value="zh">中文</option><option value="fr">FR</option></select>
   </div>
   <div class="fbanner" id="fbanner"></div>
   <div class="fbanner" id="evb"></div>
@@ -1745,7 +1756,7 @@ ko:{
  motiveQ:'그럼, 자연이 말하는 나의 성격은?',
  h1:'나의 <em>오행 성격</em>은?',
  sub:'나무 · 불 · 흙 · 쇠 · 물 &nbsp;다섯 기운 중 나는?',
- start:'내 오행 성격 알아보기  →', free:'🎁 오픈 기념 <b>전체 무료</b>',
+ start:'내 오행 성격 알아보기  →', free:'🎁 <b>오픈 기념 무료</b> · 14문항 · 가입 없음',
  f1:'진단 문항', f2:'가지 성격 상징', f3:'소요 시간', min3:'3분',
  vToday:'오늘 방문', vTotal:'누적 방문', vDone:'진단 완료',
  shareTop:'친구에게 공유', kkTop:'카카오톡 문의',
@@ -1887,7 +1898,7 @@ en:{
  motiveQ:'So what does nature say about you?',
  h1:'What are my <em>Five Elements (5行)</em>?',
  sub:'Wood · Fire · Earth · Metal · Water &nbsp;— which one?',
- start:'Find my Five Elements  →', free:'🎁 Launch special — <b>fully free</b>',
+ start:'Find my Five Elements  →', free:'🎁 Element test <b>free at launch</b> · 14 questions · no sign-up',
  f1:'questions', f2:'nature symbols', f3:'to finish', min3:'3 min',
  vToday:'Today', vTotal:'Total visits', vDone:'Completed',
  shareTop:'Share with friends', kkTop:'Ask on KakaoTalk',
@@ -2063,7 +2074,7 @@ ja:{
  h1:'私の<em>五行(ごぎょう)性格</em>は?',
  sub:'木 · 火 · 土 · 金 · 水 &nbsp;五つの気、あなたはどれ?',
  start:'私の五行性格を調べる  →',
- free:'🎁 オープン記念 <b>すべて無料</b>',
+ free:'🎁 五行診断 <b>オープン記念 無料</b> · 14問 · 登録不要',
  f1:'診断項目', f2:'種類の性格シンボル', f3:'所要時間', min3:'3分',
  vToday:'本日の訪問', vTotal:'累計訪問', vDone:'診断完了',
  shareTop:'友だちに共有', kkTop:'カカオトークで問い合わせ',
@@ -2103,7 +2114,7 @@ zh:{
  h1:'我的<em>五行性格</em>是?',
  sub:'木 · 火 · 土 · 金 · 水 &nbsp;五种气，你是哪一种?',
  start:'查看我的五行性格  →',
- free:'🎁 开业纪念 <b>全部免费</b>',
+ free:'🎁 五行测试 <b>开业纪念 免费</b> · 14题 · 无需注册',
  f1:'测试题', f2:'种性格象征', f3:'所需时间', min3:'3分钟',
  vToday:'今日访问', vTotal:'累计访问', vDone:'完成测试',
  shareTop:'分享给朋友', kkTop:'KakaoTalk 咨询',
@@ -2143,7 +2154,7 @@ fr:{
  h1:"Quelle est ma <em>phase (五行)</em> ?",
  sub:"Bois · Feu · Terre · Métal · Eau &nbsp;— laquelle êtes-vous ?",
  start:"Découvrir ma phase  →",
- free:"🎁 Lancement — <b>entièrement gratuit</b>",
+ free:"🎁 Test des éléments <b>gratuit au lancement</b> · 14 questions · sans inscription",
  f1:"questions", f2:"symboles naturels", f3:"durée", min3:"3 min",
  vToday:"Aujourd'hui", vTotal:"Visites totales", vDone:"Terminés",
  shareTop:"Partager", kkTop:"Nous contacter (KakaoTalk)",
@@ -3862,6 +3873,7 @@ function applyLang(){
   document.querySelectorAll("[data-i]").forEach(el=>{ el.innerHTML=T(el.dataset.i) });
   document.querySelectorAll("[data-ph]").forEach(el=>{ el.placeholder=T(el.dataset.ph) });
   document.querySelectorAll("[data-lang]").forEach(b=>b.classList.toggle("on",b.dataset.lang===LANG));
+  {const ls=$("langSel"); if(ls&&ls.value!==LANG) ls.value=LANG;}
   const ph={pwIn:"pwPH",askIn:"askPH"}; Object.keys(ph).forEach(id=>{const e=$(id);if(e)e.placeholder=T(ph[id])});
   $("brandT").innerHTML = isEN()? 'AIsajuLab<i>.com</i>' : 'AI사주랩<i>.com</i>';
   ["sh1","sh2"].forEach(id=>{const e=$(id);if(e)e.textContent=T("cardBtn")});
@@ -3890,6 +3902,7 @@ function kkoAddLabel(){
     el.innerHTML="<span><b>"+t[0]+"</b><small>"+t[1]+"</small></span>";
   });
 }
+{const ls=$("langSel"); if(ls) ls.onchange=()=>{ window.AJ&&AJ.track("lang_change",{props:{to:ls.value,from:"intro"}}); setLang(ls.value); };}
 function setLang(l){ LANG=l;
   try{ kkoAddLabel(); }catch(e){} store.set("ohaeng_lang",l);
   /* Next.js 쪽(홈·상담·법적)은 raw 문자열 aisaju_lang 을 쓰므로 함께 기록한다 */

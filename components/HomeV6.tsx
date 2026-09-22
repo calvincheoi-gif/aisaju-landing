@@ -2017,7 +2017,23 @@ export default function HomeV6(
   { learn?: HomeLearn | null; reviews?: HomeReview[] | null; ohaengLinks?: Record<string, string | null> | null; words?: DailyWord[] | null }
 ) {
   useEffect(() => {
-    track("home_view");
+    /* 봇·미리보기 크롤러는 세지 않는다 (2026-09-22) */
+    const isBot = navigator.webdriver || /bot|crawl|spider|slurp|facebookexternalhit|kakaotalk-scrap|Yeti|preview|headless|lighthouse/i.test(navigator.userAgent);
+    const trk = (n: string, p: Record<string, unknown> = {}) => { if (!isBot) track(n, p); };
+    trk("home_view");
+    /* 스크롤 깊이(25·50·75·100%)·체류 시간 — 홈 이탈 73%가 어디서 나가는지 보기 위해 */
+    const marks = [25, 50, 75, 100]; const sent: Record<number, boolean> = {};
+    const onScroll = () => {
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      const p = h <= 0 ? 100 : Math.round((window.scrollY / h) * 100);
+      marks.forEach((m) => { if (p >= m && !sent[m]) { sent[m] = true; trk("scroll_depth", { pct: m }); } });
+    };
+    const t0 = Date.now(); let dwellSent = false;
+    const dwell = () => { if (dwellSent) return; dwellSent = true; trk("dwell", { sec: Math.round((Date.now() - t0) / 1000) }); };
+    const onVis = () => { if (document.visibilityState === "hidden") dwell(); };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("pagehide", dwell);
+    document.addEventListener("visibilitychange", onVis);
     const root = document.querySelector(".v6"); if (!root) return;
     /* Today's 촌철활인 한마디 — 12초 순환·보완 오행 강조 (lib/daily-words) */
     const dailyWords = mountDailyWords(root as HTMLElement);
@@ -2901,6 +2917,9 @@ export default function HomeV6(
       document.removeEventListener("click", onDocClick);
       window.removeEventListener("pwa-ready", onPwaReady);
       dailyWords.destroy();
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("pagehide", dwell);
+      document.removeEventListener("visibilitychange", onVis);
       window.removeEventListener("keydown", svKey);
       stage?.removeEventListener("touchstart", onTS);
       stage?.removeEventListener("touchend", onTE);
