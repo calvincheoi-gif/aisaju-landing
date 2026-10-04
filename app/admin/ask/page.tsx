@@ -103,44 +103,43 @@ export default function AdminAskPage() {
     } catch (e) { setMsg(e instanceof Error ? e.message : "초안 실패"); } finally { setBusy(null); }
   }
 
-  async function makePng(): Promise<{ blob: Blob; url: string; name: string } | null> {
-    if (!sel || !previewRef.current) return null;
-    if (png) return png;
-    /* 비어 있는 칸이 있어도 막지 않는다 — 테스트·부분 전달이 필요할 때가 있다. 확인만 한 번 묻는다 */
-    if (miss.length > 0 && !confirm(`비어 있는 칸이 있습니다: ${miss.join(", ")}
-그대로 이미지를 만들까요?`)) return null;
+  /* 1단계: 이미지를 먼저 만들어 둔다 (몇 초 걸림). 공유·복사는 만들어 둔 것을 쓰므로
+     버튼을 누른 즉시 실행된다 — 브라우저가 공유·클립보드를 "클릭 직후"에만 허용하기 때문에 두 단계로 나눈다 */
+  async function makePng() {
+    if (!sel || !previewRef.current) return;
+    if (miss.length > 0 && !confirm(`비어 있는 칸이 있습니다: ${miss.join(", ")}\n그대로 이미지를 만들까요?`)) return;
     setBusy("png");
     try {
       const { toBlob } = await import("html-to-image");
       if ("fonts" in document) await (document as Document & { fonts: FontFaceSet }).fonts.ready;
       const blob = await toBlob(previewRef.current, { pixelRatio: 2, cacheBust: true, backgroundColor: "#EEF3FB" });
       if (!blob) throw new Error("이미지를 만들지 못했습니다.");
-      const out = { blob, url: URL.createObjectURL(blob), name: `AI사주랩_1문1답_${sel.ref_no}_${maskName(sel.name)}.png` };
-      setPng(out);
-      return out;
-    } catch (e) { setMsg("PNG 생성 실패: " + (e instanceof Error ? e.message : String(e))); return null; } finally { setBusy(null); }
+      setPng({ blob, url: URL.createObjectURL(blob), name: `AI사주랩_1문1답_${sel.ref_no}_${maskName(sel.name)}.png` });
+      setMsg(isMobile ? "이미지가 준비됐습니다. 「카톡으로 공유」를 누르세요." : "이미지가 준비됐습니다. 「이미지 복사」 후 카카오톡 PC 대화창에 Ctrl+V 하세요.");
+    } catch (e) { setMsg("이미지 생성 실패: " + (e instanceof Error ? e.message : String(e))); } finally { setBusy(null); }
   }
-  /* 폰: 공유 시트 → 카카오톡. PC 크롬도 OS 공유 창이 뜨지만 카톡이 없을 수 있어 「복사」를 함께 둔다 */
-  async function sharePng() {
-    const p = await makePng(); if (!p) return;
-    const file = new File([p.blob], p.name, { type: "image/png" });
+  const isMobile = typeof navigator !== "undefined" && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  /* 2단계(폰): 공유 시트 → 카카오톡. 만들어 둔 blob 을 바로 넘긴다 */
+  function sharePng() {
+    if (!png) return;
+    const file = new File([png.blob], png.name, { type: "image/png" });
     const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
-    if (nav.share && (!nav.canShare || nav.canShare({ files: [file] }))) {
-      try { await nav.share({ files: [file], title: "AI사주랩 1문 1답" }); setMsg("공유 창에서 카카오톡을 고르세요. 보낸 뒤 「답변 완료」를 눌러 주세요."); }
-      catch { /* 사용자가 공유 창을 닫은 경우 */ }
-    } else {
-      setMsg("이 기기에서는 공유 창을 열 수 없습니다. 「이미지 복사」 후 카톡 대화창에 Ctrl+V 하세요.");
+    if (!nav.share || (nav.canShare && !nav.canShare({ files: [file] }))) {
+      setMsg("이 브라우저는 이미지 공유 창을 열 수 없습니다. PC라면 「이미지 복사」, 폰이라면 크롬·사파리로 열어 주세요."); return;
     }
+    nav.share({ files: [file], title: "AI사주랩 1문 1답" })
+      .then(() => setMsg("공유 창에서 카카오톡을 고르세요. 보낸 뒤 「답변 완료」를 눌러 주세요."))
+      .catch((e: unknown) => { const m = e instanceof Error ? e.name : ""; if (m !== "AbortError") setMsg("공유 창을 열지 못했습니다(" + m + "). 「파일로 저장」 후 갤러리에서 카톡으로 보내 주세요."); });
   }
-  /* PC: 클립보드에 이미지로 복사 → 카카오톡 PC 대화창에 Ctrl+V */
-  async function copyPng() {
-    const p = await makePng(); if (!p) return;
-    try {
-      await navigator.clipboard.write([new ClipboardItem({ "image/png": p.blob })]);
-      setMsg("이미지를 복사했습니다. 카카오톡 PC 대화창을 열고 Ctrl+V 하면 그대로 붙습니다.");
-    } catch {
-      setMsg("복사가 막혔습니다. 아래 미리보기 이미지를 마우스 오른쪽 → 「이미지 복사」로 복사해 주세요.");
+  /* 2단계(PC): 클립보드에 이미지로 복사 → 카카오톡 PC 대화창에 Ctrl+V. 클릭 직후 동기적으로 호출한다 */
+  function copyPng() {
+    if (!png) return;
+    if (!("clipboard" in navigator) || typeof ClipboardItem === "undefined") {
+      setMsg("이 브라우저는 이미지 복사를 지원하지 않습니다. 아래 이미지를 마우스 오른쪽 → 「이미지 복사」로 복사해 주세요."); return;
     }
+    navigator.clipboard.write([new ClipboardItem({ "image/png": png.blob })])
+      .then(() => setMsg("이미지를 복사했습니다. 카카오톡 PC 대화창을 열고 Ctrl+V → Enter."))
+      .catch((e: unknown) => setMsg("복사가 막혔습니다(" + (e instanceof Error ? e.name : "") + "). 아래 이미지를 마우스 오른쪽 → 「이미지 복사」로 복사하거나, 일반 크롬에서 이 화면을 열어 주세요."));
   }
   function downloadPng() {
     if (!png) return;
@@ -303,8 +302,19 @@ export default function AdminAskPage() {
             {/* 저장·내보내기 */}
             <div className="sticky bottom-0 mt-5 -mx-5 -mb-5 flex flex-wrap items-center gap-2 border-t border-border bg-white px-5 py-3">
               <button onClick={() => save()} disabled={!!busy} className="rounded-md border border-border px-3 py-2 text-[13px] font-semibold text-ink-900 disabled:opacity-50">{busy === "save" ? "저장 중…" : "저장"}</button>
-              <button onClick={sharePng} disabled={!!busy} title="폰: 공유 창에서 카카오톡 선택" className="btn-primary px-4 py-2 text-[13px] disabled:opacity-50">{busy === "png" ? "이미지 만드는 중…" : "카톡으로 공유"}</button>
-              <button onClick={copyPng} disabled={!!busy} title="PC: 복사한 뒤 카카오톡 대화창에 Ctrl+V" className="rounded-md border border-indigo-300 bg-indigo-50 px-3 py-2 text-[13px] font-semibold text-indigo-700 disabled:opacity-50">이미지 복사</button>
+              {!png ? (
+                <button onClick={makePng} disabled={!!busy} className="btn-primary px-4 py-2 text-[13px] disabled:opacity-50">{busy === "png" ? "이미지 만드는 중…" : "① 이미지 만들기"}</button>
+              ) : isMobile ? (
+                <>
+                  <button onClick={sharePng} className="btn-primary px-4 py-2 text-[13px]">② 카톡으로 공유</button>
+                  <button onClick={copyPng} className="rounded-md border border-indigo-300 bg-indigo-50 px-3 py-2 text-[13px] font-semibold text-indigo-700">이미지 복사</button>
+                </>
+              ) : (
+                <>
+                  <button onClick={copyPng} className="btn-primary px-4 py-2 text-[13px]">② 이미지 복사 → 카톡에 Ctrl+V</button>
+                  <button onClick={sharePng} className="rounded-md border border-indigo-300 bg-indigo-50 px-3 py-2 text-[13px] font-semibold text-indigo-700">공유 창</button>
+                </>
+              )}
               <button onClick={() => save("answered")} disabled={!!busy} className="rounded-md bg-emerald-600 px-3 py-2 text-[13px] font-semibold text-white disabled:opacity-50">답변 완료</button>
               <button onClick={() => save("converted")} disabled={!!busy} className="rounded-md border border-indigo-300 px-3 py-2 text-[12.5px] text-indigo-700 disabled:opacity-50">유료 전환</button>
               <button onClick={() => { if (confirm("이 건을 취소 처리합니다. 오늘 정원에서 빠집니다.")) save("cancelled"); }} disabled={!!busy} className="rounded-md px-2 py-2 text-[12.5px] text-body hover:text-red-600">취소 처리</button>
