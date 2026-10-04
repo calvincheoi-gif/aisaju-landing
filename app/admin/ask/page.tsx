@@ -71,6 +71,7 @@ export default function AdminAskPage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  const miss = useMemo(() => missingFields(a, module), [a, module]);
   const set = (k: keyof AskAnswer) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => setA((p) => ({ ...p, [k]: e.target.value }));
   const setArr = (k: "chips" | "ans", i: number) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setA((p) => { const arr = [...p[k]] as AskAnswer["chips"]; arr[i] = e.target.value; return { ...p, [k]: arr }; });
@@ -105,6 +106,9 @@ export default function AdminAskPage() {
   async function makePng(): Promise<{ blob: Blob; url: string; name: string } | null> {
     if (!sel || !previewRef.current) return null;
     if (png) return png;
+    /* 비어 있는 칸이 있어도 막지 않는다 — 테스트·부분 전달이 필요할 때가 있다. 확인만 한 번 묻는다 */
+    if (miss.length > 0 && !confirm(`비어 있는 칸이 있습니다: ${miss.join(", ")}
+그대로 이미지를 만들까요?`)) return null;
     setBusy("png");
     try {
       const { toBlob } = await import("html-to-image");
@@ -146,7 +150,6 @@ export default function AdminAskPage() {
   /* 내용이 바뀌면 만들어 둔 PNG는 버린다 */
   useEffect(() => { if (png) { URL.revokeObjectURL(png.url); setPng(null); } /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [a, module, sel?.id]);
 
-  const miss = useMemo(() => missingFields(a, module), [a, module]);
   const list = rows.filter((r) => filter === "all" || r.status === filter);
   const todayCount = rows.filter((r) => r.status === "received").length;
 
@@ -300,12 +303,12 @@ export default function AdminAskPage() {
             {/* 저장·내보내기 */}
             <div className="sticky bottom-0 mt-5 -mx-5 -mb-5 flex flex-wrap items-center gap-2 border-t border-border bg-white px-5 py-3">
               <button onClick={() => save()} disabled={!!busy} className="rounded-md border border-border px-3 py-2 text-[13px] font-semibold text-ink-900 disabled:opacity-50">{busy === "save" ? "저장 중…" : "저장"}</button>
-              <button onClick={sharePng} disabled={!!busy || miss.length > 0} title={miss.length ? `비어 있음: ${miss.join(", ")}` : "폰: 공유 창에서 카카오톡 선택"} className="btn-primary px-4 py-2 text-[13px] disabled:opacity-50">{busy === "png" ? "이미지 만드는 중…" : "카톡으로 공유"}</button>
-              <button onClick={copyPng} disabled={!!busy || miss.length > 0} title="PC: 복사한 뒤 카카오톡 대화창에 Ctrl+V" className="rounded-md border border-indigo-300 bg-indigo-50 px-3 py-2 text-[13px] font-semibold text-indigo-700 disabled:opacity-50">이미지 복사</button>
+              <button onClick={sharePng} disabled={!!busy} title="폰: 공유 창에서 카카오톡 선택" className="btn-primary px-4 py-2 text-[13px] disabled:opacity-50">{busy === "png" ? "이미지 만드는 중…" : "카톡으로 공유"}</button>
+              <button onClick={copyPng} disabled={!!busy} title="PC: 복사한 뒤 카카오톡 대화창에 Ctrl+V" className="rounded-md border border-indigo-300 bg-indigo-50 px-3 py-2 text-[13px] font-semibold text-indigo-700 disabled:opacity-50">이미지 복사</button>
               <button onClick={() => save("answered")} disabled={!!busy} className="rounded-md bg-emerald-600 px-3 py-2 text-[13px] font-semibold text-white disabled:opacity-50">답변 완료</button>
               <button onClick={() => save("converted")} disabled={!!busy} className="rounded-md border border-indigo-300 px-3 py-2 text-[12.5px] text-indigo-700 disabled:opacity-50">유료 전환</button>
               <button onClick={() => { if (confirm("이 건을 취소 처리합니다. 오늘 정원에서 빠집니다.")) save("cancelled"); }} disabled={!!busy} className="rounded-md px-2 py-2 text-[12.5px] text-body hover:text-red-600">취소 처리</button>
-              {miss.length > 0 && <span className="text-[12px] text-amber-700">비어 있음: {miss.join(", ")}</span>}
+              {miss.length > 0 && <span className="text-[12px] text-amber-700">아직 빈 칸: {miss.join(", ")}</span>}
               {msg && <span className="ml-auto text-[12.5px] text-body">{msg}</span>}
             </div>
           </div>
