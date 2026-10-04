@@ -489,6 +489,9 @@ footer b{color:#fff;font-size:14px;font-weight:800;letter-spacing:-.04em}
 .inst svg{width:14px;height:14px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .inst:hover{background:#E6F0FF}
 .inst,.inst span{white-space:nowrap;text-wrap:nowrap}
+/* 상단바는 어떤 화면이든 최대 430px — 홈 추가 버튼이 들어온 뒤로는 버전 표기를 접고 브랜드 부제는 한 줄로 고정 */
+.util .ver{display:none}
+.brand small{white-space:nowrap}
 /* 좁은 폰(400px 미만): 버전 표기 숨김 + 홈 추가는 아이콘만(32px) + 브랜드 부제 숨김 — 한 줄에 맞춘다 */
 @media(max-width:400px){.util .ver{display:none}.util{gap:5px}.inst{width:32px;padding:0;justify-content:center}.inst span{display:none}.brand small{display:none}}
 .instsheet{position:fixed;inset:0;z-index:95;background:rgba(8,20,40,.55);display:none;align-items:flex-end;justify-content:center}
