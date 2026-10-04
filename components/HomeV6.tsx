@@ -71,11 +71,59 @@ body{
 .bdg{font-size:11.5px;font-weight:800;letter-spacing:-.02em;padding:6px 12px;border-radius:999px;color:#fff}
 .bdg.free{background:linear-gradient(135deg,#3B82F6,#1D4ED8);box-shadow:0 5px 14px rgba(37,99,235,.26)}
 .bdg.mbti{background:var(--navy)}
+/* 2026-10 첫 화면: 테두리형(조건) + 주황 채움형(남은 자리) — 채움 파랑은 CTA 버튼 하나에만 남긴다 */
+.bdg.outline{background:#fff;color:var(--navy);border:1.5px solid var(--navy);padding:4.5px 12px}
+.bdg.seats{background:#E8542E;box-shadow:0 4px 12px rgba(232,84,46,.28)}
+.bdg.seats.full{background:#94A3B8;box-shadow:none}
+.badges{margin:4px 0 10px}
 
-h1.hook{position:relative;margin:0 0 7px;font-size:28px;line-height:1.24;letter-spacing:-.05em;font-weight:800;color:var(--navy)}
+h1.hook{position:relative;margin:4px 0 7px;font-size:26px;line-height:1.28;letter-spacing:-.05em;font-weight:900;color:var(--navy)}
 h1.hook b{color:var(--blue)}
 h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent 56%,#FFE08A 56%);padding:0 3px}
-.sub{position:relative;margin:0 0 14px;font-size:13px;line-height:1.55;color:var(--gray);font-weight:500}
+.sub{position:relative;margin:0 0 10px;font-size:13.5px;line-height:1.5;color:#4C5570;font-weight:500}
+
+/* ── 무료 1문 1답 CTA — 첫 화면의 유일한 채움 버튼. 밝고 살짝 투명한 청색 ── */
+.askbtn{position:relative;display:block;width:100%;height:46px;border-radius:16px;cursor:pointer;font-family:inherit;
+  border:1px solid rgba(255,255,255,.7);color:#fff;font-size:18px;font-weight:900;letter-spacing:-.03em;
+  background:linear-gradient(180deg,rgba(104,150,255,.96) 0%,rgba(59,108,245,.96) 100%);
+  box-shadow:0 10px 22px rgba(59,108,245,.30),inset 0 1px 0 rgba(255,255,255,.45)}
+.askbtn:active{transform:translateY(1px)}
+.askbtn.full{background:linear-gradient(180deg,#B7C4DE,#94A3B8);box-shadow:none}
+
+/* ── 데일리 카드: 오늘의 기운 + 읽을거리 ── */
+.daily{position:relative;margin:18px 0 0;background:#fff;border-radius:16px;text-align:left;
+  box-shadow:0 4px 14px rgba(30,42,85,.06);overflow:hidden}
+.daily .todaybar{margin:0;padding:6px 14px;min-height:42px}
+.daily .lrow{display:flex;align-items:center;gap:10px;padding:6px 14px;min-height:42px;
+  border-top:1px solid #EEF1F7;text-decoration:none;color:inherit}
+.daily .lr-tx{flex:1;min-width:0}
+.daily .lr-lab{display:block;font-size:11px;font-weight:700;color:#5B6480;letter-spacing:-.02em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.daily .lr-h{display:block;font-size:14px;font-weight:800;color:var(--ink);letter-spacing:-.03em;line-height:1.3;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.daily .lr-go{flex:0 0 auto;font-size:12px;font-weight:800;color:var(--blue);white-space:nowrap}
+
+/* ── 소장 한 줄 ── */
+.owner{position:relative;display:flex;align-items:center;gap:12px;width:100%;margin:16px 0 0;padding:10px 14px;
+  border:0;border-radius:16px;background:#fff;box-shadow:0 4px 14px rgba(30,42,85,.06);
+  text-align:left;cursor:pointer;font-family:inherit;color:inherit}
+.owner img{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);flex:0 0 50px}
+.owner .ow-tx{flex:1;min-width:0}
+.owner .ow-n{display:block;font-size:14px;font-weight:800;color:var(--ink);letter-spacing:-.03em}
+.owner .ow-l{display:block;margin-top:1px;font-size:12px;color:#4C5570;line-height:1.4;letter-spacing:-.02em}
+.owner .ow-star{color:#E3A800;font-weight:800}
+
+/* ── (자연) 오행 머리 + 버튼 ── */
+.ohhead{position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin:20px 0 9px;text-align:left}
+.ohttl{margin:0;font-size:17px;font-weight:900;line-height:1.3;letter-spacing:-.04em;color:var(--navy)}
+.ohttl b{color:var(--blue)}
+.ohttl .mark{display:inline-block;background:linear-gradient(180deg,transparent 56%,#FFE08A 56%);padding:0 2px}
+.ohmeta{flex:0 0 auto;font-size:11px;font-weight:700;color:#5B6480;white-space:nowrap;padding-bottom:2px}
+.btn-oh{position:relative;display:block;width:100%;height:44px;margin-top:4px;border-radius:14px;cursor:pointer;font-family:inherit;
+  border:1px solid #fff;background:rgba(104,150,255,.16);color:var(--navy);font-size:15px;font-weight:800;letter-spacing:-.03em;
+  box-shadow:0 2px 8px rgba(59,108,245,.10)}
+.btn-oh:active{transform:translateY(1px)}
+.trustline{position:relative;margin-top:8px;font-size:11px;font-weight:600;color:#5B6480;letter-spacing:-.02em}
 
 /* 오행 순환 스트립 */
 .ohwrap{position:relative;margin-bottom:12px}
@@ -206,14 +254,15 @@ html:not([lang="ko"]) .biz{overflow-wrap:anywhere}
   text-align:left;cursor:pointer;transition:.15s}
 .todaybar:hover .tb-go{filter:brightness(1.06)}
 .todaybar .tb-tx{flex:1;min-width:0}
-.todaybar .tb-lab{display:block;font-size:11.5px;font-weight:800;color:var(--blue-d);
-  letter-spacing:-.03em;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.todaybar .tb-han{display:block;font-size:14px;font-weight:900;color:#C4392C;
-  letter-spacing:-.02em;line-height:1.3;margin-top:2px;
+.todaybar .tb-lab{display:block;font-size:11px;font-weight:700;color:#5B6480;
+  letter-spacing:-.02em;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.todaybar .tb-lab b{color:#E8542E;font-weight:800}
+.todaybar .tb-han{display:block;font-size:14px;font-weight:800;color:var(--ink);
+  letter-spacing:-.03em;line-height:1.3;margin-top:1px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .todaybar .tb-go{flex:0 0 auto;padding:9px 15px;border-radius:999px;
-  background:linear-gradient(135deg,#FF6152,#E0362A);color:#fff;font-size:12px;font-weight:900;
-  letter-spacing:-.04em;white-space:nowrap;box-shadow:0 4px 12px rgba(224,54,42,.34)}
+  background:#E8542E;color:#fff;font-size:12px;font-weight:800;padding:6px 12px;
+  letter-spacing:-.03em;white-space:nowrap;box-shadow:0 4px 12px rgba(232,84,46,.28)}
 @media(max-width:360px){.todaybar{gap:8px}
   .todaybar .tb-lab{font-size:10.8px}.todaybar .tb-han{font-size:13px}
   .todaybar .tb-go{padding:8px 12px;font-size:11px}}
@@ -553,15 +602,16 @@ footer .lg{display:inline-block;margin:6px 12px 0 0;color:rgba(255,255,255,.85);
 .cb-deep{background:linear-gradient(135deg,#EEF5FF,#E0EDFF);border:1.5px solid #93C0F5;color:#1A4E9E;box-shadow:0 2px 8px rgba(29,109,227,.12)}
 .pricenote{margin-top:8px;font-size:10.5px;color:#9AA7BD;font-weight:600}
 /* ═══ v6: 하단 탭바 (기존 dock 대체) ═══ */
-.tabbar{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:430px;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr 1.2fr 1fr 1fr;padding:7px 6px calc(9px + env(safe-area-inset-bottom));z-index:60}
-.tb{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:700;color:#9AA7BD;background:none;border:0;font-family:inherit}
+/* 2026-10: 상단 촌철활인 띠와 같은 남색으로 위아래를 맞춘다. 가운데 「진단」은 CTA와 같은 밝은 청색 */
+.tabbar{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:430px;background:#1E2A55;border-top:1px solid rgba(255,255,255,.08);display:grid;grid-template-columns:1fr 1fr 1.2fr 1fr 1fr;padding:8px 6px calc(9px + env(safe-area-inset-bottom));z-index:60}
+.tb{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:11.5px;font-weight:700;letter-spacing:-.02em;color:#C3CCEB;background:none;border:0;font-family:inherit}
 .tb .ti{line-height:0}
-.tb .ti svg{width:22px;height:22px;stroke:currentColor;stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
-.tb.on{color:var(--blue)}
-.tb.main{margin-top:-22px}
-.tb.main .ti{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#2F7FF0,#1D6DE3);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 18px rgba(29,109,227,.35);border:3px solid #fff}
-.tb.main .ti svg{width:24px;height:24px;stroke-width:2}
-.tb.main{color:var(--blue)}
+.tb .ti svg{width:24px;height:24px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.tb.on{color:#fff;font-weight:900}
+.tb.main{margin-top:-28px}
+.tb.main .ti{width:56px;height:56px;border-radius:50%;background:linear-gradient(180deg,#7FA6FF,#3B6CF5);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 18px rgba(59,108,245,.45),inset 0 1px 0 rgba(255,255,255,.5);border:4px solid #EEF3FB}
+.tb.main .ti svg{width:26px;height:26px;stroke-width:2.4}
+.tb.main{color:#fff;font-weight:900}
 .wallchip{display:inline-flex;align-items:center;gap:6px;margin-top:10px;background:#0F2A5C;color:#DCE9FF;font-size:11.5px;font-weight:700;padding:7px 12px;border-radius:99px}
 
 /* ══════════════════════════════════════════════════════════════
@@ -774,9 +824,19 @@ en: {
  brand:'AI<span>sajuLab</span>.com', brandSub:'AI × Myeongnihak',
  voc:'AIsajuLab.com listens to every piece of customer feedback and keeps refining its analysis and report quality, so that your satisfaction and your quality of life keep improving.',
  voc2:'AIsajuLab.com listens to every piece of customer feedback and keeps refining its analysis and report quality, so that your satisfaction and your quality of life keep improving.',
- bdgFree:'🎁 Element check · Today\u0027s flow — free', bdgMbti:'Like blood type or MBTI!',
- hook:'So what are my<br><span class="mark"><b>Five Elements (5行)</b></span> really?',
- heroSub:'Your temperament and strengths, found through Saju myeongnihak × AI analysis',
+ bdgFree:"First 3 a day · free",
+ bdgSeats:"3/3 spots left today",
+ hook:"One question, <span class=\"mark\"><b>one-page answer.</b></span><br>Read by Choi Hyeung-chul himself",
+ heroSub:"Career, business, love, home — send one line.<br>You get a phone-sized one-page report within 24 hours.",
+ askCta:"Send a question, get a free answer ›",
+ ownerName:"Choi Hyeung-chul · Certified management consultant who reads Saju",
+ ownerLine:"AI analyzes, a person finds the direction · <b class=\"ow-star\">★★★★★</b> Reviews ›",
+ ohTtl:"Like blood type or MBTI — my <span class=\"mark\"><b>Five Elements (5行)</b></span>?",
+ ohMeta:"14 questions · 1 min",
+ ohCta:"Find my Five Elements type · free, no sign-up ›",
+ trustLine:"Privacy first · minimal storage · AI analysis + expert review",
+ lrLab:"This week's read",
+ lrGo:"Read ›",
  nMok:'Wood (木)', kMok:'Growth · expansion',
  nHwa:'Fire (火)', kHwa:'Passion · expression',
  nTo:'Earth (土)', kTo:'Center · stability',
@@ -931,9 +991,19 @@ ja: {
  brand:'AI<span>四柱ラボ</span>.com', brandSub:'AI × 命理学',
  voc:'AIsajuLab.com は、お客様の声と継続的な分析、レポートの品質改善を通じて、ご満足と暮らしの質の向上に力を尽くしてまいります。',
  voc2:'AIsajuLab.com は、お客様の声と継続的な分析、レポートの品質改善を通じて、ご満足と暮らしの質の向上に力を尽くしてまいります。',
- bdgFree:'🎁 五行診断 · 今日の流れ 無料', bdgMbti:'血液型やMBTIのように!',
- hook:'では、私の<br><span class="mark"><b>(自然) 五行</b></span>の性格は?',
- heroSub:'四柱命理学 × AI分析で見つける、私だけの気質と強み',
+ bdgFree:"毎日先着3名 無料",
+ bdgSeats:"本日の残り 3/3",
+ hook:"質問ひとつ、<span class=\"mark\"><b>答えは1枚。</b></span><br>崔亨哲所長が直接みます",
+ heroSub:"転職・起業・相性・住まい、何でも一行で。<br>24時間以内にスマホで読む1枚レポートでお答えします。",
+ askCta:"質問を送って無料で答えをもらう ›",
+ ownerName:"崔亨哲 · 四柱を読む経営指導士",
+ ownerLine:"AIは分析し、方向は人が探す · <b class=\"ow-star\">★★★★★</b> レビュー ›",
+ ohTtl:"血液型やMBTIのように、私の<span class=\"mark\"><b>(自然) 五行</b></span>は?",
+ ohMeta:"質問14個 · 1分",
+ ohCta:"私の五行性格を診断する · 登録不要・無料 ›",
+ trustLine:"個人情報に配慮 · 保存最小化 · AI分析 + 専門家確認",
+ lrLab:"今週の読みもの",
+ lrGo:"読む ›",
  nMok:'木(もく)', kMok:'成長 · 拡張',
  nHwa:'火(か)', kHwa:'情熱 · 表現',
  nTo:'土(ど)', kTo:'中心 · 安定',
@@ -1088,9 +1158,19 @@ zh: {
  brand:'AI<span>四柱Lab</span>.com', brandSub:'AI × 命理学',
  voc:'AIsajuLab.com 将始终倾听客户的声音，持续改进分析与报告质量，努力提升您的满意度与生活品质。',
  voc2:'AIsajuLab.com 将始终倾听客户的声音，持续改进分析与报告质量，努力提升您的满意度与生活品质。',
- bdgFree:'🎁 五行测试 · 今日运势 免费', bdgMbti:'就像血型、MBTI 一样!',
- hook:'那么，我的<br><span class="mark"><b>(自然) 五行</b></span>性格是?',
- heroSub:'用四柱命理学 × AI 分析，找到只属于你的性情与强项',
+ bdgFree:"每日前3名 免费",
+ bdgSeats:"今日剩余名额 3/3",
+ hook:"一个问题，<span class=\"mark\"><b>一页答案。</b></span><br>崔亨哲所长亲自解读",
+ heroSub:"跳槽、创业、姻缘、买房，一句话发来即可。<br>24小时内收到手机阅读的一页报告。",
+ askCta:"发送问题，免费获得答案 ›",
+ ownerName:"崔亨哲 · 懂八字的经营指导师",
+ ownerLine:"AI 负责分析，方向由人来找 · <b class=\"ow-star\">★★★★★</b> 评价 ›",
+ ohTtl:"像血型、MBTI 一样，我的<span class=\"mark\"><b>(自然) 五行</b></span>是?",
+ ohMeta:"14 道题 · 1 分钟",
+ ohCta:"测测我的五行性格 · 免注册免费 ›",
+ trustLine:"保护隐私 · 最少存储 · AI 分析 + 专家审核",
+ lrLab:"本周阅读",
+ lrGo:"阅读 ›",
  nMok:'木', kMok:'成长 · 扩展',
  nHwa:'火', kHwa:'热情 · 表达',
  nTo:'土', kTo:'中心 · 稳定',
@@ -1245,9 +1325,19 @@ fr: {
  brand:'AI<span>sajuLab</span>.com', brandSub:'IA × Myeongnihak (命理学)',
  voc:"AIsajuLab.com écoute chaque retour de ses clients et continue d'affiner ses analyses et la qualité de ses rapports, pour votre satisfaction et votre qualité de vie.",
  voc2:"AIsajuLab.com écoute chaque retour de ses clients et continue d'affiner ses analyses et la qualité de ses rapports, pour votre satisfaction et votre qualité de vie.",
- bdgFree:"🎁 Diagnostic des phases · flux du jour — gratuit", bdgMbti:"Comme le groupe sanguin ou le MBTI !",
- hook:"Alors, quelles sont mes<br><span class=\"mark\"><b>Cinq Phases (五行)</b></span> ?",
- heroSub:"Votre tempérament et vos forces, révélés par le Saju myeongnihak × l'analyse IA",
+ bdgFree:"3 premiers par jour · gratuit",
+ bdgSeats:"3/3 places aujourd'hui",
+ hook:"Une question, <span class=\"mark\"><b>une page de réponse.</b></span><br>Lue par Choi Hyeung-chul lui-même",
+ heroSub:"Carrière, projet, couple, logement : une ligne suffit.<br>Réponse en 24 h, en un rapport d'une page lisible sur mobile.",
+ askCta:"Envoyer ma question, réponse gratuite ›",
+ ownerName:"Choi Hyeung-chul · consultant en gestion certifié, lecteur de Saju",
+ ownerLine:"L'IA analyse, l'humain trouve la direction · <b class=\"ow-star\">★★★★★</b> Avis ›",
+ ohTtl:"Comme le groupe sanguin ou le MBTI : mes <span class=\"mark\"><b>Cinq Phases (五行)</b></span> ?",
+ ohMeta:"14 questions · 1 min",
+ ohCta:"Découvrir mes Cinq Phases · gratuit, sans inscription ›",
+ trustLine:"Vie privée respectée · stockage minimal · analyse IA + relecture experte",
+ lrLab:"Lecture de la semaine",
+ lrGo:"Lire ›",
  nMok:'Bois (木)', kMok:'Croissance · expansion',
  nHwa:'Feu (火)', kHwa:'Passion · expression',
  nTo:'Terre (土)', kTo:'Centre · stabilité',
@@ -1380,18 +1470,48 @@ const HTML = String.raw`
   <div class="voc top" data-i="voc">AI사주랩.com은 항상 고객님의 VOC와 지속적인 분석, 리포트 Quality 개선을 통해 고객 만족도, 삶의 질 향상에 최선을 다하겠습니다.</div>
   <!--WORDS_SLOT-->
 
-  <!-- 히어로 : 여기까지가 첫 화면 -->
+  <!-- ══════════ 히어로 : 첫 화면 (2026-10-04 전면 개편) ══════════
+       순서 = ① 질문 하나·답 한 장(무료 1문 1답 CTA) → ② 오늘의 기운·읽을거리 → ③ 소장 → ④ (자연) 오행
+       원칙 = 첫 화면의 채움 버튼은 「질문 보내고 무료 답 받기」 하나뿐. 오행 진단은 연한 바탕으로 한 단계 낮춘다.
+       근거 = 2개월 진단(2026-10-04): 홈 방문 85%가 스크롤·클릭 없이 이탈 → 메시지 1개 + 행동 1개로 재구성. -->
   <div class="hero">
     <div class="blob b1"></div><div class="blob b2"></div>
 
+    <!-- ① 질문 블록 -->
+    <h1 class="hook" data-i="hook">질문 하나, <span class="mark"><b>답 한 장.</b></span><br>최형철 소장이 직접 봅니다</h1>
+    <p class="sub" data-i="heroSub">이직·창업·궁합·집, 뭐든 한 줄로 보내 주세요.<br>24시간 안에 폰으로 보는 1장 리포트로 답합니다.</p>
     <div class="badges">
-      <span class="bdg free" data-i="bdgFree">🎁 오행 진단 · 오늘의 흐름 무료</span>
-      <span class="bdg mbti" data-i="bdgMbti">혈액형, MBTI처럼!</span>
+      <span class="bdg outline" data-i="bdgFree">선착순 Daily 3명 무료</span>
+      <span class="bdg seats" id="seats" data-seats="3" data-cap="3" data-i="bdgSeats">오늘 남은 자리 3/3</span>
+    </div>
+    <button class="askbtn" type="button" data-go="ask" data-from="hero" data-i="askCta">질문 보내고 무료 답 받기 ›</button>
+
+    <!-- ② 데일리 카드: 오늘의 기운 + 이번 주 읽을거리 (글이 없으면 읽을거리 줄은 사라진다) -->
+    <div class="daily">
+      <button class="todaybar" id="todaybar" type="button" data-go="today" data-from="todaybar" aria-label="오늘의 기운 보기">
+        <span class="tb-tx">
+          <span class="tb-lab" id="tb-lab">오늘</span>
+          <span class="tb-han" id="tb-han">나의 오늘 행동 방향은?</span>
+        </span>
+        <span class="tb-go" id="tb-go">오늘의 기운 ›</span>
+      </button>
+      <!--LEARN_ROW-->
     </div>
 
-    <h1 class="hook" data-i="hook">그럼, 나의<br><span class="mark"><b>(자연) 오행</b></span> 성격은?</h1>
-    <p class="sub" data-i="heroSub">사주 명리학 × AI 분석으로 찾는 나만의 성향과 강점</p>
+    <!-- ③ 소장 — "이 사람을 믿을 수 있나"에 3초 안에 답하는 줄. 실제 사진을 쓴다(캐릭터는 카드뉴스용) -->
+    <button class="owner" type="button" data-go="reviews" data-from="hero">
+      <img src="/img/choi-profile.jpg" alt="최형철 소장" width="50" height="50" loading="eager">
+      <span class="ow-tx">
+        <span class="ow-n" data-i="ownerName">최형철 · 사주보는 경영지도사</span>
+        <span class="ow-l" data-i="ownerLine">AI는 분석하고, 방향은 사람이 찾습니다 · <b class="ow-star">★★★★★</b> 후기 ›</span>
+      </span>
+    </button>
 
+    <!-- ④ (자연) 오행 — 두 번째 행동. 카드 순환·상세 패널은 기존 그대로 -->
+    <div class="ohhead">
+      <h2 class="ohttl" data-i="ohTtl">혈액형·MBTI처럼, 나의 <span class="mark"><b>(자연) 오행</b></span>은?</h2>
+      <span class="ohmeta" data-i="ohMeta">질문 14개 · 1분</span>
+    </div>
     <!-- 오행 순환 스트립 -->
     <div class="ohwrap" id="ohwrap">
       <div class="ohstrip">
@@ -1437,42 +1557,8 @@ const HTML = String.raw`
       </div>
     </div>
 
-    <!-- 시간 + CTA를 가리키는 화살표
-         화살표는 무료 진입점인 「오행 성격 진단」(왼쪽 버튼)을 가리켜야 한다.
-         오른쪽에 두면 유료인 「전문가 상담」쪽을 가리키게 되므로 왼쪽 배치를 유지할 것. -->
-    <div class="timeline">
-      <svg class="hook-arrow" width="34" height="40" viewBox="0 0 34 40" fill="none" aria-hidden="true">
-        <path d="M30 4 C12 6, 6 14, 7 30" stroke="#9FC5FF" stroke-width="2.4" stroke-linecap="round" fill="none"/>
-        <path d="M13 25 L7 33 L1 25" stroke="#9FC5FF" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-      </svg>
-      <div class="txt">
-        <div class="q" data-i="tlQ">질문 14개</div>
-        <div class="a" data-i="tlA"><em>1분</em>이면 나와요!</div>
-      </div>
-    </div>
-
-    <div class="cta-pair">
-      <button class="btn btn-free" data-go="ohaeng" data-from="hero">
-        <span class="ico">🤖</span>
-        <span class="tx"><span class="t1" data-i="ctaFree1">오행 성격 진단</span><span class="t2" data-i="ctaFree2">가입 없이 바로 · <b>무료</b></span></span>
-        <span class="go">›</span>
-      </button>
-      <button class="btn btn-pro" data-go="consult" data-from="hero">
-        <span class="ico">💬</span>
-        <span class="tx"><span class="t1" data-i="ctaPro1">전문가 상담</span><span class="t2" data-i="ctaPro2">리포트 9,900원부터</span></span>
-        <span class="go">›</span>
-      </button>
-    </div>
-
-    <a class="guidelink" href="/guide" data-i="guideLink">처음이신가요? 1분 이용 안내 →</a>
-
-    <button class="todaybar" id="todaybar" data-go="today" data-from="todaybar" aria-label="오늘의 기운 보기">
-      <span class="tb-tx">
-        <span class="tb-lab" id="tb-lab">오늘의 기운</span>
-        <span class="tb-han" id="tb-han">—</span>
-      </span>
-      <span class="tb-go" id="tb-go">오늘의 행동 ›</span>
-    </button>
+    <button class="btn-oh" type="button" data-go="ohaeng" data-from="hero" data-i="ohCta">내 오행 성격 진단하기 · 가입 없이 무료 ›</button>
+    <div class="trustline" data-i="trustLine">개인정보 안심 · 저장 최소화 · AI 분석 + 전문가 검수</div>
 
     <div class="sv" id="sv" role="dialog" aria-modal="true" aria-label="리포트 미리보기">
       <div class="sv-top">
@@ -1493,12 +1579,6 @@ const HTML = String.raw`
       <span class="pw-tx" id="pw-tx">매일 아침 오늘의 기운을 보시려면 홈 화면에 추가하세요</span>
       <button class="pw-go" id="pw-go" type="button">추가</button>
       <button class="pw-x" id="pw-x" type="button" aria-label="안내 닫기">×</button>
-    </div>
-
-    <div class="trust">
-      <div class="cell"><div class="ti">🛡️</div><div class="n" data-i="tr1n">개인정보 안심</div><div class="l" data-i="tr1l">저장 최소화</div></div>
-      <div class="cell"><div class="ti">⚡</div><div class="n" data-i="tr2n">초간단 14문항</div><div class="l" data-i="tr2l">1분 빠른 분석</div></div>
-      <div class="cell"><div class="ti">🎯</div><div class="n" data-i="tr3n">AI + 전문가</div><div class="l" data-i="tr3l">해석을 사람이 검수</div></div>
     </div>
 
     <div class="disclosure" data-i="disclosure">AI사주랩은 명리학을 기반으로 AI가 보조 분석하여<br>더 쉽고 정확한 인사이트를 제공합니다.</div>
@@ -1967,6 +2047,21 @@ function learnBlockHtml(learn?: HomeLearn | null) {
   </section>`;
 }
 
+/** 첫 화면 데일리 카드의 둘째 줄(<!--LEARN_ROW-->). 글이 없으면 줄 자체가 사라져 오늘의 기운만 남는다 (2026-10-04) */
+function learnRowHtml(learn?: HomeLearn | null) {
+  if (!learn) return "";
+  const esc = (t: string) =>
+    String(t).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  return `
+      <a class="lrow" href="/learn/${esc(learn.slug)}?utm=home_daily" data-ev="learn_row">
+        <span class="lr-tx">
+          <span class="lr-lab"><span data-i="lrLab">이번 주 읽을거리</span> · ${esc(learn.category)}</span>
+          <span class="lr-h">${esc(learn.title)}</span>
+        </span>
+        <span class="lr-go" data-i="lrGo">글 읽기 ›</span>
+      </a>`;
+}
+
 export interface HomeReview {
   id: string;
   name: string;
@@ -2076,12 +2171,13 @@ export default function HomeV6(
       const GAN_EL = ["wood", "wood", "fire", "fire", "earth", "earth", "metal", "metal", "water", "water"];
       const EL_HAN: Record<string, string> = { wood: "木", fire: "火", earth: "土", metal: "金", water: "水" };
       /* 질문을 앞세운다 — 「오늘의 행동」보다 「내 행동 방향은?」이 매일 눌리게 만든다 */
+      /* [질문, 버튼, 날짜 앞말] — 2026-10 첫 화면 개편: 윗줄 = 날짜·간지(작게), 아랫줄 = 질문(굵게), 버튼 = 「오늘의 기운」 */
       const LAB: Record<string, [string, string, string]> = {
-        ko: ["나의 오늘 행동 방향은?", "지금 보기", "오늘"],
-        en: ["What should I do today?", "See now", "Today"],
-        ja: ["今日の私の動き方は?", "今すぐ見る", "今日"],
-        zh: ["我今天该怎么做?", "立即查看", "今天"],
-        fr: ["Ma direction du jour ?", "Voir", "Auj."],
+        ko: ["나의 오늘 행동 방향은?", "오늘의 기운", "오늘"],
+        en: ["What should I do today?", "Today's energy", "Today"],
+        ja: ["今日の私の動き方は?", "今日の気", "今日"],
+        zh: ["我今天该怎么做?", "今日气运", "今天"],
+        fr: ["Ma direction du jour ?", "Énergie du jour", "Auj."],
       };
       const LOC: Record<string, string> = { ko: "ko-KR", en: "en-US", ja: "ja-JP", zh: "zh-CN", fr: "fr-FR" };
       const jdn = (y: number, m: number, d: number) => {
@@ -2106,7 +2202,7 @@ export default function HomeV6(
         const gz = GAN10[i % 10] + JI12[i % 12];
         const dayEl = EL_HAN[GAN_EL[i % 10]];
         const seaEl = EL_HAN[seasonEl(dt)];
-        const [ask, , todayWord] = LAB[lang] || LAB.ko;
+        const [ask, goWord, todayWord] = LAB[lang] || LAB.ko;
         /* 요일 이름만 각 언어에서 가져오고, 형식은 M/D(요일) 로 통일한다 */
         let when = (dt.getMonth() + 1) + "/" + dt.getDate();
         try {
@@ -2114,11 +2210,39 @@ export default function HomeV6(
           when = when + "(" + wd.replace(/^周/, "周") + ")";
         } catch { /* 구형 브라우저는 숫자 표기로 둔다 */ }
         const put = (id: string, t: string) => { const e = document.getElementById(id); if (e) e.textContent = t; };
-        put("tb-lab", todayWord + " " + when);
-        put("tb-han", seaEl + " · " + gz + "(" + dayEl + ")");
-        put("tb-go", ask + " ›");
+        const lab = document.getElementById("tb-lab");
+        if (lab) lab.innerHTML = todayWord + " " + when + " · <b>" + seaEl + " · " + gz + "(" + dayEl + ")</b>";
+        put("tb-han", ask);
+        put("tb-go", goWord + " ›");
       };
     })();
+
+    /* ══════════ 무료 1문 1답 남은 자리 ══════════
+       /api/ask 가 DB 함수(free_ask_status)로 오늘(KST) 접수 수를 세어 준다. 실패하면 3/3 그대로 둔다.
+       마감이면 배지를 회색으로, 버튼 문구는 「오늘 마감 · 내일 다시」로 바꾼다(버튼은 그대로 /ask 로 간다). */
+    const SEAT_TXT: Record<string, [string, string, string]> = {
+      ko: ["오늘 남은 자리 {n}/{c}", "오늘 마감 · 내일 다시", "오늘 마감 · 내일 다시 열려요 ›"],
+      en: ["{n}/{c} spots left today", "Full today · back tomorrow", "Full today · opens again tomorrow ›"],
+      ja: ["本日の残り {n}/{c}", "本日終了 · また明日", "本日終了 · 明日また開きます ›"],
+      zh: ["今日剩余名额 {n}/{c}", "今日已满 · 明天再来", "今日已满 · 明天再开放 ›"],
+      fr: ["{n}/{c} places aujourd'hui", "Complet · à demain", "Complet aujourd'hui · réouvre demain ›"],
+    };
+    let seatState: { remaining: number; cap: number } | null = null;
+    const renderSeats = (lang: string) => {
+      const el = document.getElementById("seats"); const btn = root.querySelector<HTMLElement>(".askbtn");
+      if (!el || !seatState) return;
+      const [tpl, fullTxt, fullBtn] = SEAT_TXT[lang] || SEAT_TXT.ko;
+      const full = seatState.remaining <= 0;
+      el.textContent = full ? fullTxt : tpl.replace("{n}", String(seatState.remaining)).replace("{c}", String(seatState.cap));
+      el.classList.toggle("full", full);
+      el.dataset.seats = String(seatState.remaining);
+      if (btn) { btn.classList.toggle("full", full); if (full) btn.textContent = fullBtn; }
+    };
+    fetch("/api/ask", { cache: "no-store" }).then(r => r.ok ? r.json() : null).then(d => {
+      if (!d || typeof d.remaining !== "number") return;
+      seatState = { remaining: d.remaining, cap: d.cap || 3 };
+      renderSeats(LANG);
+    }).catch(() => {});
 
     /* ══════════ 홈 화면 추가 안내 ══════════
        화면이 길어지지 않도록 다음을 모두 만족할 때만 나타난다.
@@ -2723,6 +2847,7 @@ export default function HomeV6(
       if (note) cycBase = note.innerHTML;
       /* 오늘의 기운 스트립도 같은 언어로 다시 그린다 */
       renderTodayBar(LANG);
+      renderSeats(LANG);
       renderPwaBar(LANG);
       /* 후기 폼 문구도 같은 언어로 맞춘다 */
       renderReviewForm(LANG);
@@ -2898,6 +3023,15 @@ export default function HomeV6(
         track("consult_open", { from, kind: q ? "direct" : "custom" });
         window.location.href = q ? `/consult?${q}` : "/consult";
       }
+      else if (go === "ask") {
+        /* 무료 1문 1답 — 홈 첫 화면의 유일한 채움 버튼. 마감돼도 /ask 로 보내 「내일 다시 · 9,900원」 안내를 보게 한다 */
+        track("ask_click", { from, seats: Number(document.getElementById("seats")?.dataset.seats ?? -1) });
+        window.location.href = "/ask?utm=home_ask";
+      }
+      else if (go === "reviews") {
+        track("owner_click", { from });
+        document.getElementById("rv-list")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
       else if (go === "ohaeng") { window.location.href = "/ohaeng/"; }
       else if (go === "menu") { track("menu_click", { from }); window.location.href = "/ohaeng/#me"; }
       else if (go === "today")  { track("svc_click", { to: "today", from });  window.location.href = "/ohaeng/#today"; }
@@ -2937,6 +3071,7 @@ export default function HomeV6(
             /* 촌철활인이 있으면 상단 VOC 문구는 숨겨 두고(한국어 외 언어에서 다시 보임) 그 자리에 한마디를 넣는다 */
             .replace('<div class="voc top" data-i="voc">', words && words.length ? '<div class="voc top" data-i="voc" hidden>' : '<div class="voc top" data-i="voc">')
             .replace("<!--WORDS_SLOT-->", wordsBlockHtml(words))
+            .replace("<!--LEARN_ROW-->", learnRowHtml(learn))
             .replace("<!--LEARN_SLOT-->", learnBlockHtml(learn))
             .replace("<!--REVIEWS_SLOT-->", reviewsBlockHtml(reviews)),
         }}
