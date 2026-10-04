@@ -9,7 +9,7 @@
  */
 import { usePathname, useRouter } from "next/navigation";
 
-const HIDE = (p: string) => p === "/" || p.startsWith("/admin");
+const HIDE = (p: string) => p === "/" || p.startsWith("/admin") || p.startsWith("/r/");
 
 export default function FloatNav() {
   const pathname = usePathname() || "/";

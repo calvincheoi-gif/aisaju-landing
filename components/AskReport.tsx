@@ -227,7 +227,7 @@ const AskReport = forwardRef<HTMLDivElement, AskReportProps>(function AskReport(
         <img src={photoSrc} alt="최형철 소장" width={56} height={56} crossOrigin="anonymous" style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover", border: `2px solid ${GOLD}` }} />
         <div style={{ fontSize: 15, fontWeight: 800 }}>최형철 · 사주보는 경영지도사</div>
         <div style={{ fontSize: 12, color: GRAY, lineHeight: 1.4 }}>명리에 기반한 참고 의견이며 결과를 보장하지 않습니다</div>
-        <div style={{ marginTop: 6, padding: "10px 18px", borderRadius: 999, background: BG, fontSize: 13, color: NAVY, lineHeight: 1.4 }}>더 깊이 보려면 <b style={{ color: BLUE }}>1문 1답 9,900원 · 개인종합 20장</b> · aisajulab.com</div>
+        <a href="/consult?mode=simple&item=reportOnly&utm=report_foot" style={{ marginTop: 6, padding: "10px 18px", borderRadius: 999, background: BG, fontSize: 13, color: NAVY, lineHeight: 1.4, textDecoration: "none", display: "inline-block" }}>더 깊이 보려면 <b style={{ color: BLUE }}>1문 1답 9,900원 · 개인종합 20장</b> · aisajulab.com ›</a>
       </div>
     </div>
   );

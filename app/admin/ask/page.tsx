@@ -146,7 +146,7 @@ export default function AdminAskPage() {
   async function copyLink() {
     if (!shareUrl) return;
     if (!sel?.answer) { setMsg("먼저 「저장」을 눌러야 링크가 열립니다."); return; }
-    try { await navigator.clipboard.writeText(shareUrl); setMsg("고객용 링크를 복사했습니다. 카톡 대화창에 붙여넣어 보내세요."); }
+    try { await navigator.clipboard.writeText(shareUrl); setMsg("고객용 링크를 복사했습니다. 카톡 대화창에 붙여넣으면 「○○○님의 질문」 미리보기 카드와 함께 전달됩니다."); }
     catch { setMsg("복사가 막혔습니다. 링크: " + shareUrl); }
   }
   function openPdf() {

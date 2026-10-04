@@ -98,3 +98,19 @@ begin
 end $$;
 revoke all on function public.free_ask_public(uuid) from public;
 grant execute on function public.free_ask_public(uuid) to anon, authenticated;
+
+-- 2026-10-04 (4차) 미리보기(OG)·크롤러 조회는 열람 수에 넣지 않도록 p_count 인자 버전 추가
+create or replace function public.free_ask_public(p_token uuid, p_count boolean)
+returns json language plpgsql security definer set search_path = public as $$
+declare r record;
+begin
+  select id, ref_no, name, created_at, question, answer, module, status into r
+    from public.free_questions where share_token = p_token and answer is not null and status <> 'cancelled';
+  if not found then return null; end if;
+  if p_count then
+    update public.free_questions set view_count = view_count + 1, viewed_at = now() where id = r.id;
+  end if;
+  return json_build_object('ref_no', r.ref_no, 'name', r.name, 'created_at', r.created_at, 'question', r.question, 'answer', r.answer, 'module', r.module);
+end $$;
+revoke all on function public.free_ask_public(uuid, boolean) from public;
+grant execute on function public.free_ask_public(uuid, boolean) to anon, authenticated;
