@@ -64,7 +64,7 @@ function Module({ a, module }: { a: AskAnswer; module: AskModule }) {
   if (module === "none") return null;
   const tag = module === "swot" ? "SWOT" : module === "whys" ? "3 Whys" : "타임라인 · PDCA";
   return (
-    <div style={{ ...CARD, padding: "20px 22px 20px" }}>
+    <div className="rpt-card" style={{ ...CARD, padding: "20px 22px 20px" }}>
       <SHead label={`근거 2 · 분석 틀 ${tag}`} action={a.mod_action} color={GRAY} />
       {module === "swot" && (
         <>
@@ -128,10 +128,11 @@ export interface AskReportProps {
   module: AskModule;
   a: AskAnswer;
   photoSrc?: string;     // 기본 /img/choi-profile.jpg
+  className?: string;
 }
 
 /** ref 는 PNG 내보내기용 — 이 노드를 그대로 그림으로 굽는다 */
-const AskReport = forwardRef<HTMLDivElement, AskReportProps>(function AskReport({ refNo, date, name, question, module, a, photoSrc = "/img/choi-profile.jpg" }, ref) {
+const AskReport = forwardRef<HTMLDivElement, AskReportProps>(function AskReport({ refNo, date, name, question, module, a, photoSrc = "/img/choi-profile.jpg", className }, ref) {
   const ActionRow = ({ tag, bg, txt }: { tag: string; bg: string; txt: string }) => (
     <div style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
       <span style={{ flex: "0 0 auto", minWidth: 62, textAlign: "center", fontSize: 12.5, fontWeight: 800, color: "#fff", background: bg, padding: "6px 10px", borderRadius: 999 }}>{tag}</span>
@@ -139,7 +140,7 @@ const AskReport = forwardRef<HTMLDivElement, AskReportProps>(function AskReport(
     </div>
   );
   return (
-    <div ref={ref} style={{ width: 540, boxSizing: "border-box", background: BG, fontFamily: "'Pretendard Variable', Pretendard, -apple-system, 'Noto Sans KR', sans-serif", color: INK, position: "relative", overflow: "hidden", WebkitFontSmoothing: "antialiased" }}>
+    <div ref={ref} className={className} style={{ width: 540, boxSizing: "border-box", background: BG, fontFamily: "'Pretendard Variable', Pretendard, -apple-system, 'Noto Sans KR', sans-serif", color: INK, position: "relative", overflow: "hidden", WebkitFontSmoothing: "antialiased" }}>
       <div style={{ position: "absolute", width: 280, height: 280, borderRadius: "50%", background: "#DCE7FA", left: -100, top: 420 }} />
       <div style={{ position: "absolute", width: 220, height: 220, borderRadius: "50%", background: "#E3ECFA", right: -80, top: 1500 }} />
 
@@ -149,12 +150,12 @@ const AskReport = forwardRef<HTMLDivElement, AskReportProps>(function AskReport(
       </div>
 
       <div style={{ position: "relative", padding: "22px 24px 0", display: "flex", flexDirection: "column", gap: 16 }}>
-        <div style={{ ...CARD, padding: "22px 24px", textAlign: "center" }}>
+        <div className="rpt-card" style={{ ...CARD, padding: "22px 24px", textAlign: "center" }}>
           <div style={{ fontSize: 12.5, fontWeight: 800, color: BLUE, letterSpacing: 1.5 }}>{name}님의 질문</div>
           <div style={{ margin: "10px auto 0", fontSize: 23, fontWeight: 900, lineHeight: 1.42, letterSpacing: -0.5, maxWidth: 460, whiteSpace: "pre-wrap" }}>“{question}”</div>
         </div>
 
-        <div style={{ background: NAVY, borderRadius: 18, padding: "22px 24px 20px", color: "#fff", textAlign: "center" }}>
+        <div className="rpt-card" style={{ background: NAVY, borderRadius: 18, padding: "22px 24px 20px", color: "#fff", textAlign: "center" }}>
           <div style={{ fontSize: 12.5, fontWeight: 800, color: GOLD, letterSpacing: 1.5 }}>결론부터</div>
           <div style={{ margin: "10px auto 0", fontSize: 19, fontWeight: 900, lineHeight: 1.45, letterSpacing: -0.4, maxWidth: 460, whiteSpace: "pre-wrap" }}>{a.one}</div>
           <div style={{ marginTop: 16, display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 8 }}>
@@ -167,7 +168,7 @@ const AskReport = forwardRef<HTMLDivElement, AskReportProps>(function AskReport(
           </div>
         </div>
 
-        <div style={{ ...CARD, padding: "20px 22px 20px" }}>
+        <div className="rpt-card" style={{ ...CARD, padding: "20px 22px 20px" }}>
           <SHead label="근거 1 · 명식" action={a.m_action} color={GRAY} />
           <div style={{ marginTop: 14, display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 10 }}>
             {[["나의 일간", a.ilgan, a.ilgan_sub, a.ilgan_desc], ["올해·내년 흐름", a.seun, a.seun_sub, a.seun_desc]].map(([h, big, sub, desc]) => (
@@ -184,7 +185,7 @@ const AskReport = forwardRef<HTMLDivElement, AskReportProps>(function AskReport(
 
         <Module a={a} module={module} />
 
-        <div style={{ ...CARD, padding: "20px 22px 22px" }}>
+        <div className="rpt-card" style={{ ...CARD, padding: "20px 22px 22px" }}>
           <SHead label="판단 · 소장의 답" action="세 줄로 정리하면 이렇습니다" />
           <div style={{ marginTop: 14, display: "flex", flexDirection: "column", gap: 14 }}>
             {a.ans.map((t, i) => (
@@ -196,7 +197,7 @@ const AskReport = forwardRef<HTMLDivElement, AskReportProps>(function AskReport(
           </div>
         </div>
 
-        <div style={{ ...CARD, padding: "20px 22px 20px" }}>
+        <div className="rpt-card" style={{ ...CARD, padding: "20px 22px 20px" }}>
           <SHead label="시기" action={a.t_action} color={GRAY} />
           <div style={{ marginTop: 14, display: "grid", gridTemplateColumns: "repeat(2, minmax(0, 1fr))", gap: 10 }}>
             <div style={{ border: `1.5px solid ${BLUE}`, borderRadius: 14, padding: "14px 16px" }}>
@@ -210,7 +211,7 @@ const AskReport = forwardRef<HTMLDivElement, AskReportProps>(function AskReport(
           </div>
         </div>
 
-        <div style={{ ...CARD, padding: "20px 22px 20px" }}>
+        <div className="rpt-card" style={{ ...CARD, padding: "20px 22px 20px" }}>
           <SHead label="실행" action={a.a_action} color={GRAY} />
           <div style={{ marginTop: 14, display: "flex", flexDirection: "column", gap: 12 }}>
             <ActionRow tag="오늘" bg="#E8542E" txt={a.today} />
@@ -221,7 +222,7 @@ const AskReport = forwardRef<HTMLDivElement, AskReportProps>(function AskReport(
         </div>
       </div>
 
-      <div style={{ position: "relative", marginTop: 22, padding: "22px 28px 24px", display: "flex", flexDirection: "column", alignItems: "center", gap: 10, borderTop: "1px solid #DCE4EE", background: "#fff", textAlign: "center" }}>
+      <div className="rpt-card rpt-foot" style={{ position: "relative", marginTop: 22, padding: "22px 28px 24px", display: "flex", flexDirection: "column", alignItems: "center", gap: 10, borderTop: "1px solid #DCE4EE", background: "#fff", textAlign: "center" }}>
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={photoSrc} alt="최형철 소장" width={56} height={56} crossOrigin="anonymous" style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover", border: `2px solid ${GOLD}` }} />
         <div style={{ fontSize: 15, fontWeight: 800 }}>최형철 · 사주보는 경영지도사</div>

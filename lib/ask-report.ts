@@ -109,6 +109,9 @@ export interface AskRow {
   answer: Partial<AskAnswer> | null;
   module: AskModule | null;
   saju: SajuBrief | null;
+  share_token?: string | null;
+  viewed_at?: string | null;
+  view_count?: number | null;
 }
 
 /** 생년월일시로 자동 계산해 저장하는 명식 요약 */

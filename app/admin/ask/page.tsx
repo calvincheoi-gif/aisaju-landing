@@ -85,9 +85,9 @@ export default function AdminAskPage() {
       const res = await fetch("/api/admin/ask", { method: "PATCH", headers: H(), body: JSON.stringify({ id: sel.id, answer: a, module, status }) });
       const j = await res.json();
       if (!res.ok) throw new Error(j.error || "저장 실패");
-      setMsg(status ? `저장하고 「${STATUS_LABEL[status]}」로 바꿨습니다.` : "저장했습니다.");
+      setMsg(status ? `저장하고 「${STATUS_LABEL[status]}」로 바꿨습니다.` : "저장했습니다. 이제 「링크 복사 → 카톡」 또는 「PDF 저장」을 쓸 수 있습니다.");
       await load(password);
-      if (status) setSel((s) => (s ? { ...s, status } : s));
+      setSel((s) => (s ? { ...s, answer: a, module, ...(status ? { status } : {}) } : s));
     } catch (e) { setMsg(e instanceof Error ? e.message : "저장 실패"); } finally { setBusy(null); }
   }
 
@@ -140,6 +140,20 @@ export default function AdminAskPage() {
     navigator.clipboard.write([new ClipboardItem({ "image/png": png.blob })])
       .then(() => setMsg("이미지를 복사했습니다. 카카오톡 PC 대화창을 열고 Ctrl+V → Enter."))
       .catch((e: unknown) => setMsg("복사가 막혔습니다(" + (e instanceof Error ? e.name : "") + "). 아래 이미지를 마우스 오른쪽 → 「이미지 복사」로 복사하거나, 일반 크롬에서 이 화면을 열어 주세요."));
+  }
+  /* 고객용 링크·PDF — 답을 저장한 뒤에만 열린다 (DB 함수가 answer 가 있는 건만 내준다) */
+  const shareUrl = sel?.share_token ? `${typeof window !== "undefined" ? window.location.origin : "https://aisajulab.com"}/r/${sel.share_token}` : "";
+  async function copyLink() {
+    if (!shareUrl) return;
+    if (!sel?.answer) { setMsg("먼저 「저장」을 눌러야 링크가 열립니다."); return; }
+    try { await navigator.clipboard.writeText(shareUrl); setMsg("고객용 링크를 복사했습니다. 카톡 대화창에 붙여넣어 보내세요."); }
+    catch { setMsg("복사가 막혔습니다. 링크: " + shareUrl); }
+  }
+  function openPdf() {
+    if (!shareUrl) return;
+    if (!sel?.answer) { setMsg("먼저 「저장」을 눌러야 PDF를 만들 수 있습니다."); return; }
+    window.open(shareUrl + "?print=1", "_blank");
+    setMsg("새 탭에서 인쇄 창이 뜨면 대상에서 「PDF로 저장」을 고르세요. 저장한 PDF 파일을 카톡으로 보내면 선명하게 전달됩니다.");
   }
   function downloadPng() {
     if (!png) return;
@@ -315,6 +329,10 @@ export default function AdminAskPage() {
                   <button onClick={sharePng} className="rounded-md border border-indigo-300 bg-indigo-50 px-3 py-2 text-[13px] font-semibold text-indigo-700">공유 창</button>
                 </>
               )}
+              <span style={{ width: 1, height: 22, background: "#DCE4EE" }} />
+              <button onClick={copyLink} disabled={!!busy} title="고객이 폰에서 선명하게 보는 웹 페이지 주소" className="rounded-md bg-[#FEE500] px-3 py-2 text-[13px] font-semibold text-[#191919] disabled:opacity-50">링크 복사 → 카톡</button>
+              <button onClick={openPdf} disabled={!!busy} title="A4 PDF로 저장 (글자 선명)" className="rounded-md border border-border px-3 py-2 text-[13px] font-semibold text-ink-900 disabled:opacity-50">PDF 저장</button>
+              <span style={{ width: 1, height: 22, background: "#DCE4EE" }} />
               <button onClick={() => save("answered")} disabled={!!busy} className="rounded-md bg-emerald-600 px-3 py-2 text-[13px] font-semibold text-white disabled:opacity-50">답변 완료</button>
               <button onClick={() => save("converted")} disabled={!!busy} className="rounded-md border border-indigo-300 px-3 py-2 text-[12.5px] text-indigo-700 disabled:opacity-50">유료 전환</button>
               <button onClick={() => { if (confirm("이 건을 취소 처리합니다. 오늘 정원에서 빠집니다.")) save("cancelled"); }} disabled={!!busy} className="rounded-md px-2 py-2 text-[12.5px] text-body hover:text-red-600">취소 처리</button>
@@ -362,7 +380,7 @@ export default function AdminAskPage() {
             <div className="truncate text-ink-900" title={r.question}>{r.question}</div>
             <div className="text-[12px] text-body"><div className="text-ink-900">{r.name}</div><div>{r.saju ? `${r.saju.dayStemKo} · ${r.saju.pillars.day}일주` : r.birth_info}</div></div>
             <div className="text-[11.5px] text-body">{r.kakao_agree ? "카톡 ✓" : "카톡 ✗"}<br />{r.review_agree ? "후기 ✓" : "후기 ✗"}</div>
-            <div><span className={`rounded px-1.5 py-0.5 text-[11.5px] font-semibold ${STATUS_COLOR[r.status]}`}>{STATUS_LABEL[r.status]}</span></div>
+            <div><span className={`rounded px-1.5 py-0.5 text-[11.5px] font-semibold ${STATUS_COLOR[r.status]}`}>{STATUS_LABEL[r.status]}</span>{r.view_count ? <div className="mt-0.5 text-[11px] text-body">열람 {r.view_count}회</div> : null}</div>
           </button>
         ))}
       </div>

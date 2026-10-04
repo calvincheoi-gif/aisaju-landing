@@ -79,3 +79,22 @@ alter table public.free_questions
   add column if not exists module text,
   add column if not exists saju jsonb,
   add column if not exists updated_at timestamptz not null default now();
+
+-- 2026-10-04 (3차) 고객용 웹 링크·PDF: 공유 토큰 + 열람 기록 + 공개 조회 함수
+alter table public.free_questions
+  add column if not exists share_token uuid not null default gen_random_uuid(),
+  add column if not exists viewed_at timestamptz,
+  add column if not exists view_count int not null default 0;
+create unique index if not exists free_questions_share_token_idx on public.free_questions(share_token);
+create or replace function public.free_ask_public(p_token uuid)
+returns json language plpgsql security definer set search_path = public as $$
+declare r record;
+begin
+  select id, ref_no, name, created_at, question, answer, module, status into r
+    from public.free_questions where share_token = p_token and answer is not null and status <> 'cancelled';
+  if not found then return null; end if;
+  update public.free_questions set view_count = view_count + 1, viewed_at = now() where id = r.id;
+  return json_build_object('ref_no', r.ref_no, 'name', r.name, 'created_at', r.created_at, 'question', r.question, 'answer', r.answer, 'module', r.module);
+end $$;
+revoke all on function public.free_ask_public(uuid) from public;
+grant execute on function public.free_ask_public(uuid) to anon, authenticated;
