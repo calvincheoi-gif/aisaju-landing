@@ -8,6 +8,7 @@ export const metadata: Metadata = {
 
 const ADMIN_NAV = [
   { label: "상담 신청 내역", href: "/admin" },
+  { label: "무료 1문 1답", href: "/admin/ask" },
   { label: "상담 사례 관리", href: "/admin/cases" },
   { label: "가격 관리", href: "/admin/pricing" },
   { label: "Q&A 관리", href: "/admin/qna" },

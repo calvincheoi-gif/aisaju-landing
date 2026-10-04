@@ -72,3 +72,10 @@ revoke all on function public.free_ask_status() from public;
 revoke all on function public.free_ask_submit(text,text,text,text,text,boolean,boolean,text,text,text) from public;
 grant execute on function public.free_ask_status() to anon, authenticated;
 grant execute on function public.free_ask_submit(text,text,text,text,text,boolean,boolean,text,text,text) to anon, authenticated;
+
+-- 2026-10-04 (2차) 운영 자동화: 관리자가 채운 답(answer), 사용한 분석 모듈(module), 계산된 명식(saju)
+alter table public.free_questions
+  add column if not exists answer jsonb,
+  add column if not exists module text,
+  add column if not exists saju jsonb,
+  add column if not exists updated_at timestamptz not null default now();
