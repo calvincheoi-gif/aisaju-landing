@@ -799,6 +799,31 @@ h1.big{font-size:41.1px;margin-bottom:6px}
 .navfab .nf-home{background:linear-gradient(135deg,#2F7FF0,#1D5FD0);border:0}
 .navfab .nf-home .nf-ic,.navfab .nf-home .nf-tx{color:#fff}
 @media(max-width:360px){.navfab{right:10px;gap:7px}.navfab button{width:42px;height:42px}}
+/* ═══ 넓은 화면 대응 — 폴더블 펼침·태블릿·PC (2026-10-04) ═══
+   폰 폭(520px)보다 넓은 화면에서는 글자·버튼은 그대로인데 좌우만 늘어나 '퍼져' 보인다.
+   그래서 600px 이상에서는 내용 폭을 460px로 모으고, 그 자리를 옅은 흰 기둥(무대)으로
+   표시해 "폰 화면 하나가 가운데 서 있는" 모양으로 통일한다. 떠 있는 내비 버튼은
+   기둥 바깥 오른쪽에 붙여 내용과 겹치지 않게 한다. 폰(600px 미만)은 아무 영향 없음. */
+@media (min-width:600px){
+  :root{--maxw:460px}
+  body{background:#E6EEF9}
+  body::before{content:"";position:fixed;top:0;bottom:0;left:50%;width:calc(var(--maxw) + 24px);transform:translateX(-50%);
+    background:rgba(245,249,255,.92);border-left:1px solid #D6E2F3;border-right:1px solid #D6E2F3;
+    box-shadow:0 0 0 1px rgba(255,255,255,.7) inset,0 18px 60px rgba(20,50,110,.10);z-index:0;pointer-events:none}
+  .appbar-in,.adbar-in{max-width:calc(var(--maxw) + 24px)}
+  .appbar,.adbar{background:transparent;border-bottom:0;backdrop-filter:none}
+  .appbar-in{background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);border-left:1px solid #D6E2F3;border-right:1px solid #D6E2F3}
+  .adbar-in{background:#0C1A2E}
+  .navfab{right:auto;left:calc(50% + var(--maxw)/2 + 24px)}
+  .allfoot{padding-right:0}
+  #gback{left:calc(50% - var(--maxw)/2 - 64px)}  /* 뒤로 버튼도 기둥 바깥 왼쪽에 */
+  .scrolldn{bottom:calc(14px + env(safe-area-inset-bottom))}
+}
+@media (min-width:600px) and (max-height:760px){
+  /* 펼친 폴더블처럼 넓고 낮은 화면: 첫 화면 세로 요소를 조금 줄여 한 눈에 들어오게 */
+  h1.big{font-size:34px}
+  .heroWrap{max-width:290px}
+}
 
 /* ═══ 결과 카드 스킨 ═══════════════════════════════════
    A안(skin-a) = 기본. 흰 바탕에 금색 액자 — 차분하고 신뢰 중심.
@@ -3694,7 +3719,7 @@ const saveDB=()=>store.set(DB_KEY,DB);
 /* ── 데이터 버전 마이그레이션 ─────────────────────────────
    예전에 저장된 문항·상징이 새 버전을 덮어써 버리는 문제 방지.
    문항/상징/수식어만 최신 기본값으로 되돌리고, Q&A·설정은 유지한다. */
-const DATA_VER="4.11";
+const DATA_VER="4.12";
 if(DB.dataVer!==DATA_VER){
   DB.Q=clone(DEFAULT_Q); DB.SYM=clone(DEFAULT_SYM); DB.MOD=clone(DEFAULT_MOD);
   DB.cfg.kakaoChannelUrl=CONFIG.kakaoChannelUrl;
@@ -7911,7 +7936,8 @@ function scdnCheck(){
   const e=$("scdn"); if(!e)return;
   const modal=document.querySelector(".modal.on");
   const left=document.documentElement.scrollHeight-window.scrollY-window.innerHeight;
-  e.classList.toggle("on", !modal && left>140 && window.scrollY<80);
+  /* 한 화면 문항(s1all)은 하단 고정 버튼이 있어 "아래로 더 보기"와 겹친다 → 그 화면에선 숨긴다 */
+  e.classList.toggle("on", !modal && CUR!=="s1all" && left>140 && window.scrollY<80);
 }
 $("scdn").onclick=()=>window.scrollBy({top:Math.round(innerHeight*0.78),behavior:"smooth"});
 addEventListener("scroll",scdnCheck,{passive:true});
