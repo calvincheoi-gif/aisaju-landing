@@ -44,6 +44,8 @@ export default function AdminAskPage() {
   const [msg, setMsg] = useState<string | null>(null);
   const [filter, setFilter] = useState<"all" | AskRow["status"]>("all");
   const previewRef = useRef<HTMLDivElement>(null);
+  /* 만든 PNG — 화면에 띄우고 공유·복사·저장에 같이 쓴다 */
+  const [png, setPng] = useState<{ blob: Blob; url: string; name: string } | null>(null);
 
   const H = (pw = password) => ({ "x-admin-password": pw, "Content-Type": "application/json" });
 
@@ -100,19 +102,49 @@ export default function AdminAskPage() {
     } catch (e) { setMsg(e instanceof Error ? e.message : "초안 실패"); } finally { setBusy(null); }
   }
 
-  async function exportPng() {
-    if (!sel || !previewRef.current) return;
+  async function makePng(): Promise<{ blob: Blob; url: string; name: string } | null> {
+    if (!sel || !previewRef.current) return null;
+    if (png) return png;
     setBusy("png");
     try {
-      const { toPng } = await import("html-to-image");
+      const { toBlob } = await import("html-to-image");
       if ("fonts" in document) await (document as Document & { fonts: FontFaceSet }).fonts.ready;
-      const dataUrl = await toPng(previewRef.current, { pixelRatio: 2, cacheBust: true, backgroundColor: "#EEF3FB" });
-      const link = document.createElement("a");
-      link.download = `AI사주랩_1문1답_${sel.ref_no}_${maskName(sel.name)}.png`;
-      link.href = dataUrl; link.click();
-      setMsg("PNG를 내려받았습니다. 카카오톡 채널 대화창에 보내시고 「답변 완료」를 눌러 주세요.");
-    } catch (e) { setMsg("PNG 생성 실패: " + (e instanceof Error ? e.message : String(e))); } finally { setBusy(null); }
+      const blob = await toBlob(previewRef.current, { pixelRatio: 2, cacheBust: true, backgroundColor: "#EEF3FB" });
+      if (!blob) throw new Error("이미지를 만들지 못했습니다.");
+      const out = { blob, url: URL.createObjectURL(blob), name: `AI사주랩_1문1답_${sel.ref_no}_${maskName(sel.name)}.png` };
+      setPng(out);
+      return out;
+    } catch (e) { setMsg("PNG 생성 실패: " + (e instanceof Error ? e.message : String(e))); return null; } finally { setBusy(null); }
   }
+  /* 폰: 공유 시트 → 카카오톡. PC 크롬도 OS 공유 창이 뜨지만 카톡이 없을 수 있어 「복사」를 함께 둔다 */
+  async function sharePng() {
+    const p = await makePng(); if (!p) return;
+    const file = new File([p.blob], p.name, { type: "image/png" });
+    const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
+    if (nav.share && (!nav.canShare || nav.canShare({ files: [file] }))) {
+      try { await nav.share({ files: [file], title: "AI사주랩 1문 1답" }); setMsg("공유 창에서 카카오톡을 고르세요. 보낸 뒤 「답변 완료」를 눌러 주세요."); }
+      catch { /* 사용자가 공유 창을 닫은 경우 */ }
+    } else {
+      setMsg("이 기기에서는 공유 창을 열 수 없습니다. 「이미지 복사」 후 카톡 대화창에 Ctrl+V 하세요.");
+    }
+  }
+  /* PC: 클립보드에 이미지로 복사 → 카카오톡 PC 대화창에 Ctrl+V */
+  async function copyPng() {
+    const p = await makePng(); if (!p) return;
+    try {
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": p.blob })]);
+      setMsg("이미지를 복사했습니다. 카카오톡 PC 대화창을 열고 Ctrl+V 하면 그대로 붙습니다.");
+    } catch {
+      setMsg("복사가 막혔습니다. 아래 미리보기 이미지를 마우스 오른쪽 → 「이미지 복사」로 복사해 주세요.");
+    }
+  }
+  function downloadPng() {
+    if (!png) return;
+    const a = document.createElement("a"); a.href = png.url; a.download = png.name; a.click();
+    setMsg("다운로드 폴더에 저장했습니다 (크롬 오른쪽 위 ↓ 아이콘에서 확인).");
+  }
+  /* 내용이 바뀌면 만들어 둔 PNG는 버린다 */
+  useEffect(() => { if (png) { URL.revokeObjectURL(png.url); setPng(null); } /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [a, module, sel?.id]);
 
   const miss = useMemo(() => missingFields(a, module), [a, module]);
   const list = rows.filter((r) => filter === "all" || r.status === filter);
@@ -268,7 +300,8 @@ export default function AdminAskPage() {
             {/* 저장·내보내기 */}
             <div className="sticky bottom-0 mt-5 -mx-5 -mb-5 flex flex-wrap items-center gap-2 border-t border-border bg-white px-5 py-3">
               <button onClick={() => save()} disabled={!!busy} className="rounded-md border border-border px-3 py-2 text-[13px] font-semibold text-ink-900 disabled:opacity-50">{busy === "save" ? "저장 중…" : "저장"}</button>
-              <button onClick={exportPng} disabled={!!busy || miss.length > 0} title={miss.length ? `비어 있음: ${miss.join(", ")}` : ""} className="btn-primary px-4 py-2 text-[13px] disabled:opacity-50">{busy === "png" ? "PNG 만드는 중…" : "PNG 저장"}</button>
+              <button onClick={sharePng} disabled={!!busy || miss.length > 0} title={miss.length ? `비어 있음: ${miss.join(", ")}` : "폰: 공유 창에서 카카오톡 선택"} className="btn-primary px-4 py-2 text-[13px] disabled:opacity-50">{busy === "png" ? "이미지 만드는 중…" : "카톡으로 공유"}</button>
+              <button onClick={copyPng} disabled={!!busy || miss.length > 0} title="PC: 복사한 뒤 카카오톡 대화창에 Ctrl+V" className="rounded-md border border-indigo-300 bg-indigo-50 px-3 py-2 text-[13px] font-semibold text-indigo-700 disabled:opacity-50">이미지 복사</button>
               <button onClick={() => save("answered")} disabled={!!busy} className="rounded-md bg-emerald-600 px-3 py-2 text-[13px] font-semibold text-white disabled:opacity-50">답변 완료</button>
               <button onClick={() => save("converted")} disabled={!!busy} className="rounded-md border border-indigo-300 px-3 py-2 text-[12.5px] text-indigo-700 disabled:opacity-50">유료 전환</button>
               <button onClick={() => { if (confirm("이 건을 취소 처리합니다. 오늘 정원에서 빠집니다.")) save("cancelled"); }} disabled={!!busy} className="rounded-md px-2 py-2 text-[12.5px] text-body hover:text-red-600">취소 처리</button>
@@ -279,10 +312,26 @@ export default function AdminAskPage() {
 
           <div>
             <div className="sticky top-4">
-              <div className="mb-2 text-[12.5px] text-body">미리보기 (PNG는 이 모습 그대로 1080px 폭)</div>
-              <div className="overflow-auto rounded-lg border border-border bg-[#DCE4EE] p-2" style={{ maxHeight: "calc(100vh - 80px)" }}>
-                <AskReport ref={previewRef} refNo={sel.ref_no} date={fmtDate(sel.created_at)} name={maskName(sel.name)} question={sel.question} module={module} a={a} />
-              </div>
+              {png ? (
+                <>
+                  <div className="mb-2 flex flex-wrap items-center gap-2 text-[12.5px] text-body">
+                    <b className="text-ink-900">완성 이미지</b> · 폰이면 길게 눌러 공유, PC면 오른쪽 클릭 → 이미지 복사
+                    <button onClick={downloadPng} className="rounded-md border border-border px-2 py-1 text-[12px]">파일로 저장</button>
+                    <button onClick={() => setPng(null)} className="text-[12px] text-body hover:text-ink-900">편집으로 돌아가기</button>
+                  </div>
+                  <div className="overflow-auto rounded-lg border border-border bg-[#DCE4EE] p-2" style={{ maxHeight: "calc(100vh - 80px)" }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={png.url} alt="1문 1답 리포트" style={{ width: 540, display: "block" }} />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="mb-2 text-[12.5px] text-body">미리보기 (이미지는 이 모습 그대로 1080px 폭)</div>
+                  <div className="overflow-auto rounded-lg border border-border bg-[#DCE4EE] p-2" style={{ maxHeight: "calc(100vh - 80px)" }}>
+                    <AskReport ref={previewRef} refNo={sel.ref_no} date={fmtDate(sel.created_at)} name={maskName(sel.name)} question={sel.question} module={module} a={a} />
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </section>
