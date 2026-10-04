@@ -506,6 +506,9 @@ footer b{color:#fff;font-size:14px;font-weight:800;letter-spacing:-.04em}
   font-size:13.5px;line-height:1.5;color:var(--ink);font-weight:600;letter-spacing:-.02em}
 .instsheet li b{flex:0 0 22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:11.5px;font-weight:900;display:grid;place-items:center;margin-top:1px}
 .instsheet li em{font-style:normal;color:var(--blue);font-weight:800}
+.instsheet li.is-tip{background:#FFF8E8;border-color:#F5E2B0;font-weight:500;color:#5B5340;font-size:12.5px}
+.instsheet li.is-tip b{background:#E8B04A}
+.instsheet li.is-tip em{color:#B7791F}
 .instsheet .is-x{margin-top:14px;width:100%;height:44px;border-radius:13px;border:0;background:var(--navy);color:#fff;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer}
 .util .chip{cursor:pointer}
 .util .burger{cursor:pointer}
@@ -2357,18 +2360,22 @@ export default function HomeV6(
        · 안드로이드 Chrome 등 설치 프롬프트가 잡혀 있으면 → 바로 설치 창
        · iOS Safari / 카카오·인스타 앱 내 브라우저 → 플랫폼별 절차 안내 시트 */
     const installUi = (() => {
-      type T = { lab: string; t: string; s: string; ios: string[]; and: string[]; inapp: string[]; x: string };
+      type T = { lab: string; t: string; s: string; ios: string[]; and: string[]; sam: string[]; inapp: string[]; tip: string; done: string; x: string };
       const TXT: Record<string, T> = {
         ko: { lab: "홈 추가", t: "홈 화면에 AI사주랩 추가", s: "앱처럼 아이콘으로 바로 열고, 매일 아침 오늘의 기운을 확인하세요.",
-          ios: ["화면 아래 <em>공유 버튼(네모에 화살표)</em>을 누릅니다", "<em>「홈 화면에 추가」</em>를 선택합니다", "오른쪽 위 <em>추가</em>를 누르면 끝"],
-          and: ["오른쪽 위 <em>⋮ 메뉴</em>를 누릅니다", "<em>「홈 화면에 추가」</em> 또는 <em>「앱 설치」</em>를 선택합니다", "<em>추가</em>를 누르면 끝"],
+          ios: ["화면 아래 <em>공유 버튼(네모에 화살표 ↑)</em>을 누릅니다", "<em>「홈 화면에 추가」</em>를 선택합니다", "오른쪽 위 <em>추가</em>를 누르면 끝"],
+          and: ["<em>주소창 오른쪽 끝의 점 세 개(⋮)</em>를 누릅니다 — 주소창이 아래에 있으면 아래 오른쪽입니다", "<em>「홈 화면에 추가」</em> 또는 <em>「앱 설치」</em>를 선택합니다", "<em>추가(설치)</em>를 누르면 끝"],
+          sam: ["화면 <em>아래 오른쪽 메뉴(≡)</em>를 누릅니다", "<em>「현재 페이지 추가」</em> → <em>「홈 화면」</em>을 선택합니다", "<em>추가</em>를 누르면 끝"],
           inapp: ["오른쪽 위 <em>⋮ 또는 공유</em>를 눌러 <em>「다른 브라우저로 열기」</em>(Chrome/Safari)", "브라우저에서 다시 <em>홈 추가</em>를 누릅니다", "<em>「홈 화면에 추가」</em> → 추가"],
-          x: "확인" },
+          tip: "이미 추가하셨다면 홈 화면·앱 목록에서 <em>AI사주랩</em> 아이콘을 찾아 주세요. 메뉴에 「앱 열기」가 보이는 것도 이미 설치됐다는 뜻입니다.",
+          done: "이미 홈 화면 앱으로 보고 계십니다 ✓", x: "확인" },
         en: { lab: "Add", t: "Add AIsajuLab to Home Screen", s: "Open it like an app and check today's energy every morning.",
           ios: ["Tap the <em>Share</em> button at the bottom", "Choose <em>“Add to Home Screen”</em>", "Tap <em>Add</em>"],
-          and: ["Tap the <em>⋮ menu</em> at the top right", "Choose <em>“Add to Home screen”</em> or <em>“Install app”</em>", "Tap <em>Add</em>"],
+          and: ["Tap the <em>⋮ menu at the end of the address bar</em>", "Choose <em>“Add to Home screen”</em> or <em>“Install app”</em>", "Tap <em>Add</em>"],
+          sam: ["Tap the <em>≡ menu</em> at the bottom right", "Choose <em>“Add page to”</em> → <em>“Home screen”</em>", "Tap <em>Add</em>"],
           inapp: ["Tap <em>⋮ or Share</em> → <em>“Open in browser”</em> (Chrome/Safari)", "Tap <em>Add</em> again in the browser", "<em>“Add to Home Screen”</em> → Add"],
-          x: "OK" },
+          tip: "Already added? Look for the <em>AIsajuLab</em> icon on your home screen. “Open app” in the menu also means it is installed.",
+          done: "You are already in the home-screen app ✓", x: "OK" },
       };
       const btn = document.getElementById("instbtn");
       const lab = document.getElementById("instlab");
@@ -2379,32 +2386,36 @@ export default function HomeV6(
       const installed = window.matchMedia("(display-mode: standalone)").matches || nav.standalone === true;
       const ua = navigator.userAgent;
       const isIOS = /iphone|ipad|ipod/i.test(ua);
+      const isSamsung = /SamsungBrowser/i.test(ua);
       const inApp = /KAKAOTALK|Instagram|FBAN|FBAV|NAVER\(inapp|Line\//i.test(ua);
       const close = () => { sheet.classList.remove("on"); sheet.setAttribute("aria-hidden", "true"); };
       const openGuide = (l: string) => {
         const t = TXT[l] || TXT.en;
-        const steps = inApp ? t.inapp : isIOS ? t.ios : t.and;
+        const how = inApp ? "inapp" : isIOS ? "ios" : isSamsung ? "samsung" : "android";
+        const steps = inApp ? t.inapp : isIOS ? t.ios : isSamsung ? t.sam : t.and;
         tEl.textContent = t.t; sEl.textContent = t.s; xEl.textContent = t.x;
-        ol.innerHTML = steps.map((st, i) => `<li><b>${i + 1}</b><span>${st}</span></li>`).join("");
+        ol.innerHTML = steps.map((st, i) => `<li><b>${i + 1}</b><span>${st}</span></li>`).join("")
+          + `<li class="is-tip"><b>i</b><span>${t.tip}</span></li>`;
         sheet.classList.add("on"); sheet.setAttribute("aria-hidden", "false");
-        track("install_guide", { how: inApp ? "inapp" : isIOS ? "ios" : "android" });
+        track("install_guide", { how });
       };
       xEl.addEventListener("click", close);
       sheet.addEventListener("click", (e) => { if (e.target === sheet) close(); });
       btn.addEventListener("click", async () => {
+        /* 이미 홈 화면 앱으로 열려 있으면 — 버튼은 두되 안내만 */
+        if (installed) { showToast((TXT[LANG] || TXT.en).done); return; }
         const p = (window as unknown as { __pwaPrompt?: { prompt: () => void; userChoice: Promise<{ outcome: string }> } }).__pwaPrompt;
         if (p) {
           track("install_click", { how: "prompt" });
           p.prompt();
-          try { const r = await p.userChoice; track("install_result", { outcome: r.outcome }); if (r.outcome === "accepted") btn.classList.remove("on"); } catch { /* 닫음 */ }
+          try { const r = await p.userChoice; track("install_result", { outcome: r.outcome }); if (r.outcome === "accepted") showToast((TXT[LANG] || TXT.en).done); } catch { /* 닫음 */ }
           return;
         }
         openGuide(LANG);
       });
-      window.addEventListener("pwa-installed", () => btn.classList.remove("on"));
       return (l: string) => {
         lab.textContent = (TXT[l] || TXT.en).lab;
-        btn.classList.toggle("on", !installed);
+        btn.classList.add("on");   /* 항상 보인다 — 설치 여부와 상관없이 입구는 한 곳 */
       };
     })();
 
