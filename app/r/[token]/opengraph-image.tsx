@@ -1,17 +1,29 @@
 import { ImageResponse } from "next/og";
-import { readFile } from "fs/promises";
-import path from "path";
+import { headers } from "next/headers";
 import { getSupabaseServerClient } from "@/lib/supabase";
 
 /**
  * 카톡·문자로 리포트 링크를 보낼 때 뜨는 미리보기 그림 (1200×630)
  *   의뢰자 이름(가림) · 질문 · 「AI사주랩 1문 1답 리포트」 · 로고 띠
- * 글꼴은 public/fonts 의 Noto Sans KR Bold 하나만 쓴다 (한글이 깨지지 않도록 TTF 를 직접 읽는다).
+ * 글꼴은 public/fonts 의 Noto Sans KR Bold 하나만 쓴다. 서버 함수에서는 public/ 을 fs 로 읽을 수 없고(Netlify 는 CDN 에만 둔다)
+ * import.meta.url 경로도 외부에 서빙되지 않으므로, 현재 호스트의 /fonts/… 를 HTTPS 로 한 번 받아 메모리에 둔다.
  */
 export const runtime = "nodejs";
 export const alt = "AI사주랩 1문 1답 리포트";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+
+let fontCache: ArrayBuffer | null = null;
+async function loadFont(): Promise<ArrayBuffer> {
+  if (fontCache) return fontCache;
+  const h = headers();
+  const host = h.get("x-forwarded-host") || h.get("host") || "aisajulab.com";
+  const proto = h.get("x-forwarded-proto") || (host.startsWith("localhost") ? "http" : "https");
+  const res = await fetch(`${proto}://${host}/fonts/NotoSansKR_700Bold.ttf`, { cache: "force-cache" });
+  if (!res.ok) throw new Error("font " + res.status);
+  fontCache = await res.arrayBuffer();
+  return fontCache;
+}
 
 function maskName(n: string) {
   const s = (n || "").trim();
@@ -28,7 +40,7 @@ export default async function OG({ params }: { params: { token: string } }) {
     const r = data as { name?: string; question?: string; ref_no?: string } | null;
     if (r) { name = maskName(r.name || ""); question = r.question || ""; ref = r.ref_no || ""; }
   }
-  const font = await readFile(path.join(process.cwd(), "public", "fonts", "NotoSansKR_700Bold.ttf"));
+  const font = await loadFont();
   const title = name ? `${name}님의 질문` : "AI사주랩 1문 1답";
   const q = question ? `“${clip(question, 60)}”` : "질문 하나, 답 한 장.";
 
