@@ -206,6 +206,40 @@ h1.big em{font-style:normal;background:var(--grad);-webkit-background-clip:text;
 .opt.sel .chk{background:var(--b500);border-color:var(--b500)}
 .opt.skip{justify-content:center;font-size:15.2px;color:var(--ink3);font-weight:500;padding:13px}
 .q-foot{position:sticky;bottom:0;padding:12px 0 calc(15px + env(safe-area-inset-bottom));background:linear-gradient(to top,#fff 58%,rgba(255,255,255,0))}
+
+/* ═══ 한 화면 간편형 (2026-10-04, C+ 안) ═══
+   14문항을 한 번에 세로로 보여 주고 칩으로 고른다. 계산·결과는 기존 ans 배열을 그대로 쓴다. */
+.modesw{display:flex;gap:2px;padding:2px;border-radius:999px;background:#F1F5FB;flex-shrink:0}
+.modesw button{border:0;background:transparent;border-radius:999px;padding:6px 9px;font-family:inherit;font-size:11px;font-weight:800;color:var(--ink3);cursor:pointer;white-space:nowrap}
+.modesw button.on{background:var(--navy,#12224A);color:#fff}
+.allhead{display:flex;justify-content:center;gap:10px;font-size:11.5px;color:var(--ink3);padding:10px 0 2px;flex-wrap:wrap}
+.allhead span{display:inline-flex;align-items:center;gap:4px}
+.allhead i{width:8px;height:8px;border-radius:50%;display:inline-block}
+.alllist{display:flex;flex-direction:column;gap:9px;padding:6px 0 10px}
+.qx{background:#fff;border-radius:14px;padding:11px 12px 10px;border:1.5px solid var(--line);transition:border-color .2s,box-shadow .2s;scroll-margin-top:84px;text-align:left}
+.qx.done{border-color:#BFDBFE}
+.qx.now{border-color:var(--b500);box-shadow:0 8px 20px rgba(37,99,235,.12)}
+.qx-t{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.qx-t b{font-size:14.8px;font-weight:800;letter-spacing:-.03em;line-height:1.3}
+.qx-t b em{font-style:normal;font-size:10.5px;font-weight:800;color:var(--b500);margin-right:6px;letter-spacing:.06em}
+.qx-t small{font-size:10.5px;color:var(--ink3);white-space:nowrap;font-weight:600}
+.qx-hint{margin-top:5px;font-size:12px;color:var(--ink3);line-height:1.5;text-align:left}
+.qx-hint span{display:inline}
+.qx-hint b{display:inline;color:var(--ink2);font-weight:800;margin:0}
+.qx-hint span+span::before{content:" · ";color:#CBD5E1}
+.chips{margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:7px;padding:9px 12px;border-radius:999px;background:#fff;border:1.5px solid var(--line);color:var(--ink);font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;min-height:40px;transition:.14s;letter-spacing:-.02em}
+.chip i{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.chip small{font-weight:500;color:var(--ink3);font-size:11.5px;margin-left:-2px}
+.chip.sel{background:var(--navy,#12224A);border-color:var(--navy,#12224A);color:#fff}
+.chip.sel small{color:#C9D2EA}
+.chip.skip{border-style:dashed;background:#F8FAFD;color:var(--ink3);font-weight:600;font-size:12.5px}
+.chip.skip.sel{background:#E2E8F0;border-color:#CBD5E1;color:var(--ink2)}
+.chip:active{transform:scale(.97)}
+.qx-sub{margin-top:6px;font-size:11.5px;color:var(--ink3);text-align:right}
+.allfoot{position:sticky;bottom:0;padding:12px 70px calc(15px + env(safe-area-inset-bottom)) 0;background:linear-gradient(to top,var(--bg,#F5F9FF) 58%,rgba(245,249,255,0))}
+.allfoot .btn[disabled]{background:#CBD5E1;box-shadow:none;color:#fff;cursor:default;font-size:15.5px}
+.allmore{text-align:center;font-size:12px;color:var(--ink3);padding:4px 0 2px}
 .lik{background:#fff;border:1px solid var(--line);border-radius:17px;padding:16px 15px;margin-bottom:11px}
 .lik-q{font-size:16.1px;font-weight:700;letter-spacing:-.03em;margin-bottom:13px;line-height:1.45}
 .lik-q i{font-style:normal;font-size:13.3px;font-weight:800;padding:2px 7px;border-radius:6px;margin-right:7px;vertical-align:2px}
@@ -921,11 +955,24 @@ body.skin-b .emb{filter:drop-shadow(0 8px 18px rgba(30,50,110,.22))}
   </div>
 </div>
 
-<!-- ═══════ 1단계 문항 ═══════ -->
+<!-- ═══════ 1단계 문항 · 한 화면 간편형 (기본값) ═══════ -->
+<div id="s1all" class="screen">
+  <div class="appbar"><div class="appbar-in"><button class="back" data-back="sg">‹</button>
+    <div class="prog"><div class="prog-t"><span id="pAl"></span><span id="pAc"></span></div><div class="prog-bar"><div class="prog-fill" id="pAf"></div></div></div>
+    <div class="modesw" id="modeswA"><button data-mode="single" class="on"></button><button data-mode="step"></button></div>
+  </div></div>
+  <div class="wrap">
+    <div class="allhead" id="allhead"></div>
+    <div class="alllist" id="alllist"></div>
+    <div class="allfoot"><button class="btn btn-p" id="nAll" disabled></button></div>
+  </div>
+</div>
+
+<!-- ═══════ 1단계 문항 · 한 문항씩 ═══════ -->
 <div id="s1" class="screen">
   <div class="appbar"><div class="appbar-in"><button class="back" data-back="sg">‹</button>
     <div class="prog"><div class="prog-t"><span id="p1l">1 / 14</span><span id="p1c"></span></div><div class="prog-bar"><div class="prog-fill" id="p1f"></div></div></div>
-    <button class="shbtn" data-sh="1" aria-label="share"></button>
+    <div class="modesw" id="modeswS"><button data-mode="single"></button><button data-mode="step" class="on"></button></div>
   </div></div>
   <div class="wrap">
     <div class="q-head"><div class="q-num" id="q1n"></div><div class="q-title" id="q1t"></div><div class="q-hint" id="q1h" style="display:none"></div></div>
@@ -3238,19 +3285,19 @@ const DEFAULT_Q=[
   en:{t:"Which part of nature draws you in?",
    o:[["Trees and grass",""],["Fire and sunlight",""],["Soil and land",""],["Metal and stone",""],["Water and rivers",""]]}},
 
- {t:"태어난 계절은?",w:3,pick:1,yy:1,yv:[1,2,0,-1,-2],
+ {t:"태어난 계절은?",w:3,pick:1,yy:1,sub:1,yv:[1,2,0,-1,-2],
   hint:"이 문항은 <b>3점</b>으로 계산합니다 — 태어난 달(月支)이 기운의 강약을 가장 크게 좌우합니다. 성격 이름의 <b>계절</b>도 여기서 정해집니다.",
   o:[["봄","2~4월경"],["여름","5~7월경"],["환절기","계절이 바뀌던 무렵"],["가을","8~10월경"],["겨울","11~1월경"]],
   en:{t:"Which season were you born in?",
    hint:"This one counts <b>3 points</b> — the birth month governs elemental strength more than anything else. Your <b>season name</b> also comes from here.",
    o:[["Spring","around Feb–Apr"],["Summer","around May–Jul"],["Turning of seasons","when seasons changed"],["Autumn","around Aug–Oct"],["Winter","around Nov–Jan"]]}},
 
- {t:"태어난 시간은?",w:2,pick:1,yy:1,yv:[1,2,0,-1,-2],hint:"이 문항은 <b>2점</b>으로 계산합니다",
+ {t:"태어난 시간은?",w:2,pick:1,yy:1,sub:1,yv:[1,2,0,-1,-2],hint:"이 문항은 <b>2점</b>으로 계산합니다",
   o:[["아침","새벽~오전"],["점심","한낮 무렵"],["오후","해가 기울 무렵"],["밤","저녁~늦은 밤"],["자정 전후",""]],
   en:{t:"What time of day were you born?",hint:"This one counts <b>2 points</b>",
    o:[["Morning","dawn to noon"],["Midday","around noon"],["Afternoon","as the sun leans"],["Night","evening to late"],["Around midnight",""]]}},
 
- {t:"태어난 지역은?",w:1,pick:1,yy:0,skip:"해외이거나 잘 모르겠습니다 (건너뛰기)",
+ {t:"태어난 지역은?",w:1,pick:1,yy:0,sub:1,skip:"해외이거나 잘 모르겠습니다 (건너뛰기)",
   o:[["강원도 · 경북 동해안","동쪽"],["경상도 · 부산 · 대구 · 제주","남쪽"],["서울 · 경기 · 충청 · 대전 · 세종","중앙"],["전라도 · 인천 · 광주","서쪽"],["이북 · 강원 북부","북쪽"]],
   en:{t:"Where were you born?",skip:"Outside Korea, or not sure (skip)",
    o:[["Gangwon · east coast","East"],["Gyeongsang · Busan · Jeju","South"],["Seoul · Gyeonggi · Chungcheong","Center"],["Jeolla · Incheon · Gwangju","West"],["North of the border · far north","North"]]}},
@@ -3260,7 +3307,7 @@ const DEFAULT_Q=[
   en:{t:"Which virtue speaks to you?",hint:"Choose <b>2</b> that feel closest",
    o:[["Benevolence","kindness and compassion"],["Propriety","grace and good manners"],["Faith","keeping trust and promises"],["Righteousness","loyalty and justice"],["Wisdom","seeing things clearly"]]}},
 
- {t:"나의 띠는?",w:1,pick:1,yy:0,
+ {t:"나의 띠는?",w:1,pick:1,yy:0,sub:1,
   o:[["호랑이 · 토끼","1998·1999 / 2010·2011 / 2022·2023"],["뱀 · 말","1989·1990 / 2001·2002 / 2013·2014"],["용 · 개 · 소 · 양","1988·1994·1997·1991 / 2000·2006·2009·2003"],["원숭이 · 닭","1992·1993 / 2004·2005 / 2016·2017"],["돼지 · 쥐","1995·1996 / 2007·2008 / 2019·2020"]],
   en:{t:"What is your zodiac animal?",
    o:[["Tiger · Rabbit","1998·1999 / 2010·2011 / 2022·2023"],["Snake · Horse","1989·1990 / 2001·2002 / 2013·2014"],["Dragon · Dog · Ox · Goat","1988·1994·1997·1991 / 2000·2006·2009·2003"],["Monkey · Rooster","1992·1993 / 2004·2005 / 2016·2017"],["Pig · Rat","1995·1996 / 2007·2008 / 2019·2020"]]}},
@@ -3281,7 +3328,7 @@ const DEFAULT_Q=[
   o:[["신맛",""],["쓴맛",""],["단맛",""],["매운맛",""],["짠맛",""]],
   en:{t:"Which taste lifts you?",o:[["Sour",""],["Bitter",""],["Sweet",""],["Spicy",""],["Salty",""]]}},
 
- {t:"나의 직업 (또는 하고 싶은 일)은?",w:1,pick:1,yy:0,
+ {t:"나의 직업 (또는 하고 싶은 일)은?",w:1,pick:1,yy:0,sub:1,
   o:[["교육 · 의료","기획 · 출판 · 상담"],["예능 · 연예","방송 · 디자인 · 요식"],["농사 · 제조 · 생산","부동산 · 중개"],["군 · 경찰 · 체육 · 금융","법조 · 감사"],["경영 · 경제","유통 · 연구 · 물류"]],
   en:{t:"Your work — or the work you want?",
    o:[["Education · healthcare","planning · publishing · counselling"],["Arts · entertainment","media · design · food"],["Farming · manufacturing","real estate · brokerage"],["Military · law · sport · finance","audit · enforcement"],["Business · economics","trade · research · logistics"]]}},
@@ -3647,7 +3694,7 @@ const saveDB=()=>store.set(DB_KEY,DB);
 /* ── 데이터 버전 마이그레이션 ─────────────────────────────
    예전에 저장된 문항·상징이 새 버전을 덮어써 버리는 문제 방지.
    문항/상징/수식어만 최신 기본값으로 되돌리고, Q&A·설정은 유지한다. */
-const DATA_VER="4.10";
+const DATA_VER="4.11";
 if(DB.dataVer!==DATA_VER){
   DB.Q=clone(DEFAULT_Q); DB.SYM=clone(DEFAULT_SYM); DB.MOD=clone(DEFAULT_MOD);
   DB.cfg.kakaoChannelUrl=CONFIG.kakaoChannelUrl;
@@ -3874,6 +3921,7 @@ function bars(el,A,prev){
 
 /* ═══════════ 언어 적용 ═══════════ */
 function applyLang(){
+  setTimeout(()=>{ try{ if(CUR==="s1all") renderAll(); else paintModeSw(); }catch(e){} },0);
   document.documentElement.lang = LANG;
   document.querySelectorAll("[data-i]").forEach(el=>{ el.innerHTML=T(el.dataset.i) });
   document.querySelectorAll("[data-ph]").forEach(el=>{ el.placeholder=T(el.dataset.ph) });
@@ -3922,8 +3970,81 @@ function renderGender(){
     <i>${GICON[g.k]}</i><div><b>${isEN()?g.en:g.n}</b><span>${isEN()?g.dEn:g.d}</span></div></button>`).join("");
   el.querySelectorAll(".gcard").forEach(b=>b.onclick=()=>{
     gender=b.dataset.g; renderGender();
-    setTimeout(()=>{Q=DB.Q;step=0;ans=Q.map(()=>[]);symPick=null;render1();show("s1")},220);
+    setTimeout(()=>{Q=DB.Q;step=0;ans=Q.map(()=>[]);symPick=null; if(quizMode()==="single"){renderAll();show("s1all")} else {render1();show("s1")} },220);
   });
+}
+
+/* ═══════════ 1단계 문항 · 한 화면 간편형 (2026-10-04) ═══════════
+   · 기본 모드 = single(한 화면). 토글로 step(한 문항씩) 전환, 선택은 ohaeng_qmode 에 기억.
+   · 두 모드는 같은 ans 배열을 채운다 → 중간에 바꿔도 답이 유지되고, 계산·결과 코드는 손대지 않는다.
+   · 완료 이벤트에 mode 를 붙여 2주 뒤 시작률·완료율을 모드별로 비교한다. */
+const QMODE_KEY="ohaeng_qmode";
+const quizMode=()=>{ const m=store.get(QMODE_KEY,"single"); return m==="step"?"step":"single" };
+function setQuizMode(m, from){
+  store.set(QMODE_KEY,m); window.AJ&&AJ.track("ohaeng_mode",{mode:m,from:from||"toggle"});
+  if(m==="single"){ renderAll(); showRaw("s1all"); navPush(); }
+  else { step=Math.max(0,Math.min(firstUnanswered(),Q.length-1)); render1(); showRaw("s1"); navPush(); }
+}
+const answeredCount=()=>ans.filter((a,i)=>isAnswered(i)).length;
+const isAnswered=i=>{ const q=Q[i], a=ans[i]||[]; if(!a.length) return false; if(a[0]==="__skip") return true; return a.filter(x=>x!=="__skip").length>=(q.pick||1) };
+const firstUnanswered=()=>{ for(let i=0;i<Q.length;i++) if(!isAnswered(i)) return i; return Q.length-1 };
+const MODE_LBL={ko:["한 화면","한 문항씩"],en:["All at once","One by one"],ja:["一画面","1問ずつ"],zh:["单页","逐题"],fr:["Une page","Une par une"]};
+function paintModeSw(){
+  const lb=MODE_LBL[LANG]||MODE_LBL.en, m=quizMode();
+  ["modeswA","modeswS"].forEach(id=>{ const el=$(id); if(!el) return;
+    el.querySelectorAll("button").forEach(b=>{ b.textContent=b.dataset.mode==="single"?lb[0]:lb[1]; b.classList.toggle("on",b.dataset.mode===m);
+      b.onclick=()=>{ if(b.dataset.mode!==quizMode()) setQuizMode(b.dataset.mode) }; });
+  });
+}
+/* 긴 선택지(계절·시간·지역·띠)는 칩 아래 보조 줄로 설명을 모아 보여 준다 — C+ 안 */
+function renderAll(){
+  paintModeSw();
+  const lb=MODE_LBL[LANG]||MODE_LBL.en;
+  $("allhead").innerHTML=ORDER.map(k=>`<span><i style="background:${EL[k].color}"></i>${EL[k].han} ${isEN()?((EL[k].en&&EL[k].en.name)||""):(EL[k].name||"")}</span>`).join("");
+  const cur=firstUnanswered();
+  $("alllist").innerHTML=Q.map((q,i)=>{
+    const need=q.pick||1, a=ans[i]||[], done=isAnswered(i);
+    const hint=QT(q,"hint"); const hintTxt=hint?String(hint).replace(/<[^>]+>/g,""):"";
+    const SEQ=(Array.isArray(q.ord)&&q.ord.length===ORDER.length)?q.ord.map(ix=>ORDER[ix]):ORDER;
+    const chips=SEQ.map(k=>{ const ix=ORDER.indexOf(k), o=QO(q,ix), on=a.includes(k);
+      return `<button class="chip${on?" sel":""}" data-qi="${i}" data-k="${k}"><i style="background:${EL[k].color}"></i>${esc(o[0])}</button>`; }).join("");
+    /* 보조 줄: sub:1 로 표시한 문항만(계절·시간·지역·띠 + 직업) — 나머지는 칩만으로 충분하다 */
+    const subs=!q.sub?[]:SEQ.map(k=>{ const ix=ORDER.indexOf(k), o=QO(q,ix); return o[1]?`<span style="display:inline"><b style="display:inline;font-weight:800">${esc(o[0])}</b> ${esc(o[1])}</span>`:"" }).filter(Boolean);
+    const sk=QT(q,"skip");
+    const skip=sk?`<button class="chip skip${a[0]==="__skip"?" sel":""}" data-qi="${i}" data-k="__skip">${esc(sk)}</button>`:"";
+    const meta=[ q.w>1?`${q.w}${isEN()?"pt":"점"}`:"", need===2?(isEN()?"pick 2":"2개 선택"):"" ].filter(Boolean).join(" · ");
+    const picked=need===2?`<div class="qx-sub">${a.filter(x=>x!=="__skip").length} / 2 ${T("selected")}</div>`:"";
+    return `<div class="qx${done?" done":""}${i===cur&&!done?" now":""}" id="qa${i}">
+      <div class="qx-t"><b><em>Q${String(i+1).padStart(2,"0")}</em>${esc(QT(q,"t"))}</b>${meta?`<small>${meta}</small>`:""}</div>
+      ${subs.length?`<div class="qx-hint">${subs.join("")}</div>`:(hintTxt&&need!==2&&!(q.w>1)?`<div class="qx-hint">${esc(hintTxt)}</div>`:"")}
+      <div class="chips">${chips}${skip}</div>${picked}
+    </div>`;
+  }).join("");
+  $("alllist").querySelectorAll(".chip").forEach(b=>b.onclick=()=>pickAll(+b.dataset.qi,b.dataset.k));
+  paintAllProgress();
+}
+function paintAllProgress(){
+  const n=answeredCount(), tot=Q.length;
+  $("pAl").textContent=`${n} / ${tot}`; $("pAc").textContent=`${T("check")} ${checks()} / ${maxChecks()}`;
+  $("pAf").style.width=(n/tot*100)+"%";
+  const btn=$("nAll"), left=tot-n;
+  if(left<=0){ btn.disabled=false; btn.textContent=T("seeResult"); }
+  else { btn.disabled=true; btn.textContent=isEN()?`${left} left to answer`:`남은 질문 ${left}개`; }
+}
+function pickAll(i,k){
+  const q=Q[i]; let a=(ans[i]||[]).filter(x=>x!=="__skip");
+  if(k==="__skip"){ ans[i]=ans[i]&&ans[i][0]==="__skip"?[]:["__skip"]; }
+  else if((q.pick||1)===1){ ans[i]=a[0]===k?[]:[k]; }
+  else { if(a.includes(k))a=a.filter(x=>x!==k); else{ if(a.length>=2)a.shift(); a.push(k) } ans[i]=a; }
+  window.AJ&&AJ.track("ohaeng_answer",{step:i+1,mode:"single"});
+  /* 전체를 다시 그리지 않고 해당 카드와 진행바만 갱신 → 스크롤이 튀지 않는다 */
+  const card=$("qa"+i); if(card){ card.querySelectorAll(".chip").forEach(b=>{ const kk=b.dataset.k; b.classList.toggle("sel", kk==="__skip"?ans[i][0]==="__skip":ans[i].includes(kk)); });
+    const sub=card.querySelector(".qx-sub"); if(sub) sub.textContent=`${ans[i].filter(x=>x!=="__skip").length} / 2 ${T("selected")}`;
+    card.classList.toggle("done",isAnswered(i)); }
+  document.querySelectorAll(".qx.now").forEach(c=>c.classList.remove("now"));
+  const nx=firstUnanswered(); const nxc=$("qa"+nx);
+  if(isAnswered(i)&&nxc&&!isAnswered(nx)){ nxc.classList.add("now"); setTimeout(()=>{ try{nxc.scrollIntoView({behavior:"smooth",block:"start"})}catch(e){} },160); }
+  paintAllProgress();
 }
 
 /* ═══════════ 1단계 문항 ═══════════ */
@@ -3932,6 +4053,7 @@ const QO=(q,i)=>{const o=(isEN()&&q.en&&q.en.o)?q.en.o[i]:q.o[i];return o||["","
 const checks=()=>ans.reduce((n,a,i)=>n+a.filter(x=>x!=="__skip").length*(Q[i].w||1),0);
 const maxChecks=()=>Q.reduce((n,q)=>n+(q.w||1)*(q.pick||1),0);
 function render1(){
+  paintModeSw();
   const q=Q[step];
   $("p1l").textContent=`${step+1} / ${Q.length}`;
   $("p1c").textContent=`${T("check")} ${checks()} / ${maxChecks()}`;
@@ -4175,7 +4297,7 @@ $("rateB").addEventListener("click",rateCommit);
 
 /* ═══════════ 1단계 결과 ═══════════ */
 function finish1(reRender){
-  if(!reRender){R1=analyze(baseScore());bump("d",R1.nameKo);window.AJ&&AJ.track("ohaeng_complete",{props:{type:R1.nameKo,balance:R1.bal}})}
+  if(!reRender){R1=analyze(baseScore());bump("d",R1.nameKo);window.AJ&&AJ.track("ohaeng_complete",{props:{type:R1.nameKo,balance:R1.bal,mode:quizMode()}})}
   else R1=analyze(R1.s,true);
   rateReset();
   /* 스킨 미리보기(1080px 캔버스 한 장)는 여기서 그리지 않는다 — 결과가 뜨는 순간 화면을 멈추게 했다.
@@ -7363,7 +7485,8 @@ function renderRepLen(){
 /* 언어 전환 */
 document.querySelectorAll("[data-lang]").forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
 
-$("startBtn").onclick=()=>{window.AJ&&AJ.track("ohaeng_start");renderGender();show("sg")};
+$("startBtn").onclick=()=>{window.AJ&&AJ.track("ohaeng_start",{mode:quizMode()});renderGender();show("sg")};
+$("nAll").onclick=()=>{ if(answeredCount()<Q.length) return; doReveal(); };
 $("n1").onclick=next1; $("n2").onclick=()=>finish2(); $("n3").onclick=next3;
 $("go2").onclick=()=>{window.AJ&&AJ.track("ohaeng_calibration_start");render2();show("s2")};
 /* 리포트로 가는 모든 길은 여기 하나로 모은다.
@@ -7664,6 +7787,7 @@ document.querySelectorAll("[data-back]").forEach(b=>b.onclick=()=>goBack());
 addEventListener("popstate",e=>{
   const st=e.state; if(!st||!st.sc)return;
   if(st.g)gender=st.g;
+  if(st.sc==="s1all"){ showRaw("s1all"); renderAll(); return }
   if(st.sc==="s1"){ step=Math.max(0,Math.min(st.step||0,Q.length-1)); showRaw("s1"); render1(); return }
   if(st.sc==="s2"){ showRaw("s2"); render2(); return }
   if(st.sc==="s3"){ p3=Math.max(0,Math.min(st.p3||0,3)); showRaw("s3"); render3(); return }
