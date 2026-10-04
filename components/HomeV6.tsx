@@ -21,7 +21,10 @@ body{
   font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
   color:var(--ink);display:flex;justify-content:center;-webkit-font-smoothing:antialiased;
 }
-.shell{width:100%;max-width:430px;background:var(--bg);position:relative;overflow:hidden;padding-bottom:100px}
+/* 2026-10-04 폰 좌측 잘림 수정: body가 flex라 .v6 가 안쪽 '한 줄 고정 글(nowrap)'의 최소 폭만큼 커져
+   화면보다 넓어지고(413px) 가운데 정렬되면서 왼쪽이 잘렸다. 최소 폭을 0으로 풀어 항상 화면 폭에 맞춘다. */
+.v6{width:100%;max-width:430px;min-width:0}
+.shell{width:100%;max-width:430px;min-width:0;background:var(--bg);position:relative;overflow:hidden;padding-bottom:100px}
 @media(min-width:900px){
   body{padding:24px 0;background:#D7E5F8}
   .shell{border-radius:30px;box-shadow:0 26px 70px rgba(20,50,110,.22)}
@@ -96,7 +99,7 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 .daily .todaybar{margin:0;padding:6px 14px;min-height:42px}
 .daily .lrow{display:flex;align-items:center;gap:10px;padding:6px 14px;min-height:42px;
   border-top:1px solid #EEF1F7;text-decoration:none;color:inherit}
-.daily .lr-tx{flex:1;min-width:0}
+.daily .lr-tx{flex:1;min-width:0;contain:inline-size}
 .daily .lr-lab{display:block;font-size:11px;font-weight:700;color:#5B6480;letter-spacing:-.02em;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .daily .lr-h{display:block;font-size:14px;font-weight:800;color:var(--ink);letter-spacing:-.03em;line-height:1.3;
@@ -108,7 +111,7 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
   border:0;border-radius:16px;background:#fff;box-shadow:0 4px 14px rgba(30,42,85,.06);
   text-align:left;cursor:pointer;font-family:inherit;color:inherit}
 .owner img{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);flex:0 0 50px}
-.owner .ow-tx{flex:1;min-width:0}
+.owner .ow-tx{flex:1;min-width:0;contain:inline-size}
 .owner .ow-n{display:block;font-size:14px;font-weight:800;color:var(--ink);letter-spacing:-.03em}
 .owner .ow-l{display:block;margin-top:1px;font-size:12px;color:#4C5570;line-height:1.4;letter-spacing:-.02em}
 .owner .ow-star{color:#E3A800;font-weight:800}
@@ -253,7 +256,7 @@ html:not([lang="ko"]) .biz{overflow-wrap:anywhere}
   margin:8px 0 6px;padding:0;border:0;background:none;color:var(--navy);
   text-align:left;cursor:pointer;transition:.15s}
 .todaybar:hover .tb-go{filter:brightness(1.06)}
-.todaybar .tb-tx{flex:1;min-width:0}
+.todaybar .tb-tx{flex:1;min-width:0;contain:inline-size}
 .todaybar .tb-lab{display:block;font-size:11px;font-weight:700;color:#5B6480;
   letter-spacing:-.02em;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .todaybar .tb-lab b{color:#E8542E;font-weight:800}
@@ -477,6 +480,28 @@ h2 b{color:var(--blue)}
 footer{padding:22px var(--pad) 28px;background:var(--navy);color:rgba(255,255,255,.72);font-size:11px;line-height:1.75;font-weight:500}
 footer b{color:#fff;font-size:14px;font-weight:800;letter-spacing:-.04em}
 .util .ver{font-size:10.6px;font-weight:800;color:#9AA7BD;letter-spacing:.02em;margin-right:2px}
+/* ── 홈 화면 추가 버튼(상단바 상시) — 2026-10-04. 오행 앱의 「홈 추가」와 같은 역할.
+   안드로이드 Chrome: 설치 창을 바로 띄운다 · iOS/앱 내 브라우저: 절차 안내 시트를 연다 · 이미 설치됨: 숨긴다 */
+.inst{height:32px;padding:0 9px 0 7px;border:1px solid var(--blue-l,#BFD3F5);background:#F2F7FF;border-radius:9px;
+  display:none;align-items:center;gap:4px;cursor:pointer;font-family:inherit;color:var(--navy);
+  font-size:11.2px;font-weight:800;letter-spacing:-.03em;white-space:nowrap}
+.inst.on{display:inline-flex}
+.inst svg{width:14px;height:14px;stroke:var(--blue);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.inst:hover{background:#E6F0FF}
+@media(max-width:400px){.util .ver{display:none}.util{gap:5px}}
+.instsheet{position:fixed;inset:0;z-index:95;background:rgba(8,20,40,.55);display:none;align-items:flex-end;justify-content:center}
+.instsheet.on{display:flex}
+.instsheet .is-in{width:100%;max-width:430px;background:#fff;border-radius:22px 22px 0 0;padding:18px 20px calc(20px + env(safe-area-inset-bottom));
+  box-shadow:0 -10px 40px rgba(20,50,110,.25);animation:isUp .28s cubic-bezier(.3,1,.4,1) both}
+@keyframes isUp{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+.instsheet .is-t{font-size:17px;font-weight:900;color:var(--navy);letter-spacing:-.04em;margin:0 0 4px;text-align:center}
+.instsheet .is-s{font-size:12.5px;color:var(--gray);text-align:center;margin:0 0 14px;line-height:1.5}
+.instsheet ol{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.instsheet li{display:flex;gap:10px;align-items:flex-start;background:#F5F9FF;border:1px solid #E3ECFA;border-radius:12px;padding:10px 12px;
+  font-size:13.5px;line-height:1.5;color:var(--ink);font-weight:600;letter-spacing:-.02em}
+.instsheet li b{flex:0 0 22px;height:22px;border-radius:50%;background:var(--navy);color:#fff;font-size:11.5px;font-weight:900;display:grid;place-items:center;margin-top:1px}
+.instsheet li em{font-style:normal;color:var(--blue);font-weight:800}
+.instsheet .is-x{margin-top:14px;width:100%;height:44px;border-radius:13px;border:0;background:var(--navy);color:#fff;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer}
 .util .chip{cursor:pointer}
 .util .burger{cursor:pointer}
 .voc{font-size:11px;line-height:1.65;color:#7A8AA3;text-align:center;padding:9px var(--pad);
@@ -1451,6 +1476,9 @@ const HTML = String.raw`
       <button class="shr" type="button" data-go="share" data-from="top" aria-label="공유하기" title="친구에게 공유하기">
         <svg viewBox="0 0 24 24"><circle cx="18" cy="5.5" r="2.8"/><circle cx="6" cy="12" r="2.8"/><circle cx="18" cy="18.5" r="2.8"/><path d="M8.5 10.6 15.5 6.9M8.5 13.4l7 3.7"/></svg>
       </button>
+      <button class="inst" id="instbtn" type="button" aria-label="홈 화면에 추가" title="홈 화면에 앱처럼 추가">
+        <svg viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="2.6"/><path d="M12 8v6M9 11h6"/></svg><span id="instlab">홈 추가</span>
+      </button>
       <div class="langbox" id="langbox">
         <button class="langbtn" id="langbtn" type="button" aria-haspopup="true" aria-expanded="false">
           <span id="langnow">한국어</span><i>▾</i>
@@ -1574,6 +1602,14 @@ const HTML = String.raw`
       <div class="sv-bot" id="sv-bot"></div>
     </div>
 
+    <div class="instsheet" id="instsheet" aria-hidden="true">
+      <div class="is-in">
+        <p class="is-t" id="is-t"></p>
+        <p class="is-s" id="is-s"></p>
+        <ol id="is-ol"></ol>
+        <button class="is-x" id="is-x" type="button"></button>
+      </div>
+    </div>
     <div class="pwabar" id="pwabar">
       <span class="pw-ic">📲</span>
       <span class="pw-tx" id="pw-tx">매일 아침 오늘의 기운을 보시려면 홈 화면에 추가하세요</span>
@@ -2311,6 +2347,62 @@ export default function HomeV6(
       };
     })();
 
+    /* ══════════ 상단바 「홈 추가」 버튼 (2026-10-04) ══════════
+       pwabar(두 번째 방문부터 뜨는 안내 줄)와 달리 항상 보이는 입구. 설치되어 실행 중이면 숨긴다.
+       · 안드로이드 Chrome 등 설치 프롬프트가 잡혀 있으면 → 바로 설치 창
+       · iOS Safari / 카카오·인스타 앱 내 브라우저 → 플랫폼별 절차 안내 시트 */
+    const installUi = (() => {
+      type T = { lab: string; t: string; s: string; ios: string[]; and: string[]; inapp: string[]; x: string };
+      const TXT: Record<string, T> = {
+        ko: { lab: "홈 추가", t: "홈 화면에 AI사주랩 추가", s: "앱처럼 아이콘으로 바로 열고, 매일 아침 오늘의 기운을 확인하세요.",
+          ios: ["화면 아래 <em>공유 버튼(네모에 화살표)</em>을 누릅니다", "<em>「홈 화면에 추가」</em>를 선택합니다", "오른쪽 위 <em>추가</em>를 누르면 끝"],
+          and: ["오른쪽 위 <em>⋮ 메뉴</em>를 누릅니다", "<em>「홈 화면에 추가」</em> 또는 <em>「앱 설치」</em>를 선택합니다", "<em>추가</em>를 누르면 끝"],
+          inapp: ["오른쪽 위 <em>⋮ 또는 공유</em>를 눌러 <em>「다른 브라우저로 열기」</em>(Chrome/Safari)", "브라우저에서 다시 <em>홈 추가</em>를 누릅니다", "<em>「홈 화면에 추가」</em> → 추가"],
+          x: "확인" },
+        en: { lab: "Add", t: "Add AIsajuLab to Home Screen", s: "Open it like an app and check today's energy every morning.",
+          ios: ["Tap the <em>Share</em> button at the bottom", "Choose <em>“Add to Home Screen”</em>", "Tap <em>Add</em>"],
+          and: ["Tap the <em>⋮ menu</em> at the top right", "Choose <em>“Add to Home screen”</em> or <em>“Install app”</em>", "Tap <em>Add</em>"],
+          inapp: ["Tap <em>⋮ or Share</em> → <em>“Open in browser”</em> (Chrome/Safari)", "Tap <em>Add</em> again in the browser", "<em>“Add to Home Screen”</em> → Add"],
+          x: "OK" },
+      };
+      const btn = document.getElementById("instbtn");
+      const lab = document.getElementById("instlab");
+      const sheet = document.getElementById("instsheet");
+      const tEl = document.getElementById("is-t"), sEl = document.getElementById("is-s"), ol = document.getElementById("is-ol"), xEl = document.getElementById("is-x");
+      if (!btn || !lab || !sheet || !tEl || !sEl || !ol || !xEl) return (_l: string) => { /* noop */ };
+      const nav = navigator as Navigator & { standalone?: boolean };
+      const installed = window.matchMedia("(display-mode: standalone)").matches || nav.standalone === true;
+      const ua = navigator.userAgent;
+      const isIOS = /iphone|ipad|ipod/i.test(ua);
+      const inApp = /KAKAOTALK|Instagram|FBAN|FBAV|NAVER\(inapp|Line\//i.test(ua);
+      const close = () => { sheet.classList.remove("on"); sheet.setAttribute("aria-hidden", "true"); };
+      const openGuide = (l: string) => {
+        const t = TXT[l] || TXT.en;
+        const steps = inApp ? t.inapp : isIOS ? t.ios : t.and;
+        tEl.textContent = t.t; sEl.textContent = t.s; xEl.textContent = t.x;
+        ol.innerHTML = steps.map((st, i) => `<li><b>${i + 1}</b><span>${st}</span></li>`).join("");
+        sheet.classList.add("on"); sheet.setAttribute("aria-hidden", "false");
+        track("install_guide", { how: inApp ? "inapp" : isIOS ? "ios" : "android" });
+      };
+      xEl.addEventListener("click", close);
+      sheet.addEventListener("click", (e) => { if (e.target === sheet) close(); });
+      btn.addEventListener("click", async () => {
+        const p = (window as unknown as { __pwaPrompt?: { prompt: () => void; userChoice: Promise<{ outcome: string }> } }).__pwaPrompt;
+        if (p) {
+          track("install_click", { how: "prompt" });
+          p.prompt();
+          try { const r = await p.userChoice; track("install_result", { outcome: r.outcome }); if (r.outcome === "accepted") btn.classList.remove("on"); } catch { /* 닫음 */ }
+          return;
+        }
+        openGuide(LANG);
+      });
+      window.addEventListener("pwa-installed", () => btn.classList.remove("on"));
+      return (l: string) => {
+        lab.textContent = (TXT[l] || TXT.en).lab;
+        btn.classList.toggle("on", !installed);
+      };
+    })();
+
     /* ══════════ 후기 남기기 ══════════
        · 보낸 글은 /api/reviews 가 항상 「승인 대기」로 저장한다. 홈에 보이는 목록은
          서버(app/page.tsx)가 승인된 것만 내려보낸 것이라, 방금 쓴 글은 바로 뜨지 않는다.
@@ -2848,7 +2940,7 @@ export default function HomeV6(
       /* 오늘의 기운 스트립도 같은 언어로 다시 그린다 */
       renderTodayBar(LANG);
       renderSeats(LANG);
-      renderPwaBar(LANG);
+      renderPwaBar(LANG); installUi(LANG);
       /* 후기 폼 문구도 같은 언어로 맞춘다 */
       renderReviewForm(LANG);
       /* 오행 카드 패널도 같은 언어로 다시 그린다 */
@@ -2858,7 +2950,7 @@ export default function HomeV6(
     };
 
     /* 설치 프롬프트가 화면을 그린 뒤에 도착하는 경우를 위해 한 번 더 그린다 */
-    const onPwaReady = () => renderPwaBar(LANG);
+    const onPwaReady = () => { renderPwaBar(LANG); installUi(LANG); };
     window.addEventListener("pwa-ready", onPwaReady);
 
     const setLang = (l: Lang) => {

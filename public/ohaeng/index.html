@@ -262,9 +262,13 @@ canvas.cv{width:100%;display:block}
 .bars{display:flex;flex-direction:column;gap:14px}
 .bar{display:flex;align-items:center;gap:10px}
 .bar-n{width:74px;white-space:nowrap;font-size:15.8px;font-weight:800;flex-shrink:0}
-.bar-t{flex:1;height:18px;background:#EFF4FB;border-radius:12px;overflow:hidden;position:relative}
-.bar-f{height:100%;border-radius:12px;width:0;transition:width .85s cubic-bezier(.3,1,.4,1)}
+.bar-t{flex:1;height:22px;background:#EEF3FA;border-radius:100px;position:relative}
+.bar-f{height:100%;border-radius:100px;width:0;min-width:22px;position:relative;transition:width .85s cubic-bezier(.3,1,.4,1);box-shadow:inset 0 1px 0 rgba(255,255,255,.35)}
+.bar-f i{position:absolute;right:4px;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:#fff;border:2.5px solid;box-sizing:border-box;box-shadow:0 1px 3px rgba(20,50,110,.25)}
+.bar-avg{position:absolute;top:-4px;bottom:-4px;width:0;border-left:1.5px dotted rgba(239,139,20,.7);z-index:2}
 .bar-v{width:98px;white-space:nowrap;text-align:right;font-size:14.8px;color:var(--ink2);flex-shrink:0;font-variant-numeric:tabular-nums;font-weight:800}
+.bar-v b{font-weight:900;color:var(--ink)}
+.bar-v span{display:inline-block;margin-left:5px;font-size:12.6px;font-weight:700;color:var(--ink3)}
 .bal{display:flex;align-items:baseline;gap:9px;margin-bottom:9px}
 .bal b{font-size:35.7px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums;background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .bal span{font-size:14.8px;color:var(--ink2);font-weight:600}
@@ -3719,7 +3723,7 @@ const saveDB=()=>store.set(DB_KEY,DB);
 /* ── 데이터 버전 마이그레이션 ─────────────────────────────
    예전에 저장된 문항·상징이 새 버전을 덮어써 버리는 문제 방지.
    문항/상징/수식어만 최신 기본값으로 되돌리고, Q&A·설정은 유지한다. */
-const DATA_VER="4.12";
+const DATA_VER="4.13";
 if(DB.dataVer!==DATA_VER){
   DB.Q=clone(DEFAULT_Q); DB.SYM=clone(DEFAULT_SYM); DB.MOD=clone(DEFAULT_MOD);
   DB.cfg.kakaoChannelUrl=CONFIG.kakaoChannelUrl;
@@ -3795,56 +3799,54 @@ const lighten=(h,a)=>mix(h,[255,255,255],a), darken=(h,a)=>mix(h,[0,0,0],a);
 const FONT=(w,s)=>`${w} ${s}px -apple-system,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif`;
 const charImg=new Image(); charImg.src=CHAR_IMG;
 
-/* ═══════════ 입체 막대 그래프 ═══════════ */
+/* ═══════════ 세로 막대 그래프 — 캡슐 트랙형 (2026-10-04 정리) ═══════════
+   · 막대마다 옅은 트랙(0~50% 구간)을 먼저 깔고, 그 위에 양 끝이 둥근 캡슐 막대를 채운다.
+     → 0점도 빈 트랙으로 보여 "얼마나 비었는지"가 함께 읽힌다.
+   · 가로를 가로지르던 주황 점선(평균선)은 걷어내고, 트랙 안쪽에 작은 평균 눈금만 남긴다.
+   · 막대는 전보다 굵게(간격 축소), 모서리는 완전한 반원. 점수는 굵게, %는 작게 아래. */
 function drawBars3D(x,W,H,s,total,opt){
   opt=opt||{};
-  const pad=W*0.055, topPad=H*(opt.top||0.24), botPad=H*(opt.bot||0.31);
+  const pad=W*0.07, topPad=H*(opt.top||0.20), botPad=H*(opt.bot||0.29);
   const y0=H-botPad, maxH=y0-topPad;
-  const gap=W*0.052, bw=(W-pad*2-gap*4)/5, d=0, dy=0;   /* 폭 축소·간격 확대 */
-  const fs=W*0.036;
-  // 바닥선
-  x.strokeStyle="#E6EEF9";x.lineWidth=1.4;
-  x.beginPath();x.moveTo(pad-4,y0+.5);x.lineTo(W-pad+d+4,y0+.5);x.stroke();
+  const gap=W*0.072, bw=(W-pad*2-gap*4)/5, d=0;
+  const fs=W*0.036, r=bw/2;
   const avgY=y0-(AVG_SHARE/MAX_SHARE)*maxH;
-  // 막대 (오른쪽부터 그려 겹침 자연스럽게)
-  for(let i=4;i>=0;i--){
+  for(let i=0;i<5;i++){
     const k=ORDER[i], c=EL[k].color, sh=total?s[k]/total:0;
-    /* 수치에 비례하되 상한(50%)에서 멈춘다. 0점도 납작한 흔적은 남긴다. */
-    const ratio=Math.min(1, sh/MAX_SHARE);
-    const h=Math.max(maxH*0.045, ratio*maxH*(opt.p===undefined?1:opt.p));
-    const bx=pad+i*(bw+gap), by=y0-h;
-    // 캡슐형 평면 막대 (v6 규격 통일)
-    const r=Math.min(bw*0.38,h/2);
+    const bx=pad+i*(bw+gap);
+    /* 트랙: 0~50% 전체 구간 */
+    x.fillStyle="#EEF3FA";x.beginPath();x.roundRect(bx,topPad,bw,maxH,r);x.fill();
+    /* 평균 눈금: 트랙 안쪽 짧은 선 */
+    x.strokeStyle="rgba(239,139,20,.55)";x.lineWidth=1.5;
+    x.beginPath();x.moveTo(bx+bw*.28,avgY+.5);x.lineTo(bx+bw*.72,avgY+.5);x.stroke();
+    /* 막대: 수치 비례, 상한 50%. 0점은 바닥에 작은 점만 */
+    const ratio=Math.min(1, sh/MAX_SHARE)*(opt.p===undefined?1:opt.p);
+    const h=Math.max(bw*.55, ratio*maxH), by=y0-h, rr=Math.min(r,h/2);
     const g=x.createLinearGradient(bx,by,bx,y0);
-    g.addColorStop(0,lighten(c,.14));g.addColorStop(1,c);
-    x.fillStyle=g;x.beginPath();x.roundRect(bx,by,bw,h,[r,r,4,4]);x.fill();
-    // 점수 배지
+    g.addColorStop(0,lighten(c,.22));g.addColorStop(1,c);
+    x.fillStyle=g;x.beginPath();x.roundRect(bx,by,bw,h,rr);x.fill();
+    /* 점수 배지 */
     if(opt.p===undefined||opt.p>.92){
       const v=Math.round(s[k]*10)/10, pc=Math.round(sh*100);
-      x.textAlign="center";
-      x.font=FONT(900,fs*1.30);x.fillStyle=darken(EL[k].tc,.04);
-      x.fillText(v+T("pt"),bx+bw/2+d/2,by-dy-fs*1.55);
+      x.textAlign="center";x.textBaseline="alphabetic";
+      x.font=FONT(900,fs*1.34);x.fillStyle=darken(EL[k].tc,.04);
+      x.fillText(v+T("pt"),bx+bw/2,by-fs*1.55);
       x.font=FONT(700,fs*0.94);x.fillStyle="#93A3BA";
-      x.fillText(pc+"%",bx+bw/2+d/2,by-dy-fs*.38);
+      x.fillText(pc+"%",bx+bw/2,by-fs*.42);
     }
-    // 하단 라벨 — 한자·한글 모두 2배
-    x.textAlign="center";
-    x.font=FONT(900,fs*2.48);x.fillStyle=EL[k].tc;x.fillText(EL[k].han,bx+bw/2+d/2,y0+fs*2.30);
-    x.font=FONT(800,fs*1.30);x.fillStyle="#3E5372";x.fillText(isEN()?EL[k].en.name:EL[k].name,bx+bw/2+d/2,y0+fs*4.05);
+    /* 하단 라벨 */
+    x.textAlign="center";x.textBaseline="alphabetic";
+    x.font=FONT(900,fs*2.48);x.fillStyle=EL[k].tc;x.fillText(EL[k].han,bx+bw/2,y0+fs*2.75);
+    x.font=FONT(800,fs*1.30);x.fillStyle="#3E5372";x.fillText(isEN()?EL[k].en.name:EL[k].name,bx+bw/2,y0+fs*4.45);
   }
-  // 평균선 — 막대 '위에' 그려야 가려지지 않는다 (선은 반투명, 라벨은 불투명)
-  x.save();x.globalAlpha=.72;
-  x.setLineDash([6,5]);x.strokeStyle="#EF8B14";x.lineWidth=2;
-  x.beginPath();x.moveTo(pad-6,avgY);x.lineTo(W-pad+d+6,avgY);x.stroke();x.setLineDash([]);x.restore();
+  /* 평균 표기 — 선 대신 오른쪽 위 작은 라벨 하나 (왼쪽 위는 ← 뒤로 버튼 자리라 피한다) */
   x.textAlign="left";x.textBaseline="middle";
-  x.font=FONT(800,fs*.98);
-  const lab=T("avg"), lw=x.measureText(lab).width+fs*.7;
-  const lx=pad-6;                              // 왼쪽 끝 · 막대 위에 올려 항상 보이게
-  const ly=avgY-fs*1.05;                       // 선 바로 '위'에 올려 막대 점수와 겹치지 않게
-  x.fillStyle="rgba(255,255,255,.97)";x.beginPath();x.roundRect(lx,ly-fs*.74,lw,fs*1.48,fs*.34);x.fill();
-  x.strokeStyle="#EF8B1466";x.lineWidth=1.4;x.stroke();
-  x.beginPath();x.moveTo(lx+lw*.5,ly+fs*.74);x.lineTo(lx+lw*.5,avgY);x.strokeStyle="#EF8B1499";x.lineWidth=1.2;x.stroke();
-  x.fillStyle="#EF8B14";x.fillText(lab,lx+fs*.35,ly);
+  x.font=FONT(800,fs*.92);
+  const lab=T("avg"), lw=x.measureText(lab).width+fs*1.3;
+  const lx=W-pad-lw, ly=topPad-fs*2.8;   /* 점수 글자(막대 위 ~1.9fs)와 겹치지 않는 높이 */
+  x.fillStyle="rgba(239,139,20,.10)";x.beginPath();x.roundRect(lx,ly-fs*.70,lw,fs*1.40,fs*.70);x.fill();
+  x.fillStyle="rgba(239,139,20,.9)";x.beginPath();x.arc(lx+fs*.62,ly,fs*.22,0,Math.PI*2);x.fill();
+  x.fillStyle="#C9731A";x.fillText(lab,lx+fs*1.0,ly);
 }
 
 /* ═══════════ 레이더 (비선형) ═══════════ */
@@ -3923,7 +3925,7 @@ function paint(id,mode,series){
     if(p<1)requestAnimationFrame(loop);
   })(performance.now());
 }
-/* 가로 막대 (정확 비교) */
+/* 가로 막대 (정확 비교) — 굵은 캡슐 트랙 + 끝점 노드 (2026-10-04 정리) */
 function bars(el,A,prev){
   el.innerHTML="";
   A.sorted.forEach((k,i)=>{
@@ -3933,14 +3935,14 @@ function bars(el,A,prev){
       dl=`<span class="delta ${d>0?"up":d<0?"dn":"eq"}">${d>0?"▲":d<0?"▼":"–"}${d?Math.abs(d):""}</span>`}
     const n=document.createElement("div");n.className="bar";
     n.innerHTML=`<div class="bar-n" style="color:${EL[k].tc}">${N(k)}</div>
-      <div class="bar-t"><div style="position:absolute;left:${(AVG_SHARE/MAX_SHARE*100).toFixed(1)}%;top:0;bottom:0;width:2px;background:#EF8B14;z-index:2"></div>
-      <div class="bar-f" style="background:linear-gradient(90deg,${lighten(EL[k].color,.2)},${EL[k].color})"></div></div>
-      <div class="bar-v">${Math.round(v*10)/10}${T("pt")} ${Math.round(sh*100)}%${dl}</div>`;
+      <div class="bar-t"><i class="bar-avg" style="left:${(AVG_SHARE/MAX_SHARE*100).toFixed(1)}%"></i>
+      <div class="bar-f" style="background:linear-gradient(90deg,${lighten(EL[k].color,.28)},${EL[k].color})"><i style="border-color:${EL[k].color}"></i></div></div>
+      <div class="bar-v"><b>${Math.round(v*10)/10}${T("pt")}</b><span>${Math.round(sh*100)}%</span>${dl}</div>`;
     el.appendChild(n);
     setTimeout(()=>n.querySelector(".bar-f").style.width=w+"%",80+i*70);
   });
   const g=document.createElement("p");g.className="tiny";g.style.cssText="margin-top:10px;text-align:right";
-  g.innerHTML=`<span style="display:inline-block;width:2px;height:9px;background:#EF8B14;vertical-align:-1px"></span> `+T("barNote");
+  g.innerHTML=`<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#EF8B14;opacity:.7;vertical-align:0"></span> `+T("barNote");
   el.appendChild(g);
 }
 
