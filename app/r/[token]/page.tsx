@@ -15,9 +15,9 @@ export const dynamic = "force-dynamic";
 interface PublicRow { ref_no: string; name: string; created_at: string; question: string; answer: Partial<AskAnswer> | null; module: AskModule | null }
 
 function maskName(n: string) {
+  /* 성 + ○○ 로 고정 — 카톡 미리보기 제목이 한 줄에 들어가도록 길이를 일정하게 둔다 */
   const s = (n || "").trim();
-  if (s.length <= 1) return s + "○○";
-  return s[0] + "○".repeat(Math.max(1, s.length - 1));
+  return (s[0] || "") + "○○";
 }
 const isBot = (ua: string) => /bot|crawl|spider|facebookexternalhit|kakaotalk-scrap|kakao|Yeti|preview|headless|lighthouse|Slack|Twitter|Discord|WhatsApp|Telegram/i.test(ua);
 
@@ -30,9 +30,9 @@ async function fetchRow(token: string, count: boolean): Promise<PublicRow | null
 
 export async function generateMetadata({ params }: { params: { token: string } }): Promise<Metadata> {
   const row = await fetchRow(params.token, false);
-  const title = row ? `${maskName(row.name)}님의 1문 1답 리포트 | AI사주랩.com` : "1문 1답 리포트 | AI사주랩.com";
-  const q = row?.question ? `“${row.question.slice(0, 70)}${row.question.length > 70 ? "…" : ""}”` : "질문 하나, 답 한 장. 최형철 소장이 직접 봅니다.";
-  const description = row ? `${q} — 결론부터 · 명식 근거 · 시기 · 실행 3가지. 최형철 소장의 답을 확인하세요.` : q;
+  /* 카톡 미리보기는 제목·설명을 왼쪽 정렬로만 보여 주므로, 질문은 그림에 맡기고 글은 각각 한 줄로 짧게 둔다 */
+  const title = row ? `${maskName(row.name)}님의 1문 1답 리포트` : "1문 1답 리포트";
+  const description = "AI사주랩.com · 최형철 소장의 답을 확인하세요";
   return {
     title, description,
     robots: { index: false, follow: false },

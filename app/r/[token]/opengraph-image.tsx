@@ -26,9 +26,9 @@ async function loadFont(): Promise<ArrayBuffer> {
 }
 
 function maskName(n: string) {
+  /* 성 + ○○ 로 고정 — 카톡 미리보기 제목이 한 줄에 들어가도록 길이를 일정하게 둔다 */
   const s = (n || "").trim();
-  if (s.length <= 1) return s + "○○";
-  return s[0] + "○".repeat(Math.max(1, s.length - 1));
+  return (s[0] || "") + "○○";
 }
 function clip(t: string, n: number) { return t.length > n ? t.slice(0, n - 1) + "…" : t; }
 

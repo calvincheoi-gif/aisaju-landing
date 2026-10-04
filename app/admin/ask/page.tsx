@@ -18,9 +18,9 @@ const input = "w-full rounded-md border border-border bg-white px-2.5 py-1.5 tex
 const label = "block text-[11.5px] font-semibold text-body mb-1";
 
 function maskName(n: string) {
+  /* 성 + ○○ 로 고정 — 카톡 미리보기 제목이 한 줄에 들어가도록 길이를 일정하게 둔다 */
   const s = (n || "").trim();
-  if (s.length <= 1) return s + "○○";
-  return s[0] + "○".repeat(Math.max(1, s.length - 1));
+  return (s[0] || "") + "○○";
 }
 function fmtDate(iso: string) {
   const d = new Date(iso);
