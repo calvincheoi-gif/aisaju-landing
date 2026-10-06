@@ -859,8 +859,8 @@ en: {
  voc2:'AIsajuLab.com listens to every piece of customer feedback and keeps refining its analysis and report quality, so that your satisfaction and your quality of life keep improving.',
  bdgFree:"First 3 a day · free",
  bdgSeats:"3/3 spots left today",
- hook:"One question, <span class=\"mark\"><b>one-page answer.</b></span><br>Read by Choi Hyeung-chul himself",
- heroSub:"Career, business, love, home — send one line.<br>You get a phone-sized one-page report within 24 hours.",
+ hook:"One question, <span class=\"mark\"><b>only what matters.</b></span><br>Read by Choi Hyeung-chul himself",
+ heroSub:"Career, business, love, home — send one line.<br>You get a phone-sized <b>1–3 page Key report</b> within 24 hours.",
  askCta:"Send a question, get a free answer ›",
  ownerName:"Choi Hyeung-chul · Certified management consultant who reads Saju",
  ownerLine:"AI analyzes, a person finds the direction · <b class=\"ow-star\">★★★★★</b> Reviews ›",
@@ -1026,8 +1026,8 @@ ja: {
  voc2:'AIsajuLab.com は、お客様の声と継続的な分析、レポートの品質改善を通じて、ご満足と暮らしの質の向上に力を尽くしてまいります。',
  bdgFree:"毎日先着3名 無料",
  bdgSeats:"本日の残り 3/3",
- hook:"質問ひとつ、<span class=\"mark\"><b>答えは1枚。</b></span><br>崔亨哲所長が直接みます",
- heroSub:"転職・起業・相性・住まい、何でも一行で。<br>24時間以内にスマホで読む1枚レポートでお答えします。",
+ hook:"質問ひとつ、<span class=\"mark\"><b>答えは要点だけ。</b></span><br>崔亨哲所長が直接みます",
+ heroSub:"転職・起業・相性・住まい、何でも一行で。<br>24時間以内にスマホで読む<b>1〜3枚のKeyレポート</b>でお答えします。",
  askCta:"質問を送って無料で答えをもらう ›",
  ownerName:"崔亨哲 · 四柱を読む経営指導士",
  ownerLine:"AIは分析し、方向は人が探す · <b class=\"ow-star\">★★★★★</b> レビュー ›",
@@ -1193,8 +1193,8 @@ zh: {
  voc2:'AIsajuLab.com 将始终倾听客户的声音，持续改进分析与报告质量，努力提升您的满意度与生活品质。',
  bdgFree:"每日前3名 免费",
  bdgSeats:"今日剩余名额 3/3",
- hook:"一个问题，<span class=\"mark\"><b>一页答案。</b></span><br>崔亨哲所长亲自解读",
- heroSub:"跳槽、创业、姻缘、买房，一句话发来即可。<br>24小时内收到手机阅读的一页报告。",
+ hook:"一个问题，<span class=\"mark\"><b>只给关键。</b></span><br>崔亨哲所长亲自解读",
+ heroSub:"跳槽、创业、姻缘、买房，一句话发来即可。<br>24小时内收到手机阅读的<b>1~3页 Key 报告</b>。",
  askCta:"发送问题，免费获得答案 ›",
  ownerName:"崔亨哲 · 懂八字的经营指导师",
  ownerLine:"AI 负责分析，方向由人来找 · <b class=\"ow-star\">★★★★★</b> 评价 ›",
@@ -1360,8 +1360,8 @@ fr: {
  voc2:"AIsajuLab.com écoute chaque retour de ses clients et continue d'affiner ses analyses et la qualité de ses rapports, pour votre satisfaction et votre qualité de vie.",
  bdgFree:"3 premiers par jour · gratuit",
  bdgSeats:"3/3 places aujourd'hui",
- hook:"Une question, <span class=\"mark\"><b>une page de réponse.</b></span><br>Lue par Choi Hyeung-chul lui-même",
- heroSub:"Carrière, projet, couple, logement : une ligne suffit.<br>Réponse en 24 h, en un rapport d'une page lisible sur mobile.",
+ hook:"Une question, <span class=\"mark\"><b>l’essentiel seulement.</b></span><br>Lue par Choi Hyeung-chul lui-même",
+ heroSub:"Carrière, projet, couple, logement : une ligne suffit.<br>Réponse en 24 h, en un <b>rapport Key de 1 à 3 pages</b> lisible sur mobile.",
  askCta:"Envoyer ma question, réponse gratuite ›",
  ownerName:"Choi Hyeung-chul · consultant en gestion certifié, lecteur de Saju",
  ownerLine:"L'IA analyse, l'humain trouve la direction · <b class=\"ow-star\">★★★★★</b> Avis ›",
@@ -1507,15 +1507,15 @@ const HTML = String.raw`
   <!--WORDS_SLOT-->
 
   <!-- ══════════ 히어로 : 첫 화면 (2026-10-04 전면 개편) ══════════
-       순서 = ① 질문 하나·답 한 장(무료 1문 1답 CTA) → ② 오늘의 기운·읽을거리 → ③ 소장 → ④ (자연) 오행
+       순서 = ① 질문 하나·1~3매 Key 리포트(무료 1문 1답 CTA) → ② 오늘의 기운·읽을거리 → ③ 소장 → ④ (자연) 오행
        원칙 = 첫 화면의 채움 버튼은 「질문 보내고 무료 답 받기」 하나뿐. 오행 진단은 연한 바탕으로 한 단계 낮춘다.
        근거 = 2개월 진단(2026-10-04): 홈 방문 85%가 스크롤·클릭 없이 이탈 → 메시지 1개 + 행동 1개로 재구성. -->
   <div class="hero">
     <div class="blob b1"></div><div class="blob b2"></div>
 
     <!-- ① 질문 블록 -->
-    <h1 class="hook" data-i="hook">질문 하나, <span class="mark"><b>답 한 장.</b></span><br>최형철 소장이 직접 봅니다</h1>
-    <p class="sub" data-i="heroSub">이직·창업·궁합·집, 뭐든 한 줄로 보내 주세요.<br>24시간 안에 폰으로 보는 1장 리포트로 답합니다.</p>
+    <h1 class="hook" data-i="hook">질문 하나, <span class="mark"><b>답은 핵심만.</b></span><br>최형철 소장이 직접 봅니다</h1>
+    <p class="sub" data-i="heroSub">이직·창업·궁합·집, 뭐든 한 줄로 보내 주세요.<br>24시간 안에 폰으로 보는 <b>1~3매 Key 리포트</b>로 답합니다.</p>
     <div class="badges">
       <span class="bdg outline" data-i="bdgFree">선착순 Daily 3명 무료</span>
       <span class="bdg seats" id="seats" data-seats="3" data-cap="3" data-i="bdgSeats">오늘 남은 자리 3/3</span>

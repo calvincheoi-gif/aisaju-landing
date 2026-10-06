@@ -5,7 +5,7 @@ import { mergeAnswer, type AskAnswer, type AskModule } from "@/lib/ask-report";
 import ReportView from "./ReportView";
 
 /**
- * 고객용 1매 리포트 열람 페이지 (2026-10-04)
+ * 고객용 1~3매 Key 리포트 열람 페이지 (2026-10-04)
  *   /r/<share_token>  — 카톡으로 이 링크를 보낸다. 글자가 선명한 웹 페이지로 열리고, PDF 저장도 여기서 한다.
  * 토큰은 추측 불가한 uuid 이고, 답이 저장된 건만 열린다. 검색엔진에는 노출하지 않는다.
  * 카톡 미리보기(스크래퍼)가 긁어 갈 때는 열람 수에 넣지 않는다 — 실제 사람이 연 횟수만 센다.

@@ -42,7 +42,7 @@ export default async function OG({ params }: { params: { token: string } }) {
   }
   const font = await loadFont();
   const title = name ? `${name}님의 질문` : "AI사주랩 1문 1답";
-  const q = question ? `“${clip(question, 60)}”` : "질문 하나, 답 한 장.";
+  const q = question ? `“${clip(question, 60)}”` : "질문 하나, 답은 핵심만.";
 
   return new ImageResponse(
     (

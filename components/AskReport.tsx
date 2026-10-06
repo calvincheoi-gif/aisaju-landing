@@ -4,7 +4,7 @@ import { forwardRef } from "react";
 import type { AskAnswer, AskModule } from "@/lib/ask-report";
 
 /**
- * 무료 1문 1답 · 1매 리포트 — 그리기 전담 (2026-10-04)
+ * 무료 1문 1답 · 1~3매 Key 리포트 — 그리기 전담 (2026-10-04, 2026-10-06 겹침·공백 수정)
  *
  * 540px 폭 고정(PNG는 2배 = 1080px). 관리자 미리보기와 PNG 내보내기가 같은 컴포넌트를 쓴다.
  * 디자인 기준은 캔버스 시안 v3: 결론 먼저 · 섹션별 행동 제목 · 고정 요소 중앙 정렬 ·
@@ -19,8 +19,9 @@ function SHead({ label, action, color = BLUE }: { label: string; action: string;
   return (
     <div style={{ textAlign: "center" }}>
       <div style={{ fontSize: 12.5, fontWeight: 800, color, letterSpacing: 1.5 }}>{label}</div>
-      <div style={{ margin: "6px auto 0", fontSize: 17, fontWeight: 900, color: NAVY, lineHeight: 1.4, letterSpacing: -0.4, maxWidth: 440 }}>{action || " "}</div>
-      <div style={{ width: 28, height: 3, background: GOLD, borderRadius: 2, margin: "10px auto 0" }} />
+      {/* 행동 제목이 비면 줄 자체를 그리지 않는다 — 빈 줄이 흰 공간으로 남지 않게 (2026-10-06) */}
+      {!!action.trim() && <div style={{ margin: "6px auto 0", fontSize: 17, fontWeight: 900, color: NAVY, lineHeight: 1.4, letterSpacing: -0.4, maxWidth: 440 }}>{action}</div>}
+      <div style={{ width: 28, height: 3, background: GOLD, borderRadius: 2, margin: action.trim() ? "10px auto 0" : "8px auto 0" }} />
     </div>
   );
 }
@@ -91,16 +92,20 @@ function Module({ a, module }: { a: AskAnswer; module: AskModule }) {
       )}
       {module === "timeline" && (
         <>
-          <div style={{ marginTop: 22, position: "relative", height: 84 }}>
-            <div style={{ position: "absolute", left: 14, right: 14, top: 16, height: 12, borderRadius: 999, background: "linear-gradient(90deg,#C9D2EA 0%,#2F5BEA 55%,#1E2A55 100%)" }} />
-            {[["0", "#E8542E"], ["calc(50% - 18px)", BLUE], ["auto", NAVY]].map(([left, c], i) => (
-              <div key={i} style={{ position: "absolute", left: i === 2 ? undefined : left, right: i === 2 ? 0 : undefined, top: 4, width: 36, height: 36, borderRadius: "50%", background: "#fff", border: `5px solid ${c}`, boxSizing: "border-box" }} />
+          {/* 3열 그리드 — 글자가 몇 줄로 늘어나도 아래 P·D·C·A 칸을 덮지 않는다.
+              (2026-10-06 수정: 예전엔 height:84 고정 틀 안에 글자를 절대위치로 얹어, 부제가
+               두 줄이 되면 그만큼 아래 칸 위로 겹쳐 찍혔다 — 화면·PNG·PDF 모두 같은 증상) */}
+          <div style={{ marginTop: 20, position: "relative", display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 6, alignItems: "start" }}>
+            <div style={{ position: "absolute", left: "16.7%", right: "16.7%", top: 13, height: 9, borderRadius: 999, background: "linear-gradient(90deg,#E8542E 0%,#2F5BEA 52%,#1E2A55 100%)" }} />
+            {([["t1", "t1s", "#E8542E"], ["t2", "t2s", BLUE], ["t3", "t3s", NAVY]] as const).map(([k, ks, c]) => (
+              <div key={k} style={{ position: "relative", display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
+                <span style={{ display: "block", width: 35, height: 35, borderRadius: "50%", background: "#fff", border: `5px solid ${c}`, boxSizing: "border-box" }} />
+                <div style={{ marginTop: 8, fontSize: 13.5, fontWeight: 900, color: c, lineHeight: 1.35, letterSpacing: -0.3, wordBreak: "keep-all" }}>{a.timeline[k]}</div>
+                {a.timeline[ks] && <div style={{ marginTop: 3, fontSize: 12.5, color: "#4C5570", lineHeight: 1.45, wordBreak: "keep-all" }}>{a.timeline[ks]}</div>}
+              </div>
             ))}
-            <div style={{ position: "absolute", left: 0, top: 48, width: 150, fontSize: 13, lineHeight: 1.4 }}><b style={{ color: "#E8542E" }}>{a.timeline.t1}</b><br /><span style={{ color: "#4C5570" }}>{a.timeline.t1s}</span></div>
-            <div style={{ position: "absolute", left: "calc(50% - 75px)", top: 48, width: 150, textAlign: "center", fontSize: 13, lineHeight: 1.4 }}><b style={{ color: BLUE }}>{a.timeline.t2}</b><br /><span style={{ color: "#4C5570" }}>{a.timeline.t2s}</span></div>
-            <div style={{ position: "absolute", right: 0, top: 48, width: 150, textAlign: "right", fontSize: 13, lineHeight: 1.4 }}><b style={{ color: NAVY }}>{a.timeline.t3}</b><br /><span style={{ color: "#4C5570" }}>{a.timeline.t3s}</span></div>
           </div>
-          <div style={{ marginTop: 18, display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 8 }}>
+          <div style={{ marginTop: 16, display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: 8 }}>
             {(["P", "D", "C", "A"] as const).map((s) => {
               const on = a.timeline.stage === s;
               const lab = { P: "계획", D: "실행", C: "점검", A: "조정" }[s];
@@ -140,24 +145,24 @@ const AskReport = forwardRef<HTMLDivElement, AskReportProps>(function AskReport(
     </div>
   );
   return (
-    <div ref={ref} className={className} style={{ width: 540, boxSizing: "border-box", background: BG, fontFamily: "'Pretendard Variable', Pretendard, -apple-system, 'Noto Sans KR', sans-serif", color: INK, position: "relative", overflow: "hidden", WebkitFontSmoothing: "antialiased" }}>
-      <div style={{ position: "absolute", width: 280, height: 280, borderRadius: "50%", background: "#DCE7FA", left: -100, top: 420 }} />
-      <div style={{ position: "absolute", width: 220, height: 220, borderRadius: "50%", background: "#E3ECFA", right: -80, top: 1500 }} />
+    <div ref={ref} className={(className ? className + " " : "") + "rpt-root"} style={{ width: 540, boxSizing: "border-box", background: BG, fontFamily: "'Pretendard Variable', Pretendard, -apple-system, 'Noto Sans KR', sans-serif", color: INK, position: "relative", overflow: "hidden", WebkitFontSmoothing: "antialiased" }}>
+      <div className="rpt-deco" style={{ position: "absolute", width: 280, height: 280, borderRadius: "50%", background: "#DCE7FA", left: -100, top: 420 }} />
+      <div className="rpt-deco" style={{ position: "absolute", width: 220, height: 220, borderRadius: "50%", background: "#E3ECFA", right: -80, top: 1500 }} />
 
       <div style={{ position: "relative", display: "flex", justifyContent: "space-between", alignItems: "center", padding: "18px 28px", background: NAVY, color: "#fff" }}>
-        <div style={{ fontSize: 19, fontWeight: 900, letterSpacing: -0.3 }}>AI사주랩<span style={{ color: GOLD }}>.com</span><span style={{ fontSize: 12.5, fontWeight: 500, color: "#B9C4E6", marginLeft: 8 }}>무료 1문 1답</span></div>
+        <div style={{ fontSize: 19, fontWeight: 900, letterSpacing: -0.3 }}>AI사주랩<span style={{ color: GOLD }}>.com</span><span style={{ fontSize: 12.5, fontWeight: 500, color: "#B9C4E6", marginLeft: 8 }}>무료 1문 1답 · Key 리포트</span></div>
         <div style={{ fontSize: 12, color: "#C9D2EA", textAlign: "right", lineHeight: 1.45 }}>접수 {refNo}<br />{date}</div>
       </div>
 
-      <div style={{ position: "relative", padding: "22px 24px 0", display: "flex", flexDirection: "column", gap: 16 }}>
+      <div className="rpt-wrap" style={{ position: "relative", padding: "22px 24px 0", display: "flex", flexDirection: "column", gap: 16 }}>
         <div className="rpt-card" style={{ ...CARD, padding: "22px 24px", textAlign: "center" }}>
           <div style={{ fontSize: 12.5, fontWeight: 800, color: BLUE, letterSpacing: 1.5 }}>{name}님의 질문</div>
-          <div style={{ margin: "10px auto 0", fontSize: 23, fontWeight: 900, lineHeight: 1.42, letterSpacing: -0.5, maxWidth: 460, whiteSpace: "pre-wrap" }}>“{question}”</div>
+          <div className="rpt-q" style={{ margin: "10px auto 0", fontSize: 23, fontWeight: 900, lineHeight: 1.42, letterSpacing: -0.5, maxWidth: 460, whiteSpace: "pre-wrap" }}>“{question}”</div>
         </div>
 
         <div className="rpt-card" style={{ background: NAVY, borderRadius: 18, padding: "22px 24px 20px", color: "#fff", textAlign: "center" }}>
           <div style={{ fontSize: 12.5, fontWeight: 800, color: GOLD, letterSpacing: 1.5 }}>결론부터</div>
-          <div style={{ margin: "10px auto 0", fontSize: 19, fontWeight: 900, lineHeight: 1.45, letterSpacing: -0.4, maxWidth: 460, whiteSpace: "pre-wrap" }}>{a.one}</div>
+          <div className="rpt-one" style={{ margin: "10px auto 0", fontSize: 19, fontWeight: 900, lineHeight: 1.45, letterSpacing: -0.4, maxWidth: 460, whiteSpace: "pre-wrap" }}>{a.one}</div>
           <div style={{ marginTop: 16, display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 8 }}>
             {(["판단", "시기", "첫 행동"] as const).map((k, i) => (
               <div key={k} style={{ background: "rgba(255,255,255,.10)", border: "1px solid rgba(255,255,255,.22)", borderRadius: 12, padding: "10px 8px", textAlign: "center" }}>
@@ -174,7 +179,7 @@ const AskReport = forwardRef<HTMLDivElement, AskReportProps>(function AskReport(
             {[["나의 일간", a.ilgan, a.ilgan_sub, a.ilgan_desc], ["올해·내년 흐름", a.seun, a.seun_sub, a.seun_desc]].map(([h, big, sub, desc]) => (
               <div key={h} style={{ background: BG, borderRadius: 14, padding: "14px 16px", textAlign: "center" }}>
                 <div style={{ fontSize: 12.5, fontWeight: 700, color: GRAY }}>{h}</div>
-                <div style={{ marginTop: 4, fontSize: 26, fontWeight: 900, color: NAVY, lineHeight: 1.1 }}>{big}</div>
+                <div className="rpt-big" style={{ marginTop: 4, fontSize: 26, fontWeight: 900, color: NAVY, lineHeight: 1.1 }}>{big}</div>
                 <div style={{ fontSize: 13.5, fontWeight: 700, color: BLUE, marginTop: 3 }}>{sub}</div>
                 <div style={{ fontSize: 14, color: BODY, marginTop: 6, lineHeight: 1.5, textAlign: "left", whiteSpace: "pre-wrap" }}>{desc}</div>
               </div>
@@ -191,7 +196,7 @@ const AskReport = forwardRef<HTMLDivElement, AskReportProps>(function AskReport(
             {a.ans.map((t, i) => (
               <div key={i} style={{ display: "flex", gap: 12, alignItems: "flex-start" }}>
                 <span style={{ flex: "0 0 28px", height: 28, borderRadius: "50%", background: GOLD, color: NAVY, fontSize: 14, fontWeight: 900, display: "flex", alignItems: "center", justifyContent: "center", marginTop: 1 }}>{i + 1}</span>
-                <span style={{ fontSize: 17, lineHeight: 1.6, fontWeight: 500, whiteSpace: "pre-wrap" }}>{t}</span>
+                <span className="rpt-ans" style={{ fontSize: 17, lineHeight: 1.6, fontWeight: 500, whiteSpace: "pre-wrap" }}>{t}</span>
               </div>
             ))}
           </div>
@@ -209,6 +214,12 @@ const AskReport = forwardRef<HTMLDivElement, AskReportProps>(function AskReport(
               <div style={{ fontSize: 15, lineHeight: 1.55, color: INK, marginTop: 8, whiteSpace: "pre-wrap" }}>{a.avoid}</div>
             </div>
           </div>
+          {/* 시기 근거 — 두 칸 아래 남던 흰 공간을 근거로 채운다 (2026-10-06) */}
+          {!!a.t_why?.trim() && (
+            <div style={{ marginTop: 12, padding: "12px 14px", borderLeft: `3px solid ${GOLD}`, background: "#FFFBF0", borderRadius: "0 12px 12px 0", fontSize: 14.5, lineHeight: 1.6, color: BODY, whiteSpace: "pre-wrap" }}>
+              <b style={{ color: NAVY }}>왜 이 시기인가 ·</b> {a.t_why}
+            </div>
+          )}
         </div>
 
         <div className="rpt-card" style={{ ...CARD, padding: "20px 22px 20px" }}>
@@ -218,7 +229,13 @@ const AskReport = forwardRef<HTMLDivElement, AskReportProps>(function AskReport(
             <ActionRow tag="이번 주" bg={BLUE} txt={a.week} />
             <ActionRow tag="이번 달" bg={NAVY} txt={a.month} />
           </div>
-          {a.stop && <div style={{ marginTop: 14, padding: "12px 14px", background: "#F7F9FD", borderRadius: 12, fontSize: 14.5, lineHeight: 1.55, color: BODY, whiteSpace: "pre-wrap" }}><b style={{ color: NAVY }}>이럴 땐 멈추세요 ·</b> {a.stop}</div>}
+          {/* 확인 방법 · 멈출 신호 — 실행 칸 아래 남던 흰 공간을 채운다 (2026-10-06) */}
+          {!!a.a_check?.trim() && (
+            <div style={{ marginTop: 14, padding: "12px 14px", background: BG, border: "1px solid #C9D7F3", borderRadius: 12, fontSize: 14.5, lineHeight: 1.55, color: INK, whiteSpace: "pre-wrap" }}>
+              <b style={{ color: BLUE }}>이렇게 확인하세요 ·</b> {a.a_check}
+            </div>
+          )}
+          {!!a.stop?.trim() && <div style={{ marginTop: 10, padding: "12px 14px", background: "#F7F9FD", borderRadius: 12, fontSize: 14.5, lineHeight: 1.55, color: BODY, whiteSpace: "pre-wrap" }}><b style={{ color: NAVY }}>이럴 땐 멈추세요 ·</b> {a.stop}</div>}
         </div>
       </div>
 
@@ -226,6 +243,8 @@ const AskReport = forwardRef<HTMLDivElement, AskReportProps>(function AskReport(
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={photoSrc} alt="최형철 소장" width={56} height={56} crossOrigin="anonymous" style={{ width: 56, height: 56, borderRadius: "50%", objectFit: "cover", border: `2px solid ${GOLD}` }} />
         <div style={{ fontSize: 15, fontWeight: 800 }}>최형철 · 사주보는 경영지도사</div>
+        {/* 분량 명시 (2026-10-06): 1매 → 1~3매 Key 리포트 */}
+        <div style={{ fontSize: 12.5, fontWeight: 700, color: NAVY, lineHeight: 1.4 }}>질문 하나에 대한 <b style={{ color: BLUE }}>1~3매 Key 리포트</b></div>
         <div style={{ fontSize: 12, color: GRAY, lineHeight: 1.4 }}>명리에 기반한 참고 의견이며 결과를 보장하지 않습니다</div>
         <a href="/consult?mode=simple&item=reportOnly&utm=report_foot" style={{ marginTop: 6, padding: "10px 18px", borderRadius: 999, background: BG, fontSize: 13, color: NAVY, lineHeight: 1.4, textDecoration: "none", display: "inline-block" }}>더 깊이 보려면 <b style={{ color: BLUE }}>1문 1답 9,900원 · 개인종합 20장</b> · aisajulab.com ›</a>
       </div>

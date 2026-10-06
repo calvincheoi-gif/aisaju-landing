@@ -35,7 +35,7 @@ export default function FloatNav() {
   return (
     <nav
       aria-label="빠른 이동"
-      className="fixed right-[14px] z-50 flex flex-col gap-2"
+      className="floatnav fixed right-[14px] z-50 flex flex-col gap-2 print:hidden"
       style={{ bottom: "calc(16px + env(safe-area-inset-bottom))" }}
     >
       <button type="button" className={btn} onClick={goBack} aria-label="뒤로 가기">

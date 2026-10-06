@@ -303,13 +303,15 @@ export default function AdminAskPage() {
                 <div><label className={label}>움직이기 좋은 때</label><textarea rows={3} className={input} value={a.good} onChange={set("good")} /></div>
                 <div><label className={label}>서두르지 않을 때</label><textarea rows={3} className={input} value={a.avoid} onChange={set("avoid")} /></div>
               </div>
+              <div className="mt-2"><label className={label}>왜 이 시기인가 (세운·월운 근거 · 비우면 숨김)</label><textarea rows={2} className={input} value={a.t_why} onChange={set("t_why")} placeholder="예) 2027년은 丁未로 土가 두터워지는 해입니다. 火를 쓰는 일간에는 申·酉월에 기운이 맞물려…" /></div>
             </fieldset>
 
             {/* ⑦ 실행 */}
             <fieldset className="mt-4 rounded-md border border-border p-3">
               <legend className="px-1 text-[12px] font-bold text-indigo-700">⑦ 실행</legend>
               <label className={label}>행동 제목</label><input className={input} value={a.a_action} onChange={set("a_action")} />
-              {(["today", "week", "month"] as const).map((k) => (<div key={k} className="mt-2"><label className={label}>{{ today: "오늘", week: "이번 주", month: "이번 달" }[k]}</label><input className={input} value={a[k]} onChange={set(k)} /></div>))}
+              {(["today", "week", "month"] as const).map((k) => (<div key={k} className="mt-2"><label className={label}>{{ today: "오늘", week: "이번 주", month: "이번 달" }[k]}</label><textarea rows={2} className={input} value={a[k]} onChange={set(k)} /></div>))}
+              <div className="mt-2"><label className={label}>이렇게 확인하세요 (점검 방법 · 비우면 숨김)</label><textarea rows={2} className={input} value={a.a_check} onChange={set("a_check")} placeholder="예) 한 주 뒤 통화 3건 중 2건에서 같은 반응이 나오면 방향이 맞은 것입니다." /></div>
               <div className="mt-2"><label className={label}>이럴 땐 멈추세요 (비우면 숨김)</label><textarea rows={2} className={input} value={a.stop} onChange={set("stop")} /></div>
             </fieldset>
 

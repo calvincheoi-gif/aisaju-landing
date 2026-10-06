@@ -1,5 +1,5 @@
 /**
- * 무료 1문 1답 · 1매 리포트의 데이터 모델 (2026-10-04)
+ * 무료 1문 1답 · 1~3매 Key 리포트의 데이터 모델 (2026-10-04, 2026-10-06 보강)
  *
  * 리포트 한 장은 「공통 골격 + 교체 모듈 1개」로 되어 있다.
  *   공통 골격: 질문 → 결론부터(한 줄 + 칩 3) → 근거1 명식 → [모듈] → 판단(답 3줄) → 시기 → 실행 → 서명
@@ -42,8 +42,10 @@ export interface AskAnswer {
   ans: [string, string, string];
   /* ⑥ 시기 */
   t_action: string; good: string; avoid: string;
+  t_why: string;                     // 왜 이 시기인가 — 세운·월운 근거 한 줄 (2026-10-06 추가, 공백 메우기)
   /* ⑦ 실행 */
   a_action: string; today: string; week: string; month: string; stop: string;
+  a_check: string;                   // 이렇게 확인하세요 — 점검 방법 한 줄 (2026-10-06 추가, 공백 메우기)
 }
 
 export function emptyAnswer(): AskAnswer {
@@ -55,8 +57,8 @@ export function emptyAnswer(): AskAnswer {
     whys: { w1: "", w2: "", w3: "", root: "" },
     timeline: { t1: "지금", t1s: "", t2: "", t2s: "", t3: "", t3s: "", stage: "P", stage_note: "" },
     ans: ["", "", ""],
-    t_action: "", good: "", avoid: "",
-    a_action: "", today: "", week: "", month: "", stop: "",
+    t_action: "", good: "", avoid: "", t_why: "",
+    a_action: "", today: "", week: "", month: "", stop: "", a_check: "",
   };
 }
 
@@ -83,7 +85,11 @@ export function missingFields(a: AskAnswer, module: AskModule): string[] {
   if (!a.read.trim()) miss.push("명식이 말하는 것");
   if (a.ans.some((c) => !c.trim())) miss.push("답 3줄");
   if (!a.good.trim() || !a.avoid.trim()) miss.push("시기");
-  if (!a.today.trim()) miss.push("오늘 할 일");
+  /* 공백 없는 리포트를 위해 아래 칸도 필수로 본다 (2026-10-06) */
+  if (!a.t_why.trim()) miss.push("시기 근거");
+  if (!a.today.trim() || !a.week.trim() || !a.month.trim()) miss.push("실행 3단(오늘·주·달)");
+  if (!a.a_check.trim()) miss.push("확인 방법");
+  if (!a.stop.trim()) miss.push("멈출 신호");
   if (module === "swot" && Object.values(a.swot).some((v) => !v.trim())) miss.push("SWOT 칸");
   if (module === "whys" && Object.values(a.whys).some((v) => !v.trim())) miss.push("3 Whys 칸");
   if (module === "timeline" && (!a.timeline.t2.trim() || !a.timeline.t3.trim())) miss.push("타임라인 시점");

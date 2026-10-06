@@ -36,6 +36,20 @@ export default function ReportView(props: AskReportProps & { autoPrint?: boolean
   };
   useEffect(() => { if (props.autoPrint) void printPdf(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [props.autoPrint]);
 
+  /* 인쇄 배율 자동 맞춤 (2026-10-06)
+     A4 세로 · 여백 10mm 기준 한 쪽에 들어가는 영역 = 가로 718px · 세로 1047px(CSS 96dpi).
+     리포트 높이(540px 폭 기준)를 재어, 「1~3매」 안에 떨어지는 가장 큰 배율을 고른다.
+     0.90 을 곱하는 것은 카드가 쪽 경계에서 밀리며 생기는 손실을 미리 빼 두는 것이다. */
+  const printZoom = (() => {
+    const PAGE = 1047, MAXZ = 1.33, MINZ = 0.92;
+    if (!h) return 1.24;
+    for (const n of [1, 2, 3]) {
+      const z = (n * PAGE * 0.9) / h;
+      if (z >= MINZ) return Math.min(MAXZ, Math.round(z * 100) / 100);
+    }
+    return MINZ;
+  })();
+
   return (
     <div className="rv-root">
       <style>{`
@@ -59,12 +73,36 @@ export default function ReportView(props: AskReportProps & { autoPrint?: boolean
         .rv-a4{background:#fff;color:#1E2A55;border:1.5px solid #DCE4EE}
         @media print{
           @page{size:A4 portrait;margin:10mm}
-          html,body{background:#fff !important}
+          html,body{background:#fff !important;margin:0;padding:0}
           .rv-root{background:#fff;padding:0;display:block}
-          .rv-bar,.rv-hint,.rv-next{display:none !important}
+          .rv-bar,.rv-hint,.rv-next,.floatnav,nav[aria-label="빠른 이동"]{display:none !important}
           .rv-outer{overflow:visible;height:auto !important;width:auto !important}
-          .rv-stage{transform:none !important;width:540px;zoom:1.32;margin:0 auto}
-          .rpt-card{break-inside:avoid;page-break-inside:avoid}
+          /* A4 가로폭(190mm ≒ 718px)에 꽉 차게 키운다 */
+          .rv-stage{transform:none !important;width:540px;zoom:${printZoom};margin:0 auto}
+          /* 페이지 나눔 규칙 (2026-10-06 재설계)
+             · 카드 통째로 넘기면 앞 페이지 절반이 비어 버린다 → 카드는 쪼개지되(auto),
+               카드 안의 한 덩어리(표·박스·줄)는 절대 쪼개지 않는다.
+             · 제목만 페이지 끝에 남는 것을 막기 위해 제목 뒤 나눔 금지. */
+          .rpt-card{break-inside:auto;page-break-inside:auto}
+          .rpt-card>div{break-inside:avoid;page-break-inside:avoid}
+          .rpt-card>div:first-child{break-after:avoid;page-break-after:avoid}
+          .rpt-foot{break-inside:avoid;page-break-inside:avoid}
+          p,div{orphans:3;widows:3}
+          img{break-inside:avoid}
+          /* flex 컨테이너는 크롬 인쇄에서 쪼개지지 않아 카드 하나가 통째로 다음 장으로 넘어가며
+             앞 장을 반쯤 비워 놓는다 → 인쇄에서만 보통 블록으로 바꾼다 (2026-10-06 공백 원인) */
+          .rpt-root{overflow:visible !important}
+          /* overflow 를 풀면 장식 원이 리포트 밖으로 삐져나오므로 인쇄에서는 감춘다 */
+          .rpt-deco{display:none !important}
+          .rpt-wrap{display:block !important;gap:0 !important;padding:12px 20px 0 !important}
+          .rpt-wrap>*{margin-bottom:8px !important}
+          /* 인쇄는 화면보다 촘촘하게 — 흰 공간을 남기지 않고 1~3매 안에 담는다 */
+          .rpt-card{padding:13px 18px !important}
+          .rpt-q{font-size:19px !important;margin-top:7px !important}
+          .rpt-one{font-size:16.5px !important;margin-top:7px !important}
+          .rpt-big{font-size:21px !important}
+          .rpt-ans{font-size:15px !important;line-height:1.5 !important}
+          .rpt-foot{margin-top:8px !important;padding:12px 24px 12px !important;gap:6px !important}
           .rv-stage *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
         }
       `}</style>
@@ -84,7 +122,7 @@ export default function ReportView(props: AskReportProps & { autoPrint?: boolean
 
       <div className="rv-next">
         <h3>더 묻고 싶은 것이 있다면</h3>
-        <p>이 답은 질문 하나에 대한 1장 요약입니다. 이어지는 질문이나 전체 명식 풀이는 아래에서 받으실 수 있습니다.</p>
+        <p>이 답은 질문 하나에 대한 <b>1~3매 Key 리포트</b>입니다. 이어지는 질문이나 전체 명식 풀이는 아래에서 받으실 수 있습니다.</p>
         <div className="rv-grid">
           <a className="rv-a1" href={CTA.ask}>1문 1답 더 묻기<small>9,900원 · 24시간 안 답</small></a>
           <a className="rv-a2" href={CTA.full}>개인종합 20장<small>리포트 + 전화·톡 상담</small></a>

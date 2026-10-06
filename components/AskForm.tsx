@@ -108,7 +108,7 @@ export default function AskForm() {
         <h2 className="mt-2 text-[22px] font-black leading-snug text-[#12224A]">질문 잘 받았습니다.<br />24시간 안에 답을 보내 드립니다.</h2>
         <p className="mt-3 text-[14px] leading-relaxed text-[#64748B]">
           접수번호 <b className="text-[#12224A]">{done.refNo}</b><br />
-          답(폰으로 보는 1장 리포트)은 <b>카카오톡 채널</b>로 보내 드려요.
+          답(폰으로 보는 <b>1~3매 Key 리포트</b>)은 <b>카카오톡 채널</b>로 보내 드려요.
         </p>
         <a
           href={siteConfig.channels.kakaoChannelAdd}
