@@ -17,7 +17,7 @@ import { emptyAnswer, mergeAnswer, type AskAnswer, type AskModule, type SajuBrie
  */
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
+export const maxDuration = 26;   /* Netlify 동기 함수 상한. 이보다 크게 적어도 늘어나지 않는다 */
 
 function authed(req: Request) {
   const expected = process.env.ADMIN_PASSWORD;
@@ -70,35 +70,61 @@ export async function PATCH(req: Request) {
   return NextResponse.json({ ok: true });
 }
 
-const DRAFT_SYSTEM = `당신은 「최형철 사주명리 연구소」의 보조 작성자입니다. 소장은 30년 대기업 경력의 경영지도사이자 명리 10년 연구자입니다.
-고객의 질문 하나와 명식 요약을 받아, 폰으로 보는 1~3매 Key 리포트의 각 칸을 채우는 초안을 씁니다. 소장이 「감수만」 하면 바로 보낼 수 있을 만큼, 모든 칸을 끝까지 채워 씁니다.
+/* ── AI 초안 (2026-10-06 재설계) ───────────────────────────────────────────────
+   분량을 늘리자 한 번의 호출이 Netlify 함수 제한(26초)을 넘겨 초안이 아예 안 채워졌다.
+   그래서 「앞 절반(결론·근거)」과 「뒤 절반(판단·시기·실행)」을 나눠 동시에 부른다.
+   각 호출이 짧아져 제한 안에 끝나고, 한쪽이 실패해도 나머지 절반은 채워진다.      */
+
+const SYS_BASE = `당신은 「최형철 사주명리 연구소」의 보조 작성자입니다. 소장은 30년 대기업 경력의 경영지도사이자 명리 10년 연구자입니다.
+고객의 질문 하나와 명식 요약을 받아, 폰으로 보는 1~3매 Key 리포트의 칸을 채우는 초안을 씁니다. 소장이 「감수만」 하면 바로 보낼 수 있을 만큼 모든 칸을 끝까지 채웁니다.
 
 지켜야 할 것:
 1. 결론부터. 확정형 예언 금지 — "~로 읽힙니다", "~가 유리해 보입니다"처럼 여지를 둔다.
 2. 명식 해석은 일간(日干)의 성질과 올해·내년 세운(歲運)의 오행 관계를 근거로 한다. 주어진 간지 외의 사실을 지어내지 않는다.
 3. 시기는 월 단위(예: "2027년 8~9월, 申·酉월")로 구체적으로. 근거는 세운·월운의 오행.
-4. 실천 항목은 오늘·이번 주·이번 달 각 1개, 당장 할 수 있는 작은 행동으로. 추상어("노력하세요") 금지.
-5. 경영 컨설팅 기법은 결과만 쓰고 전문용어 설명은 하지 않는다. SWOT의 S·W는 사주(안), O·T는 세운·시장(밖).
-6. 존댓말. 이모지·해시태그 금지. 분량 기준(공백 포함) — 리포트 칸에 흰 공백이 남지 않게 아래 분량을 반드시 채운다:
-   one 50~70자 / read 70~100자 / ans 각 80~110자(근거+판단이 한 문장에 함께)
-   good·avoid 각 80~110자(시기 + 그때 무엇이 유리/불리한지 + 이유) / t_why 70~100자(왜 그 시기인지 세운·월운 오행 근거)
-   today·week·month 각 50~75자(행동 + 끝났는지 알 수 있는 확인 기준) / a_check 70~100자(한 주·한 달 뒤 무엇을 보면 되는지) / stop 70~100자(감정·상황 신호 + 왜 그때 멈춰야 하는지)
-   SWOT 각 칸 60~90자: 특성 한 줄 + 이 질문에서 어떻게 작용하는지 한 줄. strategy 50~70자. whys 각 70~100자, root 50~70자.
-   timeline 시점(t1·t2·t3) 각 6~14자, 부제(t1s·t2s·t3s) 각 10~18자(한 줄로 끊어 읽히게), stage_note 60~90자.
-   m_action·mod_action·t_action·a_action 은 각 18~30자의 "행동 제목"(한 문장 결론)으로 반드시 채운다. 어떤 칸도 빈 문자열로 두지 않는다 — 모듈이 없는 경우(module=none)만 swot·whys·timeline 을 빈 문자열로 둔다.
-7. 모듈(module)이 주어지면 그 모듈 칸만 채우고 다른 모듈 칸은 빈 문자열로 둔다.
-8. 같은 문장·같은 표현을 두 칸에 반복하지 않는다. 결론(one) → 판단(ans) → 시기(good·avoid) → 실행(today·week·month)은 서로 다른 층위의 말이어야 한다.
+4. 실천 항목은 당장 할 수 있는 작은 행동으로. 추상어("노력하세요") 금지.
+5. 경영 컨설팅 기법은 결과만 쓰고 전문용어 설명은 하지 않는다.
+6. 존댓말. 이모지·해시태그 금지. 어떤 칸도 빈 문자열로 두지 않는다 — 리포트에 흰 공백이 남는다.
+7. 설명·머리말 없이 JSON 객체 하나만 출력한다.`;
 
-출력은 JSON 하나만. 키와 형식은 다음과 같다(모두 문자열, 배열은 정확히 3개):
+/* 앞 절반 — 결론 · 근거 1(명식) · 근거 2(모듈) */
+const SYS_A = `${SYS_BASE}
+
+분량 기준(공백 포함): one 50~70자 / ilgan_desc·seun_desc 각 30~45자 / read 70~100자 /
+m_action·mod_action 각 18~30자의 "행동 제목"(한 문장 결론).
+SWOT 각 칸 60~90자(특성 + 이 질문에서 어떻게 작용하는지), strategy 50~70자.
+whys 각 70~100자, root 50~70자.
+timeline 시점(t1·t2·t3) 각 6~14자, 부제(t1s·t2s·t3s) 각 10~18자, stage_note 60~90자.
+지정된 모듈의 칸만 채우고 나머지 모듈은 빈 문자열로 둔다. module=none 이면 셋 다 빈 문자열.
+
+출력 JSON(이 키만):
 {"one":"","chips":["판단 6자 이내","시기 8자 이내","첫 행동 8자 이내"],
- "m_action":"","ilgan":"丙火 형식","ilgan_sub":"4~6자 별칭","ilgan_desc":"30~45자 (성질 + 이 질문과의 관계)","seun":"丁未 형식","seun_sub":"4~8자","seun_desc":"30~45자 (해의 성질 + 이 일간에 미치는 영향)","read":"40~60자",
+ "m_action":"","ilgan_sub":"4~6자 별칭","ilgan_desc":"","seun_sub":"4~8자","seun_desc":"","read":"",
  "mod_action":"",
  "swot":{"s":"","w":"","o":"","t":"","strategy":""},
  "whys":{"w1":"","w2":"","w3":"","root":""},
- "timeline":{"t1":"지금 · 2026 가을","t1s":"","t2":"","t2s":"","t3":"","t3s":"","stage":"P","stage_note":""},
- "ans":["","",""],
+ "timeline":{"t1":"지금","t1s":"","t2":"","t2s":"","t3":"","t3s":"","stage":"P","stage_note":""}}`;
+
+/* 뒤 절반 — 판단 3줄 · 시기 · 실행 */
+const SYS_B = `${SYS_BASE}
+
+분량 기준(공백 포함): ans 각 80~110자(근거 + 판단이 한 문장에 함께) /
+good·avoid 각 80~110자(시기 + 그때 무엇이 유리·불리한지 + 이유) / t_why 70~100자(왜 그 시기인지 세운·월운 오행 근거) /
+today·week·month 각 50~75자(행동 + 끝났는지 알 수 있는 확인 기준) — 오늘·이번 주·이번 달 각 1개 /
+a_check 70~100자(한 주·한 달 뒤 무엇을 보면 되는지) / stop 70~100자(감정·상황 신호 + 왜 그때 멈춰야 하는지) /
+t_action·a_action 각 18~30자의 "행동 제목".
+같은 표현을 두 칸에 반복하지 않는다 — 판단 → 시기 → 실행은 서로 다른 층위의 말이어야 한다.
+
+출력 JSON(이 키만):
+{"ans":["","",""],
  "t_action":"","good":"","avoid":"","t_why":"",
  "a_action":"","today":"","week":"","month":"","stop":"","a_check":""}`;
+
+function pickJson(text: string): Record<string, unknown> | null {
+  const m = text.match(/\{[\s\S]*\}/);
+  if (!m) return null;
+  try { return JSON.parse(m[0]) as Record<string, unknown>; } catch { return null; }
+}
 
 export async function POST(req: Request) {
   if (!authed(req)) return deny();
@@ -124,17 +150,29 @@ export async function POST(req: Request) {
 오늘 날짜: ${new Date().toLocaleDateString("ko-KR", { timeZone: "Asia/Seoul" })}
 위 규칙대로 JSON 초안을 작성하세요.`;
 
-  try {
-    const client = ai.client as Anthropic;
-    const res = await client.messages.create({ model: ai.model, max_tokens: 4000, system: DRAFT_SYSTEM, messages: [{ role: "user", content: user }] });
+  const client = ai.client as Anthropic;
+  const ask = async (system: string) => {
+    const res = await client.messages.create({ model: ai.model, max_tokens: 2200, system, messages: [{ role: "user", content: user }] });
     const text = res.content.map((c) => ("text" in c ? c.text : "")).join("");
-    const m = text.match(/\{[\s\S]*\}/);
-    if (!m) return NextResponse.json({ error: "AI 응답을 읽지 못했습니다. 다시 시도해 주세요." }, { status: 502 });
-    const draft = mergeAnswer(JSON.parse(m[0]) as Partial<AskAnswer>);
-    /* 일간·세운은 계산값으로 덮어쓴다 — AI가 틀리게 적는 일을 막는다 */
-    if (saju) { draft.ilgan = saju.dayStemKo; draft.seun = saju.nextYear; }
-    return NextResponse.json({ draft, module, via: ai.via });
-  } catch (e) {
-    return NextResponse.json({ error: `AI 호출 실패: ${e instanceof Error ? e.message : String(e)}`, fallback: emptyAnswer() }, { status: 502 });
+    if (res.stop_reason === "max_tokens") throw new Error("답이 길어 중간에 끊겼습니다");
+    const json = pickJson(text);
+    if (!json) throw new Error("AI 응답을 읽지 못했습니다");
+    return json;
+  };
+
+  /* 두 덩어리를 동시에 — 한쪽이 실패해도 나머지는 살린다 */
+  const [ra, rb] = await Promise.allSettled([ask(SYS_A), ask(SYS_B)]);
+  const partial: Record<string, unknown> = {};
+  const fails: string[] = [];
+  if (ra.status === "fulfilled") Object.assign(partial, ra.value); else fails.push(`앞부분(결론·근거): ${ra.reason instanceof Error ? ra.reason.message : String(ra.reason)}`);
+  if (rb.status === "fulfilled") Object.assign(partial, rb.value); else fails.push(`뒷부분(판단·시기·실행): ${rb.reason instanceof Error ? rb.reason.message : String(rb.reason)}`);
+
+  if (fails.length === 2) {
+    return NextResponse.json({ error: `AI 초안 실패 — ${fails.join(" / ")}. 잠시 뒤 다시 눌러 주세요.`, fallback: emptyAnswer() }, { status: 502 });
   }
+
+  const draft = mergeAnswer(partial as Partial<AskAnswer>);
+  /* 일간·세운은 계산값으로 덮어쓴다 — AI가 틀리게 적는 일을 막는다 */
+  if (saju) { draft.ilgan = saju.dayStemKo; draft.seun = saju.nextYear; }
+  return NextResponse.json({ draft, module, via: ai.via, partial: fails.length ? fails.join(" / ") : undefined });
 }

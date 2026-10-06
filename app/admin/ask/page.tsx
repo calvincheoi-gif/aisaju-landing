@@ -93,13 +93,18 @@ export default function AdminAskPage() {
 
   async function draft() {
     if (!sel) return;
-    if (!confirm("AI 초안을 만듭니다. Anthropic API 호출 1회(토큰 비용 수십 원)가 발생합니다. 계속할까요?")) return;
+    if (!confirm("AI 초안을 만듭니다. Anthropic API 호출 2회(앞부분·뒷부분 동시, 토큰 비용 수십 원)가 발생합니다. 계속할까요?")) return;
     setBusy("draft");
     try {
       const res = await fetch("/api/admin/ask", { method: "POST", headers: H(), body: JSON.stringify({ id: sel.id, action: "draft", module }) });
-      const j = await res.json();
+      /* 서버가 시간을 넘기면 JSON 이 아니라 오류 페이지가 돌아온다 — 먼저 글로 받아 보고 판단한다 */
+      const raw = await res.text();
+      let j: { draft?: Partial<AskAnswer>; error?: string; partial?: string } | null = null;
+      try { j = JSON.parse(raw); } catch { j = null; }
+      if (!j) throw new Error(`서버가 제때 답하지 못했습니다 (${res.status}). 잠시 뒤 다시 눌러 주세요.`);
       if (!res.ok) throw new Error(j.error || "초안 실패");
-      setA(mergeAnswer(j.draft)); setMsg("AI 초안을 채웠습니다. 소장님 말로 고쳐 쓰신 뒤 저장하세요.");
+      setA(mergeAnswer(j.draft));
+      setMsg(j.partial ? `초안을 일부만 채웠습니다 — ${j.partial}. 한 번 더 누르면 나머지도 채워집니다.` : "AI 초안을 채웠습니다. 소장님 말로 고쳐 쓰신 뒤 저장하세요.");
     } catch (e) { setMsg(e instanceof Error ? e.message : "초안 실패"); } finally { setBusy(null); }
   }
 
