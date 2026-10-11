@@ -85,6 +85,21 @@ h1.hook b{color:var(--blue)}
 h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent 56%,#FFE08A 56%);padding:0 3px}
 .sub{position:relative;margin:0 0 10px;font-size:13.5px;line-height:1.5;color:#4C5570;font-weight:500}
 
+/* ── 고민 주제 롤링: 2줄 창, 한 줄씩 위로 (2026-10-11) ── */
+.topics{position:relative;margin:2px 0 10px;height:72px;overflow:hidden;border-radius:14px;
+  background:rgba(255,255,255,.78);border:1px solid rgba(37,99,235,.16);box-shadow:0 4px 14px rgba(18,34,74,.06);text-align:left}
+.topics:after{content:"";position:absolute;left:12px;right:12px;top:36px;height:1px;background:rgba(37,99,235,.12);pointer-events:none}
+.topics ul{list-style:none;margin:0;padding:0;will-change:transform}
+.topics ul.anim{transition:transform .42s cubic-bezier(.4,0,.2,1)}
+.topics li{height:36px}
+.topics a{display:flex;align-items:center;gap:7px;height:36px;padding:0 12px;text-decoration:none;color:var(--navy)}
+.topics a:active{background:rgba(37,99,235,.06)}
+.topics .tk{flex:none;font-size:12px;font-weight:900;color:var(--blue)}
+.topics .tc{flex:none;font-size:11.5px;font-weight:800;color:#fff;background:var(--navy);padding:2px 7px;border-radius:999px;letter-spacing:-.02em}
+.topics .tt{flex:1;min-width:0;font-size:14.5px;font-weight:800;letter-spacing:-.035em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topics .ta{flex:none;font-size:14px;font-weight:900;color:var(--blue)}
+.topics .tt[lang="fr"],.topics .tt[lang="en"]{font-size:13.5px;letter-spacing:-.02em}
+
 /* ── 무료 1문 1답 CTA — 첫 화면의 유일한 채움 버튼. 밝고 살짝 투명한 청색 ── */
 .askbtn{position:relative;display:block;width:100%;height:46px;border-radius:16px;cursor:pointer;font-family:inherit;
   border:1px solid rgba(255,255,255,.7);color:#fff;font-size:18px;font-weight:900;letter-spacing:-.03em;
@@ -1515,7 +1530,8 @@ const HTML = String.raw`
 
     <!-- ① 질문 블록 -->
     <h1 class="hook" data-i="hook">질문 하나, <span class="mark"><b>답은 핵심만.</b></span><br>최형철 소장이 직접 봅니다</h1>
-    <p class="sub" data-i="heroSub">이직·창업·궁합·집, 뭐든 한 줄로 보내 주세요.<br>24시간 안에 폰으로 보는 <b>1~3매 Key 리포트</b>로 답합니다.</p>
+    <!-- 설명 2줄 자리 → 고민 주제 롤링(2줄씩 위로 순환, 2026-10-11). 내용은 /admin/topics -->
+    <!--TOPICS_SLOT-->
     <div class="badges">
       <span class="bdg outline" data-i="bdgFree">선착순 Daily 3명 무료</span>
       <span class="bdg seats" id="seats" data-seats="3" data-cap="3" data-i="bdgSeats">오늘 남은 자리 3/3</span>
@@ -2052,6 +2068,27 @@ function track(name: string, props: Record<string, unknown> = {}) {
   } catch {}
 }
 
+/** 홈 첫 화면 고민 주제 롤링 — app/page.tsx 가 DB(home_topics)에서 읽어 넘겨준다 (2026-10-11) */
+export interface HomeTopicItem { category: string; title: string; slug: string; i18n?: Partial<Record<"en" | "ja" | "zh" | "fr", { category: string; title: string }>> }
+
+const escT = (v: string) => String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+
+/** <!--TOPICS_SLOT--> 에 넣을 블록. 주제가 없으면 예전 설명 2줄을 그대로 보여 준다 */
+function topicsBlockHtml(topics?: HomeTopicItem[] | null): string {
+  if (!topics || topics.length === 0) {
+    return `<p class="sub" data-i="heroSub">이직·창업·궁합·집, 뭐든 한 줄로 보내 주세요.<br>24시간 안에 폰으로 보는 <b>1~3매 Key 리포트</b>로 답합니다.</p>`;
+  }
+  /* 각 언어 문구는 data-l-<lang> 에 실어 두고, applyLang 이 언어가 바뀔 때 바꿔 끼운다. 번역이 비면 한국어 */
+  const attrs = (ko: string, key: "category" | "title", t: HomeTopicItem) =>
+    `data-l-ko="${escT(ko)}"` + (["en", "ja", "zh", "fr"] as const).map((l) => { const v = t.i18n?.[l]?.[key]; return v ? ` data-l-${l}="${escT(v)}"` : ""; }).join("");
+  const li = (t: HomeTopicItem) =>
+    `<li><a href="/q/${escT(t.slug)}?utm=home_q" data-topic="${escT(t.slug)}"><span class="tk">✓</span><span class="tc" ${attrs(t.category, "category", t)}>${escT(t.category)}</span><span class="tt" ${attrs(t.title, "title", t)}>${escT(t.title)}</span><span class="ta">›</span></a></li>`;
+  /* 2개 이하면 돌리지 않고 그대로. 3개 이상이면 앞 2개를 뒤에 한 번 더 붙여 끊김 없이 순환 */
+  const roll = topics.length > 2;
+  const list = roll ? [...topics, topics[0], topics[1]] : topics;
+  return `<div class="topics" id="topics" data-n="${topics.length}" data-roll="${roll ? 1 : 0}" aria-label="지금 많이 보는 고민"><ul id="topics-ul">${list.map(li).join("")}</ul></div>`;
+}
+
 /** 홈에 띄울 이번 주 읽을거리 — app/page.tsx 가 DB에서 읽어 넘겨준다 */
 export interface HomeLearn {
   slug: string;
@@ -2152,14 +2189,33 @@ function reviewsBlockHtml(reviews?: HomeReview[] | null) {
 }
 
 export default function HomeV6(
-  { learn, reviews, ohaengLinks, words }:
-  { learn?: HomeLearn | null; reviews?: HomeReview[] | null; ohaengLinks?: Record<string, string | null> | null; words?: DailyWord[] | null }
+  { learn, reviews, ohaengLinks, words, topics }:
+  { learn?: HomeLearn | null; reviews?: HomeReview[] | null; ohaengLinks?: Record<string, string | null> | null; words?: DailyWord[] | null; topics?: HomeTopicItem[] | null }
 ) {
   useEffect(() => {
     /* 봇·미리보기 크롤러는 세지 않는다 (2026-09-22) */
     const isBot = navigator.webdriver || /bot|crawl|spider|slurp|facebookexternalhit|kakaotalk-scrap|Yeti|preview|headless|lighthouse/i.test(navigator.userAgent);
     const trk = (n: string, p: Record<string, unknown> = {}) => { if (!isBot) track(n, p); };
     trk("home_view");
+    /* ── 고민 주제 롤링: 3초마다 한 줄씩 위로, 끝에 가면 소리 없이 처음으로 (2026-10-11) ── */
+    const tkBox = document.getElementById("topics"), tkUl = document.getElementById("topics-ul") as HTMLElement | null;
+    let tkTimer: ReturnType<typeof setInterval> | null = null;
+    if (tkBox && tkUl && tkBox.dataset.roll === "1") {
+      const n = parseInt(tkBox.dataset.n || "0", 10), H = 36; let i = 0, hold = false;
+      const step = () => {
+        if (hold || document.visibilityState === "hidden") return;
+        i += 1; tkUl.classList.add("anim"); tkUl.style.transform = `translateY(-${i * H}px)`;
+        if (i >= n) setTimeout(() => { tkUl.classList.remove("anim"); i = 0; tkUl.style.transform = "translateY(0)"; }, 460);
+      };
+      tkTimer = setInterval(step, 3000);
+      const pause = () => { hold = true; }, go = () => { hold = false; };
+      tkBox.addEventListener("touchstart", pause, { passive: true }); tkBox.addEventListener("touchend", go);
+      tkBox.addEventListener("mouseenter", pause); tkBox.addEventListener("mouseleave", go);
+      tkUl.addEventListener("click", (e) => {
+        const a = (e.target as HTMLElement).closest("a[data-topic]") as HTMLElement | null;
+        if (a) trk("home_topic_click", { slug: a.dataset.topic, pos: i });
+      });
+    }
     /* 스크롤 깊이(25·50·75·100%)·체류 시간 — 홈 이탈 73%가 어디서 나가는지 보기 위해 */
     const marks = [25, 50, 75, 100]; const sent: Record<number, boolean> = {};
     const onScroll = () => {
@@ -2945,6 +3001,11 @@ export default function HomeV6(
         const v = dict[k];
         el.setAttribute("data-d", (v !== undefined && v !== "") ? v : (dOrigin.get(el) || ""));
       });
+      /* 고민 주제 롤링 — data-l-<lang> 문구로 바꿔 끼운다 (2026-10-11) */
+      root.querySelectorAll<HTMLElement>("#topics [data-l-ko]").forEach(el => {
+        const v = el.getAttribute("data-l-" + LANG) || el.getAttribute("data-l-ko") || "";
+        el.textContent = v; el.setAttribute("lang", LANG);
+      });
       const now = document.getElementById("langnow");
       if (now) now.textContent = LANGNAME[LANG];
       document.documentElement.lang = LANG;
@@ -3159,6 +3220,7 @@ export default function HomeV6(
       document.removeEventListener("click", onDocClick);
       window.removeEventListener("pwa-ready", onPwaReady);
       dailyWords.destroy();
+      if (tkTimer) clearInterval(tkTimer);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pagehide", dwell);
       document.removeEventListener("visibilitychange", onVis);
@@ -3179,6 +3241,7 @@ export default function HomeV6(
             /* 촌철활인이 있으면 상단 VOC 문구는 숨겨 두고(한국어 외 언어에서 다시 보임) 그 자리에 한마디를 넣는다 */
             .replace('<div class="voc top" data-i="voc">', words && words.length ? '<div class="voc top" data-i="voc" hidden>' : '<div class="voc top" data-i="voc">')
             .replace("<!--WORDS_SLOT-->", wordsBlockHtml(words))
+            .replace("<!--TOPICS_SLOT-->", topicsBlockHtml(topics))
             .replace("<!--LEARN_ROW-->", learnRowHtml(learn))
             .replace("<!--LEARN_SLOT-->", learnBlockHtml(learn))
             .replace("<!--REVIEWS_SLOT-->", reviewsBlockHtml(reviews)),

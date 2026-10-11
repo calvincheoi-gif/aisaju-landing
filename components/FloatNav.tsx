@@ -17,7 +17,7 @@ export default function FloatNav() {
   if (HIDE(pathname)) return null;
 
   const inPost = pathname.startsWith("/learn/");
-  const fallback = inPost ? "/learn" : "/";
+  const fallback = inPost ? "/learn" : pathname.startsWith("/q/") ? "/q" : "/";
 
   const goBack = () => {
     let sameSite = false;

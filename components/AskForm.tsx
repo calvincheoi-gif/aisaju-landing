@@ -53,6 +53,14 @@ export default function AskForm() {
   const [err, setErr] = useState<string | null>(null);
   const [done, setDone] = useState<{ refNo: string; remaining: number } | null>(null);
 
+  /* 고민 랜딩(/q/[slug])에서 오면 질문 칸을 미리 채운다 — ?q=…&topic=… (2026-10-11) */
+  useEffect(() => {
+    try {
+      const pre = new URLSearchParams(window.location.search).get("q");
+      if (pre) setQuestion((cur) => cur || pre.slice(0, Q_MAX));
+    } catch {}
+  }, []);
+
   useEffect(() => {
     fetch("/api/ask", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))

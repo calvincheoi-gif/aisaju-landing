@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getPublishedLearnPosts } from "@/lib/learn-posts";
+import { LIVE_WORRIES } from "@/lib/worries/data";
 
 const BASE_URL = "https://aisajulab.com";
 
@@ -29,6 +30,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/legal/`, changeFrequency: "yearly" as const, priority: 0.3 },
   ].map((p) => ({ ...p, lastModified: now }));
 
+  /* 고민 랜딩 — lib/worries/data.ts 에서 live 인 것만 (2026-10-11) */
+  const worryPages: MetadataRoute.Sitemap = [
+    { url: `${BASE_URL}/q`, lastModified: now, changeFrequency: "weekly" as const, priority: 0.8 },
+    ...LIVE_WORRIES.map((w) => ({ url: `${BASE_URL}/q/${w.slug}`, lastModified: now, changeFrequency: "monthly" as const, priority: 0.7 })),
+  ];
+
   const posts = await getPublishedLearnPosts();
   const learnPages: MetadataRoute.Sitemap = posts.map((post) => ({
     url: `${BASE_URL}/learn/${post.slug}`,
@@ -37,6 +44,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...learnPages];
+  return [...staticPages, ...worryPages, ...learnPages];
 }
 
