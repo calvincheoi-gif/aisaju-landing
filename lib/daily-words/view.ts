@@ -39,7 +39,7 @@ export function wordsBlockHtml(words: DailyWord[] | null | undefined): string {
    문구 글자 크기는 client.ts 의 fitWords() 가 칸에 꽉 차도록 12~19px 사이에서 자동 조절 */
 export const WORDS_CSS = `
 .v6 .voc.top[hidden],.v6 .dw[hidden]{display:none!important}
-.dw{position:relative;padding:9px var(--pad) 10px;
+.dw{position:relative;padding:7px var(--pad) 7px;
   background:linear-gradient(135deg,#15224A 0%,#1C3170 100%);color:#fff;
   box-shadow:inset 0 -1px 0 rgba(255,255,255,.06)}
 .dw-dots{position:absolute;top:11px;right:var(--pad);display:flex;gap:6px;z-index:2}
@@ -49,7 +49,7 @@ export const WORDS_CSS = `
 .dw-dot[data-el=wood].on{background:#4CD787}.dw-dot[data-el=fire].on{background:#FF6B5E}
 .dw-dot[data-el=earth].on{background:#E0B060}.dw-dot[data-el=metal].on{background:#D8E1EE}
 .dw-dot[data-el=water].on{background:#5AA2FF}
-.dw-stage{position:relative;height:74px}
+.dw-stage{position:relative;height:68px}
 .dw-s{position:absolute;inset:0;opacity:0;transition:opacity .45s ease;pointer-events:none}
 .dw-s.on{opacity:1;pointer-events:auto}
 .dw-meta{display:flex;align-items:center;gap:6px;height:18px;padding-right:74px;white-space:nowrap;overflow:hidden;font-size:11px}
@@ -61,7 +61,7 @@ export const WORDS_CSS = `
 .dw-s[data-el=earth] .dw-el{background:#A87B3E}.dw-s[data-el=metal] .dw-el{background:#6F7E95}.dw-s[data-el=water] .dw-el{background:#2F6FD6}
 .dw-me{display:none;padding:0 7px;border-radius:999px;background:#FFD66B;color:#15224A;font-size:10px;font-weight:900;line-height:17px}
 .dw-s.me .dw-me{display:inline-block}
-.dw-txt{margin-top:5px;height:51px;overflow:hidden;font-size:15px;line-height:1.3;
+.dw-txt{margin-top:4px;height:46px;overflow:hidden;font-size:15px;line-height:1.3;
   color:#fff;font-weight:800;letter-spacing:-.025em;word-break:keep-all;overflow-wrap:anywhere}
 .dw-s.me .dw-q{color:#FFE08A}
 .dw-q.en{font-style:italic;letter-spacing:-.01em}

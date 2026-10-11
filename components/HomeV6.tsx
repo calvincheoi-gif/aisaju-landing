@@ -64,44 +64,45 @@ body{
 .toast.on{opacity:1;transform:translate(-50%,0)}
 
 /* ── 히어로 (1화면 안에 CTA까지) ── */
-.hero{position:relative;padding:14px var(--pad) 20px;text-align:center;overflow:hidden;
+.hero{position:relative;padding:8px var(--pad) 14px;text-align:center;overflow:hidden;
   background:radial-gradient(120% 66% at 50% -14%,#fff 0%,#E9F1FF 44%,#F5F9FF 100%)}
 .hero .blob{position:absolute;border-radius:50%;pointer-events:none}
 .hero .b1{width:130px;height:130px;background:rgba(96,165,250,.15);top:-28px;left:-42px}
 .hero .b2{width:96px;height:96px;background:rgba(37,99,235,.09);top:130px;right:-36px}
 
 .badges{position:relative;display:flex;gap:6px;justify-content:center;margin-bottom:11px;flex-wrap:wrap}
-.bdg{font-size:11.5px;font-weight:800;letter-spacing:-.02em;padding:6px 12px;border-radius:999px;color:#fff}
+.bdg{font-size:11.5px;font-weight:700;letter-spacing:-.02em;padding:5px 12px;border-radius:999px;color:#fff;line-height:1.3}
 .bdg.free{background:linear-gradient(135deg,#3B82F6,#1D4ED8);box-shadow:0 5px 14px rgba(37,99,235,.26)}
 .bdg.mbti{background:var(--navy)}
 /* 2026-10 첫 화면: 테두리형(조건) + 주황 채움형(남은 자리) — 채움 파랑은 CTA 버튼 하나에만 남긴다 */
-.bdg.outline{background:#fff;color:var(--navy);border:1.5px solid var(--navy);padding:4.5px 12px}
-.bdg.seats{background:#E8542E;box-shadow:0 4px 12px rgba(232,84,46,.28)}
-.bdg.seats.full{background:#94A3B8;box-shadow:none}
-.badges{margin:4px 0 10px}
+/* outline 은 Tailwind 유틸리티 이름과 겹쳐 3px 테두리가 생기므로 명시적으로 끈다 */
+.bdg.outline{outline:0;background:#fff;color:#2B3A66;border:1px solid #E3EAF6;box-shadow:0 1px 2px rgba(18,34,74,.05),0 3px 10px rgba(18,34,74,.05)}
+.bdg.seats{background:rgba(255,224,138,.55);color:#7A4F00;border:1px solid rgba(245,185,33,.35);box-shadow:none;backdrop-filter:blur(4px)}
+.bdg.seats.full{background:#EEF2F7;color:#64748B;border-color:#E3EAF6}
+.badges{margin:2px 0 8px}
 
-h1.hook{position:relative;margin:4px 0 7px;font-size:26px;line-height:1.28;letter-spacing:-.05em;font-weight:900;color:var(--navy)}
+h1.hook{position:relative;margin:2px 0 8px;font-size:22.5px;line-height:1.27;letter-spacing:-.045em;font-weight:800;color:#1E2A55}
 h1.hook b{color:var(--blue)}
-h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent 56%,#FFE08A 56%);padding:0 3px}
+h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent 58%,rgba(255,224,138,.75) 58%);padding:0 3px}
 .sub{position:relative;margin:0 0 10px;font-size:13.5px;line-height:1.5;color:#4C5570;font-weight:500}
 
 /* ── 고민 주제 롤링: 2줄 창, 한 줄씩 위로 (2026-10-11) ── */
-.topics{position:relative;margin:2px 0 10px;height:72px;overflow:hidden;border-radius:14px;
+.topics{position:relative;margin:0 0 8px;height:68px;overflow:hidden;border-radius:14px;
   background:rgba(255,255,255,.78);border:1px solid rgba(37,99,235,.16);box-shadow:0 4px 14px rgba(18,34,74,.06);text-align:left}
-.topics:after{content:"";position:absolute;left:12px;right:12px;top:36px;height:1px;background:rgba(37,99,235,.12);pointer-events:none}
+.topics:after{content:"";position:absolute;left:12px;right:12px;top:34px;height:1px;background:rgba(37,99,235,.12);pointer-events:none}
 .topics ul{list-style:none;margin:0;padding:0;will-change:transform}
 .topics ul.anim{transition:transform .42s cubic-bezier(.4,0,.2,1)}
-.topics li{height:36px}
-.topics a{display:flex;align-items:center;gap:7px;height:36px;padding:0 12px;text-decoration:none;color:var(--navy)}
+.topics li{height:34px}
+.topics a{display:flex;align-items:center;gap:7px;height:34px;padding:0 12px;text-decoration:none;color:var(--navy)}
 .topics a:active{background:rgba(37,99,235,.06)}
 .topics .tk{flex:none;font-size:12px;font-weight:900;color:var(--blue)}
 .topics .tc{flex:none;font-size:11.5px;font-weight:800;color:#fff;background:var(--navy);padding:2px 7px;border-radius:999px;letter-spacing:-.02em}
-.topics .tt{flex:1;min-width:0;font-size:14.5px;font-weight:800;letter-spacing:-.035em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topics .tt{flex:1;min-width:0;font-size:14px;font-weight:800;letter-spacing:-.04em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topics .ta{flex:none;font-size:14px;font-weight:900;color:var(--blue)}
 .topics .tt[lang="fr"],.topics .tt[lang="en"]{font-size:13.5px;letter-spacing:-.02em}
 
 /* ── 무료 1문 1답 CTA — 첫 화면의 유일한 채움 버튼. 밝고 살짝 투명한 청색 ── */
-.askbtn{position:relative;display:block;width:100%;height:46px;border-radius:16px;cursor:pointer;font-family:inherit;
+.askbtn{position:relative;display:block;width:100%;height:44px;border-radius:14px;cursor:pointer;font-family:inherit;
   border:1px solid rgba(255,255,255,.7);color:#fff;font-size:18px;font-weight:900;letter-spacing:-.03em;
   background:linear-gradient(180deg,rgba(104,150,255,.96) 0%,rgba(59,108,245,.96) 100%);
   box-shadow:0 10px 22px rgba(59,108,245,.30),inset 0 1px 0 rgba(255,255,255,.45)}
@@ -109,10 +110,10 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 .askbtn.full{background:linear-gradient(180deg,#B7C4DE,#94A3B8);box-shadow:none}
 
 /* ── 데일리 카드: 오늘의 기운 + 읽을거리 ── */
-.daily{position:relative;margin:18px 0 0;background:#fff;border-radius:16px;text-align:left;
+.daily{position:relative;margin:10px 0 0;background:#fff;border-radius:16px;text-align:left;
   box-shadow:0 4px 14px rgba(30,42,85,.06);overflow:hidden}
-.daily .todaybar{margin:0;padding:6px 14px;min-height:42px}
-.daily .lrow{display:flex;align-items:center;gap:10px;padding:6px 14px;min-height:42px;
+.daily .todaybar{margin:0;padding:5px 14px;min-height:40px}
+.daily .lrow{display:flex;align-items:center;gap:10px;padding:5px 14px;min-height:40px;
   border-top:1px solid #EEF1F7;text-decoration:none;color:inherit}
 .daily .lr-tx{flex:1;min-width:0;contain:inline-size}
 .daily .lr-lab{display:block;font-size:11px;font-weight:700;color:#5B6480;letter-spacing:-.02em;
@@ -122,39 +123,39 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 .daily .lr-go{flex:0 0 auto;font-size:12px;font-weight:800;color:var(--blue);white-space:nowrap}
 
 /* ── 소장 한 줄 ── */
-.owner{position:relative;display:flex;align-items:center;gap:12px;width:100%;margin:16px 0 0;padding:10px 14px;
+.owner{position:relative;display:flex;align-items:center;gap:12px;width:100%;margin:10px 0 0;padding:7px 14px;
   border:0;border-radius:16px;background:#fff;box-shadow:0 4px 14px rgba(30,42,85,.06);
   text-align:left;cursor:pointer;font-family:inherit;color:inherit}
-.owner img{width:50px;height:50px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);flex:0 0 50px}
+.owner img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);flex:0 0 50px}
 .owner .ow-tx{flex:1;min-width:0;contain:inline-size}
 .owner .ow-n{display:block;font-size:14px;font-weight:800;color:var(--ink);letter-spacing:-.03em}
 .owner .ow-l{display:block;margin-top:1px;font-size:12px;color:#4C5570;line-height:1.4;letter-spacing:-.02em}
 .owner .ow-star{color:#E3A800;font-weight:800}
 
 /* ── (자연) 오행 머리 + 버튼 ── */
-.ohhead{position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin:20px 0 9px;text-align:left}
-.ohttl{margin:0;font-size:17px;font-weight:900;line-height:1.3;letter-spacing:-.04em;color:var(--navy)}
+.ohhead{position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin:10px 0 7px;text-align:left}
+.ohttl{margin:0;font-size:16px;font-weight:900;line-height:1.3;letter-spacing:-.04em;color:var(--navy)}
 .ohttl b{color:var(--blue)}
 .ohttl .mark{display:inline-block;background:linear-gradient(180deg,transparent 56%,#FFE08A 56%);padding:0 2px}
 .ohmeta{flex:0 0 auto;font-size:11px;font-weight:700;color:#5B6480;white-space:nowrap;padding-bottom:2px}
-.btn-oh{position:relative;display:block;width:100%;height:44px;margin-top:4px;border-radius:14px;cursor:pointer;font-family:inherit;
+.btn-oh{position:relative;display:block;width:100%;height:42px;margin-top:2px;border-radius:14px;cursor:pointer;font-family:inherit;
   border:1px solid #fff;background:rgba(104,150,255,.16);color:var(--navy);font-size:15px;font-weight:800;letter-spacing:-.03em;
   box-shadow:0 2px 8px rgba(59,108,245,.10)}
 .btn-oh:active{transform:translateY(1px)}
 .trustline{position:relative;margin-top:8px;font-size:11px;font-weight:600;color:#5B6480;letter-spacing:-.02em}
 
 /* 오행 순환 스트립 */
-.ohwrap{position:relative;margin-bottom:12px}
+.ohwrap{position:relative;margin-bottom:6px}
 .ohstrip{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .oh{
-  background:#fff;border:1px solid var(--line);border-radius:14px;padding:9px 3px 8px;
+  background:#fff;border:1px solid #E3EAF6;border-radius:14px;padding:7px 3px 6px;
   display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;
   box-shadow:0 2px 8px rgba(20,50,110,.06);
   animation:cyc 6s linear infinite;
 }
 .oh .han{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;
   font-size:10.5px;font-weight:800;color:#fff;letter-spacing:-.04em}
-.oh .sym{font-size:27px;line-height:1.1;margin:1px 0}
+.oh .sym{font-size:24px;line-height:1.1;margin:1px 0}
 .oh .nm{font-size:11.5px;font-weight:800;color:var(--navy);letter-spacing:-.04em}
 .oh .kw{font-size:9.5px;font-weight:600;color:var(--gray);letter-spacing:-.04em}
 .oh:nth-child(1){animation-delay:0s}
@@ -172,7 +173,7 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 .ohwrap.paused .oh{animation-play-state:paused}
 .oh.on{background:var(--blue-p)!important;border-color:#9FC5FF!important;transform:translateY(-5px)!important;
   box-shadow:0 10px 20px rgba(37,99,235,.24)!important}
-.cycnote{margin-top:7px;font-size:11px;font-weight:700;color:var(--blue-d);letter-spacing:-.02em;
+.cycnote{margin-top:5px;font-size:11px;font-weight:700;color:var(--blue-d);letter-spacing:-.02em;
   display:flex;align-items:center;justify-content:center;gap:5px;min-height:17px}
 .cycnote .arrow{color:#9FC5FF}
 .cycnote.hint{color:var(--crim)}
@@ -279,8 +280,8 @@ html:not([lang="ko"]) .biz{overflow-wrap:anywhere}
   letter-spacing:-.03em;line-height:1.3;margin-top:1px;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .todaybar .tb-go{flex:0 0 auto;padding:9px 15px;border-radius:999px;
-  background:#E8542E;color:#fff;font-size:12px;font-weight:800;padding:6px 12px;
-  letter-spacing:-.03em;white-space:nowrap;box-shadow:0 4px 12px rgba(232,84,46,.28)}
+  background:#F06A3F;color:#fff;font-size:12px;font-weight:800;padding:6px 12px;
+  letter-spacing:-.03em;white-space:nowrap;box-shadow:0 3px 10px rgba(240,106,63,.22)}
 @media(max-width:360px){.todaybar{gap:8px}
   .todaybar .tb-lab{font-size:10.8px}.todaybar .tb-han{font-size:13px}
   .todaybar .tb-go{padding:8px 12px;font-size:11px}}
@@ -527,7 +528,7 @@ footer b{color:#fff;font-size:14px;font-weight:800;letter-spacing:-.04em}
 .instsheet .is-x{margin-top:14px;width:100%;height:44px;border-radius:13px;border:0;background:var(--navy);color:#fff;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer}
 .util .chip{cursor:pointer}
 .util .burger{cursor:pointer}
-.voc{font-size:11px;line-height:1.65;color:#7A8AA3;text-align:center;padding:9px var(--pad);
+.voc{font-size:11px;line-height:1.6;color:#7A8AA3;text-align:center;padding:7px var(--pad);
   background:#F4F8FD;border-top:1px solid #E9F0F9;border-bottom:1px solid #E9F0F9}
 .voc.bot{background:none;border:0;color:#8C9AAF;padding:16px var(--pad) 2px}
 footer .biz{display:inline-block;color:rgba(255,255,255,.55);font-size:10.6px;line-height:1.85}
@@ -2201,7 +2202,7 @@ export default function HomeV6(
     const tkBox = document.getElementById("topics"), tkUl = document.getElementById("topics-ul") as HTMLElement | null;
     let tkTimer: ReturnType<typeof setInterval> | null = null;
     if (tkBox && tkUl && tkBox.dataset.roll === "1") {
-      const n = parseInt(tkBox.dataset.n || "0", 10), H = 36; let i = 0, hold = false;
+      const n = parseInt(tkBox.dataset.n || "0", 10), H = 34; let i = 0, hold = false;
       const step = () => {
         if (hold || document.visibilityState === "hidden") return;
         i += 1; tkUl.classList.add("anim"); tkUl.style.transform = `translateY(-${i * H}px)`;
