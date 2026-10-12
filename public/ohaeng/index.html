@@ -602,6 +602,18 @@ h1.big{font-size:41.1px;margin-bottom:6px}
 .xs b{display:block;font-size:15.6px;font-weight:900;letter-spacing:-.02em}
 .xs span{display:block;font-size:12.4px;margin-top:3px;opacity:.93;line-height:1.5}
 .xs.deep{background:#fff;border:1.5px solid #BFD5F5;color:#1F3D66}
+/* ═══ 결과 → 샘플 리포트 다리 (2026-10-12) ═══
+   결과를 본 73대 중 사이트 상담·리포트로 넘어간 기기가 3대뿐이었다(8/16~10/11).
+   결제 시트(990원·9,900원)는 화면 맨 아래에 있고 돈 얘기부터 나와 문턱이 높다.
+   그래서 결과 바로 아래에 "돈 안 드는 다음 한 걸음"(샘플 20장 미리보기)을 하나 둔다. */
+.bridge{display:flex;align-items:center;gap:12px;margin-top:14px;padding:14px 15px;border-radius:16px;text-decoration:none;
+  background:linear-gradient(135deg,#16233A,#1F3D66);color:#fff;border:1.5px solid #2B4C7E;box-shadow:0 6px 18px rgba(20,50,110,.16)}
+.bridge:active{transform:translateY(1px)}
+.bridge .br-i{flex:0 0 auto;width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:21px}
+.bridge .br-t{flex:1 1 auto;min-width:0;text-align:left}
+.bridge b{display:block;font-size:15.2px;font-weight:900;letter-spacing:-.02em;color:#FFE8A3}
+.bridge small{display:block;font-size:12.2px;margin-top:3px;opacity:.9;line-height:1.5}
+.bridge .br-a{flex:0 0 auto;font-size:20px;opacity:.85}
 .xs.deep span{color:#5B7292;opacity:1}
 .paym{display:none;position:fixed;inset:0;background:rgba(10,25,60,.45);z-index:999;align-items:flex-end;justify-content:center}
 .paym.on{display:flex}
@@ -1054,6 +1066,14 @@ body.skin-b .emb{filter:drop-shadow(0 8px 18px rgba(30,50,110,.22))}
     <div class="bal-t"><div class="bal-f" id="balf1"></div></div>
     <p style="font-size:15.2px;color:var(--ink2);line-height:1.68" id="bald1"></p>
   </div>
+<!-- 샘플 리포트 다리 — 결과 직후, 결제 전에 "돈 안 드는 다음 한 걸음" (2026-10-12)
+     홈의 20장 미리보기(/?sample=a)를 바로 연다. utm 은 홈 계측(home_view·sample_open)에 그대로 실린다. -->
+<a class="bridge" id="bridge1" href="https://aisajulab.com/?sample=a&utm_source=ohaeng&utm_medium=result_bridge"
+   onclick="window.AJ&&AJ.track('svc_click',{props:{from:'ohaeng_result1',to:'sample'}})">
+  <span class="br-i">📘</span>
+  <span class="br-t"><b data-i="brB"></b><small data-i="brD"></small></span>
+  <span class="br-a">›</span>
+</a>
 <!-- 결과 평가 — 유형 문구를 고객 반응으로 다듬기 위한 한 줄 (2026-09-18) -->
 <div class="card rate" id="rate1">
   <div class="rate-q" id="rateQ">이 결과, 얼마나 맞나요?</div>
@@ -1125,6 +1145,13 @@ body.skin-b .emb{filter:drop-shadow(0 8px 18px rgba(30,50,110,.22))}
   <div class="card"><div class="bars" id="b2"></div></div>
   <div class="sec-t" data-i="gapT"></div>
   <div class="card" id="gap2"></div>
+<!-- 샘플 리포트 다리 (2026-10-12) — 1단계 결과와 같은 것. 영점조정까지 마친 사람에게도 결제 전에 한 번 더 보인다 -->
+<a class="bridge" id="bridge2" href="https://aisajulab.com/?sample=a&utm_source=ohaeng&utm_medium=result_bridge"
+   onclick="window.AJ&&AJ.track('svc_click',{props:{from:'ohaeng_result2',to:'sample'}})">
+  <span class="br-i">📘</span>
+  <span class="br-t"><b data-i="brB"></b><small data-i="brD"></small></span>
+  <span class="br-a">›</span>
+</a>
   <div class="xsell">
     <div class="xs-t" data-i="xsT"></div>
     <button class="xs" onclick="openPay('report')"><b data-i="xsRep"></b><span data-i="xsRepD"></span></button>
@@ -1962,7 +1989,7 @@ ko:{
   wpNo:'배경화면 생성에 실패했습니다.',
   calibNote:'전문가 상담은 사주팔자의 \'영점 조정\' 과정을 거치나 AI가 제시한 솔루션은 그 과정을 거치지 않으므로, 나에게 맞는 솔루션을 직접 선택·활용해 주세요.',
   lockT:'여기까지 무료입니다', lockBtn:'990원으로 전부 받기',
-  lockD:'읽는 것은 무료, <b class="hl">갖는 것</b>은 프리미엄입니다. 정가 2,900원 · 9월 런칭가 990원',
+  lockD:'읽는 것은 무료, <b class="hl">갖는 것</b>은 프리미엄입니다. 정가 2,900원 · 런칭가 990원',
   lk1:'PDF 리포트 — 표지·목차 갖춘 정식 조판', lk2:'내 화면 크기에 맞춘 폰 배경화면',
   lk3:'30일 실천 플랜', lk4:'자기점검 워크시트',
  rp5:'오행 다섯 기운 상세', rp6:'관계와 균형 심화', rp7:'30일 실천 플랜', rp8:'자기점검 워크시트',
@@ -2467,7 +2494,7 @@ Object.assign(L.ja, {
  askSend:'質問をコピーしてチャンネルを開く',
  /* ── 프리미엄 ── */
  lockT:'ここまでが無料です', lockBtn:'990ウォンですべて受け取る',
- lockD:'読むのは無料、<b class="hl">手元に残す</b>のはプレミアムです。通常価格2,900ウォン · 9月ローンチ価格990ウォン',
+ lockD:'読むのは無料、<b class="hl">手元に残す</b>のはプレミアムです。通常価格2,900ウォン · ローンチ価格990ウォン',
  lk1:'PDFレポート — 表紙・目次を備えた正式な組版',
  lk2:'自分の画面サイズに合わせたスマホ壁紙',
  lk3:'30日の実践プラン', lk4:'セルフチェック ワークシート',
@@ -2711,13 +2738,14 @@ Object.assign(L.fr, {
    결제가 일어나는 화면이라 우선순위를 가장 높게 두었다.                */
 Object.assign(L.ko, {
  xsT:'📌 이 결과, 더 깊게 볼까요?',
- xsRep:'AI 오행 해설 · 990원', xsRepD:'내 고민 반영 맞춤 해석 · 당일 카톡 발송 · 9월 런칭가(정가 2,900원)',
- xsCon:'개인 종합 리포트 20장 · 9,900원', xsConD:'전문가 직접 작성 · 오픈기념 9/30까지(정가 2만원) · 상담 포함은 5만원부터',
- payRepT:'AI 오행 해설', payRepP:'990원 · 9월 런칭가 (정가 2,900원)',
+ brB:'내 사주 원국으로 보면 어떨까요?', brD:'전문가 리포트 20장 샘플 미리보기 · 무료',
+ xsRep:'AI 오행 해설 · 990원', xsRepD:'내 고민 반영 맞춤 해석 · 당일 카톡 발송 · 런칭가(정가 2,900원)',
+ xsCon:'개인 종합 리포트 20장 · 9,900원', xsConD:'전문가 직접 작성 · 오픈 특가(정가 2만원) · 상담 포함은 5만원부터',
+ payRepT:'AI 오행 해설', payRepP:'990원 · 런칭가 (정가 2,900원)',
  payRep1:'아래 노란 버튼으로 <b>990원 결제</b> (금액 자동 입력)',
  payRep2:'송금 완료 화면 캡처 + <b>내 결과 카드</b>를 카톡으로 전송',
  payRep3:'<b>당일</b> 카톡으로 리포트를 받아보세요',
- payConT:'개인 종합 리포트 20장', payConP:'9,900원 · 오픈기념 9/30까지 (정가 20,000원)',
+ payConT:'개인 종합 리포트 20장', payConP:'9,900원 · 오픈 특가 (정가 20,000원)',
  payCon1:'아래 버튼으로 <b>신청서</b>를 먼저 작성하세요 (이름·생년월일시·고민)',
  payCon2:'신청 완료 화면의 안내대로 <b>9,900원</b>을 송금하고, 접수번호를 카톡으로 보내 주세요',
  payCon3:'<b>3일 내</b> 리포트 20장을 그 카톡 대화창으로 받아보세요',
@@ -2748,9 +2776,10 @@ Object.assign(L.ko, {
 
 Object.assign(L.en, {
  xsT:'📌 Want to go deeper?',
- xsRep:'AI element reading · 990 KRW', xsRepD:'Tailored to your question · sent same day by KakaoTalk · September launch price (list 2,900 KRW)',
- xsCon:'Full 20-page report · 9,900 KRW', xsConD:'Written by the expert · opening offer until Sep 30 · with consultation from 50,000 KRW',
- payRepT:'AI element reading', payRepP:'990 KRW · September launch price (list 2,900 KRW)',
+ brB:'What would your full birth chart say?', brD:'Preview a 20-page expert report · free · no sign-up',
+ xsRep:'AI element reading · 990 KRW', xsRepD:'Tailored to your question · sent same day by KakaoTalk · launch price (list 2,900 KRW)',
+ xsCon:'Full 20-page report · 9,900 KRW', xsConD:'Written by the expert · opening offer · with consultation from 50,000 KRW',
+ payRepT:'AI element reading', payRepP:'990 KRW · launch price (list 2,900 KRW)',
  payRep1:'Tap the yellow button below to <b>pay 990 KRW</b> (amount filled in automatically)',
  payRep2:'Send a screenshot of the completed transfer plus <b>your result card</b> by KakaoTalk',
  payRep3:'Your report arrives by KakaoTalk <b>the same day</b>',
@@ -2785,13 +2814,13 @@ Object.assign(L.en, {
 
 Object.assign(L.ja, {
  xsT:'📌 この結果、もっと深く見てみますか?',
- xsRep:'AI 五行解説 · 990ウォン', xsRepD:'悩みを反映した個別解釈 · 当日カカオトークで送付 · 9月ローンチ価格(通常2,900ウォン)',
- xsCon:'個人総合レポート20枚 · 9,900ウォン', xsConD:'専門家が直接作成 · オープン記念 9/30まで · 相談付きは5万ウォンから',
- payRepT:'AI 五行解説', payRepP:'990ウォン · 9月ローンチ価格 (通常2,900ウォン)',
+ xsRep:'AI 五行解説 · 990ウォン', xsRepD:'悩みを反映した個別解釈 · 当日カカオトークで送付 · ローンチ価格(通常2,900ウォン)',
+ xsCon:'個人総合レポート20枚 · 9,900ウォン', xsConD:'専門家が直接作成 · オープン記念価格 · 相談付きは5万ウォンから',
+ payRepT:'AI 五行解説', payRepP:'990ウォン · ローンチ価格 (通常2,900ウォン)',
  payRep1:'下の黄色いボタンから<b>990ウォンを決済</b>(金額は自動入力)',
  payRep2:'送金完了画面のスクリーンショットと<b>結果カード</b>をカカオトークで送信',
  payRep3:'<b>当日</b>カカオトークでレポートをお受け取りください',
- payConT:'個人総合レポート20枚', payConP:'9,900ウォン · オープン記念 9/30まで',
+ payConT:'個人総合レポート20枚', payConP:'9,900ウォン · オープン記念価格',
  payCon1:'まず下のボタンから<b>申込フォーム</b>を入力（お名前・生年月日時・ご相談内容）',
  payCon2:'完了画面の案内に沿って<b>9,900ウォン</b>を送金し、受付番号をカカオトークで送信',
  payCon3:'<b>3日以内</b>にレポート20枚をそのトークでお届けします',
@@ -2822,8 +2851,8 @@ Object.assign(L.ja, {
 
 Object.assign(L.zh, {
  xsT:'📌 想把这个结果看得更深一些吗?',
- xsRep:'AI 五行解读 · 990韩元', xsRepD:'结合你的困惑定制解读 · 当天用 KakaoTalk 发送 · 9月上线价(原价2,900韩元)',
- xsCon:'个人综合报告20页 · 9,900韩元', xsConD:'专家亲自撰写 · 开业纪念至9/30 · 含咨询5万韩元起',
+ xsRep:'AI 五行解读 · 990韩元', xsRepD:'结合你的困惑定制解读 · 当天用 KakaoTalk 发送 · 上线价(原价2,900韩元)',
+ xsCon:'个人综合报告20页 · 9,900韩元', xsConD:'专家亲自撰写 · 开业纪念价 · 含咨询5万韩元起',
  payRepT:'AI 五行解读', payRepP:'990韩元 · 9月上线价 (原价2,900韩元)',
  payRep1:'点击下方黄色按钮<b>支付990韩元</b>(金额自动填入)',
  payRep2:'把转账完成的截图和<b>你的结果卡</b>用 KakaoTalk 发过来',
@@ -2859,13 +2888,13 @@ Object.assign(L.zh, {
 
 Object.assign(L.fr, {
  xsT:"📌 Envie d'aller plus loin ?",
- xsRep:'Lecture IA des cinq phases · 990 KRW', xsRepD:"Lecture adaptée à votre question · envoyée le jour même par KakaoTalk · prix de lancement de septembre (tarif normal 2 900 KRW)",
- xsCon:"Rapport complet 20 pages · 9 900 KRW", xsConD:"Rédigé par l'expert · offre d'ouverture jusqu'au 30 sept. · avec consultation dès 50 000 KRW",
- payRepT:'Lecture IA des cinq phases', payRepP:'990 KRW · prix de lancement de septembre (tarif normal 2 900 KRW)',
+ xsRep:'Lecture IA des cinq phases · 990 KRW', xsRepD:"Lecture adaptée à votre question · envoyée le jour même par KakaoTalk · prix de lancement (tarif normal 2 900 KRW)",
+ xsCon:"Rapport complet 20 pages · 9 900 KRW", xsConD:"Rédigé par l'expert · offre d'ouverture · avec consultation dès 50 000 KRW",
+ payRepT:'Lecture IA des cinq phases', payRepP:'990 KRW · prix de lancement (tarif normal 2 900 KRW)',
  payRep1:'Appuyez sur le bouton jaune ci-dessous pour <b>payer 990 KRW</b> (montant pré-rempli)',
  payRep2:"Envoyez par KakaoTalk la capture du transfert et <b>votre carte de résultat</b>",
  payRep3:'Vous recevez le rapport par KakaoTalk <b>le jour même</b>',
- payConT:'Rapport complet 20 pages', payConP:"9 900 KRW · offre d'ouverture jusqu'au 30 sept.",
+ payConT:'Rapport complet 20 pages', payConP:"9 900 KRW · offre d'ouverture",
  payCon1:'Sur le bouton jaune ci-dessous, saisissez <b>9 900 KRW</b> puis envoyez',
  payCon2:"Envoyez par KakaoTalk la capture du transfert et <b>votre carte de résultat</b>",
  payCon3:'<b>Sous 3 jours</b>, le rapport de 20 pages arrive par KakaoTalk',
