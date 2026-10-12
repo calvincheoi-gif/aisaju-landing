@@ -2974,6 +2974,17 @@ export default function HomeV6(
     };
     window.addEventListener("keydown", svKey);
 
+    /* 바깥에서 「샘플 리포트 보기」로 바로 들어오는 길 (2026-10-12)
+       오행 앱 결과 화면의 다리(/?sample=a&utm_source=ohaeng)가 쓴다.
+       오행 완료자 73대 중 사이트 리포트·상담까지 간 기기가 3대뿐이라, 결제 전에 돈 안 드는
+       한 걸음(20장 미리보기)을 먼저 보여 주려는 것. 주소의 utm 은 track() 이 그대로 집계한다. */
+    try {
+      const qsmp = new URLSearchParams(window.location.search).get("sample");
+      if (qsmp && SMP[qsmp]) {
+        window.setTimeout(() => svOpen(qsmp), 350);
+      }
+    } catch {}
+
     /* 손가락으로 넘기기 */
     let tx = 0, ty = 0;
     const stage = document.getElementById("sv-stage");
