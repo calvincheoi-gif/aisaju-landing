@@ -33,7 +33,7 @@ export default function WorryLanding({ w }: { w: Worry }) {
 
       {!res && (
         <p className="mt-3 text-center text-[12.5px] text-[#64748B]">
-          체크 없이 바로 묻고 싶다면?{" "}
+          체크는 건너뛰고 바로 묻고 싶다면?{" "}
           <a href="#next" onClick={() => track("q_skip", { slug: w.slug })} className="font-bold text-[#2563EB] underline underline-offset-2">
             무료 1문 1답으로
           </a>

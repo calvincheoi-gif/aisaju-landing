@@ -5,8 +5,9 @@
  * data.ts 에 한 줄을 더하면 새 고민 페이지가 생긴다.
  * 원본 관리는 엑셀 「고민랜딩_데이터시트」 → data.ts 로 옮겨 적는다.
  *
- * 체크 3문항은 각 보기가 0·1·2점. 합계(0~6)로 결과 3유형(A·B·C)을 고른다.
- *   A: 0~2점 · B: 3~4점 · C: 5~6점  (경계는 RESULT_CUTS 에서 한 번에 조정)
+ * 체크 4문항은 각 보기가 0·1·2점. 합계(0~8)로 결과 3유형(A·B·C)을 고른다.
+ *   A: 0~3점 · B: 4~5점 · C: 6~8점  (경계는 RESULT_CUTS 에서 한 번에 조정)
+ * 내용 파일은 분야별로 data/<분야>.ts 에 두고 data.ts 가 모은다 (2026-10-12, v2.0)
  */
 
 export type WorryOption = { label: string; score: 0 | 1 | 2 };
@@ -42,8 +43,8 @@ export type Worry = {
   metaDesc: string;
   /** "이런 마음이죠?" 공감 3줄 */
   empathy: [string, string, string];
-  /** 30초 체크 3문항 */
-  questions: [WorryQuestion, WorryQuestion, WorryQuestion];
+  /** 30초 체크 4문항 */
+  questions: [WorryQuestion, WorryQuestion, WorryQuestion, WorryQuestion];
   results: { A: WorryResult; B: WorryResult; C: WorryResult };
   /** 「사주로 더 보면」 — 전문가가 1문 1답에서 무엇을 보는지 */
   sajuLens: string;
@@ -51,7 +52,7 @@ export type Worry = {
   askPrefill: string;
   /** 페이지별 추가 안내(선택) — 예: 궁합의 상대 정보 동의 문구 */
   note?: string;
-  /** 하단 「이런 고민도 있어요」 */
+  /** 하단 「이런 고민도 많이 봐요」 — 같은 분야의 다른 고민 3개 (slug) */
   related: string[];
   /** 게시 여부 — false 면 목록·사이트맵에서 빠지고 주소로도 열리지 않음 */
   live: boolean;
@@ -60,7 +61,7 @@ export type Worry = {
 export type ResultKey = "A" | "B" | "C";
 
 /** 합계 점수 → 결과 유형. 경계를 바꾸려면 여기만 고친다. */
-export const RESULT_CUTS = { A: 2, B: 4 } as const;
+export const RESULT_CUTS = { A: 3, B: 5 } as const;
 
 export function resultKey(total: number): ResultKey {
   if (total <= RESULT_CUTS.A) return "A";

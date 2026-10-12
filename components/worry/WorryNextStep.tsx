@@ -25,19 +25,19 @@ export default function WorryNextStep({ w, resultTag }: { w: Worry; resultTag?: 
   return (
     <section className="mx-[18px] mt-5 rounded-2xl border border-[#DCE7F8] bg-white p-5 text-center shadow-[0_6px_20px_rgba(18,34,74,.06)]">
       <div className="flex items-center justify-center gap-2">
-        <span className="rounded-full border-[1.5px] border-[#12224A] px-3 py-1 text-[12px] font-bold text-[#12224A]">선착순 Daily 3명 무료</span>
+        <span className="rounded-full border border-[#E3EAF6] bg-white px-3 py-1 text-[12px] font-bold text-[#2B3A66] shadow-[0_1px_2px_rgba(18,34,74,.05),0_3px_10px_rgba(18,34,74,.05)]">선착순 Daily 3명 무료</span>
         {left && (
-          <span className={`rounded-full px-3 py-1 text-[12px] font-bold text-white ${full ? "bg-[#94A3B8]" : "bg-[#E8542E]"}`}>
+          <span className={`rounded-full px-3 py-1 text-[12px] font-bold ${full ? "border border-[#E3EAF6] bg-[#EEF2F7] text-[#64748B]" : "border border-[#F5B921]/35 bg-[#FFE08A]/55 text-[#7A4F00]"}`}>
             {full ? "오늘 마감 · 내일 다시" : `오늘 남은 자리 ${left.remaining}/${left.cap}`}
           </span>
         )}
       </div>
       <h3 className="mt-3.5 text-[18px] font-black leading-snug text-[#12224A]">
-        내 생년월일시로,<br />이 고민에 대한 답을 받아 보세요
+        같은 고민도,<br />답은 사주마다 다릅니다
       </h3>
       <p className="mt-2 text-[13px] leading-relaxed text-[#64748B]">
-        질문은 이미 적어 두었어요. 생년월일만 넣으면 끝.<br />
-        최형철 소장이 <b className="text-[#12224A]">24시간 안에</b> 폰으로 보는 1~3매 리포트로 답합니다.
+        질문은 이미 적어 두었어요. <b className="text-[#12224A]">생년월일만 넣으면 끝.</b><br />
+        최형철 소장이 24시간 안에 폰으로 보는 1~3매 리포트로 답합니다.
       </p>
 
       <a

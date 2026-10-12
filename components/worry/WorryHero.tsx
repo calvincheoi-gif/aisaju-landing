@@ -16,7 +16,7 @@ export default function WorryHero({ w }: { w: Worry }) {
       <div className="mt-5 grid grid-cols-3 overflow-hidden rounded-2xl border border-[#DCE7F8] bg-white text-center">
         {[
           ["⏱", "30초 체크"],
-          ["✅", "3문항"],
+          ["✅", "4문항"],
           ["🔒", "가입 없이"],
         ].map(([ic, tx], i) => (
           <div key={tx} className={`py-2.5 ${i ? "border-l border-[#DCE7F8]" : ""}`}>

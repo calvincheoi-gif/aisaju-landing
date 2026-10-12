@@ -104,8 +104,8 @@ export default function AdminTopicsPage() {
     <main className="mx-auto max-w-3xl px-6 py-10">
       <h1 className="text-[22px] font-bold">홈 고민 주제 롤링</h1>
       <p className="mt-1 text-[13px] text-body">
-        홈 첫 화면 제목 아래에 <b>2줄씩</b> 보이며 3초마다 한 줄씩 위로 돕니다. 게시 중 {liveCount}개
-        {liveCount < 3 && " — 3개 이상이어야 돌아가고, 2개 이하면 고정으로 보입니다"}.
+        홈 첫 화면 제목 아래에 <b>3줄씩</b> 보이며 3초마다 한 줄씩 위로 돕니다. 게시 중 {liveCount}개
+        {liveCount < 4 && " — 4개 이상이어야 돌아가고, 3개 이하면 고정으로 보입니다"}.
       </p>
       {warn && <p className="mt-3 rounded-md bg-amber-50 p-3 text-[13px] text-amber-800">{warn}</p>}
 

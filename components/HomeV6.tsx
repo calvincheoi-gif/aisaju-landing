@@ -64,7 +64,7 @@ body{
 .toast.on{opacity:1;transform:translate(-50%,0)}
 
 /* ── 히어로 (1화면 안에 CTA까지) ── */
-.hero{position:relative;padding:8px var(--pad) 14px;text-align:center;overflow:hidden;
+.hero{position:relative;padding:6px var(--pad) 8px;text-align:center;overflow:hidden;
   background:radial-gradient(120% 66% at 50% -14%,#fff 0%,#E9F1FF 44%,#F5F9FF 100%)}
 .hero .blob{position:absolute;border-radius:50%;pointer-events:none}
 .hero .b1{width:130px;height:130px;background:rgba(96,165,250,.15);top:-28px;left:-42px}
@@ -81,19 +81,19 @@ body{
 .bdg.seats.full{background:#EEF2F7;color:#64748B;border-color:#E3EAF6}
 .badges{margin:2px 0 8px}
 
-h1.hook{position:relative;margin:2px 0 8px;font-size:22.5px;line-height:1.27;letter-spacing:-.045em;font-weight:800;color:#1E2A55}
+h1.hook{position:relative;margin:2px 0 6px;font-size:22.5px;line-height:1.27;letter-spacing:-.045em;font-weight:800;color:#1E2A55}
 h1.hook b{color:var(--blue)}
 h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent 58%,rgba(255,224,138,.75) 58%);padding:0 3px}
 .sub{position:relative;margin:0 0 10px;font-size:13.5px;line-height:1.5;color:#4C5570;font-weight:500}
 
 /* ── 고민 주제 롤링: 2줄 창, 한 줄씩 위로 (2026-10-11) ── */
-.topics{position:relative;margin:0 0 8px;height:68px;overflow:hidden;border-radius:14px;
+.topics{position:relative;margin:0 0 7px;height:93px;overflow:hidden;border-radius:14px;
   background:rgba(255,255,255,.78);border:1px solid rgba(37,99,235,.16);box-shadow:0 4px 14px rgba(18,34,74,.06);text-align:left}
-.topics:after{content:"";position:absolute;left:12px;right:12px;top:34px;height:1px;background:rgba(37,99,235,.12);pointer-events:none}
+.topics:after{content:"";position:absolute;left:12px;right:12px;top:31px;height:1px;background:rgba(37,99,235,.12);pointer-events:none;box-shadow:0 31px 0 rgba(37,99,235,.12)}
 .topics ul{list-style:none;margin:0;padding:0;will-change:transform}
 .topics ul.anim{transition:transform .42s cubic-bezier(.4,0,.2,1)}
-.topics li{height:34px}
-.topics a{display:flex;align-items:center;gap:7px;height:34px;padding:0 12px;text-decoration:none;color:var(--navy)}
+.topics li{height:31px}
+.topics a{display:flex;align-items:center;gap:7px;height:31px;padding:0 12px;text-decoration:none;color:var(--navy)}
 .topics a:active{background:rgba(37,99,235,.06)}
 .topics .tk{flex:none;font-size:12px;font-weight:900;color:var(--blue)}
 .topics .tc{flex:none;font-size:11.5px;font-weight:800;color:#fff;background:var(--navy);padding:2px 7px;border-radius:999px;letter-spacing:-.02em}
@@ -102,7 +102,7 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 .topics .tt[lang="fr"],.topics .tt[lang="en"]{font-size:13.5px;letter-spacing:-.02em}
 
 /* ── 무료 1문 1답 CTA — 첫 화면의 유일한 채움 버튼. 밝고 살짝 투명한 청색 ── */
-.askbtn{position:relative;display:block;width:100%;height:44px;border-radius:14px;cursor:pointer;font-family:inherit;
+.askbtn{position:relative;display:block;width:100%;height:42px;border-radius:14px;cursor:pointer;font-family:inherit;
   border:1px solid rgba(255,255,255,.7);color:#fff;font-size:18px;font-weight:900;letter-spacing:-.03em;
   background:linear-gradient(180deg,rgba(104,150,255,.96) 0%,rgba(59,108,245,.96) 100%);
   box-shadow:0 10px 22px rgba(59,108,245,.30),inset 0 1px 0 rgba(255,255,255,.45)}
@@ -110,10 +110,10 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 .askbtn.full{background:linear-gradient(180deg,#B7C4DE,#94A3B8);box-shadow:none}
 
 /* ── 데일리 카드: 오늘의 기운 + 읽을거리 ── */
-.daily{position:relative;margin:10px 0 0;background:#fff;border-radius:16px;text-align:left;
+.daily{position:relative;margin:7px 0 0;background:#fff;border-radius:16px;text-align:left;
   box-shadow:0 4px 14px rgba(30,42,85,.06);overflow:hidden}
-.daily .todaybar{margin:0;padding:5px 14px;min-height:40px}
-.daily .lrow{display:flex;align-items:center;gap:10px;padding:5px 14px;min-height:40px;
+.daily .todaybar{margin:0;padding:4px 14px;min-height:38px}
+.daily .lrow{display:flex;align-items:center;gap:10px;padding:4px 14px;min-height:38px;
   border-top:1px solid #EEF1F7;text-decoration:none;color:inherit}
 .daily .lr-tx{flex:1;min-width:0;contain:inline-size}
 .daily .lr-lab{display:block;font-size:11px;font-weight:700;color:#5B6480;letter-spacing:-.02em;
@@ -123,39 +123,41 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 .daily .lr-go{flex:0 0 auto;font-size:12px;font-weight:800;color:var(--blue);white-space:nowrap}
 
 /* ── 소장 한 줄 ── */
-.owner{position:relative;display:flex;align-items:center;gap:12px;width:100%;margin:10px 0 0;padding:7px 14px;
+.owner{position:relative;display:flex;align-items:center;gap:12px;width:100%;margin:8px 0 0;padding:6px 14px;
   border:0;border-radius:16px;background:#fff;box-shadow:0 4px 14px rgba(30,42,85,.06);
   text-align:left;cursor:pointer;font-family:inherit;color:inherit}
-.owner img{width:44px;height:44px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);flex:0 0 50px}
+.owner img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);flex:0 0 50px}
 .owner .ow-tx{flex:1;min-width:0;contain:inline-size}
 .owner .ow-n{display:block;font-size:14px;font-weight:800;color:var(--ink);letter-spacing:-.03em}
-.owner .ow-l{display:block;margin-top:1px;font-size:12px;color:#4C5570;line-height:1.4;letter-spacing:-.02em}
-.owner .ow-star{color:#E3A800;font-weight:800}
+.owner .ow-l{display:block;margin-top:1px;font-size:11.5px;color:#4C5570;line-height:1.4;letter-spacing:-.02em;white-space:nowrap;text-wrap:nowrap;overflow:hidden;text-overflow:ellipsis}
+.owner .ow-star{color:#E3A800;font-weight:800;font-size:10px;letter-spacing:-.06em}
+/* body * {text-wrap:balance} 가 자식 <b>의 줄바꿈을 되살리므로 자식까지 한 줄로 고정 */
+.owner .ow-l *, .ohttl *{white-space:nowrap;text-wrap:nowrap}
 
 /* ── (자연) 오행 머리 + 버튼 ── */
-.ohhead{position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin:10px 0 7px;text-align:left}
-.ohttl{margin:0;font-size:16px;font-weight:900;line-height:1.3;letter-spacing:-.04em;color:var(--navy)}
+.ohhead{position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin:6px 0 5px;text-align:left}
+.ohttl{margin:0;font-size:16px;font-weight:900;line-height:1.3;letter-spacing:-.04em;color:var(--navy);white-space:nowrap;text-wrap:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .ohttl b{color:var(--blue)}
 .ohttl .mark{display:inline-block;background:linear-gradient(180deg,transparent 56%,#FFE08A 56%);padding:0 2px}
 .ohmeta{flex:0 0 auto;font-size:11px;font-weight:700;color:#5B6480;white-space:nowrap;padding-bottom:2px}
-.btn-oh{position:relative;display:block;width:100%;height:42px;margin-top:2px;border-radius:14px;cursor:pointer;font-family:inherit;
+.btn-oh{position:relative;display:block;width:100%;height:40px;margin-top:2px;border-radius:14px;cursor:pointer;font-family:inherit;
   border:1px solid #fff;background:rgba(104,150,255,.16);color:var(--navy);font-size:15px;font-weight:800;letter-spacing:-.03em;
   box-shadow:0 2px 8px rgba(59,108,245,.10)}
 .btn-oh:active{transform:translateY(1px)}
 .trustline{position:relative;margin-top:8px;font-size:11px;font-weight:600;color:#5B6480;letter-spacing:-.02em}
 
 /* 오행 순환 스트립 */
-.ohwrap{position:relative;margin-bottom:6px}
+.ohwrap{position:relative;margin-bottom:5px}
 .ohstrip{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .oh{
-  background:#fff;border:1px solid #E3EAF6;border-radius:14px;padding:7px 3px 6px;
+  background:#fff;border:1px solid #E3EAF6;border-radius:14px;padding:5px 3px 4px;
   display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer;
   box-shadow:0 2px 8px rgba(20,50,110,.06);
   animation:cyc 6s linear infinite;
 }
 .oh .han{width:19px;height:19px;border-radius:50%;display:grid;place-items:center;
   font-size:10.5px;font-weight:800;color:#fff;letter-spacing:-.04em}
-.oh .sym{font-size:24px;line-height:1.1;margin:1px 0}
+.oh .sym{font-size:22px;line-height:1.1;margin:0}
 .oh .nm{font-size:11.5px;font-weight:800;color:var(--navy);letter-spacing:-.04em}
 .oh .kw{font-size:9.5px;font-weight:600;color:var(--gray);letter-spacing:-.04em}
 .oh:nth-child(1){animation-delay:0s}
@@ -173,7 +175,7 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 .ohwrap.paused .oh{animation-play-state:paused}
 .oh.on{background:var(--blue-p)!important;border-color:#9FC5FF!important;transform:translateY(-5px)!important;
   box-shadow:0 10px 20px rgba(37,99,235,.24)!important}
-.cycnote{margin-top:5px;font-size:11px;font-weight:700;color:var(--blue-d);letter-spacing:-.02em;
+.cycnote{margin-top:4px;font-size:10.5px;font-weight:700;color:var(--blue-d);letter-spacing:-.02em;
   display:flex;align-items:center;justify-content:center;gap:5px;min-height:17px}
 .cycnote .arrow{color:#9FC5FF}
 .cycnote.hint{color:var(--crim)}
@@ -879,8 +881,8 @@ en: {
  heroSub:"Career, business, love, home — send one line.<br>You get a phone-sized <b>1–3 page Key report</b> within 24 hours.",
  askCta:"Send a question, get a free answer ›",
  ownerName:"Choi Hyeung-chul · Certified management consultant who reads Saju",
- ownerLine:"AI analyzes, a person finds the direction · <b class=\"ow-star\">★★★★★</b> Reviews ›",
- ohTtl:"Like blood type or MBTI — my <span class=\"mark\"><b>Five Elements (5行)</b></span>?",
+ ownerLine:"AI analyzes, experts guide · <b class=\"ow-star\">★★★★★</b> Reviews ›",
+ ohTtl:"Like MBTI — my <span class=\"mark\"><b>Five Elements</b></span>?",
  ohMeta:"14 questions · 1 min",
  ohCta:"Find my Five Elements type · free, no sign-up ›",
  trustLine:"Privacy first · minimal storage · AI analysis + expert review",
@@ -1046,8 +1048,8 @@ ja: {
  heroSub:"転職・起業・相性・住まい、何でも一行で。<br>24時間以内にスマホで読む<b>1〜3枚のKeyレポート</b>でお答えします。",
  askCta:"質問を送って無料で答えをもらう ›",
  ownerName:"崔亨哲 · 四柱を読む経営指導士",
- ownerLine:"AIは分析し、方向は人が探す · <b class=\"ow-star\">★★★★★</b> レビュー ›",
- ohTtl:"血液型やMBTIのように、私の<span class=\"mark\"><b>(自然) 五行</b></span>は?",
+ ownerLine:"AIが分析、方向は専門家 · <b class=\"ow-star\">★★★★★</b> レビュー ›",
+ ohTtl:"MBTIのように、私の<span class=\"mark\"><b>(自然) 五行</b></span>は?",
  ohMeta:"質問14個 · 1分",
  ohCta:"私の五行性格を診断する · 登録不要・無料 ›",
  trustLine:"個人情報に配慮 · 保存最小化 · AI分析 + 専門家確認",
@@ -1213,8 +1215,8 @@ zh: {
  heroSub:"跳槽、创业、姻缘、买房，一句话发来即可。<br>24小时内收到手机阅读的<b>1~3页 Key 报告</b>。",
  askCta:"发送问题，免费获得答案 ›",
  ownerName:"崔亨哲 · 懂八字的经营指导师",
- ownerLine:"AI 负责分析，方向由人来找 · <b class=\"ow-star\">★★★★★</b> 评价 ›",
- ohTtl:"像血型、MBTI 一样，我的<span class=\"mark\"><b>(自然) 五行</b></span>是?",
+ ownerLine:"AI 分析，专家指路 · <b class=\"ow-star\">★★★★★</b> 评价 ›",
+ ohTtl:"像 MBTI 一样，我的<span class=\"mark\"><b>(自然) 五行</b></span>是?",
  ohMeta:"14 道题 · 1 分钟",
  ohCta:"测测我的五行性格 · 免注册免费 ›",
  trustLine:"保护隐私 · 最少存储 · AI 分析 + 专家审核",
@@ -1380,8 +1382,8 @@ fr: {
  heroSub:"Carrière, projet, couple, logement : une ligne suffit.<br>Réponse en 24 h, en un <b>rapport Key de 1 à 3 pages</b> lisible sur mobile.",
  askCta:"Envoyer ma question, réponse gratuite ›",
  ownerName:"Choi Hyeung-chul · consultant en gestion certifié, lecteur de Saju",
- ownerLine:"L'IA analyse, l'humain trouve la direction · <b class=\"ow-star\">★★★★★</b> Avis ›",
- ohTtl:"Comme le groupe sanguin ou le MBTI : mes <span class=\"mark\"><b>Cinq Phases (五行)</b></span> ?",
+ ownerLine:"L'IA analyse, l'expert oriente · <b class=\"ow-star\">★★★★★</b> Avis ›",
+ ohTtl:"Comme le MBTI : mes <span class=\"mark\"><b>Cinq Phases</b></span> ?",
  ohMeta:"14 questions · 1 min",
  ohCta:"Découvrir mes Cinq Phases · gratuit, sans inscription ›",
  trustLine:"Vie privée respectée · stockage minimal · analyse IA + relecture experte",
@@ -1556,13 +1558,13 @@ const HTML = String.raw`
       <img src="/img/choi-profile.jpg" alt="최형철 소장" width="50" height="50" loading="eager">
       <span class="ow-tx">
         <span class="ow-n" data-i="ownerName">최형철 · 사주보는 경영지도사</span>
-        <span class="ow-l" data-i="ownerLine">AI는 분석하고, 방향은 사람이 찾습니다 · <b class="ow-star">★★★★★</b> 후기 ›</span>
+        <span class="ow-l" data-i="ownerLine">AI는 분석, 방향은 전문가 · <b class="ow-star">★★★★★</b> 후기 ›</span>
       </span>
     </button>
 
     <!-- ④ (자연) 오행 — 두 번째 행동. 카드 순환·상세 패널은 기존 그대로 -->
     <div class="ohhead">
-      <h2 class="ohttl" data-i="ohTtl">혈액형·MBTI처럼, 나의 <span class="mark"><b>(자연) 오행</b></span>은?</h2>
+      <h2 class="ohttl" data-i="ohTtl">MBTI처럼, 나의 <span class="mark"><b>(자연) 오행</b></span>은?</h2>
       <span class="ohmeta" data-i="ohMeta">질문 14개 · 1분</span>
     </div>
     <!-- 오행 순환 스트립 -->
@@ -2084,9 +2086,9 @@ function topicsBlockHtml(topics?: HomeTopicItem[] | null): string {
     `data-l-ko="${escT(ko)}"` + (["en", "ja", "zh", "fr"] as const).map((l) => { const v = t.i18n?.[l]?.[key]; return v ? ` data-l-${l}="${escT(v)}"` : ""; }).join("");
   const li = (t: HomeTopicItem) =>
     `<li><a href="/q/${escT(t.slug)}?utm=home_q" data-topic="${escT(t.slug)}"><span class="tk">✓</span><span class="tc" ${attrs(t.category, "category", t)}>${escT(t.category)}</span><span class="tt" ${attrs(t.title, "title", t)}>${escT(t.title)}</span><span class="ta">›</span></a></li>`;
-  /* 2개 이하면 돌리지 않고 그대로. 3개 이상이면 앞 2개를 뒤에 한 번 더 붙여 끊김 없이 순환 */
-  const roll = topics.length > 2;
-  const list = roll ? [...topics, topics[0], topics[1]] : topics;
+  /* 3줄 창(2026-10-12). 3개 이하면 돌리지 않고 그대로. 4개 이상이면 앞 3개를 뒤에 한 번 더 붙여 끊김 없이 순환 */
+  const roll = topics.length > 3;
+  const list = roll ? [...topics, ...topics.slice(0, 3)] : topics;
   return `<div class="topics" id="topics" data-n="${topics.length}" data-roll="${roll ? 1 : 0}" aria-label="지금 많이 보는 고민"><ul id="topics-ul">${list.map(li).join("")}</ul></div>`;
 }
 
@@ -2202,7 +2204,7 @@ export default function HomeV6(
     const tkBox = document.getElementById("topics"), tkUl = document.getElementById("topics-ul") as HTMLElement | null;
     let tkTimer: ReturnType<typeof setInterval> | null = null;
     if (tkBox && tkUl && tkBox.dataset.roll === "1") {
-      const n = parseInt(tkBox.dataset.n || "0", 10), H = 34; let i = 0, hold = false;
+      const n = parseInt(tkBox.dataset.n || "0", 10), H = 31; let i = 0, hold = false;
       const step = () => {
         if (hold || document.visibilityState === "hidden") return;
         i += 1; tkUl.classList.add("anim"); tkUl.style.transform = `translateY(-${i * H}px)`;
