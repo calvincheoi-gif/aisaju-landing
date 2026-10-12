@@ -16,6 +16,24 @@ const BASE = "https://aisajulab.com";
 
 export const revalidate = 3600;
 
+/** 본문 중간 CTA 문구 — 글의 분류(category)에 맞춰 "왜 지금 진단을 해 볼 만한지" 한 줄로 잇는다 */
+function pickMidCta(category: string): { title: string; sub: string } {
+  const c = category || "";
+  if (c.includes("입문")) {
+    return { title: "내 사주에서 '나'는 어떤 글자일까요?", sub: "생년월일만으로 내 오행 성격 3분 진단 · 가입 없이" };
+  }
+  if (c.includes("오행")) {
+    return { title: "나는 어떤 오행이 강할까요?", sub: "14개 질문으로 내 오행 성격 3분 진단 · 가입 없이" };
+  }
+  if (c.includes("궁합")) {
+    return { title: "궁합은 내 오행을 아는 데서 시작합니다", sub: "먼저 내 오행 성격 3분 무료 진단 · 가입 없이" };
+  }
+  if (c.includes("상식")) {
+    return { title: "좋은 날도 내 오행과 맞아야 좋은 날입니다", sub: "내 오행 성격 3분 무료 진단 · 가입 없이" };
+  }
+  return { title: "내 오행 성격은 어떤 유형일까요?", sub: "3분 무료 진단 · 가입 없이 바로" };
+}
+
 /** 관리자에서 글을 올리면 새 주소가 자동으로 생긴다 */
 export async function generateStaticParams() {
   const posts = await getPublishedLearnPosts();
@@ -88,6 +106,16 @@ export default async function LearnPostPage({
   };
 
   let hIdx = -1;
+
+  /* 본문 중간 CTA (2026-10-12)
+     8/16~10/11 두 달간 읽을거리로 들어온 259기기 중 오행 진단까지 간 기기는 2대, 메인을 본 기기는 1대.
+     글 끝의 「다음 단계」 상자는 이미 있지만, 검색으로 들어온 독자는 답을 얻는 첫 문단 근처에서 떠난다.
+     그래서 첫 문단 바로 아래에 글 성격에 맞춘 한 줄짜리 무료 진단 링크를 하나 둔다.
+     꼬리표(utm_source=learn·utm_campaign=slug)는 오행 앱 track.js 가 ohaeng_view 에 그대로 싣는다 → 글별 전환 측정. */
+  const firstP = blocks.findIndex((b) => b.kind === "p");
+  const midCta = pickMidCta(post.category);
+  const ohaengHref = (medium: string) =>
+    `/ohaeng/?utm_source=learn&utm_medium=${medium}&utm_campaign=${encodeURIComponent(post.slug)}`;
 
   return (
     <>
@@ -163,12 +191,34 @@ export default async function LearnPostPage({
                 );
               }
               if (block.kind === "p") {
-                return (
+                const para = (
                   <p
                     key={i}
                     className="text-[15.5px] leading-[1.85] text-ink-900/90"
                     dangerouslySetInnerHTML={{ __html: block.text }}
                   />
+                );
+                if (i !== firstP) return para;
+                return (
+                  <div key={i} className="space-y-5">
+                    {para}
+                    <a
+                      href={ohaengHref("cta_mid")}
+                      className="flex items-center justify-between gap-3 rounded-lg border border-indigo-100 bg-indigo-50 px-4 py-3.5 transition-colors hover:bg-indigo-100"
+                    >
+                      <span className="min-w-0">
+                        <span className="block text-[14.5px] font-bold leading-snug text-ink-900">
+                          {midCta.title}
+                        </span>
+                        <span className="mt-0.5 block text-[12.5px] text-body">
+                          {midCta.sub}
+                        </span>
+                      </span>
+                      <span className="shrink-0 rounded-md bg-indigo-600 px-3 py-1.5 text-[12.5px] font-bold text-white">
+                        무료 진단 ›
+                      </span>
+                    </a>
+                  </div>
                 );
               }
               if (block.kind === "list") {
@@ -212,7 +262,7 @@ export default async function LearnPostPage({
             </h2>
             <div className="mt-5 space-y-2.5">
               <a
-                href="/ohaeng/"
+                href={ohaengHref("cta_bottom")}
                 className="flex items-center justify-between rounded-lg bg-indigo-600 px-5 py-4 text-white transition-colors hover:bg-indigo-500"
               >
                 <span>
@@ -224,7 +274,7 @@ export default async function LearnPostPage({
                 <span className="text-[18px]">›</span>
               </a>
               <a
-                href="/ohaeng/"
+                href={ohaengHref("cta_bottom_ai")}
                 className="flex items-center justify-between rounded-lg border border-border px-5 py-4 transition-colors hover:bg-bg-alt"
               >
                 <span>
