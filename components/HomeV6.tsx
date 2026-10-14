@@ -64,7 +64,7 @@ body{
 .toast.on{opacity:1;transform:translate(-50%,0)}
 
 /* ── 히어로 (1화면 안에 CTA까지) ── */
-.hero{position:relative;padding:6px var(--pad) 8px;text-align:center;overflow:hidden;
+.hero{position:relative;padding:4px var(--pad) 6px;text-align:center;overflow:hidden;
   background:radial-gradient(120% 66% at 50% -14%,#fff 0%,#E9F1FF 44%,#F5F9FF 100%)}
 .hero .blob{position:absolute;border-radius:50%;pointer-events:none}
 .hero .b1{width:130px;height:130px;background:rgba(96,165,250,.15);top:-28px;left:-42px}
@@ -79,9 +79,9 @@ body{
 .bdg.outline{outline:0;background:#fff;color:#2B3A66;border:1px solid #E3EAF6;box-shadow:0 1px 2px rgba(18,34,74,.05),0 3px 10px rgba(18,34,74,.05)}
 .bdg.seats{background:rgba(255,224,138,.55);color:#7A4F00;border:1px solid rgba(245,185,33,.35);box-shadow:none;backdrop-filter:blur(4px)}
 .bdg.seats.full{background:#EEF2F7;color:#64748B;border-color:#E3EAF6}
-.badges{margin:2px 0 8px}
+.badges{margin:2px 0 6px}
 
-h1.hook{position:relative;margin:2px 0 6px;font-size:22.5px;line-height:1.27;letter-spacing:-.045em;font-weight:800;color:#1E2A55}
+h1.hook{position:relative;margin:0 0 4px;font-size:20.5px;line-height:1.22;letter-spacing:-.045em;font-weight:800;color:#1E2A55}
 h1.hook b{color:var(--blue)}
 h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent 58%,rgba(255,224,138,.75) 58%);padding:0 3px}
 .sub{position:relative;margin:0 0 10px;font-size:13.5px;line-height:1.5;color:#4C5570;font-weight:500}
@@ -102,7 +102,7 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 .topics .tt[lang="fr"],.topics .tt[lang="en"]{font-size:13.5px;letter-spacing:-.02em}
 
 /* ── 무료 1문 1답 CTA — 첫 화면의 유일한 채움 버튼. 밝고 살짝 투명한 청색 ── */
-.askbtn{position:relative;display:block;width:100%;height:42px;border-radius:14px;cursor:pointer;font-family:inherit;
+.askbtn{position:relative;display:block;width:100%;height:40px;border-radius:14px;cursor:pointer;font-family:inherit;
   border:1px solid rgba(255,255,255,.7);color:#fff;font-size:18px;font-weight:900;letter-spacing:-.03em;
   background:linear-gradient(180deg,rgba(104,150,255,.96) 0%,rgba(59,108,245,.96) 100%);
   box-shadow:0 10px 22px rgba(59,108,245,.30),inset 0 1px 0 rgba(255,255,255,.45)}
@@ -110,9 +110,9 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 .askbtn.full{background:linear-gradient(180deg,#B7C4DE,#94A3B8);box-shadow:none}
 
 /* ── 데일리 카드: 오늘의 기운 + 읽을거리 ── */
-.daily{position:relative;margin:7px 0 0;background:#fff;border-radius:16px;text-align:left;
+.daily{position:relative;margin:5px 0 0;background:#fff;border-radius:16px;text-align:left;
   box-shadow:0 4px 14px rgba(30,42,85,.06);overflow:hidden}
-.daily .todaybar{margin:0;padding:4px 14px;min-height:38px}
+.daily .todaybar{margin:0;padding:4px 14px;min-height:36px}
 .daily .lrow{display:flex;align-items:center;gap:10px;padding:4px 14px;min-height:38px;
   border-top:1px solid #EEF1F7;text-decoration:none;color:inherit}
 .daily .lr-tx{flex:1;min-width:0;contain:inline-size}
@@ -123,10 +123,10 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 .daily .lr-go{flex:0 0 auto;font-size:12px;font-weight:800;color:var(--blue);white-space:nowrap}
 
 /* ── 소장 한 줄 ── */
-.owner{position:relative;display:flex;align-items:center;gap:12px;width:100%;margin:8px 0 0;padding:6px 14px;
+.owner{position:relative;display:flex;align-items:center;gap:12px;width:100%;margin:5px 0 0;padding:4px 14px;
   border:0;border-radius:16px;background:#fff;box-shadow:0 4px 14px rgba(30,42,85,.06);
   text-align:left;cursor:pointer;font-family:inherit;color:inherit}
-.owner img{width:40px;height:40px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);flex:0 0 50px}
+.owner img{width:36px;height:36px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);flex:0 0 50px}
 .owner .ow-tx{flex:1;min-width:0;contain:inline-size}
 .owner .ow-n{display:block;font-size:14px;font-weight:800;color:var(--ink);letter-spacing:-.03em}
 .owner .ow-l{display:block;margin-top:1px;font-size:11.5px;color:#4C5570;line-height:1.4;letter-spacing:-.02em;white-space:nowrap;text-wrap:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -134,20 +134,31 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 /* body * {text-wrap:balance} 가 자식 <b>의 줄바꿈을 되살리므로 자식까지 한 줄로 고정 */
 .owner .ow-l *, .ohttl *{white-space:nowrap;text-wrap:nowrap}
 
+/* ── 무료 Q&A 한 줄 (2026-10-14) — 소장 박스 아래, 오행 위. 연한 행(첫 화면 채움 버튼은 askbtn 하나) ── */
+.qna-line{position:relative;display:flex;align-items:center;gap:9px;width:100%;margin:6px 0 0;padding:8px 12px;min-height:40px;
+  border:1px solid rgba(37,99,235,.30);border-radius:13px;background:linear-gradient(180deg,#F3F7FF,#E9F1FF);
+  text-align:left;cursor:pointer;font-family:inherit;color:inherit;box-shadow:0 2px 8px rgba(18,34,74,.05)}
+.qna-line .ql-ic{flex:none;font-size:16px;line-height:1}
+.qna-line .ql-tx{flex:1;min-width:0;font-size:14px;font-weight:800;color:var(--blue-d);letter-spacing:-.035em;line-height:1.32;
+  white-space:normal;text-wrap:balance;word-break:keep-all}
+.qna-line .ql-go{flex:none;font-size:12px;font-weight:800;color:#fff;background:var(--blue);padding:4px 9px;border-radius:999px;white-space:nowrap}
+.qna-line:active{transform:translateY(1px)}
+@media(max-width:360px){.qna-line .ql-tx{font-size:13px}}
+
 /* ── (자연) 오행 머리 + 버튼 ── */
-.ohhead{position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin:6px 0 5px;text-align:left}
+.ohhead{position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin:4px 0 4px;text-align:left}
 .ohttl{margin:0;font-size:16px;font-weight:900;line-height:1.3;letter-spacing:-.04em;color:var(--navy);white-space:nowrap;text-wrap:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .ohttl b{color:var(--blue)}
 .ohttl .mark{display:inline-block;background:linear-gradient(180deg,transparent 56%,#FFE08A 56%);padding:0 2px}
 .ohmeta{flex:0 0 auto;font-size:11px;font-weight:700;color:#5B6480;white-space:nowrap;padding-bottom:2px}
-.btn-oh{position:relative;display:block;width:100%;height:40px;margin-top:2px;border-radius:14px;cursor:pointer;font-family:inherit;
+.btn-oh{position:relative;display:block;width:100%;height:40px;margin-top:0;border-radius:14px;cursor:pointer;font-family:inherit;
   border:1px solid #fff;background:rgba(104,150,255,.16);color:var(--navy);font-size:15px;font-weight:800;letter-spacing:-.03em;
   box-shadow:0 2px 8px rgba(59,108,245,.10)}
 .btn-oh:active{transform:translateY(1px)}
-.trustline{position:relative;margin-top:8px;font-size:11px;font-weight:600;color:#5B6480;letter-spacing:-.02em}
+.trustline{position:relative;margin-top:3px;font-size:10.5px;font-weight:600;color:#5B6480;letter-spacing:-.02em}
 
 /* 오행 순환 스트립 */
-.ohwrap{position:relative;margin-bottom:5px}
+.ohwrap{position:relative;margin-bottom:3px}
 .ohstrip{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
 .oh{
   background:#fff;border:1px solid #E3EAF6;border-radius:14px;padding:5px 3px 4px;
@@ -175,7 +186,7 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 .ohwrap.paused .oh{animation-play-state:paused}
 .oh.on{background:var(--blue-p)!important;border-color:#9FC5FF!important;transform:translateY(-5px)!important;
   box-shadow:0 10px 20px rgba(37,99,235,.24)!important}
-.cycnote{margin-top:4px;font-size:10.5px;font-weight:700;color:var(--blue-d);letter-spacing:-.02em;
+.cycnote{margin-top:2px;font-size:10.5px;font-weight:700;color:var(--blue-d);letter-spacing:-.02em;
   display:flex;align-items:center;justify-content:center;gap:5px;min-height:17px}
 .cycnote .arrow{color:#9FC5FF}
 .cycnote.hint{color:var(--crim)}
@@ -530,7 +541,7 @@ footer b{color:#fff;font-size:14px;font-weight:800;letter-spacing:-.04em}
 .instsheet .is-x{margin-top:14px;width:100%;height:44px;border-radius:13px;border:0;background:var(--navy);color:#fff;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer}
 .util .chip{cursor:pointer}
 .util .burger{cursor:pointer}
-.voc{font-size:11px;line-height:1.6;color:#7A8AA3;text-align:center;padding:7px var(--pad);
+.voc{font-size:11px;line-height:1.5;color:#7A8AA3;text-align:center;padding:5px var(--pad);
   background:#F4F8FD;border-top:1px solid #E9F0F9;border-bottom:1px solid #E9F0F9}
 .voc.bot{background:none;border:0;color:#8C9AAF;padding:16px var(--pad) 2px}
 footer .biz{display:inline-block;color:rgba(255,255,255,.55);font-size:10.6px;line-height:1.85}
@@ -882,6 +893,8 @@ en: {
  askCta:"Send a question, get a free answer ›",
  ownerName:"Choi Hyeung-chul · Certified management consultant who reads Saju",
  ownerLine:"AI analyzes, experts guide · <b class=\"ow-star\">★★★★★</b> Reviews ›",
+ qnaLine:"Saju or tarot left you wondering? Ask anything, freely.",
+ qnaGo:"KakaoTalk ›",
  ohTtl:"Like MBTI — my <span class=\"mark\"><b>Five Elements</b></span>?",
  ohMeta:"14 questions · 1 min",
  ohCta:"Find my Five Elements type · free, no sign-up ›",
@@ -1049,6 +1062,8 @@ ja: {
  askCta:"質問を送って無料で答えをもらう ›",
  ownerName:"崔亨哲 · 四柱を読む経営指導士",
  ownerLine:"AIが分析、方向は専門家 · <b class=\"ow-star\">★★★★★</b> レビュー ›",
+ qnaLine:"四柱やタロットを見て気になったこと、気軽にどうぞ。",
+ qnaGo:"カカオトーク ›",
  ohTtl:"MBTIのように、私の<span class=\"mark\"><b>(自然) 五行</b></span>は?",
  ohMeta:"質問14個 · 1分",
  ohCta:"私の五行性格を診断する · 登録不要・無料 ›",
@@ -1216,6 +1231,8 @@ zh: {
  askCta:"发送问题，免费获得答案 ›",
  ownerName:"崔亨哲 · 懂八字的经营指导师",
  ownerLine:"AI 分析，专家指路 · <b class=\"ow-star\">★★★★★</b> 评价 ›",
+ qnaLine:"看了八字或塔罗后有疑问？随时提问。",
+ qnaGo:"KakaoTalk ›",
  ohTtl:"像 MBTI 一样，我的<span class=\"mark\"><b>(自然) 五行</b></span>是?",
  ohMeta:"14 道题 · 1 分钟",
  ohCta:"测测我的五行性格 · 免注册免费 ›",
@@ -1383,6 +1400,8 @@ fr: {
  askCta:"Envoyer ma question, réponse gratuite ›",
  ownerName:"Choi Hyeung-chul · consultant en gestion certifié, lecteur de Saju",
  ownerLine:"L'IA analyse, l'expert oriente · <b class=\"ow-star\">★★★★★</b> Avis ›",
+ qnaLine:"Une question après un saju ou un tarot ? Posez-la librement.",
+ qnaGo:"KakaoTalk ›",
  ohTtl:"Comme le MBTI : mes <span class=\"mark\"><b>Cinq Phases</b></span> ?",
  ohMeta:"14 questions · 1 min",
  ohCta:"Découvrir mes Cinq Phases · gratuit, sans inscription ›",
@@ -1560,6 +1579,14 @@ const HTML = String.raw`
         <span class="ow-n" data-i="ownerName">최형철 · 사주보는 경영지도사</span>
         <span class="ow-l" data-i="ownerLine">AI는 분석, 방향은 전문가 · <b class="ow-star">★★★★★</b> 후기 ›</span>
       </span>
+    </button>
+
+    <!-- ③-1 무료 Q&A 한 줄 (2026-10-14) — 소장 박스 바로 아래. 사주·타로의 개념·AI 결과 해석 질문은 카톡 채널 1:1로,
+         본인 사주 풀이는 위 1문1답·리포트로 나눈다. 답은 보통 당일, 밀리면 월·목 아침 채널 발송에 모아서. -->
+    <button class="qna-line" type="button" data-go="kakao" data-from="hero_qna" aria-label="카카오톡으로 질문하기">
+      <span class="ql-ic">💬</span>
+      <span class="ql-tx" data-i="qnaLine">사주, 타로 보면서, 본 후 궁금했던 것, 자유롭게 물어보세요.</span>
+      <span class="ql-go" data-i="qnaGo">카톡 ›</span>
     </button>
 
     <!-- ④ (자연) 오행 — 두 번째 행동. 카드 순환·상세 패널은 기존 그대로 -->
