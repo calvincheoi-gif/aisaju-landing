@@ -2,8 +2,17 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import AskForm from "@/components/AskForm";
 
+/**
+ * 정규 주소(canonical) — 2026-10-16
+ *
+ * 홍보용 추적 링크(?utm=daangn, ?utm=kakao …)는 내용이 같은데 주소만 다르다.
+ * 표시가 없으면 구글이 "중복 페이지, 어느 게 원본인지 모름"으로 보고 색인을 보류한다
+ * (Search Console 경고: 사용자가 선택한 표준이 없는 중복 페이지).
+ * 아래 한 줄이 "원본은 이 주소"라고 알려 준다. utm 추적 자체에는 영향이 없다.
+ */
 export const metadata = {
   title: "무료 1문 1답 | AI사주랩.com",
+  alternates: { canonical: "/ask" },
   description: "질문 하나, 답은 핵심만. 최형철 소장이 24시간 안에 1~3매 Key 리포트로 답합니다 — 선착순 Daily 3명 무료.",
 };
 
