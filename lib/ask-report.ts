@@ -112,6 +112,8 @@ export interface AskRow {
   answered_at: string | null;
   note: string | null;
   utm: string | null;
+  source?: string | null;   // 「어디서 보고 오셨어요?」 칩 (2026-10-17)
+  app?: string | null;      // 인앱 브라우저 판별값
   answer: Partial<AskAnswer> | null;
   module: AskModule | null;
   saju: SajuBrief | null;

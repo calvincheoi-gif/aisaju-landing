@@ -60,6 +60,23 @@ export function ohaengHref(slug: string): string {
 
 function rid() { return Math.random().toString(36).slice(2) + Date.now().toString(36); }
 
+/** 어느 앱 안에서 열렸는지 (2026-10-17) — 홈·오행 앱과 같은 규칙 */
+export function appName(): string {
+  try {
+    const ua = navigator.userAgent || "";
+    if (/Instagram/i.test(ua)) return "instagram";
+    if (/FBAN|FBAV|FB_IAB/i.test(ua)) return "facebook";
+    if (/Barcelona|Threads/i.test(ua)) return "threads";
+    if (/KAKAOTALK/i.test(ua)) return "kakao";
+    if (/NAVER\(/i.test(ua)) return "naver";
+    if (/Daangn|Karrot|TowneersApp/i.test(ua)) return "daangn";
+    if (/\bLine\//i.test(ua)) return "line";
+    if (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) return "pwa";
+    if (/; wv\)|WebView/i.test(ua)) return "webview";
+  } catch {}
+  return "browser";
+}
+
 /** 홈(HomeV6)의 track() 과 같은 events 테이블·같은 세션 키를 쓴다 */
 export function track(name: string, props: Record<string, unknown> = {}) {
   try {
@@ -81,6 +98,7 @@ export function track(name: string, props: Record<string, unknown> = {}) {
         session_id: sid, visitor_id: vid, name, step: null, props,
         utm: u.utm || null, utm_source: u.utm_source || null, utm_medium: u.utm_medium || null, utm_campaign: u.utm_campaign || null,
         referrer: document.referrer || null, path: window.location.pathname,
+        app: appName(),
         device: w < 768 ? "mobile" : w < 1024 ? "tablet" : "desktop", lang: "ko",
       }),
     }).catch(() => {});

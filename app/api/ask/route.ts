@@ -37,6 +37,8 @@ interface AskBody {
   utm?: string | null;
   referrer?: string | null;
   deviceCode?: string | null;
+  source?: string | null;   // 「어디서 보고 오셨어요?」 칩 (2026-10-17)
+  app?: string | null;      // 인앱 브라우저 판별값
 }
 
 export async function POST(req: Request) {
@@ -69,6 +71,8 @@ export async function POST(req: Request) {
     p_utm: body.utm ?? null,
     p_referrer: body.referrer ?? null,
     p_device_code: body.deviceCode ?? null,
+    p_source: body.source ? String(body.source).replace(/[^a-z_]/g, "").slice(0, 20) || null : null,
+    p_app: body.app ? String(body.app).replace(/[^a-z_]/g, "").slice(0, 20) || null : null,
   });
   if (error) return NextResponse.json({ saved: false, reason: "db", detail: error.message }, { status: 500 });
 

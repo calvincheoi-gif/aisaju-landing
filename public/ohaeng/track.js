@@ -35,6 +35,23 @@
     var x = w.innerWidth;
     return x < 768 ? 'mobile' : x < 1024 ? 'tablet' : 'desktop';
   }
+  /* 어느 앱 안에서 열렸는지 (2026-10-17) — 링크에 꼬리표가 없어도 "인스타 인앱/카톡 인앱"은 알 수 있다.
+     홈(HomeV6)·고민 랜딩(links.ts)과 같은 규칙. 값: instagram·facebook·threads·kakao·naver·daangn·line·pwa·webview·browser */
+  function app() {
+    try {
+      var ua = navigator.userAgent || '';
+      if (/Instagram/i.test(ua)) return 'instagram';
+      if (/FBAN|FBAV|FB_IAB/i.test(ua)) return 'facebook';
+      if (/Barcelona|Threads/i.test(ua)) return 'threads';
+      if (/KAKAOTALK/i.test(ua)) return 'kakao';
+      if (/NAVER\(/i.test(ua)) return 'naver';
+      if (/Daangn|Karrot|TowneersApp/i.test(ua)) return 'daangn';
+      if (/\bLine\//i.test(ua)) return 'line';
+      if (w.matchMedia && w.matchMedia('(display-mode: standalone)').matches) return 'pwa';
+      if (/; wv\)|WebView/i.test(ua)) return 'webview';
+    } catch (e) {}
+    return 'browser';
+  }
   /* 홈·고민 랜딩과 같은 규칙 (2026-10-17)
      ① /?notrack=1 을 한 번 연 기기는 집계에서 뺀다 (/?notrack=0 으로 해제)
      ② 채널 꼬리표는 30일이 지나면 버린다 — 끝난 이벤트의 꼬리표가 몇 달씩 따라붙던 문제 */
@@ -81,6 +98,7 @@
       referrer: d.referrer || null,
       path: w.location.pathname,
       device: device(),
+      app: app(),
       lang: d.documentElement.lang || 'ko'
     };
     try {

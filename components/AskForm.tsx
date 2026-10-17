@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { siteConfig } from "@/lib/site-config";
+import { appName } from "@/lib/worries/links";
 
 /**
  * 선착순 Daily 3명 무료 1문 1답 신청서 (2026-10-04)
@@ -35,8 +36,18 @@ function readTracking() {
   let savedUtm: string | null = null;
   try { savedUtm = window.localStorage.getItem("sp_utm"); } catch {}
   const m = document.cookie.match(/(?:^|; )sp_device=([^;]*)/);
-  return { utm: paramUtm || savedUtm || null, referrer: document.referrer || null, deviceCode: m ? decodeURIComponent(m[1]) : null };
+  return { utm: paramUtm || savedUtm || null, referrer: document.referrer || null, deviceCode: m ? decodeURIComponent(m[1]) : null, app: appName() };
 }
+
+/* 「어디서 보고 오셨어요?」 칩 (2026-10-17) — 링크 없이 온 사람의 출처를 본인에게 한 번 묻는다. 선택 사항 */
+const SOURCES: { k: string; label: string }[] = [
+  { k: "insta", label: "인스타그램" },
+  { k: "daangn", label: "당근" },
+  { k: "youtube", label: "유튜브" },
+  { k: "kakao", label: "카카오톡" },
+  { k: "search", label: "검색" },
+  { k: "friend", label: "지인 소개" },
+];
 
 export default function AskForm() {
   const [status, setStatus] = useState<Status | null>(null);
@@ -49,6 +60,7 @@ export default function AskForm() {
   const [question, setQuestion] = useState("");
   const [kakaoAgree, setKakaoAgree] = useState(true);
   const [reviewAgree, setReviewAgree] = useState(true);
+  const [source, setSource] = useState<string | null>(null);
   const [sending, setSending] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [done, setDone] = useState<{ refNo: string; remaining: number } | null>(null);
@@ -87,7 +99,7 @@ export default function AskForm() {
       const res = await fetch("/api/ask", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), gender, birthInfo, contact: contact.trim(), question: question.trim(), kakaoAgree, reviewAgree, ...t }),
+        body: JSON.stringify({ name: name.trim(), gender, birthInfo, contact: contact.trim(), question: question.trim(), kakaoAgree, reviewAgree, source, ...t }),
       });
       const d = await res.json().catch(() => ({}));
       if (res.ok && d.saved) {
@@ -137,8 +149,8 @@ export default function AskForm() {
   return (
     <form onSubmit={submit} className="mx-auto max-w-[430px]">
       <div className="mb-4 flex items-center justify-center gap-2">
-        <span className="rounded-full border-[1.5px] border-[#12224A] bg-white px-3 py-1 text-[12px] font-bold text-[#12224A]">선착순 Daily {CAP}명 무료</span>
-        <span className={`rounded-full px-3 py-1 text-[12px] font-bold text-white ${full ? "bg-[#94A3B8]" : "bg-[#E8542E]"}`}>
+        <span className="rounded-full border border-[#E3EAF6] bg-white px-3 py-1 text-[12px] font-bold text-[#2B3A66] shadow-[0_1px_2px_rgba(18,34,74,.05),0_3px_10px_rgba(18,34,74,.05)]">선착순 Daily {CAP}명 무료</span>
+        <span className={`rounded-full px-3 py-1 text-[12px] font-bold ${full ? "border border-[#E3EAF6] bg-[#EEF2F7] text-[#64748B]" : "border border-[#F5B921]/35 bg-[#FFE08A]/55 text-[#7A4F00]"}`}>
           {status ? (full ? "오늘 마감 · 내일 다시" : `오늘 남은 자리 ${status.remaining}/${status.cap}`) : "자리 확인 중…"}
         </span>
       </div>
@@ -204,6 +216,18 @@ export default function AskForm() {
         <div className="mt-4">
           <label className={labelClass} htmlFor="ct">카카오톡 이름 또는 휴대폰 번호</label>
           <input id="ct" value={contact} onChange={(e) => setContact(e.target.value)} className={inputClass} placeholder="답을 보낼 때 확인하는 용도로만 씁니다" disabled={full} />
+        </div>
+
+        <div className="mt-4">
+          <label className={labelClass}>어디서 보고 오셨어요? <span className="font-medium text-[#94A3B8]">(선택)</span></label>
+          <div className="flex flex-wrap gap-1.5">
+            {SOURCES.map((o) => (
+              <button key={o.k} type="button" disabled={full} onClick={() => setSource(source === o.k ? null : o.k)}
+                className={`rounded-full border px-3 py-1.5 text-[12.5px] font-bold transition ${source === o.k ? "border-[#2563EB] bg-[#E8F1FF] text-[#1D4ED8]" : "border-[#DCE7F8] bg-white text-[#475569]"}`}>
+                {o.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="mt-5 space-y-2.5 rounded-xl bg-[#F5F9FF] p-3.5">

@@ -12,6 +12,7 @@ import { emptyAnswer, mergeAnswer, missingFields, MODULE_LABEL, type AskAnswer, 
  */
 const STORAGE_KEY = "aisaju_admin_password";
 const STATUS_LABEL: Record<AskRow["status"], string> = { received: "접수", answered: "답변 완료", converted: "유료 전환", cancelled: "취소" };
+const SOURCE_LABEL: Record<string, string> = { insta: "인스타그램", daangn: "당근", youtube: "유튜브", kakao: "카카오톡", search: "검색", friend: "지인 소개" };
 const STATUS_COLOR: Record<AskRow["status"], string> = { received: "bg-amber-100 text-amber-800", answered: "bg-emerald-100 text-emerald-800", converted: "bg-indigo-100 text-indigo-800", cancelled: "bg-gray-100 text-gray-500" };
 
 const input = "w-full rounded-md border border-border bg-white px-2.5 py-1.5 text-[13px] text-ink-900 outline-none focus:border-indigo-400";
@@ -208,7 +209,8 @@ export default function AdminAskPage() {
               <div>
                 <div className="text-[12px] text-body">{sel.ref_no} · {fmtTime(sel.created_at)} · <span className={`rounded px-1.5 py-0.5 ${STATUS_COLOR[sel.status]}`}>{STATUS_LABEL[sel.status]}</span></div>
                 <div className="mt-1 text-[16px] font-bold text-ink-900">“{sel.question}”</div>
-                <div className="mt-1 text-[12.5px] text-body">{sel.name} · {sel.birth_info} · 연락 {sel.contact} · {sel.kakao_agree ? "카톡 동의" : "카톡 미동의"} / {sel.review_agree ? "후기 동의" : "후기 미동의"}</div>
+                <div className="mt-1 text-[12.5px] text-body">{sel.name} · {sel.birth_info} · 연락 {sel.contact} · {sel.kakao_agree ? "카톡 동의" : "카톡 미동의"} / {sel.review_agree ? "후기 동의" : "후기 미동의"}
+                  <span className="ml-2 rounded bg-bg-alt px-1.5 py-0.5 text-[11.5px]">유입 {sel.utm || "-"} · 출처(본인) {SOURCE_LABEL[sel.source || ""] || "-"} · 앱 {sel.app || "-"}</span></div>
                 {sel.saju && (
                   <div className="mt-1 text-[12.5px] text-ink-900">명식 <b>{sel.saju.pillars.year} {sel.saju.pillars.month} {sel.saju.pillars.day} {sel.saju.pillars.hour ?? "(시 모름)"}</b> · 일간 <b>{sel.saju.dayStemKo}</b> · 올해 {sel.saju.thisYear} · 내년 {sel.saju.nextYear}</div>
                 )}

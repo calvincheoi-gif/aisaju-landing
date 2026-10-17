@@ -2096,6 +2096,22 @@ function readUtm(ls: Storage): Record<string, string> {
   return {};
 }
 
+/** 어느 앱 안에서 열렸는지 (2026-10-17) — 고민 랜딩(links.ts)·오행 앱(track.js)과 같은 규칙 */
+function appName(): string {
+  try {
+    const ua = navigator.userAgent || "";
+    if (/Instagram/i.test(ua)) return "instagram";
+    if (/FBAN|FBAV|FB_IAB/i.test(ua)) return "facebook";
+    if (/Barcelona|Threads/i.test(ua)) return "threads";
+    if (/KAKAOTALK/i.test(ua)) return "kakao";
+    if (/NAVER\(/i.test(ua)) return "naver";
+    if (/Daangn|Karrot|TowneersApp/i.test(ua)) return "daangn";
+    if (/\bLine\//i.test(ua)) return "line";
+    if (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) return "pwa";
+    if (/; wv\)|WebView/i.test(ua)) return "webview";
+  } catch {}
+  return "browser";
+}
 function track(name: string, props: Record<string, unknown> = {}) {
   try {
     const ss = window.sessionStorage, ls = window.localStorage;
@@ -2120,7 +2136,7 @@ function track(name: string, props: Record<string, unknown> = {}) {
       body: JSON.stringify({ session_id: sid, visitor_id: vid, name, step: null, props,
         utm: u.utm||null, utm_source: u.utm_source||null, utm_medium: u.utm_medium||null, utm_campaign: u.utm_campaign||null,
         referrer: document.referrer||null, path: window.location.pathname,
-        device: w<768?"mobile":w<1024?"tablet":"desktop", lang: document.documentElement.lang||"ko" }),
+        device: w<768?"mobile":w<1024?"tablet":"desktop", lang: document.documentElement.lang||"ko", app: appName() }),
     }).catch(()=>{});
   } catch {}
 }
