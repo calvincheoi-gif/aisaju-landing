@@ -1,6 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { wordsBlockHtml, WORDS_CSS, mountDailyWords, type DailyWord } from "@/lib/daily-words";
+import { talkBlockHtml, TALK_CSS, mountTalk, type TalkItem } from "@/lib/talk";
 
 const KAKAO = "https://open.kakao.com/o/gj3iUKai";
 const SB_URL = "https://urazdkvkanjnquqhnrvo.supabase.co";
@@ -1554,6 +1555,8 @@ const HTML = String.raw`
     <h1 class="hook" data-i="hook">질문 하나, <span class="mark"><b>답은 핵심만.</b></span><br>최형철 소장이 직접 봅니다</h1>
     <!-- 설명 2줄 자리 → 고민 주제 롤링(2줄씩 위로 순환, 2026-10-11). 내용은 /admin/topics -->
     <!--TOPICS_SLOT-->
+    <!-- 「오늘 한 줄」 1줄 소통 — 최신 10개 롤링, 끝의 「+ 한 줄」→ /talk (2026-10-17). lib/talk -->
+    <!--TALK_SLOT-->
     <div class="badges">
       <span class="bdg outline" data-i="bdgFree">선착순 Daily 3명 무료</span>
       <span class="bdg seats" id="seats" data-seats="3" data-cap="3" data-i="bdgSeats">오늘 남은 자리 3/3</span>
@@ -2262,8 +2265,8 @@ function reviewsBlockHtml(reviews?: HomeReview[] | null) {
 }
 
 export default function HomeV6(
-  { learn, reviews, ohaengLinks, words, topics }:
-  { learn?: HomeLearn | null; reviews?: HomeReview[] | null; ohaengLinks?: Record<string, string | null> | null; words?: DailyWord[] | null; topics?: HomeTopicItem[] | null }
+  { learn, reviews, ohaengLinks, words, topics, talk }:
+  { learn?: HomeLearn | null; reviews?: HomeReview[] | null; ohaengLinks?: Record<string, string | null> | null; words?: DailyWord[] | null; topics?: HomeTopicItem[] | null; talk?: TalkItem[] | null }
 ) {
   useEffect(() => {
     /* 봇·미리보기 크롤러는 세지 않는다 (2026-09-22) */
@@ -2305,6 +2308,8 @@ export default function HomeV6(
     const root = document.querySelector(".v6"); if (!root) return;
     /* Today's 촌철활인 한마디 — 12초 순환·보완 오행 강조 (lib/daily-words) */
     const dailyWords = mountDailyWords(root as HTMLElement);
+    /* 「오늘 한 줄」 롤링 (lib/talk) */
+    const talkRoll = mountTalk(root as HTMLElement, trk);
 
     /* ══════════ 언어 전환 ══════════
        · 원본(한국어)은 첫 실행 때 요소마다 기억해 둔다 — ko 사전을 따로 두지 않아도 된다
@@ -3304,6 +3309,7 @@ export default function HomeV6(
       document.removeEventListener("click", onDocClick);
       window.removeEventListener("pwa-ready", onPwaReady);
       dailyWords.destroy();
+      talkRoll.destroy();
       if (tkTimer) clearInterval(tkTimer);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pagehide", dwell);
@@ -3318,7 +3324,7 @@ export default function HomeV6(
 
   return (
     <div className="v6">
-      <style dangerouslySetInnerHTML={{ __html: CSS + WORDS_CSS }} />
+      <style dangerouslySetInnerHTML={{ __html: CSS + WORDS_CSS + TALK_CSS }} />
       <div
         dangerouslySetInnerHTML={{
           __html: HTML
@@ -3326,6 +3332,7 @@ export default function HomeV6(
             .replace('<div class="voc top" data-i="voc">', words && words.length ? '<div class="voc top" data-i="voc" hidden>' : '<div class="voc top" data-i="voc">')
             .replace("<!--WORDS_SLOT-->", wordsBlockHtml(words))
             .replace("<!--TOPICS_SLOT-->", topicsBlockHtml(topics))
+            .replace("<!--TALK_SLOT-->", talkBlockHtml(talk))
             .replace("<!--LEARN_ROW-->", learnRowHtml(learn))
             .replace("<!--LEARN_SLOT-->", learnBlockHtml(learn))
             .replace("<!--REVIEWS_SLOT-->", reviewsBlockHtml(reviews)),

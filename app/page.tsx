@@ -3,6 +3,7 @@ import { getFeaturedLearnCard, getOhaengLearnLinks, learnImageUrl } from "@/lib/
 import { getPublishedReviews } from "@/lib/reviews";
 import { getTodayWords } from "@/lib/daily-words/server";
 import { getHomeTopics } from "@/lib/home-topics";
+import { getHomeTalk } from "@/lib/talk/server";
 
 /**
  * 홈은 CDN에 5분간 캐시한다.
@@ -37,12 +38,13 @@ export default async function Home() {
        (2) 승인(게시)된 후기만 — 승인 전 글은 여기 들어오지 않는다
        (3) 오행 카드의 「더 읽기」 연결 — 글이 공개돼 있을 때만 버튼이 붙는다
        (4) Today's 촌철활인 한마디 — 오늘(한국 시간) 날짜의 오행별 5문구, 없으면 기존 VOC 문구 */
-  const [post, reviews, ohaengLinks, words, topics] = await Promise.all([
+  const [post, reviews, ohaengLinks, words, topics, talk] = await Promise.all([
     getFeaturedLearnCard(),
     getPublishedReviews(5),
     getOhaengLearnLinks(),
     getTodayWords(),
     getHomeTopics(), /* (5) 첫 화면 고민 주제 롤링 — /admin/topics 에서 관리 (2026-10-11) */
+    getHomeTalk(),   /* (6) 「오늘 한 줄」 최신 10개 — 누구나 남기고, 걸린 글은 /admin/talk 승인 (2026-10-17) */
   ]);
 
   const learn = post
@@ -57,5 +59,5 @@ export default async function Home() {
       }
     : null;
 
-  return <HomeV6 learn={learn} reviews={reviews} ohaengLinks={ohaengLinks} words={words} topics={topics} />;
+  return <HomeV6 learn={learn} reviews={reviews} ohaengLinks={ohaengLinks} words={words} topics={topics} talk={talk} />;
 }

@@ -11,6 +11,7 @@ const ADMIN_NAV = [
   { label: "무료 1문 1답", href: "/admin/ask" },
   { label: "홈 고민 주제", href: "/admin/topics" },
   { label: "게시 기록", href: "/admin/posts" },
+  { label: "오늘 한 줄", href: "/admin/talk" },
   { label: "상담 사례 관리", href: "/admin/cases" },
   { label: "가격 관리", href: "/admin/pricing" },
   { label: "Q&A 관리", href: "/admin/qna" },
