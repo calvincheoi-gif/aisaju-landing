@@ -35,6 +35,20 @@
     var x = w.innerWidth;
     return x < 768 ? 'mobile' : x < 1024 ? 'tablet' : 'desktop';
   }
+  /* 홈·고민 랜딩과 같은 규칙 (2026-10-17)
+     ① /?notrack=1 을 한 번 연 기기는 집계에서 뺀다 (/?notrack=0 으로 해제)
+     ② 채널 꼬리표는 30일이 지나면 버린다 — 끝난 이벤트의 꼬리표가 몇 달씩 따라붙던 문제 */
+  var UTM_TTL = 30 * 24 * 3600 * 1000;
+
+  function noTrack() {
+    try {
+      var v = new URLSearchParams(w.location.search).get('notrack');
+      if (v === '1') { localStorage.setItem('aisaju_notrack', '1'); w.alert('이 기기는 방문 통계에서 제외됩니다.'); }
+      if (v === '0') { localStorage.removeItem('aisaju_notrack'); w.alert('이 기기를 방문 통계에 다시 넣습니다.'); }
+      return localStorage.getItem('aisaju_notrack') === '1';
+    } catch (e) { return false; }
+  }
+
   function utms() {
     var q = new URLSearchParams(w.location.search);
     var now = {
@@ -45,11 +59,17 @@
     };
     var has = false, k;
     for (k in now) { if (now[k]) has = true; }
-    if (has) { localStorage.setItem('aisaju_utm', JSON.stringify(now)); return now; }
-    try { return JSON.parse(localStorage.getItem('aisaju_utm') || '{}'); } catch (e) { return {}; }
+    if (has) { now.t = String(Date.now()); localStorage.setItem('aisaju_utm', JSON.stringify(now)); return now; }
+    try {
+      var saved = JSON.parse(localStorage.getItem('aisaju_utm') || '{}');
+      if (saved && saved.t && Date.now() - Number(saved.t) < UTM_TTL) return saved;
+      localStorage.removeItem('aisaju_utm');
+    } catch (e) {}
+    return {};
   }
 
   function track(name, opts) {
+    if (noTrack()) return;
     opts = opts || {};
     var u = utms();
     var body = {

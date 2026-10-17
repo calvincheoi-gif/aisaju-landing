@@ -2070,12 +2070,39 @@ const HTML = String.raw`
 `;
 
 function rid() { return Math.random().toString(36).slice(2) + Date.now().toString(36); }
+/* 계측 공통 규칙 (2026-10-17)
+   ① 내 기기 제외 — /?notrack=1 을 한 번 열면 그 기기는 이후 집계에서 빠진다(/?notrack=0 으로 해제).
+      운영자가 관리자 화면을 수시로 드나들면서 생기는 기록이 전체의 40%를 넘어, 지표를 믿을 수 없었다.
+   ② 채널 꼬리표 30일 만료 — 예전에는 한 번 붙은 utm 이 그 기기에 영원히 남아,
+      끝난 이벤트(popup)의 꼬리표가 몇 달 뒤 방문까지 따라다녔다. */
+const UTM_TTL = 30 * 24 * 3600 * 1000;
+
+function isNoTrack(ls: Storage, q: URLSearchParams): boolean {
+  try {
+    const v = q.get("notrack");
+    if (v === "1") { ls.setItem("aisaju_notrack", "1"); alert("이 기기는 방문 통계에서 제외됩니다."); }
+    if (v === "0") { ls.removeItem("aisaju_notrack"); alert("이 기기를 방문 통계에 다시 넣습니다."); }
+    return ls.getItem("aisaju_notrack") === "1";
+  } catch { return false; }
+}
+
+/** 저장된 채널 꼬리표를 읽는다 — 30일이 지났으면 버리고 '직접 방문'으로 본다 */
+function readUtm(ls: Storage): Record<string, string> {
+  try {
+    const saved = JSON.parse(ls.getItem("aisaju_utm") || "{}");
+    if (saved && saved.t && Date.now() - Number(saved.t) < UTM_TTL) return saved;
+    ls.removeItem("aisaju_utm");
+  } catch {}
+  return {};
+}
+
 function track(name: string, props: Record<string, unknown> = {}) {
   try {
     const ss = window.sessionStorage, ls = window.localStorage;
+    const q = new URLSearchParams(window.location.search);
+    if (isNoTrack(ls, q)) return;
     let sid = ss.getItem("aisaju_sid"); if (!sid) { sid = rid(); ss.setItem("aisaju_sid", sid); }
     let vid = ls.getItem("aisaju_vid"); if (!vid) { vid = rid(); ls.setItem("aisaju_vid", vid); }
-    const q = new URLSearchParams(window.location.search);
     const now: Record<string, string> = {};
     ["utm","utm_source","utm_medium","utm_campaign"].forEach(k => { const v = q.get(k); if (v) now[k] = v; });
     /* 공유 버튼으로 퍼진 주소(…/#s)로 들어온 방문 — utm=share 로 셈한다.
@@ -2084,8 +2111,8 @@ function track(name: string, props: Record<string, unknown> = {}) {
       now.utm = "share";
       try { history.replaceState(null, "", window.location.pathname + window.location.search); } catch {}
     }
-    if (Object.keys(now).length) ls.setItem("aisaju_utm", JSON.stringify(now));
-    let u: Record<string, string> = {}; try { u = JSON.parse(ls.getItem("aisaju_utm") || "{}"); } catch {}
+    if (Object.keys(now).length) { now.t = String(Date.now()); ls.setItem("aisaju_utm", JSON.stringify(now)); }
+    const u = readUtm(ls);
     const w = window.innerWidth;
     fetch(SB_URL + "/rest/v1/events", {
       method: "POST", keepalive: true,
