@@ -246,7 +246,7 @@ const AskReport = forwardRef<HTMLDivElement, AskReportProps>(function AskReport(
         {/* 분량 명시 (2026-10-06): 1매 → 1~3매 Key 리포트 */}
         <div style={{ fontSize: 12.5, fontWeight: 700, color: NAVY, lineHeight: 1.4 }}>질문 하나에 대한 <b style={{ color: BLUE }}>1~3매 Key 리포트</b></div>
         <div style={{ fontSize: 12, color: GRAY, lineHeight: 1.4 }}>명리에 기반한 참고 의견이며 결과를 보장하지 않습니다</div>
-        <a href="/consult?mode=simple&item=reportOnly&utm=report_foot" style={{ marginTop: 6, padding: "10px 18px", borderRadius: 999, background: BG, fontSize: 13, color: NAVY, lineHeight: 1.4, textDecoration: "none", display: "inline-block" }}>더 깊이 보려면 <b style={{ color: BLUE }}>1문 1답 9,900원 · 개인종합 20장</b> · aisajulab.com ›</a>
+        <a href="/consult?mode=simple&item=reportOnly&utm=report_foot" style={{ marginTop: 6, padding: "10px 18px", borderRadius: 999, background: BG, fontSize: 13, color: NAVY, lineHeight: 1.4, textDecoration: "none", display: "inline-block" }}>더 깊이 보려면 <b style={{ color: BLUE }}>1문 1답 9,900원 · 개인종합 10~20장</b> · aisajulab.com ›</a>
       </div>
     </div>
   );

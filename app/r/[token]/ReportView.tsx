@@ -125,7 +125,7 @@ export default function ReportView(props: AskReportProps & { autoPrint?: boolean
         <p>이 답은 질문 하나에 대한 <b>1~3매 Key 리포트</b>입니다. 이어지는 질문이나 전체 명식 풀이는 아래에서 받으실 수 있습니다.</p>
         <div className="rv-grid">
           <a className="rv-a1" href={CTA.ask}>1문 1답 더 묻기<small>9,900원 · 24시간 안 답</small></a>
-          <a className="rv-a2" href={CTA.full}>개인종합 20장<small>리포트 + 전화·톡 상담</small></a>
+          <a className="rv-a2" href={CTA.full}>개인종합 10~20장<small>리포트 + 전화·톡 상담</small></a>
           <a className="rv-a3" href={CTA.kakao} target="_blank" rel="noopener">카톡으로 궁금한 점<small>AI사주랩 채널</small></a>
           <a className="rv-a4" href={CTA.review}>후기 한 줄 남기기<small>다음 상담 50% 할인</small></a>
         </div>

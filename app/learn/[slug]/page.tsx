@@ -293,7 +293,7 @@ export default async function LearnPostPage({
               >
                 <span>
                   <span className="block text-[15px] font-bold text-ink-900">
-                    개인 종합 리포트 20장 · 9,900원
+                    개인 종합 리포트 10~20장 · 9,900원
                   </span>
                   <span className="mt-0.5 block text-[12.5px] text-body">
                     전문가가 직접 작성 · 상담 포함은 5만원부터
