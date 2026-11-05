@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { wordsBlockHtml, WORDS_CSS, mountDailyWords, type DailyWord } from "@/lib/daily-words";
 import { talkBlockHtml, TALK_CSS, mountTalk, type TalkItem } from "@/lib/talk";
+import { ROLL_BODY, rollScriptTag, topicHref, TOPIC_WINDOW, TOPIC_LINE_PX, TOPIC_TICK_MS, type HomeTopic } from "@/lib/home-topics";
 
 const KAKAO = "https://open.kakao.com/o/gj3iUKai";
 const SB_URL = "https://urazdkvkanjnquqhnrvo.supabase.co";
@@ -80,27 +81,30 @@ body{
 .bdg.outline{outline:0;background:#fff;color:#2B3A66;border:1px solid #E3EAF6;box-shadow:0 1px 2px rgba(18,34,74,.05),0 3px 10px rgba(18,34,74,.05)}
 .bdg.seats{background:rgba(255,224,138,.55);color:#7A4F00;border:1px solid rgba(245,185,33,.35);box-shadow:none;backdrop-filter:blur(4px)}
 .bdg.seats.full{background:#EEF2F7;color:#64748B;border-color:#E3EAF6}
-.badges{margin:2px 0 6px}
+.badges{margin:2px 0 5px}
 
-h1.hook{position:relative;margin:0 0 4px;font-size:20.5px;line-height:1.22;letter-spacing:-.045em;font-weight:800;color:#1E2A55}
+h1.hook{position:relative;margin:0 0 3px;font-size:20.5px;line-height:1.22;letter-spacing:-.045em;font-weight:800;color:#1E2A55}
 h1.hook b{color:var(--blue)}
 h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent 58%,rgba(255,224,138,.75) 58%);padding:0 3px}
 .sub{position:relative;margin:0 0 10px;font-size:13.5px;line-height:1.5;color:#4C5570;font-weight:500}
 
-/* ── 고민 주제 롤링: 2줄 창, 한 줄씩 위로 (2026-10-11) ── */
-.topics{position:relative;margin:0 0 7px;height:93px;overflow:hidden;border-radius:14px;
+/* ── 고민 주제 롤링: 4줄 창(v3, 2026-11-05 — 2줄→3줄→4줄), 한 줄씩 위로.
+     줄 높이 31→28px, 위아래 여백을 줄여 4줄이 돼도 첫 화면에 오행 카드 버튼까지 남는다. 줄 수·높이는 lib/home-topics/types.ts ── */
+.topics{position:relative;margin:0 0 5px;height:${TOPIC_WINDOW * TOPIC_LINE_PX + 2}px;overflow:hidden;border-radius:14px;
   background:rgba(255,255,255,.78);border:1px solid rgba(37,99,235,.16);box-shadow:0 4px 14px rgba(18,34,74,.06);text-align:left}
-.topics:after{content:"";position:absolute;left:12px;right:12px;top:31px;height:1px;background:rgba(37,99,235,.12);pointer-events:none;box-shadow:0 31px 0 rgba(37,99,235,.12)}
+.topics:after{content:"";position:absolute;left:12px;right:12px;top:${TOPIC_LINE_PX}px;height:1px;background:rgba(37,99,235,.12);pointer-events:none;
+  box-shadow:0 ${TOPIC_LINE_PX}px 0 rgba(37,99,235,.12),0 ${TOPIC_LINE_PX * 2}px 0 rgba(37,99,235,.12)}
 .topics ul{list-style:none;margin:0;padding:0;will-change:transform}
 .topics ul.anim{transition:transform .42s cubic-bezier(.4,0,.2,1)}
-.topics li{height:31px}
-.topics a{display:flex;align-items:center;gap:7px;height:31px;padding:0 12px;text-decoration:none;color:var(--navy)}
+.topics li{height:${TOPIC_LINE_PX}px}
+.topics a{display:flex;align-items:center;gap:7px;height:${TOPIC_LINE_PX}px;padding:0 12px;text-decoration:none;color:var(--navy)}
 .topics a:active{background:rgba(37,99,235,.06)}
 .topics .tk{flex:none;font-size:12px;font-weight:900;color:var(--blue)}
-.topics .tc{flex:none;font-size:11.5px;font-weight:800;color:#fff;background:var(--navy);padding:2px 7px;border-radius:999px;letter-spacing:-.02em}
+.topics .tc{flex:none;font-size:11.5px;font-weight:800;color:#fff;background:var(--navy);padding:1.5px 7px;border-radius:999px;letter-spacing:-.02em;white-space:nowrap}
 .topics .tt{flex:1;min-width:0;font-size:14px;font-weight:800;letter-spacing:-.04em;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topics .ta{flex:none;font-size:14px;font-weight:900;color:var(--blue)}
 .topics .tt[lang="fr"],.topics .tt[lang="en"]{font-size:13.5px;letter-spacing:-.02em}
+.topics .tc[lang="fr"],.topics .tc[lang="en"]{font-size:11px}
 
 /* ── 무료 1문 1답 CTA — 첫 화면의 유일한 채움 버튼. 밝고 살짝 투명한 청색 ── */
 .askbtn{position:relative;display:block;width:100%;height:40px;border-radius:14px;cursor:pointer;font-family:inherit;
@@ -2142,12 +2146,17 @@ function track(name: string, props: Record<string, unknown> = {}) {
   } catch {}
 }
 
-/** 홈 첫 화면 고민 주제 롤링 — app/page.tsx 가 DB(home_topics)에서 읽어 넘겨준다 (2026-10-11) */
-export interface HomeTopicItem { category: string; title: string; slug: string; i18n?: Partial<Record<"en" | "ja" | "zh" | "fr", { category: string; title: string }>> }
+/** 홈 첫 화면 고민 주제 롤링 — app/page.tsx 가 DB(home_topics)에서 읽어 넘겨준다 (2026-10-11, v3 2026-11-05) */
+export type HomeTopicItem = HomeTopic;
 
 const escT = (v: string) => String(v ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-/** <!--TOPICS_SLOT--> 에 넣을 블록. 주제가 없으면 예전 설명 2줄을 그대로 보여 준다 */
+/**
+ * <!--TOPICS_SLOT--> 에 넣을 블록. 주제가 없으면 예전 설명 2줄을 그대로 보여 준다.
+ * v3: 서버는 전체 주제를 DB 순서로 내보내고, 바로 뒤의 인라인 스크립트(lib/home-topics/roll.ts)가 첫 그림 전에
+ *     방문마다 다른 순서로 섞고 앞 4줄을 복제해 붙인다 — 홈이 CDN 에 5분 캐시돼도 조합은 매번 다르다.
+ *     규칙에 쓰는 값은 li 의 data-g(축)·data-tone·data-w(가중)·data-slot(시간대)에 싣는다.
+ */
 function topicsBlockHtml(topics?: HomeTopicItem[] | null): string {
   if (!topics || topics.length === 0) {
     return `<p class="sub" data-i="heroSub">이직·창업·궁합·집, 뭐든 한 줄로 보내 주세요.<br>24시간 안에 폰으로 보는 <b>1~3매 Key 리포트</b>로 답합니다.</p>`;
@@ -2156,11 +2165,11 @@ function topicsBlockHtml(topics?: HomeTopicItem[] | null): string {
   const attrs = (ko: string, key: "category" | "title", t: HomeTopicItem) =>
     `data-l-ko="${escT(ko)}"` + (["en", "ja", "zh", "fr"] as const).map((l) => { const v = t.i18n?.[l]?.[key]; return v ? ` data-l-${l}="${escT(v)}"` : ""; }).join("");
   const li = (t: HomeTopicItem) =>
-    `<li><a href="/q/${escT(t.slug)}?utm=home_q" data-topic="${escT(t.slug)}"><span class="tk">✓</span><span class="tc" ${attrs(t.category, "category", t)}>${escT(t.category)}</span><span class="tt" ${attrs(t.title, "title", t)}>${escT(t.title)}</span><span class="ta">›</span></a></li>`;
-  /* 3줄 창(2026-10-12). 3개 이하면 돌리지 않고 그대로. 4개 이상이면 앞 3개를 뒤에 한 번 더 붙여 끊김 없이 순환 */
-  const roll = topics.length > 3;
-  const list = roll ? [...topics, ...topics.slice(0, 3)] : topics;
-  return `<div class="topics" id="topics" data-n="${topics.length}" data-roll="${roll ? 1 : 0}" aria-label="지금 많이 보는 고민"><ul id="topics-ul">${list.map(li).join("")}</ul></div>`;
+    `<li data-g="${escT(t.grp || "")}" data-tone="${t.tone === "heavy" ? "heavy" : "light"}" data-w="${t.weight || 1}" data-slot="${escT(t.time_slot || "any")}">` +
+    `<a href="${escT(topicHref(t))}" data-topic="${escT(t.slug)}" data-link="${t.link_type === "ask" ? "ask" : "q"}">` +
+    `<span class="tk">✓</span><span class="tc" ${attrs(t.category, "category", t)}>${escT(t.category)}</span><span class="tt" ${attrs(t.title, "title", t)}>${escT(t.title)}</span><span class="ta">›</span></a></li>`;
+  /* 창(TOPIC_WINDOW)보다 적으면 돌리지 않고 그대로. 순서 섞기·복제는 인라인 스크립트가 한다 */
+  return `<div class="topics" id="topics" data-n="${topics.length}" data-win="${TOPIC_WINDOW}" data-roll="${topics.length > TOPIC_WINDOW ? 1 : 0}" aria-label="지금 많이 보는 고민"><ul id="topics-ul">${topics.map(li).join("")}</ul></div>${rollScriptTag("topics")}`;
 }
 
 /** 홈에 띄울 이번 주 읽을거리 — app/page.tsx 가 DB에서 읽어 넘겨준다 */
@@ -2271,23 +2280,27 @@ export default function HomeV6(
     const isBot = navigator.webdriver || /bot|crawl|spider|slurp|facebookexternalhit|kakaotalk-scrap|Yeti|preview|headless|lighthouse/i.test(navigator.userAgent);
     const trk = (n: string, p: Record<string, unknown> = {}) => { if (!isBot) track(n, p); };
     trk("home_view");
-    /* ── 고민 주제 롤링: 3초마다 한 줄씩 위로, 끝에 가면 소리 없이 처음으로 (2026-10-11) ── */
+    /* ── 고민 주제 롤링: 한 줄씩 위로, 끝에 가면 소리 없이 처음으로 (2026-10-11, v3 2026-11-05 4줄·2.8초) ── */
     const tkBox = document.getElementById("topics"), tkUl = document.getElementById("topics-ul") as HTMLElement | null;
     let tkTimer: ReturnType<typeof setInterval> | null = null;
+    if (tkBox && tkUl) {
+      /* 서버 HTML 의 인라인 스크립트가 이미 순서를 섞었으면 data-ready=1. 사이트 안에서 홈으로 돌아와 스크립트가 안 돈 경우만 여기서 같은 규칙을 돌린다 */
+      if (tkBox.dataset.ready !== "1") { try { new Function("box", ROLL_BODY)(tkBox); } catch {} }
+    }
     if (tkBox && tkUl && tkBox.dataset.roll === "1") {
-      const n = parseInt(tkBox.dataset.n || "0", 10), H = 31; let i = 0, hold = false;
+      const n = parseInt(tkBox.dataset.n || "0", 10), H = TOPIC_LINE_PX; let i = 0, hold = false;
       const step = () => {
         if (hold || document.visibilityState === "hidden") return;
         i += 1; tkUl.classList.add("anim"); tkUl.style.transform = `translateY(-${i * H}px)`;
         if (i >= n) setTimeout(() => { tkUl.classList.remove("anim"); i = 0; tkUl.style.transform = "translateY(0)"; }, 460);
       };
-      tkTimer = setInterval(step, 3000);
+      tkTimer = setInterval(step, TOPIC_TICK_MS);
       const pause = () => { hold = true; }, go = () => { hold = false; };
       tkBox.addEventListener("touchstart", pause, { passive: true }); tkBox.addEventListener("touchend", go);
       tkBox.addEventListener("mouseenter", pause); tkBox.addEventListener("mouseleave", go);
       tkUl.addEventListener("click", (e) => {
         const a = (e.target as HTMLElement).closest("a[data-topic]") as HTMLElement | null;
-        if (a) trk("home_topic_click", { slug: a.dataset.topic, pos: i });
+        if (a) trk("home_topic_click", { slug: a.dataset.topic, link: a.dataset.link, pos: i });
       });
     }
     /* 스크롤 깊이(25·50·75·100%)·체류 시간 — 홈 이탈 73%가 어디서 나가는지 보기 위해 */
