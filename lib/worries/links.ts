@@ -53,6 +53,12 @@ export function askHref(slug: string, prefill: string): string {
   return `/ask?${p.toString()}`;
 }
 
+/** 유료 상담 신청으로 — 더 깊은 리포트·상담을 원하는 분 (v3, 2026-11-05). 입문 리포트가 기본 선택 */
+export function consultHref(slug: string): string {
+  const p = new URLSearchParams({ mode: "simple", item: "reportOnly", utm: `q_${slug}_${inboundChannel()}` });
+  return `/consult?${p.toString()}`;
+}
+
 /** 1분 오행 진단으로 */
 export function ohaengHref(slug: string): string {
   return `/ohaeng/?utm=q_${slug}_${inboundChannel()}`;

@@ -4,6 +4,9 @@ import { wordsBlockHtml, WORDS_CSS, mountDailyWords, type DailyWord } from "@/li
 import { talkBlockHtml, TALK_CSS, mountTalk, type TalkItem } from "@/lib/talk";
 import { ROLL_BODY, rollScriptTag, topicHref, TOPIC_WINDOW, TOPIC_LINE_PX, TOPIC_TICK_MS, type HomeTopic } from "@/lib/home-topics";
 
+/** 롤링 상자 아래 「고민 전체 List」 띠 높이(px) — v3.0 */
+const TOPIC_ALL_PX = 18;
+
 const KAKAO = "https://open.kakao.com/o/gj3iUKai";
 const SB_URL = "https://urazdkvkanjnquqhnrvo.supabase.co";
 const SB_KEY = "sb_publishable_fSG-HqZrC9GVTT5FOprPnA_sDiFoiD2";
@@ -81,7 +84,7 @@ body{
 .bdg.outline{outline:0;background:#fff;color:#2B3A66;border:1px solid #E3EAF6;box-shadow:0 1px 2px rgba(18,34,74,.05),0 3px 10px rgba(18,34,74,.05)}
 .bdg.seats{background:rgba(255,224,138,.55);color:#7A4F00;border:1px solid rgba(245,185,33,.35);box-shadow:none;backdrop-filter:blur(4px)}
 .bdg.seats.full{background:#EEF2F7;color:#64748B;border-color:#E3EAF6}
-.badges{margin:2px 0 5px}
+.badges{margin:2px 0 3px}
 
 h1.hook{position:relative;margin:0 0 3px;font-size:20.5px;line-height:1.22;letter-spacing:-.045em;font-weight:800;color:#1E2A55}
 h1.hook b{color:var(--blue)}
@@ -90,7 +93,7 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 
 /* ── 고민 주제 롤링: 4줄 창(v3, 2026-11-05 — 2줄→3줄→4줄), 한 줄씩 위로.
      줄 높이 31→28px, 위아래 여백을 줄여 4줄이 돼도 첫 화면에 오행 카드 버튼까지 남는다. 줄 수·높이는 lib/home-topics/types.ts ── */
-.topics{position:relative;margin:0 0 5px;height:${TOPIC_WINDOW * TOPIC_LINE_PX + 2}px;overflow:hidden;border-radius:14px;
+.topics{position:relative;margin:0 0 4px;height:${TOPIC_WINDOW * TOPIC_LINE_PX + TOPIC_ALL_PX + 2}px;overflow:hidden;border-radius:14px;
   background:rgba(255,255,255,.78);border:1px solid rgba(37,99,235,.16);box-shadow:0 4px 14px rgba(18,34,74,.06);text-align:left}
 .topics:after{content:"";position:absolute;left:12px;right:12px;top:${TOPIC_LINE_PX}px;height:1px;background:rgba(37,99,235,.12);pointer-events:none;
   box-shadow:0 ${TOPIC_LINE_PX}px 0 rgba(37,99,235,.12),0 ${TOPIC_LINE_PX * 2}px 0 rgba(37,99,235,.12)}
@@ -105,6 +108,12 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 .topics .ta{flex:none;font-size:14px;font-weight:900;color:var(--blue)}
 .topics .tt[lang="fr"],.topics .tt[lang="en"]{font-size:13.5px;letter-spacing:-.02em}
 .topics .tc[lang="fr"],.topics .tc[lang="en"]{font-size:11px}
+/* 롤링 상자 아래 얇은 띠 — 지나간 고민·전체 목록(/q)으로 (v3.0, 2026-11-05). 높이 20px, 상자 안에 포함 */
+.topics .tall{position:absolute;left:0;right:0;bottom:0;height:${TOPIC_ALL_PX}px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 12px;background:linear-gradient(180deg,#EEF4FF,#E6EFFF);border-top:1px solid rgba(37,99,235,.14);text-decoration:none}
+.topics .tall .tn{font-size:11px;font-weight:700;color:#5B6480;letter-spacing:-.02em}
+.topics .tall .tg{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:900;color:var(--blue);letter-spacing:-.02em}
+.topics .tall .tg i{font-style:normal;font-size:11px}
 
 /* ── 무료 1문 1답 CTA — 첫 화면의 유일한 채움 버튼. 밝고 살짝 투명한 청색 ── */
 .askbtn{position:relative;display:block;width:100%;height:40px;border-radius:14px;cursor:pointer;font-family:inherit;
@@ -837,6 +846,8 @@ const I18N: Record<Lang, Record<string, string>> = {
 ko: {},   /* 한국어는 HTML 원문을 그대로 쓴다 (applyLang 이 원본을 기억한다) */
 
 en: {
+ topicsN:"worries rotating",
+ topicsAll:"All worries",
  nmMore:"See prices and contents",
  nmLess:"Close",
  nmPeek:"Report of 20–25 pages · framed certificate · 8-page keepsake commentary",
@@ -1006,6 +1017,8 @@ en: {
 },
 
 ja: {
+ topicsN:"件の悩みが流れています",
+ topicsAll:"悩み一覧",
  nmMore:"価格 · 内容を詳しく見る",
  nmLess:"閉じる",
  nmPeek:"精密レポート20~25P · 額装用命名書 · 保存用解説書8P",
@@ -1175,6 +1188,8 @@ ja: {
 },
 
 zh: {
+ topicsN:"个烦恼轮播中",
+ topicsAll:"全部烦恼",
  nmMore:"查看价格与内容",
  nmLess:"收起",
  nmPeek:"精密报告20~25页 · 装裱用命名书 · 收藏用释义8页",
@@ -1344,6 +1359,8 @@ zh: {
 },
 
 fr: {
+ topicsN:"soucis défilent",
+ topicsAll:"Tous les soucis",
  nmMore:"Voir prix et contenu",
  nmLess:"Fermer",
  nmPeek:"Rapport de 20 à 25 pages · certificat encadrable · livret de 8 pages",
@@ -2169,7 +2186,9 @@ function topicsBlockHtml(topics?: HomeTopicItem[] | null): string {
     `<a href="${escT(topicHref(t))}" data-topic="${escT(t.slug)}" data-link="${t.link_type === "ask" ? "ask" : "q"}">` +
     `<span class="tk">✓</span><span class="tc" ${attrs(t.category, "category", t)}>${escT(t.category)}</span><span class="tt" ${attrs(t.title, "title", t)}>${escT(t.title)}</span><span class="ta">›</span></a></li>`;
   /* 창(TOPIC_WINDOW)보다 적으면 돌리지 않고 그대로. 순서 섞기·복제는 인라인 스크립트가 한다 */
-  return `<div class="topics" id="topics" data-n="${topics.length}" data-win="${TOPIC_WINDOW}" data-roll="${topics.length > TOPIC_WINDOW ? 1 : 0}" aria-label="지금 많이 보는 고민"><ul id="topics-ul">${topics.map(li).join("")}</ul></div>${rollScriptTag("topics")}`;
+  /* 아래 띠: 왼쪽 개수 안내, 오른쪽 전체 목록(/q) 링크 — 4줄에서 놓친 고민을 바로 찾게 (v3.0) */
+  const all = `<a class="tall" href="/q?utm=home_all" data-topic="_all"><span class="tn"><b>${topics.length}</b> <span data-i="topicsN">가지 고민이 돌고 있어요</span></span><span class="tg"><span data-i="topicsAll">고민 전체 List</span><i>›</i></span></a>`;
+  return `<div class="topics" id="topics" data-n="${topics.length}" data-win="${TOPIC_WINDOW}" data-roll="${topics.length > TOPIC_WINDOW ? 1 : 0}" aria-label="지금 많이 보는 고민"><ul id="topics-ul">${topics.map(li).join("")}</ul>${all}</div>${rollScriptTag("topics")}`;
 }
 
 /** 홈에 띄울 이번 주 읽을거리 — app/page.tsx 가 DB에서 읽어 넘겨준다 */
@@ -2298,7 +2317,7 @@ export default function HomeV6(
       const pause = () => { hold = true; }, go = () => { hold = false; };
       tkBox.addEventListener("touchstart", pause, { passive: true }); tkBox.addEventListener("touchend", go);
       tkBox.addEventListener("mouseenter", pause); tkBox.addEventListener("mouseleave", go);
-      tkUl.addEventListener("click", (e) => {
+      tkBox.addEventListener("click", (e) => {
         const a = (e.target as HTMLElement).closest("a[data-topic]") as HTMLElement | null;
         if (a) trk("home_topic_click", { slug: a.dataset.topic, link: a.dataset.link, pos: i });
       });

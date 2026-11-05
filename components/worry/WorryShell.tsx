@@ -10,8 +10,13 @@ export default function WorryShell({ children }: { children: React.ReactNode }) 
           <a href="/" className="flex items-baseline gap-[3px] text-[17px] font-extrabold tracking-[-0.04em] text-[#12224A]">
             AI사주랩<span className="text-[#2563EB]">.com</span>
           </a>
-          <a href="/q" className="rounded-full border border-[#DCE7F8] bg-white px-3 py-1.5 text-[12px] font-bold text-[#1D4ED8]">
-            고민 모아보기
+          {/* v3.0(2026-11-05): 테두리형 「고민 모아보기」 → 채움 청색 「고민 전체 List」 — 홈 4줄에서 놓친 고민을 바로 찾게 주목도 ↑ */}
+          <a
+            href="/q?utm=q_header"
+            className="flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[12.5px] font-extrabold text-white shadow-[0_4px_12px_rgba(37,99,235,.28)]"
+            style={{ background: "linear-gradient(180deg,#5B8CFF 0%,#2563EB 100%)" }}
+          >
+            <span aria-hidden>☰</span> 고민 전체 List
           </a>
         </header>
         {children}

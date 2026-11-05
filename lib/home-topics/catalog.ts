@@ -11,18 +11,18 @@ import type { HomeTopic } from "./types";
  * 선정 기준(2026-11-04~05 벤치마킹): 사주·타로 상담 시장에서 가장 많이 찾는 키워드 2~4자.
  *   연애 5 · 결혼 3 · 일 7 · 돈 4 · 삶 5 = 24 (24절기)
  *   "할까 말까"(이직·창업·투자·재회) 뿐 아니라 "이미 벌어진 갈등"(이혼·직장갈등·가족갈등·부모부양)을 넣었다 — 상담 신청 비중이 큰 축.
- * 제목은 18자 안팎 한 줄. 랜딩(/q)이 있으면 q, 없으면 ask(1문 1답 질문 미리 채움).
+ * 제목은 18자 안팎 한 줄. v3.0(2026-11-05) 8개 랜딩을 더해 24개 모두 /q 랜딩(q)으로 연결 — ask_prefill 은 관리자에서 「1문 1답 바로」로 바꿀 때를 위해 남겨 둔다.
  */
 export const TOPIC_CATALOG: HomeTopic[] = [
   /* ── 연애 ── */
   { sort: 1, grp: "연애", category: "연애", title: "왜 나는 사랑에 상처 받을까?", slug: "love-pattern", link_type: "q", weight: 1, time_slot: "night", tone: "light",
     i18n: { en: { category: "Love", title: "Why do I keep getting hurt in love?" }, ja: { category: "恋愛", title: "なぜ私はいつも恋で傷つくの？" }, zh: { category: "恋爱", title: "为什么我总在爱情里受伤？" }, fr: { category: "Amour", title: "Pourquoi je souffre en amour ?" } } },
-  { sort: 2, grp: "연애", category: "썸", title: "이게 썸일까, 나만의 착각일까?", slug: "crush", link_type: "ask", weight: 1, time_slot: "night", tone: "light",
+  { sort: 2, grp: "연애", category: "썸", title: "이게 썸일까, 나만의 착각일까?", slug: "crush", link_type: "q", weight: 1, time_slot: "night", tone: "light",
     ask_prefill: "요즘 자주 연락하는 사람이 있어요. 썸인지, 저 혼자 착각인지 모르겠어요.",
     i18n: { en: { category: "Crush", title: "Is this a thing, or just me?" }, ja: { category: "片思い", title: "これは脈あり？私の勘違い？" }, zh: { category: "暧昧", title: "这是暧昧，还是我的错觉？" }, fr: { category: "Flirt", title: "Un début d’histoire… ou moi seule ?" } } },
   { sort: 3, grp: "연애", category: "속마음", title: "연락이 뜸한 그 사람, 속마음은?", slug: "contact", link_type: "q", weight: 1, time_slot: "night", tone: "light",
     i18n: { en: { category: "Feelings", title: "Fewer texts — what’s on their mind?" }, ja: { category: "本音", title: "連絡が減ったあの人の本音は？" }, zh: { category: "心思", title: "联系变少的那个人，在想什么？" }, fr: { category: "Pensées", title: "Moins de messages : que pense-t-il ?" } } },
-  { sort: 4, grp: "연애", category: "이별", title: "헤어지는 게 맞을까, 더 버틸까?", slug: "breakup", link_type: "ask", weight: 1, time_slot: "any", tone: "heavy",
+  { sort: 4, grp: "연애", category: "이별", title: "헤어지는 게 맞을까, 더 버틸까?", slug: "breakup", link_type: "q", weight: 1, time_slot: "any", tone: "heavy",
     ask_prefill: "헤어져야 할지, 조금 더 노력해 봐야 할지 고민이에요.",
     i18n: { en: { category: "Breakup", title: "Should I leave, or hold on?" }, ja: { category: "別れ", title: "別れるべき？もう少し耐える？" }, zh: { category: "分手", title: "该分手，还是再撑一下？" }, fr: { category: "Rupture", title: "Partir, ou tenir encore ?" } } },
   { sort: 5, grp: "연애", category: "재회", title: "헤어진 그 사람, 먼저 연락할까?", slug: "reunion", link_type: "q", weight: 2, time_slot: "night", tone: "light",
@@ -33,7 +33,7 @@ export const TOPIC_CATALOG: HomeTopic[] = [
     i18n: { en: { category: "Match", title: "Marry? 3 things beyond love" }, ja: { category: "相性", title: "結婚していい？愛以外に見る3つ" }, zh: { category: "合婚", title: "该结婚吗？爱情之外要看的3件事" }, fr: { category: "Couple", title: "Se marier ? 3 points à vérifier" } } },
   { sort: 7, grp: "결혼", category: "결혼시기", title: "몇 년을 만났는데, 결혼은 언제쯤?", slug: "marriage-talk", link_type: "q", weight: 1, time_slot: "night", tone: "light",
     i18n: { en: { category: "Timing", title: "Years together — when do we marry?" }, ja: { category: "結婚時期", title: "何年も付き合って、結婚はいつ？" }, zh: { category: "婚期", title: "交往多年，什么时候结婚？" }, fr: { category: "Mariage", title: "Des années ensemble : se marier quand ?" } } },
-  { sort: 8, grp: "결혼", category: "이혼", title: "이혼이 답일까, 시간을 더 둘까?", slug: "divorce", link_type: "ask", weight: 1, time_slot: "any", tone: "heavy",
+  { sort: 8, grp: "결혼", category: "이혼", title: "이혼이 답일까, 시간을 더 둘까?", slug: "divorce", link_type: "q", weight: 1, time_slot: "any", tone: "heavy",
     ask_prefill: "이혼을 생각하고 있어요. 지금 결정하는 게 맞을지, 별거로 시간을 둬야 할지 모르겠어요.",
     i18n: { en: { category: "Divorce", title: "Divorce — or give it more time?" }, ja: { category: "離婚", title: "離婚が答え？もう少し時間を置く？" }, zh: { category: "离婚", title: "离婚是答案，还是再给些时间？" }, fr: { category: "Divorce", title: "Divorcer, ou laisser du temps ?" } } },
 
@@ -64,19 +64,19 @@ export const TOPIC_CATALOG: HomeTopic[] = [
     i18n: { en: { category: "Business", title: "Empty shop — hold on or close?" }, ja: { category: "事業", title: "客の来ない店、続ける？畳む？" }, zh: { category: "生意", title: "没客人的店，撑还是关？" }, fr: { category: "Business", title: "Boutique vide : tenir ou fermer ?" } } },
 
   /* ── 삶 ── */
-  { sort: 20, grp: "삶", category: "건강", title: "자꾸 아픈 요즘, 몸조심할 시기일까?", slug: "health", link_type: "ask", weight: 1, time_slot: "any", tone: "light",
+  { sort: 20, grp: "삶", category: "건강", title: "자꾸 아픈 요즘, 몸조심할 시기일까?", slug: "health", link_type: "q", weight: 1, time_slot: "any", tone: "light",
     ask_prefill: "요즘 몸이 자꾸 아픈데, 올해 건강 면에서 조심해야 할 시기인지 궁금해요.",
     i18n: { en: { category: "Health", title: "Often unwell — a time to be careful?" }, ja: { category: "健康", title: "最近よく体調を崩す、用心の時期？" }, zh: { category: "健康", title: "最近老生病，是该小心的时期吗？" }, fr: { category: "Santé", title: "Souvent malade : période à risque ?" } } },
-  { sort: 21, grp: "삶", category: "가족갈등", title: "가족과 자꾸 부딪힌다, 어떻게 풀까?", slug: "family-conflict", link_type: "ask", weight: 1, time_slot: "night", tone: "heavy",
+  { sort: 21, grp: "삶", category: "가족갈등", title: "가족과 자꾸 부딪힌다, 어떻게 풀까?", slug: "family-conflict", link_type: "q", weight: 1, time_slot: "night", tone: "heavy",
     ask_prefill: "가족과 자꾸 부딪히고 말이 안 통해요. 어떻게 풀어 가면 좋을지 궁금해요.",
     i18n: { en: { category: "Family", title: "Clashing with family — how to mend?" }, ja: { category: "家族の衝突", title: "家族とぶつかる、どう解く？" }, zh: { category: "家庭矛盾", title: "总和家人起冲突，怎么化解？" }, fr: { category: "Famille", title: "Conflits en famille : comment apaiser ?" } } },
-  { sort: 22, grp: "삶", category: "부모부양", title: "부모님 부양, 나 혼자 짊어져야 할까?", slug: "parent-care", link_type: "ask", weight: 1, time_slot: "night", tone: "heavy",
+  { sort: 22, grp: "삶", category: "부모부양", title: "부모님 부양, 나 혼자 짊어져야 할까?", slug: "parent-care", link_type: "q", weight: 1, time_slot: "night", tone: "heavy",
     ask_prefill: "부모님 부양 문제로 고민이 많아요. 형제 간 역할이나 제가 감당해야 할 몫이 궁금해요.",
     i18n: { en: { category: "Parents", title: "Caring for parents — all on me?" }, ja: { category: "親の介護", title: "親の扶養、私ひとりで背負う？" }, zh: { category: "赡养", title: "赡养父母，要我一个人扛吗？" }, fr: { category: "Parents", title: "Mes parents : tout porter seul ?" } } },
-  { sort: 23, grp: "삶", category: "이사", title: "올해 이사해도 될까, 방향은?", slug: "moving", link_type: "ask", weight: 1, time_slot: "any", tone: "light",
+  { sort: 23, grp: "삶", category: "이사", title: "올해 이사해도 될까, 방향은?", slug: "moving", link_type: "q", weight: 1, time_slot: "any", tone: "light",
     ask_prefill: "올해 이사를 생각하고 있어요. 시기나 방향이 괜찮을지 봐 주세요.",
     i18n: { en: { category: "Moving", title: "Move this year? Which direction?" }, ja: { category: "引っ越し", title: "今年引っ越していい？方角は？" }, zh: { category: "搬家", title: "今年能搬家吗？往哪个方向？" }, fr: { category: "Déménager", title: "Déménager cette année ? Où ?" } } },
-  { sort: 24, grp: "삶", category: "시험", title: "이번 시험, 올해 승부를 봐도 될까?", slug: "exam", link_type: "ask", weight: 1, time_slot: "am", tone: "light",
+  { sort: 24, grp: "삶", category: "시험", title: "이번 시험, 올해 승부를 봐도 될까?", slug: "exam", link_type: "q", weight: 1, time_slot: "am", tone: "light",
     ask_prefill: "자격증·공무원 시험을 준비 중이에요. 올해 승부를 보는 게 좋을지 궁금해요.",
     i18n: { en: { category: "Exam", title: "This exam — go all in this year?" }, ja: { category: "試験", title: "この試験、今年勝負していい？" }, zh: { category: "考试", title: "这次考试，今年全力一搏吗？" }, fr: { category: "Examen", title: "Cet examen : tout donner cette année ?" } } },
 ];

@@ -2,18 +2,20 @@
 
 import { useEffect, useState } from "react";
 import type { Worry } from "@/lib/worries/types";
-import { askHref, ohaengHref, track } from "@/lib/worries/links";
+import { askHref, consultHref, ohaengHref, track } from "@/lib/worries/links";
 
 /**
  * 블록 ⑥ 다음 단계 — 유일한 채움 버튼은 「무료 1문 1답」(질문이 미리 채워져 열림).
  * 보조는 테두리 버튼 「1분 오행 진단」. 오늘 남은 자리는 /api/ask 에서 실시간으로.
+ * v3(2026-11-05): 맨 아래 글자 링크로 유료 상담 길을 연다 — 무료 → 더 깊은 리포트·상담 → 유료 순서.
+ *   버튼이 아니라 한 줄 링크인 이유: 첫 화면의 채움 버튼은 무료 1문 1답 하나라는 원칙을 지키기 위해.
  */
 export default function WorryNextStep({ w, resultTag }: { w: Worry; resultTag?: string }) {
   const [left, setLeft] = useState<{ remaining: number; cap: number } | null>(null);
-  const [hrefs, setHrefs] = useState({ ask: "/ask", ohaeng: "/ohaeng/" });
+  const [hrefs, setHrefs] = useState({ ask: "/ask", ohaeng: "/ohaeng/", consult: "/consult?mode=simple" });
 
   useEffect(() => {
-    setHrefs({ ask: askHref(w.slug, w.askPrefill), ohaeng: ohaengHref(w.slug) });
+    setHrefs({ ask: askHref(w.slug, w.askPrefill), ohaeng: ohaengHref(w.slug), consult: consultHref(w.slug) });
     fetch("/api/ask", { cache: "no-store" })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => d && typeof d.remaining === "number" && setLeft({ remaining: d.remaining, cap: d.cap }))
@@ -55,6 +57,18 @@ export default function WorryNextStep({ w, resultTag }: { w: Worry; resultTag?: 
       >
         1분 오행 성격 진단 먼저 해 보기
       </a>
+
+      <p className="mt-3.5 text-[12.5px] leading-relaxed text-[#64748B]">
+        무료 답으로 부족하다면 —{" "}
+        <a
+          href={hrefs.consult}
+          onClick={() => track("q_cta_paid", { slug: w.slug, result: resultTag || null })}
+          className="font-bold text-[#1E3A8A] underline decoration-[#93C5FD] underline-offset-2"
+        >
+          개인 종합 리포트(10~20장) 9,900원부터
+        </a>
+        <br />대운·세운까지 짚는 Special 상담도 같은 곳에서 신청할 수 있어요.
+      </p>
 
       {w.note && (
         <p className="mt-4 rounded-xl bg-[#F5F9FF] p-3 text-left text-[12px] leading-relaxed text-[#475569]">※ {w.note}</p>
