@@ -2,7 +2,7 @@
 import { useEffect } from "react";
 import { wordsBlockHtml, WORDS_CSS, mountDailyWords, type DailyWord } from "@/lib/daily-words";
 import { talkBlockHtml, TALK_CSS, mountTalk, type TalkItem } from "@/lib/talk";
-import { ROLL_BODY, rollScriptTag, topicHref, TOPIC_WINDOW, TOPIC_LINE_PX, TOPIC_TICK_MS, type HomeTopic } from "@/lib/home-topics";
+import { ROLL_BODY, rollScriptTag, topicHref, TOPIC_WINDOW, TOPIC_LINE_PX, TOPIC_TICK_MS, TOPIC_GOAL, type HomeTopic } from "@/lib/home-topics";
 
 /** 롤링 상자 아래 「고민 전체 List」 띠 높이(px) — v3.0 */
 const TOPIC_ALL_PX = 18;
@@ -112,6 +112,7 @@ h1.hook .mark{display:inline-block;background:linear-gradient(180deg,transparent
 .topics .tall{position:absolute;left:0;right:0;bottom:0;height:${TOPIC_ALL_PX}px;display:flex;align-items:center;justify-content:space-between;
   padding:0 12px;background:linear-gradient(180deg,#EEF4FF,#E6EFFF);border-top:1px solid rgba(37,99,235,.14);text-decoration:none}
 .topics .tall .tn{font-size:11px;font-weight:700;color:#5B6480;letter-spacing:-.02em}
+.topics .tall .tn .tgoal{font-style:normal;font-weight:600;color:#8A93A6;margin:0 1px 0 0}
 .topics .tall .tg{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:900;color:var(--blue);letter-spacing:-.02em}
 .topics .tall .tg i{font-style:normal;font-size:11px}
 
@@ -2186,8 +2187,8 @@ function topicsBlockHtml(topics?: HomeTopicItem[] | null): string {
     `<a href="${escT(topicHref(t))}" data-topic="${escT(t.slug)}" data-link="${t.link_type === "ask" ? "ask" : "q"}">` +
     `<span class="tk">✓</span><span class="tc" ${attrs(t.category, "category", t)}>${escT(t.category)}</span><span class="tt" ${attrs(t.title, "title", t)}>${escT(t.title)}</span><span class="ta">›</span></a></li>`;
   /* 창(TOPIC_WINDOW)보다 적으면 돌리지 않고 그대로. 순서 섞기·복제는 인라인 스크립트가 한다 */
-  /* 아래 띠: 왼쪽 개수 안내, 오른쪽 전체 목록(/q) 링크 — 4줄에서 놓친 고민을 바로 찾게 (v3.0) */
-  const all = `<a class="tall" href="/q?utm=home_all" data-topic="_all"><span class="tn"><b>${topics.length}</b> <span data-i="topicsN">가지 고민이 돌고 있어요</span></span><span class="tg"><span data-i="topicsAll">고민 전체 List</span><i>›</i></span></a>`;
+  /* 아래 띠: 왼쪽 개수 안내 「44(/108)가지 고민이 돌고 있어요」(v4: 108번뇌 목표를 함께), 오른쪽 전체 목록(/q) 링크 (v3.0) */
+  const all = `<a class="tall" href="/q?utm=home_all" data-topic="_all"><span class="tn"><b>${topics.length}</b><em class="tgoal">(/${TOPIC_GOAL})</em> <span data-i="topicsN">가지 고민이 돌고 있어요</span></span><span class="tg"><span data-i="topicsAll">고민 전체 List</span><i>›</i></span></a>`;
   return `<div class="topics" id="topics" data-n="${topics.length}" data-win="${TOPIC_WINDOW}" data-roll="${topics.length > TOPIC_WINDOW ? 1 : 0}" aria-label="지금 많이 보는 고민"><ul id="topics-ul">${topics.map(li).join("")}</ul>${all}</div>${rollScriptTag("topics")}`;
 }
 

@@ -1,10 +1,17 @@
 /**
- * lib/home-topics/catalog.ts → supabase/migrations/20261105_home_topics_v3.sql 을 만든다.
+ * lib/home-topics/catalog.ts → supabase/migrations/<OUT> 을 만든다.
  *   npx tsx scripts/home-topics-sql.ts
  * 목록을 고친 뒤 이 스크립트를 다시 돌리면 SQL 이 같이 바뀐다(손으로 SQL 을 고치지 않는다).
+ * 판이 바뀔 때는 아래 OUT·HEAD 만 바꾼다 (v3 2026-11-05 24개 → v4 2026-11-08 44개). 이전 판 SQL 은 그대로 둔다.
  */
 import { writeFileSync } from "node:fs";
 import { TOPIC_CATALOG } from "../lib/home-topics/catalog";
+import { TOPIC_GROUPS } from "../lib/home-topics/types";
+
+const OUT = "20261108_home_topics_v4.sql";
+const HEAD = `-- 홈 고민 주제 v4 (2026-11-08): 24개 → 44개 키워드. 축에 「나·시기」 추가, 목표 108(108번뇌).
+-- v3(20261105) SQL 을 이미 돌린 DB 에서는 새 20행만 들어가고, 기존 행의 제목·번역은 그대로다.
+-- v3 를 아직 안 돌린 새 DB 에서는 이 파일 하나로 충분하다.`;
 
 const q = (s: string | null | undefined) => (s == null ? "null" : `'${String(s).replace(/'/g, "''")}'`);
 const j = (o: unknown) => `'${JSON.stringify(o).replace(/'/g, "''")}'::jsonb`;
@@ -18,11 +25,11 @@ const updates = TOPIC_CATALOG.map((t) =>
   `update public.home_topics set grp = ${q(t.grp)}, link_type = ${q(t.link_type)}, weight = ${t.weight}, time_slot = ${q(t.time_slot)}, tone = ${q(t.tone)}${t.ask_prefill ? `, ask_prefill = coalesce(ask_prefill, ${q(t.ask_prefill)})` : ""} where slug = ${q(t.slug)} and grp = '';`
 ).join("\n");
 
-const sql = `-- 홈 고민 주제 v3 (2026-11-05): 7개 → 24개 키워드, 4줄 창, 방문마다 다른 순서.
+const sql = `${HEAD}
 -- 이 파일은 scripts/home-topics-sql.ts 가 lib/home-topics/catalog.ts 에서 만든다. 손으로 고치지 말 것.
 --
 -- 새 컬럼
---   grp         축(연애·결혼·일·돈·삶) — 같은 축이 연달아 보이지 않게
+--   grp         축(연애·결혼·일·돈·삶·나·시기) — 같은 축이 연달아 보이지 않게
 --   link_type   'q' = /q/<slug> 고민 랜딩, 'ask' = /ask 에 질문을 미리 채워 바로 연결
 --   ask_prefill link_type='ask' 일 때 1문 1답 질문 칸에 미리 채울 문장
 --   weight      1~3 노출 가중
@@ -61,9 +68,9 @@ ${values}
 where not exists (select 1 from public.home_topics t where t.slug = v.slug);
 
 -- (3) 관리자 목록 순서를 축별로 다시 매긴다 (홈 순서는 브라우저가 섞는다)
-with o as (select id, row_number() over (order by case grp when '연애' then 1 when '결혼' then 2 when '일' then 3 when '돈' then 4 when '삶' then 5 else 9 end, sort, created_at) rn from public.home_topics)
+with o as (select id, row_number() over (order by case grp ${TOPIC_GROUPS.map((g, i) => `when '${g}' then ${i + 1}`).join(" ")} else 9 end, sort, created_at) rn from public.home_topics)
 update public.home_topics h set sort = o.rn from o where o.id = h.id;
 `;
 
-writeFileSync(new URL("../supabase/migrations/20261105_home_topics_v3.sql", import.meta.url), sql);
-console.log(`wrote 20261105_home_topics_v3.sql — ${TOPIC_CATALOG.length} topics`);
+writeFileSync(new URL(`../supabase/migrations/${OUT}`, import.meta.url), sql);
+console.log(`wrote ${OUT} — ${TOPIC_CATALOG.length} topics`);

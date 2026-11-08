@@ -3,7 +3,8 @@
  *
  * v1~2: 7개 주제를 DB 순서대로 3줄씩 돌렸다.
  * v3  : 24개 키워드(2~4자)로 늘리고, 방문마다 다른 조합이 보이도록 아래 규칙으로 순서를 섞는다.
- *        · grp       축(연애·결혼·일·돈·삶) — 같은 축이 연달아 나오지 않게
+ * v4  : 44개(2026-11-08) — 연애·결혼·일·돈·삶에 「나·시기」 축을 더하고 20개 추가. 목표 108(108번뇌).
+ *        · grp       축(연애·결혼·일·돈·삶·나·시기) — 같은 축이 연달아 나오지 않게
  *        · tone      heavy(이별·이혼·갈등…)는 한 창(4줄)에 최대 1줄
  *        · time_slot 시간대 가중 — am(06~12) pm(12~18) night(18~06) any
  *        · weight    1~3 노출 가중
@@ -15,7 +16,10 @@ export const TOPIC_LANGS = ["en", "ja", "zh", "fr"] as const;
 export type TopicLang = (typeof TOPIC_LANGS)[number];
 export type TopicText = { category: string; title: string };
 
-export const TOPIC_GROUPS = ["연애", "결혼", "일", "돈", "삶"] as const;
+/** 축 — v4(2026-11-08) 「나·시기」 추가: 사주 고유 강점(기질·대운·택일·올해운) 키워드를 모은다 */
+export const TOPIC_GROUPS = ["연애", "결혼", "일", "돈", "삶", "나·시기"] as const;
+/** 홈 띠 「44(/108)가지 고민이 돌고 있어요」 — 108번뇌를 목표 수로 보여 준다 (v4) */
+export const TOPIC_GOAL = 108;
 export type TopicGroup = (typeof TOPIC_GROUPS)[number] | string;
 
 export const LINK_TYPES = ["q", "ask"] as const;

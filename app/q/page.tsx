@@ -6,7 +6,7 @@ import WorryShell from "@/components/worry/WorryShell";
 
 export const metadata: Metadata = {
   title: "지금 어떤 고민이세요? | AI사주랩.com",
-  description: "연애·취업·이직·결혼… 내 고민을 고르면 30초 체크와 내 사주로 받는 무료 답까지 이어집니다.",
+  description: "연애·취업·이직·결혼·노후·올해운… 내 고민을 고르면 30초 체크와 내 사주로 받는 무료 답까지 이어집니다.",
   alternates: { canonical: "/q" },
 };
 
@@ -21,6 +21,10 @@ export default function WorryIndex() {
         </h1>
         <p className="mt-2.5 text-[14px] leading-relaxed text-[#64748B]">
           내 이야기 같은 제목을 눌러 보세요.<br />30초 체크 → 내 사주로 무료 답까지 이어집니다.
+        </p>
+        {/* v4(2026-11-08): 홈 띠 「44(/108)」의 뜻 — 108번뇌까지 채워 간다 */}
+        <p className="mt-2 text-[12px] font-semibold text-[#8A93A6]">
+          지금 <b className="text-[#1E3A8A]">{LIVE_WORRIES.length}</b>가지 · 108번뇌까지 하나씩 채워 갑니다
         </p>
       </section>
 
