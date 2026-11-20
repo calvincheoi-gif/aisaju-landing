@@ -86,9 +86,13 @@ export function appName(): string {
 /** 홈(HomeV6)의 track() 과 같은 events 테이블·같은 세션 키를 쓴다 */
 export function track(name: string, props: Record<string, unknown> = {}) {
   try {
-    if (/bot|crawl|spider|preview/i.test(navigator.userAgent)) return;
+    /* 홈(HomeV6)·오행 앱과 같은 기준으로 봇·자동화 브라우저를 거른다 (2026-11-20 — 고민 랜딩 조회에 자동 수집이 섞였다) */
+    if (navigator.webdriver || /bot|crawl|spider|slurp|facebookexternalhit|kakaotalk-scrap|Yeti|preview|headless|lighthouse/i.test(navigator.userAgent)) return;
     if (isNoTrack()) return;
     const ss = window.sessionStorage, ls = window.localStorage;
+    /* 운영자 유입(카카오 파트너센터에서 넘어온 방문)은 탭을 닫을 때까지 세지 않는다 (2026-11-20) */
+    if (/business\.kakao\.com/i.test(document.referrer || "")) ss.setItem("aisaju_internal", "1");
+    if (ss.getItem("aisaju_internal") === "1") return;
     let sid = ss.getItem("aisaju_sid"); if (!sid) { sid = rid(); ss.setItem("aisaju_sid", sid); }
     let vid = ls.getItem("aisaju_vid"); if (!vid) { vid = rid(); ls.setItem("aisaju_vid", vid); }
     const q = new URLSearchParams(window.location.search);

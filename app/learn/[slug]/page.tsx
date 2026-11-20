@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import LearnView from "@/components/learn/LearnView";
 import {
   getLearnPost,
   getPublishedLearnPosts,
@@ -120,6 +121,7 @@ export default async function LearnPostPage({
   return (
     <>
       <Header />
+      <LearnView slug={post.slug} />
       <main className="section">
         <script
           type="application/ld+json"
@@ -331,6 +333,7 @@ export default async function LearnPostPage({
               href={siteConfig.channels.kakaoChannelAdd}
               target="_blank"
               rel="noopener"
+              data-track="channel_add_click"
               className="mt-4 inline-flex items-center justify-center rounded-lg bg-[#FEE500] px-5 py-3 text-[14px] font-bold text-[#3C1E1E] transition hover:brightness-95"
             >
               이번 주 읽을거리를 카톡으로 받기

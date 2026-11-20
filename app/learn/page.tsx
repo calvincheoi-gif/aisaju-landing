@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import LearnView from "@/components/learn/LearnView";
 import { getPublishedLearnPosts, learnImageUrl } from "@/lib/learn-posts";
 
 export const metadata: Metadata = {
@@ -39,6 +40,7 @@ export default async function LearnListPage() {
   return (
     <>
       <Header />
+      <LearnView />
       <main className="section">
         <script
           type="application/ld+json"

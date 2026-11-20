@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { wordsBlockHtml, WORDS_CSS, mountDailyWords, type DailyWord } from "@/lib/daily-words";
 import { talkBlockHtml, TALK_CSS, mountTalk, type TalkItem } from "@/lib/talk";
+import { quickBlockHtml, navSheetHtml, NAV_CSS, NAV_I18N, mountHomeNav } from "@/lib/home-nav";
 import { ROLL_BODY, rollScriptTag, topicHref, TOPIC_WINDOW, TOPIC_LINE_PX, TOPIC_TICK_MS, TOPIC_GOAL, type HomeTopic } from "@/lib/home-topics";
 
 /** 롤링 상자 아래 「고민 전체 List」 띠 높이(px) — v3.0 */
@@ -827,6 +828,45 @@ footer .lg{display:inline-block;margin:6px 12px 0 0;color:rgba(255,255,255,.85);
 .langmenu button.on{background:linear-gradient(135deg,#2F7FF0,#1D6DE3);color:#fff;font-weight:800}
 .langmenu button small{display:block;font-size:10.5px;font-weight:500;opacity:.62;margin-top:1px}
 .langmenu button.on small{opacity:.85}
+
+/* ══════════ v7 (2026-11-20) — 첫 화면은 그대로, 아래를 바로가기 → 무료·흥미 → 신뢰 → 가격 순으로 ══════════ */
+#report,#naming,#fold-gunghap,#gunghap,#smpwrap,#rv-list{scroll-margin-top:66px}
+/* 결과 카드 미리보기 — 축소 + 바로 만들기 */
+.preview.v7{padding-top:26px;padding-bottom:26px}
+.preview.v7 .sec-sub{margin-bottom:4px}
+.pv-wrap{width:84%;margin:0 auto}
+.pv-wrap .card-lux{zoom:.84}
+.pv-cta{display:block;width:100%;min-height:46px;margin-top:16px;padding:6px 10px;border:0;border-radius:14px;cursor:pointer;
+  background:linear-gradient(135deg,#2F7FF0,#1D6DE3);color:#fff;font-family:inherit;font-size:15px;font-weight:800;
+  letter-spacing:-.03em;box-shadow:0 8px 18px rgba(37,99,235,.24)}
+.pv-note{margin-top:9px;text-align:center;font-size:11.5px;color:var(--gray);font-weight:600;letter-spacing:-.03em;line-height:1.5}
+.pv-note b{color:var(--navy-2)}
+/* 후기 — 옆으로 넘기는 줄 */
+.rvrow{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;margin:14px calc(var(--pad) * -1) 0;
+  padding:2px var(--pad) 8px;scrollbar-width:none}
+.rvrow::-webkit-scrollbar{display:none}
+.rvrow .review{flex:0 0 84%;scroll-snap-align:center;display:flex;flex-direction:column;justify-content:center}
+.rvrow .review + .review{margin-top:0}
+/* 리포트·상담 — 신청 안내 한 줄, 접이식(궁합·작명) */
+.howline{margin-top:10px;text-align:center;font-size:11.5px;color:#4E6E9C;font-weight:600;letter-spacing:-.03em;line-height:1.5}
+.howline b{color:var(--navy)}
+.fold{margin-top:10px;background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;
+  box-shadow:0 3px 9px rgba(20,50,110,.05)}
+.fold>summary{list-style:none;display:flex;align-items:center;gap:10px;padding:14px 13px;cursor:pointer}
+.fold>summary::-webkit-details-marker{display:none}
+.fold .fs-i{font-size:21px;line-height:1}
+.fold .fs-t{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.fold .fs-t b{font-size:14.5px;font-weight:800;color:var(--navy);letter-spacing:-.045em;word-break:keep-all}
+.fold .fs-t > span{font-size:11.5px;color:var(--gray);font-weight:600;letter-spacing:-.035em;word-break:keep-all}
+.fold .fs-p{font-size:12.5px;font-weight:800;color:var(--blue);white-space:nowrap;letter-spacing:-.03em}
+.fold .fs-a{font-style:normal;font-size:12px;color:var(--gray);transition:transform .2s}
+.fold[open] .fs-a{transform:rotate(180deg)}
+.fold-body{padding:0 11px 13px}
+.fold-body .gh{margin-top:0}
+.fold-body .prod{border:0;border-radius:14px;box-shadow:none}
+.fold-h{font-size:16px;font-weight:800;color:var(--navy);letter-spacing:-.045em;line-height:1.4;padding:2px 3px 0;word-break:keep-all}
+.fold-h b{color:var(--blue)}
+.fold-s{margin:4px 3px 10px;font-size:12.5px;color:var(--gray);font-weight:500;line-height:1.5}
 `;
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -847,6 +887,16 @@ const I18N: Record<Lang, Record<string, string>> = {
 ko: {},   /* 한국어는 HTML 원문을 그대로 쓴다 (applyLang 이 원본을 기억한다) */
 
 en: {
+ /* v7 (2026-11-20) — 결과 카드 · 고민 체크 · 리포트·상담 구간 (바로가기·메뉴 문구는 lib/home-nav/i18n.ts) */
+ pvCta:"Make my result card · 1 min ›",
+ pvNote:"The check is free · on the result screen you can also get the <b>AI element reading (990 KRW)</b> right away",
+ needsSub2:"Pick a worry, take a <b>30-second check</b>, and we point you in a direction · free",
+ needAll:"See all <var class='wn'></var> worries ›",
+ rpH2:"Want to go deeper? <b>A person reads it</b> for you",
+ rpSub:"Find your direction for free first, then move on to a report or consultation only when you need it.",
+ howLine:"Apply in <b>3 steps · about 3 min</b> — choose a type → birth date and time → leave your concern",
+ fgP:"100,000 KRW",
+ nmSet:"Baby naming · Set of Three",
  topicsN:"worries rotating",
  topicsAll:"All worries",
  nmMore:"See prices and contents",
@@ -1018,6 +1068,16 @@ en: {
 },
 
 ja: {
+ /* v7 (2026-11-20) — 결과 카드 · 고민 체크 · 리포트·상담 구간 (바로가기·메뉴 문구는 lib/home-nav/i18n.ts) */
+ pvCta:"自分の結果カードを作る · 1分 ›",
+ pvNote:"診断は無料 · 結果画面で<b>AI 五行解説(990ウォン)</b>もすぐ受け取れます",
+ needsSub2:"悩みを選ぶと、<b>30秒チェック</b>のあと方向をお伝えします · 無料",
+ needAll:"悩み<var class='wn'></var>件をすべて見る ›",
+ rpH2:"もっと深く見たいなら、<b>人が直接</b>見ます",
+ rpSub:"まず無料で方向をつかみ、必要なときだけレポートと相談へ進んでください。",
+ howLine:"お申し込みは<b>3ステップ · 約3分</b> — 種類を選ぶ → 生年月日時 → 悩みを書く",
+ fgP:"100,000ウォン",
+ nmSet:"赤ちゃんの命名 3点セット",
  topicsN:"件の悩みが流れています",
  topicsAll:"悩み一覧",
  nmMore:"価格 · 内容を詳しく見る",
@@ -1189,6 +1249,16 @@ ja: {
 },
 
 zh: {
+ /* v7 (2026-11-20) — 결과 카드 · 고민 체크 · 리포트·상담 구간 (바로가기·메뉴 문구는 lib/home-nav/i18n.ts) */
+ pvCta:"生成我的结果卡 · 1 分钟 ›",
+ pvNote:"测试免费 · 在结果页还可立即获取<b>AI 五行解读（990韩元）</b>",
+ needsSub2:"选一个烦恼，做完<b>30秒自测</b>，为你指出方向 · 免费",
+ needAll:"查看全部<var class='wn'></var>个烦恼 ›",
+ rpH2:"想看得更深？<b>由真人亲自</b>来看",
+ rpSub:"先免费找到方向，需要时再选择报告和咨询。",
+ howLine:"申请只需<b>3步 · 约3分钟</b> — 选择类型 → 出生年月日时 → 留下烦恼",
+ fgP:"100,000韩元",
+ nmSet:"新生儿取名三件套",
  topicsN:"个烦恼轮播中",
  topicsAll:"全部烦恼",
  nmMore:"查看价格与内容",
@@ -1360,6 +1430,16 @@ zh: {
 },
 
 fr: {
+ /* v7 (2026-11-20) — 결과 카드 · 고민 체크 · 리포트·상담 구간 (바로가기·메뉴 문구는 lib/home-nav/i18n.ts) */
+ pvCta:"Créer ma carte · 1 min ›",
+ pvNote:"Le diagnostic est gratuit · sur l’écran de résultat, la <b>lecture IA des cinq phases (990 KRW)</b> est disponible aussitôt",
+ needsSub2:"Choisissez un souci : après un <b>test de 30 secondes</b>, nous vous donnons une direction · gratuit",
+ needAll:"Voir les <var class='wn'></var> soucis ›",
+ rpH2:"Pour aller plus loin, <b>un expert lit lui-même</b> votre thème",
+ rpSub:"Trouvez d’abord votre direction gratuitement, puis passez au rapport ou à la consultation seulement si besoin.",
+ howLine:"Demande en <b>3 étapes · environ 3 min</b> — type → date et heure de naissance → votre question",
+ fgP:"100 000 KRW",
+ nmSet:"Prénom de bébé · ensemble de trois",
  topicsN:"soucis défilent",
  topicsAll:"Tous les soucis",
  nmMore:"Voir prix et contenu",
@@ -1532,6 +1612,9 @@ fr: {
 
 };
 
+/* v7 — 바로가기 6칸·전체 메뉴 문구는 lib/home-nav 가 갖고 있다. 홈 사전에 합쳐 두면 applyLang 이 한 번에 바꾼다 */
+(["en", "ja", "zh", "fr"] as const).forEach((l) => Object.assign(I18N[l], NAV_I18N[l]));
+
 const HTML = String.raw`
 <div class="shell">
 
@@ -1560,6 +1643,9 @@ const HTML = String.raw`
       <div class="burger" data-go="menu" data-from="top"><i></i><i></i><i></i></div>
     </div>
   </div>
+
+  <!-- v7 · 전체 메뉴(≡) — 예전에는 누르면 마이페이지로 넘어갔다. 이제 사이트 전체 목차를 연다. 내용은 lib/home-nav/items.ts -->
+  <!--NAVSHEET_SLOT-->
 
   <div class="voc top" data-i="voc">AI사주랩.com은 항상 고객님의 VOC와 지속적인 분석, 리포트 Quality 개선을 통해 고객 만족도, 삶의 질 향상에 최선을 다하겠습니다.</div>
   <!--WORDS_SLOT-->
@@ -1697,31 +1783,111 @@ const HTML = String.raw`
     <div class="disclosure" data-i="disclosure">AI사주랩은 명리학을 기반으로 AI가 보조 분석하여<br>더 쉽고 정확한 인사이트를 제공합니다.</div>
   </div>
 
-  <!-- 서비스 카드 그리드 -->
-  <section style="padding-top:24px">
-    <div class="sec-label">SERVICES</div>
-    <h2 data-i="h2Svc">여기서 할 수 있는 것</h2>
-    <div class="svc">
-      <button class="sv" data-go="ohaeng" data-from="svc"><span class="tag free" data-i="tagFree">무료</span>
-        <div class="si">🤖</div><div class="sn" data-i="sv1n">무료 오행 성격 진단</div>
-        <div class="sd" data-i="sv1d">14문항 1분 · 가입 없이 바로</div></button>
-      <button class="sv" data-go="today" data-from="svc"><span class="tag day" data-i="tagDay">하루 1회 무료</span>
-        <div class="si">🌤️</div><div class="sn" data-i="sv2n">오늘의 흐름</div>
-        <div class="sd" data-i="sv2d">내 오행으로 보는 오늘 컨디션</div></button>
-      <button class="sv" data-go="match" data-from="svc"><span class="tag free" data-i="tagFree2">무료</span>
-        <div class="si">🤝</div><div class="sn" data-i="sv3n">친구와 오행 궁합</div>
-        <div class="sd" data-i="sv3d">링크 보내면 둘의 궁합 공개</div></button>
-      <button class="sv" data-go="gunghap" data-from="svc" data-ev="gunghap_open"><span class="tag pay" data-i="tagGh">10만원</span>
-        <div class="si">💞</div><div class="sn" data-i="sv6n">연애·부부 궁합 리포트</div>
-        <div class="sd" data-i="sv6d">두 사람 명식 20장 · 관계 사용법</div></button>
-      <button class="sv" data-go="report" data-from="svc" data-ev="report_open"><span class="tag pay" data-i="tagPay">990원 · 즉시</span>
-        <div class="si">📊</div><div class="sn" data-i="sv4n">AI 오행 해설</div>
-        <div class="sd" data-i="sv4d">진단 결과 자동 해설 · 즉시 발급</div></button>
-      <button class="sv sv-wide sv-new" data-go="naming" data-from="svc"><span class="tag pay" data-i="tagNm">20만원부터</span>
-        <div class="si">✍️</div><div class="sn" data-i="sv5n">작명 3종 세트</div>
-        <div class="sd" data-i="sv5d">리포트 · 명명서 · 풀이서</div></button>
-    </div>
+  <!-- v7 · 바로가기 6칸 — 첫 화면 바로 아래에서 사이트 전체를 한눈에 (2026-11-20). 내용은 lib/home-nav/items.ts -->
+  <!--QUICK_SLOT-->
 
+  <!-- 결과 카드 — v7: 첫 화면 바로 다음 구간으로 올리고, 줄여서 「바로 만들기」 버튼을 붙였다 -->
+  <section class="preview v7" data-sec="result">
+    <div class="sec-label" data-i="secResult">무료 오행 성격 진단 RESULT</div>
+    <h2 data-i="h2Prev">받게 될 <b>결과 카드</b>는 이런 모습</h2>
+    <p class="sec-sub" data-i="prevSub">계절과 상징으로 이름 붙인 나만의 카드. 저장해서 친구에게 바로 보낼 수 있어요.</p>
+    <div style="text-align:center;margin:10px 0 16px"><span class="wallchip" data-i="wallchip">📱 폰 배경화면으로 저장 가능한 화질</span></div>
+
+    <div class="pv-wrap"><div class="card-lux">
+      <div class="card-in">
+        <div class="card-brand" data-i="cardBrand">✓ AI사주랩.com</div>
+        <div class="card-emoji">✨🌲✨</div>
+        <div class="card-kicker" data-i="cardKicker">나의 오행 성격</div>
+        <div class="card-title" data-i="cardTitle">「봄 소나무」</div>
+        <div class="card-en">Spring Pine</div>
+        <div class="card-line" data-i="cardLine">쭉쭉 뻗어야 봄이 온 줄 안다</div>
+        <div class="card-pill" data-i="cardPill">甲 · 양(陽) · 목(木) 35%</div>
+        <div class="caps">
+          <div class="cap"><div class="tube" style="height:86px"><span class="num" style="color:#22A06B">7</span><span class="pel" style="height:22px;background:#22A06B"></span></div><div class="pct">35%</div><div class="han" style="color:#1E40AF">木</div></div>
+          <div class="cap"><div class="tube" style="height:64px"><span class="num" style="color:#EF4444">4</span><span class="pel" style="height:16px;background:#EF4444"></span></div><div class="pct">20%</div><div class="han" style="color:#DC2626">火</div></div>
+          <div class="cap"><div class="tube" style="height:54px"><span class="num" style="color:#B45309">3</span><span class="pel" style="height:14px;background:#B45309"></span></div><div class="pct">15%</div><div class="han" style="color:#B45309">土</div></div>
+          <div class="cap"><div class="tube" style="height:44px"><span class="num" style="color:#94A3B8">2</span><span class="pel" style="height:12px;background:#94A3B8"></span></div><div class="pct">10%</div><div class="han" style="color:#64748B">金</div></div>
+          <div class="cap"><div class="tube" style="height:64px"><span class="num" style="color:#2B7FEF">4</span><span class="pel" style="height:16px;background:#2B7FEF"></span></div><div class="pct">20%</div><div class="han" style="color:#1D4ED8">水</div></div>
+        </div>
+        <div class="card-foot" data-i="cardFoot">균형지수 <b>64</b> · 보완이 필요한 기운 <b>금(金)</b></div>
+        <div class="card-url">AIsajuLab.com</div>
+      </div>
+    </div></div>
+    <button class="pv-cta" type="button" data-go="nav" data-from="result" data-to="ohaeng" data-i="pvCta">내 결과 카드 만들기 · 1분 ›</button>
+    <div class="pv-note" data-i="pvNote">진단은 무료 · 결과 화면에서 <b>AI 오행 해설 990원</b>도 바로 받을 수 있어요</div>
+  </section>
+
+  <!--LEARN_SLOT-->
+
+  <!-- 고민 — v7: 4카드를 오행 앱이 아니라 해당 고민 랜딩(30초 체크)으로 잇는다 -->
+  <section data-sec="worry">
+    <div class="sec-label">WORRY CHECK</div>
+    <h2 data-i="h2Needs">당신도 이런 고민, <b>해본 적 있나요?</b></h2>
+    <p class="sec-sub" data-i="needsSub2">고민을 고르면 <b>30초 체크</b> 뒤 방향을 짚어 드립니다 · 무료</p>
+    <div class="needs">
+      <a class="need" href="/q/last-chance-83?utm=home_need"><i>💼</i><span data-i="need1">지금, 이직해야 할까?</span></a>
+      <a class="need" href="/q/marriage?utm=home_need"><i>💗</i><span data-i="need2">이 사람과 궁합이 맞을까?</span></a>
+      <a class="need" href="/q/severance-startup?utm=home_need"><i>📈</i><span data-i="need3">창업해도 괜찮을까?</span></a>
+      <a class="need" href="/q/buy-home?utm=home_need"><i>🏠</i><span data-i="need4">지금 집을 사도 될까?</span></a>
+      <a class="need more" href="/q?utm=home_need"><span data-i="needAll">고민 <var class="wn"><!--TOPIC_N--></var>가지 전체 보기 ›</span></a>
+    </div>
+  </section>
+
+  <!-- 후기 — v7: 가격 앞으로 올리고 옆으로 넘기는 한 줄로 -->
+  <section data-sec="reviews">
+    <div class="sec-label">REVIEWS</div>
+    <h2 data-i="h2Rev">먼저 만난 분들</h2>
+    <div id="rv-list" class="rvrow"><!--REVIEWS_SLOT--></div>
+    <div class="review-cta" data-i="revCta">후기를 남겨 주시면 다음 상담 <b>50% 할인</b>을 드려요.</div>
+
+    <button type="button" class="rv-open" id="rv-open">후기 남기기</button>
+
+    <form class="rv-form" id="rv-form" novalidate>
+      <div class="rv-row">
+        <label id="rv-l-star">얼마나 도움이 되셨나요?</label>
+        <div class="rv-stars" id="rv-stars">
+          <button type="button" class="rv-star" data-v="1" aria-label="1">★</button>
+          <button type="button" class="rv-star" data-v="2" aria-label="2">★</button>
+          <button type="button" class="rv-star" data-v="3" aria-label="3">★</button>
+          <button type="button" class="rv-star" data-v="4" aria-label="4">★</button>
+          <button type="button" class="rv-star" data-v="5" aria-label="5">★</button>
+        </div>
+      </div>
+      <div class="rv-row">
+        <label id="rv-l-name">어떻게 불러 드릴까요?</label>
+        <input id="rv-name" type="text" maxlength="20" autocomplete="off" placeholder="닉네임 또는 성함">
+      </div>
+      <div class="rv-row">
+        <label><span id="rv-l-text">상담은 어떠셨나요?</span><span class="rv-count" id="rv-count">0/400</span></label>
+        <textarea id="rv-text" maxlength="400" placeholder="상담에서 가장 도움이 된 점을 편하게 적어 주세요."></textarea>
+      </div>
+      <button type="submit" class="rv-send" id="rv-send">후기 보내기</button>
+      <div class="rv-guide" id="rv-guide">확인 후 게시되며, 개인정보는 적지 말아 주세요.</div>
+    </form>
+
+    <div class="rv-msg" id="rv-msg"></div>
+  </section>
+
+  <!-- 대조 -->
+  <section class="contrast" data-sec="why">
+    <div class="sec-label">WHY US</div>
+    <h2 data-i="h2Why">AI는 <b>분석</b>하고,<br>방향은 <b>사람</b>이 찾습니다</h2>
+    <p class="sec-sub" data-i="whySub">무료 사주, AI 자동 풀이… 그 속에 숨어 있는 광고와 상업성. AI사주랩은 다르게 갑니다.</p>
+    <div class="vs">
+      <div class="box"><div class="t" data-i="vsLt">AI 분석</div><div class="d" data-i="vsLd">사주와 데이터를<br>빠르고 객관적으로</div></div>
+      <div class="mid">≠</div>
+      <div class="box r"><div class="t" data-i="vsRt">전문가 해석</div><div class="d" data-i="vsRd">명리학 10년 · 경영지도사가<br>직접 검수</div></div>
+    </div>
+    <div class="calibnote" data-i="calibNote">전문가 상담은 사주팔자의 <b>「영점 조정」</b> 과정을 거칩니다. AI가 제시한 솔루션은 그 과정을 거치지 않으므로, 나에게 맞는 솔루션을 직접 선택해 활용해 주세요.</div>
+  </section>
+
+  <!-- v7 · 리포트·상담 — 무료 체험과 후기 다음에 가격. 궁합·작명은 접어 두고 누르면 펼친다 (2026-11-20)
+       가격 버튼·샘플·궁합·작명의 내용은 예전 그대로이고 자리만 옮겼다.
+       예전 「지금 열려 있는 것」 슬라이드와 「상담 3단계」 섹션은 다른 블록과 겹쳐 이 구간의 한 줄(.howline)과 결과 카드 안내로 합쳤다 -->
+  <section id="report" data-sec="price">
+    <div class="sec-label">REPORT · CONSULTING</div>
+    <h2 data-i="rpH2">더 깊이 보고 싶다면, <b>사람이 직접</b> 봅니다</h2>
+    <p class="sec-sub" data-i="rpSub">무료로 방향을 잡은 뒤, 필요할 때만 리포트와 상담으로 이어 가세요.</p>
     <!-- 상담 — 간편(채움) 우선, 정밀(투명+테두리) -->
     <div class="consult">
       <div class="ct" data-i="ctT">👨‍🏫 전문가 1:1 상담</div>
@@ -1735,7 +1901,7 @@ const HTML = String.raw`
         <button class="cb cb-visit cb-wide" data-go="consult" data-from="svc_visit" data-q="mode=detail&naming=140000"><span class="b1" data-i="cbV1">방문 상담 · 140,000원</span><span class="b2" data-i="cbV2">고객 근처로 찾아갑니다 · 서울·수도권 · 디테일 신청에서 선택</span></button>
       </div>
       <div class="pricenote" data-i="priceNote">리포트는 네 가지 모두 같은 10~20장입니다 · 차이는 상담 방식뿐입니다</div>
-      <div class="smpwrap">
+      <div class="smpwrap" id="smpwrap">
         <div class="smptit" data-i="smpTit">📄 촌철활인(寸鐵活人) · 핵심만 10~20장에 담습니다</div>
         <div class="smpsub" data-i="smpSub">분량으로 채운 100~200장짜리 AI 리포트는 만들지 않습니다. 읽고 바로 쓸 수 있는 말만 남깁니다. <b>아래는 실제 리포트를 한 장도 빼지 않고 그대로 보여드리는 샘플입니다.</b></div>
         <div class="smpgrid">
@@ -1750,7 +1916,12 @@ const HTML = String.raw`
         </div>
         <div class="smpnote" data-i="smpNote">등장인물은 가상이며, 받으시는 리포트는 본인 사주로 새로 작성됩니다</div>
       </div>
+      <div class="howline" data-i="howLine">신청은 <b>3단계 · 약 3분</b> — 종류 선택 → 생년월일시 → 고민 남기기</div>
+    </div>
 
+    <details class="fold" id="fold-gunghap" data-fold="gunghap">
+      <summary><span class="fs-i">💞</span><span class="fs-t"><b data-i="sv6n">연애 · 부부 궁합 리포트</b><span data-i="sv6d">두 사람 명식 20장 · 관계 사용법까지</span></span><span class="fs-p" data-i="fgP">100,000원</span><i class="fs-a">▾</i></summary>
+      <div class="fold-body">
       <div class="gh" id="gunghap">
         <div class="gh-t" data-i="ghT">💞 연애 · 부부 궁합 리포트</div>
         <div class="gh-s" data-i="ghS">점수를 매기지 않습니다 — 왜 끌리고 왜 부딪히는지를 봅니다</div>
@@ -1774,17 +1945,13 @@ const HTML = String.raw`
         </div>
         <div class="gh-note" data-i="ghNote">상대의 생년월일시가 필요합니다 · 시간을 모르셔도 진행할 수 있습니다</div>
       </div>
-    </div>
-  </section>
-
-  <!-- ═══════ 상품 진열 · 작명 3종 세트 ═══════
-       구조는 상품 종류와 무관하다. 사주 리포트 10~12종을 붙일 때는
-       이 <section> 을 복제하고 data-i 키만 새로 만들면 된다. -->
-  <section id="naming">
-    <div class="sec-label">NAMING</div>
-    <h2 data-i="nmH2">아이의 이름은 <b>평생 가장 많이</b> 불리는 단어입니다</h2>
-    <p class="sec-sub" data-i="nmSub">그래서 예쁜 이름이 아니라, 맞는 이름이어야 합니다.</p>
-
+      </div>
+    </details>
+    <details class="fold" id="naming" data-fold="naming">
+      <summary><span class="fs-i">✍️</span><span class="fs-t"><b data-i="nmSet">신생아 작명 3종 세트</b><span data-i="sv5d">정밀 리포트 · 명명서 · 풀이서</span></span><span class="fs-p" data-i="tagNm">20만원부터</span><i class="fs-a">▾</i></summary>
+      <div class="fold-body">
+        <div class="fold-h" data-i="nmH2">아이의 이름은 <b>평생 가장 많이</b> 불리는 단어입니다</div>
+        <p class="fold-s" data-i="nmSub">그래서 예쁜 이름이 아니라, 맞는 이름이어야 합니다.</p>
     <div class="prod">
       <img class="prod-hero" src="/img/naming-3set.jpg" alt="" loading="lazy" width="1200" height="750">
       <div class="prod-body">
@@ -1870,6 +2037,8 @@ const HTML = String.raw`
         </div>
       </div>
     </div>
+      </div>
+    </details>
   </section>
 
   <!-- 샘플 뷰어 — 다운로드 없이 화면에서만 본다 -->
@@ -1887,160 +2056,8 @@ const HTML = String.raw`
     <div class="gal-foot" data-i="nmGalFoot">전체 분량은 신청하신 분께만 드립니다 · 화면 보기 전용</div>
   </div>
 
-  <!-- 결과 카드 -->
-  <section class="preview">
-    <div class="sec-label" data-i="secResult">무료 오행 성격 진단 RESULT</div>
-    <h2 data-i="h2Prev">받게 될 <b>결과 카드</b>는 이런 모습</h2>
-    <p class="sec-sub" data-i="prevSub">계절과 상징으로 이름 붙인 나만의 카드. 저장해서 친구에게 바로 보낼 수 있어요.</p>
-    <div style="text-align:center;margin:10px 0 16px"><span class="wallchip" data-i="wallchip">📱 폰 배경화면으로 저장 가능한 화질</span></div>
-
-    <div class="card-lux">
-      <div class="card-in">
-        <div class="card-brand" data-i="cardBrand">✓ AI사주랩.com</div>
-        <div class="card-emoji">✨🌲✨</div>
-        <div class="card-kicker" data-i="cardKicker">나의 오행 성격</div>
-        <div class="card-title" data-i="cardTitle">「봄 소나무」</div>
-        <div class="card-en">Spring Pine</div>
-        <div class="card-line" data-i="cardLine">쭉쭉 뻗어야 봄이 온 줄 안다</div>
-        <div class="card-pill" data-i="cardPill">甲 · 양(陽) · 목(木) 35%</div>
-        <div class="caps">
-          <div class="cap"><div class="tube" style="height:86px"><span class="num" style="color:#22A06B">7</span><span class="pel" style="height:22px;background:#22A06B"></span></div><div class="pct">35%</div><div class="han" style="color:#1E40AF">木</div></div>
-          <div class="cap"><div class="tube" style="height:64px"><span class="num" style="color:#EF4444">4</span><span class="pel" style="height:16px;background:#EF4444"></span></div><div class="pct">20%</div><div class="han" style="color:#DC2626">火</div></div>
-          <div class="cap"><div class="tube" style="height:54px"><span class="num" style="color:#B45309">3</span><span class="pel" style="height:14px;background:#B45309"></span></div><div class="pct">15%</div><div class="han" style="color:#B45309">土</div></div>
-          <div class="cap"><div class="tube" style="height:44px"><span class="num" style="color:#94A3B8">2</span><span class="pel" style="height:12px;background:#94A3B8"></span></div><div class="pct">10%</div><div class="han" style="color:#64748B">金</div></div>
-          <div class="cap"><div class="tube" style="height:64px"><span class="num" style="color:#2B7FEF">4</span><span class="pel" style="height:16px;background:#2B7FEF"></span></div><div class="pct">20%</div><div class="han" style="color:#1D4ED8">水</div></div>
-        </div>
-        <div class="card-foot" data-i="cardFoot">균형지수 <b>64</b> · 보완이 필요한 기운 <b>금(金)</b></div>
-        <div class="card-url">AIsajuLab.com</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- 대조 -->
-  <section class="contrast">
-    <div class="sec-label">WHY US</div>
-    <h2 data-i="h2Why">AI는 <b>분석</b>하고,<br>방향은 <b>사람</b>이 찾습니다</h2>
-    <p class="sec-sub" data-i="whySub">무료 사주, AI 자동 풀이… 그 속에 숨어 있는 광고와 상업성. AI사주랩은 다르게 갑니다.</p>
-    <div class="vs">
-      <div class="box"><div class="t" data-i="vsLt">AI 분석</div><div class="d" data-i="vsLd">사주와 데이터를<br>빠르고 객관적으로</div></div>
-      <div class="mid">≠</div>
-      <div class="box r"><div class="t" data-i="vsRt">전문가 해석</div><div class="d" data-i="vsRd">명리학 10년 · 경영지도사가<br>직접 검수</div></div>
-    </div>
-    <div class="calibnote" data-i="calibNote">전문가 상담은 사주팔자의 <b>「영점 조정」</b> 과정을 거칩니다. AI가 제시한 솔루션은 그 과정을 거치지 않으므로, 나에게 맞는 솔루션을 직접 선택해 활용해 주세요.</div>
-  </section>
-
-  <!-- 지금 열려 있는 것 -->
-  <section>
-    <div class="sec-label">NOW</div>
-    <h2 data-i="h2Now">지금 열려 있는 것</h2>
-    <p class="sec-sub" data-i="nowSub">좌우로 넘겨 보세요.</p>
-    <div class="slides">
-      <div class="slide">
-        <div class="tag" data-i="sl1tag">진단 후 바로</div>
-        <h3 data-i="sl1h">AI 오행 해설<br>990원</h3>
-        <p data-i="sl1p">내 고민을 반영한 맞춤 해설, 당일 카톡 발송. 진단 후 결과 화면에서 신청.</p>
-        <a href="/ohaeng/" data-i="sl1a">지금 진단하고 신청하기</a>
-      </div>
-      <div class="slide">
-        <div class="tag" data-i="sl2tag">신규</div>
-        <h3 data-i="sl2h">(자연) 오행 성격 진단</h3>
-        <p data-i="sl2p">질문 14개, 1분. 계절과 상징으로 읽는 나의 기질 카드.</p>
-        <a href="/ohaeng/" data-i="sl2a">바로 진단하기</a>
-      </div>
-      <div class="slide warm">
-        <div class="tag" data-i="sl3tag">읽을거리</div>
-        <h3 data-i="sl3h">궁합은<br>점수로 나오지 않습니다</h3>
-        <p data-i="sl3p">왜 끌리고 왜 부딪히는지는 같은 뿌리에서 나옵니다.</p>
-        <a href="/learn/gunghap-score" data-i="sl3a">글 읽기</a>
-      </div>
-    </div>
-  </section>
-
-  <!--LEARN_SLOT-->
-
-  <!-- 고민 -->
-  <section>
-    <div class="sec-label">CONSULTING</div>
-    <h2 data-i="h2Needs">당신도 이런 고민, <b>해본 적 있나요?</b></h2>
-    <p class="sec-sub" data-i="needsSub">진단으로 방향을 잡았다면, 사람이 직접 보는 상담으로 이어집니다.</p>
-    <div class="needs">
-      <a class="need" href="/ohaeng/#report"><i>💼</i><span data-i="need1">지금, 이직해야 할까?</span></a>
-      <a class="need" href="/ohaeng/#match"><i>💗</i><span data-i="need2">이 사람과 궁합이 맞을까?</span></a>
-      <a class="need" href="/ohaeng/#report"><i>📈</i><span data-i="need3">창업해도 괜찮을까?</span></a>
-      <a class="need" href="/ohaeng/#report"><i>🏠</i><span data-i="need4">지금 집을 사도 될까?</span></a>
-      <a class="need more" href="/consult" data-i="needMore">개인사주 · 재물운 · 대운/세운 · 작명 더 보기 ▾</a>
-    </div>
-  </section>
-
-  <!-- 3단계 -->
-  <section>
-    <div class="sec-label">HOW</div>
-    <h2 data-i="h2How">상담은 <b>3단계</b>면 충분합니다</h2>
-    <div class="steps" style="margin-top:18px">
-      <div class="step step-sel">
-        <span class="t" data-i="st1t">30초</span>
-        <h4 data-i="st1h">상담 종류 선택</h4>
-        <select class="step-drop" onchange="if(this.value)window.location.href='/consult'">
-          <option value="" data-i="op0">▾ 유형 선택하기</option>
-          <option value="1" data-i="op1">개인사주 (생년월일시 분석)</option>
-          <option value="2" data-i="op2">이직·직업·커리어</option>
-          <option value="3" data-i="op3">연애·궁합·결혼</option>
-          <option value="4" data-i="op4">창업·사업·재물운</option>
-          <option value="5" data-i="op5">부동산·이사·투자</option>
-          <option value="6" data-i="op6">대운·세운 흐름</option>
-          <option value="7" data-i="op7">작명 (이름 짓기)</option>
-          <option value="8" data-i="op8">기타 고민</option>
-        </select>
-      </div>
-      <div class="step" onclick="window.location.href='/consult'" style="cursor:pointer">
-        <span class="t" data-i="st2t">1분</span><h4 data-i="st2h">생년월일시 입력</h4>
-        <p data-i="st2p">모르면 "모른다"고 체크해도 됩니다 →</p>
-      </div>
-      <div class="step" onclick="window.location.href='/consult'" style="cursor:pointer">
-        <span class="t" data-i="st3t">2분</span><h4 data-i="st3h">고민 남기기</h4>
-        <p data-i="st3p">AI가 정리하고 연구소가 검수합니다 →</p>
-      </div>
-    </div>
-    <a href="/consult" data-i="howCta" style="display:block;margin-top:16px;background:linear-gradient(135deg,#2F7FF0,#1D6DE3);color:#fff;text-align:center;padding:14px;border-radius:14px;font-weight:800;font-size:15px;text-decoration:none">지금 바로 상담 신청하기 →</a>
-  </section>
-
-  <!-- 후기 -->
-  <section>
-    <div class="sec-label">REVIEWS</div>
-    <h2 data-i="h2Rev">먼저 만난 분들</h2>
-    <div id="rv-list" style="margin-top:16px"><!--REVIEWS_SLOT--></div>
-    <div class="review-cta" data-i="revCta">후기를 남겨 주시면 다음 상담 <b>50% 할인</b>을 드려요.</div>
-
-    <button type="button" class="rv-open" id="rv-open">후기 남기기</button>
-
-    <form class="rv-form" id="rv-form" novalidate>
-      <div class="rv-row">
-        <label id="rv-l-star">얼마나 도움이 되셨나요?</label>
-        <div class="rv-stars" id="rv-stars">
-          <button type="button" class="rv-star" data-v="1" aria-label="1">★</button>
-          <button type="button" class="rv-star" data-v="2" aria-label="2">★</button>
-          <button type="button" class="rv-star" data-v="3" aria-label="3">★</button>
-          <button type="button" class="rv-star" data-v="4" aria-label="4">★</button>
-          <button type="button" class="rv-star" data-v="5" aria-label="5">★</button>
-        </div>
-      </div>
-      <div class="rv-row">
-        <label id="rv-l-name">어떻게 불러 드릴까요?</label>
-        <input id="rv-name" type="text" maxlength="20" autocomplete="off" placeholder="닉네임 또는 성함">
-      </div>
-      <div class="rv-row">
-        <label><span id="rv-l-text">상담은 어떠셨나요?</span><span class="rv-count" id="rv-count">0/400</span></label>
-        <textarea id="rv-text" maxlength="400" placeholder="상담에서 가장 도움이 된 점을 편하게 적어 주세요."></textarea>
-      </div>
-      <button type="submit" class="rv-send" id="rv-send">후기 보내기</button>
-      <div class="rv-guide" id="rv-guide">확인 후 게시되며, 개인정보는 적지 말아 주세요.</div>
-    </form>
-
-    <div class="rv-msg" id="rv-msg"></div>
-  </section>
-
   <!-- 채널 -->
-  <section>
+  <section data-sec="channels">
     <div class="sec-label">CHANNELS</div>
     <h2 data-i="h2Ch">다른 곳에서도 만나요</h2>
     <div class="channels" style="margin-top:14px;text-align:center;display:flex;flex-wrap:wrap;justify-content:center;gap:8px">
@@ -2140,6 +2157,9 @@ function track(name: string, props: Record<string, unknown> = {}) {
     const ss = window.sessionStorage, ls = window.localStorage;
     const q = new URLSearchParams(window.location.search);
     if (isNoTrack(ls, q)) return;
+    /* 운영자 유입(카카오 파트너센터에서 넘어온 방문)은 탭을 닫을 때까지 세지 않는다 (2026-11-20) */
+    if (/business\.kakao\.com/i.test(document.referrer || "")) ss.setItem("aisaju_internal", "1");
+    if (ss.getItem("aisaju_internal") === "1") return;
     let sid = ss.getItem("aisaju_sid"); if (!sid) { sid = rid(); ss.setItem("aisaju_sid", sid); }
     let vid = ls.getItem("aisaju_vid"); if (!vid) { vid = rid(); ls.setItem("aisaju_vid", vid); }
     const now: Record<string, string> = {};
@@ -2216,7 +2236,7 @@ function learnBlockHtml(learn?: HomeLearn | null) {
         .join("")}</div>`
     : "";
   return `
-  <section>
+  <section data-sec="learn">
     <div class="lh">
       <div class="lh-t">📖 이번 주 읽을거리</div>
       ${cardHtml}
@@ -2334,6 +2354,17 @@ export default function HomeV6(
     const dwell = () => { if (dwellSent) return; dwellSent = true; trk("dwell", { sec: Math.round((Date.now() - t0) / 1000) }); };
     const onVis = () => { if (document.visibilityState === "hidden") dwell(); };
     window.addEventListener("scroll", onScroll, { passive: true });
+    /* v7 — 구간 도달(sec_view): 각 블록이 화면에 4분의 1 이상 들어오면 방문당 한 번 기록.
+       25%·50% 눈금만으로는 어느 블록에서 멈췄는지 알 수 없었다 */
+    const secSeen: Record<string, boolean> = {};
+    let secIo: IntersectionObserver | null = null;
+    if ("IntersectionObserver" in window) {
+      secIo = new IntersectionObserver((ents) => ents.forEach((en) => {
+        const k = (en.target as HTMLElement).dataset.sec || "";
+        if (en.isIntersecting && k && !secSeen[k]) { secSeen[k] = true; trk("sec_view", { sec: k }); }
+      }), { threshold: 0.25 });
+      document.querySelectorAll("[data-sec]").forEach((el) => secIo!.observe(el));
+    }
     window.addEventListener("pagehide", dwell);
     document.addEventListener("visibilitychange", onVis);
     const root = document.querySelector(".v6"); if (!root) return;
@@ -2368,6 +2399,8 @@ export default function HomeV6(
     const dOrigin = new Map<HTMLElement, string>();
     dNodes.forEach(el => dOrigin.set(el, el.getAttribute("data-d") || ""));
 
+    /* v7 — 고민 개수: 서버가 넣어 준 수를 기억했다가, 번역문 안의 빈칸(.wn)에 다시 채운다 */
+    const WORRY_N = (root.querySelector(".wn")?.textContent || "").trim() || "44";
     let LANG: Lang = readLang();
 
     /* ══════════ 오늘의 기운 스트립 ══════════
@@ -3121,6 +3154,7 @@ export default function HomeV6(
         const v = dict[k];
         el.setAttribute("data-d", (v !== undefined && v !== "") ? v : (dOrigin.get(el) || ""));
       });
+      root.querySelectorAll<HTMLElement>(".wn").forEach(el => { el.textContent = WORRY_N; });
       /* 고민 주제 롤링 — data-l-<lang> 문구로 바꿔 끼운다 (2026-10-11) */
       root.querySelectorAll<HTMLElement>("#topics [data-l-ko]").forEach(el => {
         const v = el.getAttribute("data-l-" + LANG) || el.getAttribute("data-l-ko") || "";
@@ -3294,6 +3328,10 @@ export default function HomeV6(
         return;
       }
 
+      /* 읽을거리로 나가는 클릭 — 예전에는 기록이 없어 「무반응」으로 잡혔다 (2026-11-20) */
+      const la = t.closest("a.lrow, a.lh-go, a.lh-all") as HTMLElement | null;
+      if (la) { track("learn_click", { from: la.classList.contains("lrow") ? "hero" : la.classList.contains("lh-go") ? "block" : "all" }); return; }
+
       const b = t.closest("[data-go]") as HTMLElement | null;
       if (!b) return;
       const go = b.dataset.go, from = b.dataset.from || "home";
@@ -3302,7 +3340,7 @@ export default function HomeV6(
       else if (go === "gunghap") {
         /* 서비스 카드에서 누르면 아래 궁합 블록으로 데려간다 — 상품 설명을 건너뛰지 않게 */
         track("gunghap_open", { from });
-        document.getElementById("gunghap")?.scrollIntoView({ behavior: "smooth", block: "center" });
+        nav.jump("gunghap");
       }
       else if (go === "consult") {
         /* data-q 가 있으면 고객유형·신청방식 두 화면을 건너뛰고 바로 신청서를 연다.
@@ -3321,18 +3359,22 @@ export default function HomeV6(
         track("owner_click", { from });
         document.getElementById("rv-list")?.scrollIntoView({ behavior: "smooth", block: "center" });
       }
-      else if (go === "ohaeng") { window.location.href = "/ohaeng/"; }
-      else if (go === "menu") { track("menu_click", { from }); window.location.href = "/ohaeng/#me"; }
+      else if (go === "ohaeng") { track("svc_click", { to: "ohaeng", from }); window.location.href = "/ohaeng/"; }
+      else if (go === "chadd") { track("channel_add_click", { from }); /* 링크는 새 탭으로 그대로 열린다 */ }
+      else if (go === "nav") { nav.go(b.dataset.to || "", from); }   /* v7: 바로가기·전체 메뉴·결과 카드 버튼 */
+      else if (go === "menu") { track("menu_click", { from }); nav.open(); }   /* v7: 마이페이지 대신 전체 메뉴 */
       else if (go === "today")  { track("svc_click", { to: "today", from });  window.location.href = "/ohaeng/#today"; }
       else if (go === "match")  { track("svc_click", { to: "match", from });  window.location.href = "/ohaeng/#match"; }
       else if (go === "report") { track("svc_click", { to: "report", from }); window.location.href = "/ohaeng/#report"; }
       else if (go === "naming") {
         track("svc_click", { to: "naming", from });
-        document.getElementById("naming")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        nav.jump("naming");
       }
       else if (go === "share") { void doShare(from); }
       else if (go === "top") { window.scrollTo({ top: 0, behavior: "smooth" }); }
     };
+    /* v7 — 바로가기 6칸·전체 메뉴(≡)의 이동과 기록 (lib/home-nav) */
+    const nav = mountHomeNav(root as HTMLElement, track, { kakaoUrl: KAKAO });
     root.addEventListener("click", onClick);
 
     return () => {
@@ -3344,6 +3386,8 @@ export default function HomeV6(
       if (tkTimer) clearInterval(tkTimer);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("pagehide", dwell);
+      secIo?.disconnect();
+      nav.destroy();
       document.removeEventListener("visibilitychange", onVis);
       window.removeEventListener("keydown", svKey);
       stage?.removeEventListener("touchstart", onTS);
@@ -3353,9 +3397,12 @@ export default function HomeV6(
     };
   }, []);
 
+  /* v7 — 게시 중인 고민 주제 수. 주제를 못 읽은 경우에만 기본값 */
+  const topicN = topics && topics.length ? topics.length : 44;
+
   return (
     <div className="v6">
-      <style dangerouslySetInnerHTML={{ __html: CSS + WORDS_CSS + TALK_CSS }} />
+      <style dangerouslySetInnerHTML={{ __html: CSS + WORDS_CSS + TALK_CSS + NAV_CSS }} />
       <div
         dangerouslySetInnerHTML={{
           __html: HTML
@@ -3366,7 +3413,11 @@ export default function HomeV6(
             .replace("<!--TALK_SLOT-->", talkBlockHtml(talk))
             .replace("<!--LEARN_ROW-->", learnRowHtml(learn))
             .replace("<!--LEARN_SLOT-->", learnBlockHtml(learn))
-            .replace("<!--REVIEWS_SLOT-->", reviewsBlockHtml(reviews)),
+            .replace("<!--REVIEWS_SLOT-->", reviewsBlockHtml(reviews))
+            /* v7 — 바로가기 6칸 · 전체 메뉴(lib/home-nav), 그리고 고민 개수(관리자에서 주제를 늘리면 같이 바뀐다) */
+            .replace("<!--QUICK_SLOT-->", quickBlockHtml(topicN))
+            .replace("<!--NAVSHEET_SLOT-->", navSheetHtml(topicN))
+            .split("<!--TOPIC_N-->").join(String(topicN)),
         }}
       />
     </div>
