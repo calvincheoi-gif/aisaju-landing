@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { OG_IMAGES } from "@/lib/og";
 
 export const metadata: Metadata = {
   title: "이용 안내 — 처음이신가요 | AI사주 Lab",
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
     description: "무료 오행 진단부터 리포트·상담까지, 1분이면 파악됩니다.",
     url: "https://aisajulab.com/guide",
     type: "website",
+    images: OG_IMAGES,
   },
 };
 

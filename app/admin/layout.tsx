@@ -9,6 +9,7 @@ export const metadata: Metadata = {
 const ADMIN_NAV = [
   { label: "상담 신청 내역", href: "/admin" },
   { label: "무료 1문 1답", href: "/admin/ask" },
+  { label: "2027 새해운", href: "/admin/newyear" },
   { label: "홈 고민 주제", href: "/admin/topics" },
   { label: "게시 기록", href: "/admin/posts" },
   { label: "오늘 한 줄", href: "/admin/talk" },

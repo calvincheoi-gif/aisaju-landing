@@ -1,3 +1,4 @@
+import { OG_IMAGES } from "@/lib/og";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { LIVE_WORRIES, getWorry } from "@/lib/worries/data";
@@ -27,7 +28,7 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
     title,
     description: w.metaDesc,
     alternates: { canonical: `/q/${w.slug}` },
-    openGraph: { title: w.title, description: "30초 체크로 정리하고, 내 사주로 무료 답까지 · AI사주랩.com", url: `/q/${w.slug}`, type: "article" },
+    openGraph: { title: w.title, description: "30초 체크로 정리하고, 내 사주로 무료 답까지 · AI사주랩.com", url: `/q/${w.slug}`, type: "article", images: OG_IMAGES },
   };
 }
 

@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { OG_IMAGES } from "@/lib/og";
 import LearnView from "@/components/learn/LearnView";
 import { getPublishedLearnPosts, learnImageUrl } from "@/lib/learn-posts";
 
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
     description: "사주 명리학의 기본 개념을 쉬운 말로 정리했습니다.",
     url: "https://aisajulab.com/learn",
     type: "website",
+    images: OG_IMAGES,
   },
 };
 

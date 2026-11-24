@@ -9,7 +9,8 @@
  */
 import { usePathname, useRouter } from "next/navigation";
 
-const HIDE = (p: string) => p === "/" || p.startsWith("/admin") || p.startsWith("/r/");
+/* /2027 = 새해운 시즌 화면(목록·신청·결과) — 괘 뽑기·결제·저장 버튼을 가리지 않게 숨긴다 (/r/ 리포트 화면과 같은 이유) */
+const HIDE = (p: string) => p === "/" || p.startsWith("/admin") || p.startsWith("/r/") || p.startsWith("/2027");
 
 export default function FloatNav() {
   const pathname = usePathname() || "/";
