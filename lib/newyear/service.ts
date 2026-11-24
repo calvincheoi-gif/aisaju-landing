@@ -8,7 +8,7 @@
  */
 import { randomUUID } from "crypto";
 import { getProduct, PRODUCTS, type Product } from "./catalog";
-import { seasonState, startLabel } from "./season";
+import { productOpen, seasonState, startLabel } from "./season";
 import { checkContent } from "./content/validate";
 import { draftPartCount, priorDigest } from "./content/parts";
 import { DraftError, runDraft, type DraftContext } from "./content/writer";
@@ -56,8 +56,8 @@ export async function createOrder(productKey: string, raw: OrderInput, meta: Cre
   if (!p) throw new FlowError("상품을 찾지 못했습니다.", 404);
   /* 시즌 기간에만 접수한다(lib/newyear/season.ts). 기간 밖 시험은 NY_SEASON_FORCE=1 */
   const st = seasonState();
-  if (st !== "open" && process.env.NY_SEASON_FORCE !== "1" && !meta.preview)
-    throw new FlowError(st === "before" ? `2027 새해운은 ${startLabel()}에 열립니다.` : "2027 새해운 시즌이 끝났습니다. 이미 받으신 결과는 그 주소에서 계속 보실 수 있습니다.", 403);
+  if (!productOpen(p.review) && process.env.NY_SEASON_FORCE !== "1" && !meta.preview)
+    throw new FlowError(st === "before" || st === "pre" ? `${p.name}은(는) ${startLabel()}에 열립니다. 한 장 상품(주역 무료 · 토정 · 사주)은 지금 받을 수 있어요.` : "2027 새해운 시즌이 끝났습니다. 이미 받으신 결과는 그 주소에서 계속 보실 수 있습니다.", 403);
   const input: OrderInput = {
     name: clip(raw.name, 20) || undefined, contact: clip(raw.contact, 40) || undefined, gender: raw.gender === "male" || raw.gender === "female" ? raw.gender : undefined,
     birth: raw.birth ? { year: Number(raw.birth.year), month: Number(raw.birth.month), day: Number(raw.birth.day), isLunar: !!raw.birth.isLunar, isLeapMonth: !!raw.birth.isLunar && !!raw.birth.isLeapMonth } : undefined,

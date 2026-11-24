@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { track } from "@/lib/worries/links";
-import { daysLeft, kstDay, SEASON, seasonState } from "@/lib/newyear/season";
+import { daysLeft, kstDay, SEASON, seasonVisible } from "@/lib/newyear/season";
 
 /**
  * 홈 팝업 — 「새해맞이 새해운 EVENT」 (2026-11-24 소장님 확정: 네이비 빛결 배경 · 금빛 주역 카드 + 흰 카드 2장, 오행 카드 줄 위).
@@ -10,6 +10,7 @@ import { daysLeft, kstDay, SEASON, seasonState } from "@/lib/newyear/season";
  *  · 홈에 들어오면 바로 뜨고, 처음 나타날 때 금빛 테두리가 네 번 깜빡여 눈길을 끈다.
  *  · ✕ 는 이번만 닫는다(다음 방문에 다시 뜸). 「오늘 하루 다시 열지 않기」는 오늘(한국 날짜) 동안 뜨지 않는다.
  *  · 세 선택지(주역 무료 · 토정 1장 · 사주 1장)로 바로 들어간다. 클릭은 utm=popup 으로 표시해 홈 지표와 따로 센다.
+ *  · 사전 오픈(11/24~)부터 뜬다 — 팝업의 세 가지(한 장 상품)는 이때부터 바로 받을 수 있다. 상세본은 12/1 오픈.
  *  · 홈 화면 구조는 건드리지 않는다 — 이 부품 하나를 app/page.tsx 에 얹었다 뗐다 한다.
  */
 const HIDE_KEY = "ny_pop_hide_day";
@@ -27,7 +28,7 @@ export default function NySeasonPopup() {
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
     const preview = q.get("nypop") === "1";
-    if (!preview && seasonState() !== "open") return;
+    if (!preview && !seasonVisible()) return;
     try { if (!preview && localStorage.getItem(HIDE_KEY) === kstDay()) return; } catch { /* 저장소 막힘 — 그냥 띄운다 */ }
     setLeft(daysLeft());
     const t = window.setTimeout(() => { setOpen(true); track("ny_pop_view", { season: SEASON.key }); }, 350);

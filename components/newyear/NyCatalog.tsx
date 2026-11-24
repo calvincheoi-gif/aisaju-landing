@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { getProduct, NEWYEAR, PRODUCTS, won, type Product } from "@/lib/newyear/catalog";
 import { recentOrders, type RecentOrder } from "@/lib/newyear/client";
-import { SEASON, startLabel } from "@/lib/newyear/season";
+import { SEASON, seasonState, startLabel } from "@/lib/newyear/season";
 
 /**
  * 2027 새해운 — 상품 목록 (무료 주역 → 990원 한 장 → 상세본 순으로 선택을 넓힌다).
@@ -16,7 +16,7 @@ const FAMILY: { key: Product["family"]; title: string; what: string; tone: strin
   { key: "saju", title: "사주명리", what: "일간과 태어난 계절로 나의 기질을 읽고, 절기 열두 달을 봅니다.", tone: "#335CC4", ring: "#D5DFF7" },
 ];
 
-function ProductRow({ p, tone }: { p: Product; tone: string }) {
+function ProductRow({ p, tone, pre = false }: { p: Product; tone: string; pre?: boolean }) {
   /* 이름 옆에는 가격만 두고, 형식·전달 방식은 아래 두 줄로 — 좁은 화면에서도 가운뎃점(·)에서 줄이 끊기지 않는다 */
   return (
     <Link href={`${NEWYEAR.path}/${p.key}`} className="group flex items-start gap-3 rounded-2xl border border-[#DCE7F8] bg-white px-4 py-3.5 transition hover:border-[#9DB8F5] hover:shadow-[0_6px_18px_rgba(59,108,245,.12)]">
@@ -27,7 +27,7 @@ function ProductRow({ p, tone }: { p: Product; tone: string }) {
           <span className={`shrink-0 whitespace-nowrap rounded-full px-3 py-1 text-[13.5px] font-extrabold ${p.price === 0 ? "bg-[#FFF3BF] text-[#7A5B00]" : "bg-[#EEF3FB] text-[#12224A]"}`}>{won(p.price)}</span>
         </span>
         <span className="mt-1 block whitespace-nowrap text-[12.5px] leading-snug text-[#64748B]">{p.format}</span>
-        <span className="block whitespace-nowrap text-[12.5px] font-semibold leading-snug" style={{ color: tone }}>{p.review ? "소장 감수 후 전달" : "바로 받기"}</span>
+        <span className="block whitespace-nowrap text-[12.5px] font-semibold leading-snug" style={{ color: tone }}>{p.review ? (pre ? `${startLabel(true)} 오픈 · 감수 후 전달` : "소장 감수 후 전달") : "바로 받기"}</span>
       </span>
     </Link>
   );
@@ -35,13 +35,14 @@ function ProductRow({ p, tone }: { p: Product; tone: string }) {
 
 export default function NyCatalog() {
   const [recent, setRecent] = useState<RecentOrder[]>([]);
-  useEffect(() => { setRecent(recentOrders()); }, []);
+  const [pre, setPre] = useState(false);
+  useEffect(() => { setRecent(recentOrders()); setPre(seasonState() === "pre"); }, []);
   return (
     <div className="mx-auto w-full max-w-[560px] px-5 pb-16 pt-6">
       <div className="text-center">
         <span className="inline-block rounded-full bg-[#12224A] px-3.5 py-1.5 text-[12px] font-bold tracking-wide text-white">2027 {NEWYEAR.ganji}年 · 새해운</span>
         <h1 className="mt-4 break-keep text-[27px] font-black leading-[1.3] tracking-[-0.03em] text-[#12224A]">2027 정미년 새해운,<br />한 장으로 먼저 받아 보세요</h1>
-        <p className="mt-2 text-[12.5px] font-bold text-[#A87B22]">{SEASON.label} · {startLabel(true)} ~ {SEASON.endLabel}까지만 열려요</p>
+        <p className="mt-2 text-[12.5px] font-bold text-[#A87B22]">{pre ? `사전 오픈 · 한 장 3종은 지금 바로 · 상세본은 ${startLabel(true)} 오픈` : `${SEASON.label} · ${startLabel(true)} ~ ${SEASON.endLabel}까지만 열려요`}</p>
         <p className="mx-auto mt-3 max-w-[420px] break-keep text-[14.5px] leading-relaxed text-[#64748B] [text-wrap:balance]">주역 카드는 무료, 한 장 요약은 990원. 더 깊이 보고 싶을 때만 상세 리포트로 넘어가면 됩니다.</p>
       </div>
 
@@ -66,7 +67,7 @@ export default function NyCatalog() {
                 <span className="text-[12.5px] font-semibold text-[#94A3B8]">{items[0].tagline}</span>
               </div>
               <p className="mt-1 break-keep px-1 text-[13.5px] leading-relaxed text-[#475569] [text-wrap:balance]">{f.what}</p>
-              <div className="mt-3 space-y-2.5">{items.map((p) => <ProductRow key={p.key} p={p} tone={f.tone} />)}</div>
+              <div className="mt-3 space-y-2.5">{items.map((p) => <ProductRow key={p.key} p={p} tone={f.tone} pre={pre} />)}</div>
             </section>
           );
         })}

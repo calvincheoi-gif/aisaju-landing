@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { isProdHost, productOpen, startLabel } from "@/lib/newyear/season";
 import { NEWYEAR, won, type Product } from "@/lib/newyear/catalog";
 import { apiCreate, rememberOrder } from "@/lib/newyear/client";
 import { IC_CATEGORIES } from "@/lib/newyear/content/iching-bank";
@@ -37,6 +38,9 @@ export default function NyOrderForm({ product: p }: { product: Product }) {
   const [agree, setAgree] = useState(false), [busy, setBusy] = useState(false), [err, setErr] = useState<string | null>(null);
   const category = useMemo(() => IC_CATEGORIES.find((c) => c.key === cat) ?? IC_CATEGORIES[0], [cat]);
   const personal = need("birth") || need("contact");
+  /* 사전 오픈 기간의 상세본: 내용·양식은 보여 주되 신청은 잠근다(운영 주소에서만 — 미리보기는 시험 가능) */
+  const [locked, setLocked] = useState(false);
+  useEffect(() => { setLocked(!productOpen(p.review) && isProdHost(window.location.host)); }, [p.review]);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -82,6 +86,13 @@ export default function NyOrderForm({ product: p }: { product: Product }) {
         <p className="mt-2 break-keep text-center text-[12px] text-[#94A3B8]">대괄호 자리에 나의 내용이 들어갑니다.</p>
       </details>
 
+      {locked && (
+        <div className="mt-3 rounded-2xl border border-[#F1E3A8] bg-[#FFFBEA] px-4 py-4">
+          <p className="break-keep text-[14.5px] font-extrabold text-[#7A5B00]">{startLabel()}에 열립니다</p>
+          <p className="mt-1 break-keep text-[13px] leading-relaxed text-[#6B5200]">지금은 사전 오픈 기간이라 <b>한 장 요약</b>을 먼저 받을 수 있어요. 상세본은 {startLabel(true)}부터 신청받습니다.</p>
+          <a href={`${NEWYEAR.path}/${p.key === "tojeong-detail" ? "tojeong-card" : "saju-card"}?utm=pre_${p.key}`} className="mt-3 block rounded-xl bg-gradient-to-b from-[#FFE58A] to-[#F2C94C] px-4 py-3 text-center text-[14.5px] font-extrabold text-[#12224A]">{p.key === "tojeong-detail" ? "토정비결 한 장 먼저 받기 · 990원" : "사주명리 한 장 먼저 받기 · 990원"}</a>
+        </div>
+      )}
       <form onSubmit={submit} className="mt-5 space-y-5">
         {need("question") && (
           <>
@@ -150,8 +161,8 @@ export default function NyOrderForm({ product: p }: { product: Product }) {
         )}
 
         {err && <p className="break-keep rounded-xl bg-[#FEF2F2] px-3.5 py-3 text-[13.5px] font-semibold text-[#B91C1C]">{err}</p>}
-        <button type="submit" disabled={busy} className="block w-full rounded-full bg-gradient-to-b from-[#6896FF] to-[#3B6CF5] px-5 py-4 text-[16px] font-extrabold text-white shadow-[0_8px_20px_rgba(59,108,245,.28)] disabled:opacity-60">
-          {busy ? "처리 중…" : p.pay === "free" ? "무료로 카드 받기" : `신청하고 결제 안내 보기 · ${won(p.price)}`}
+        <button type="submit" disabled={busy || locked} className="block w-full rounded-full bg-gradient-to-b from-[#6896FF] to-[#3B6CF5] px-5 py-4 text-[16px] font-extrabold text-white shadow-[0_8px_20px_rgba(59,108,245,.28)] disabled:opacity-60">
+          {locked ? `${startLabel(true)} 오픈 — 지금은 미리 보기만` : busy ? "처리 중…" : p.pay === "free" ? "무료로 카드 받기" : `신청하고 결제 안내 보기 · ${won(p.price)}`}
         </button>
       </form>
     </div>

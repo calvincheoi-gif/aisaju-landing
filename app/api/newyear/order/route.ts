@@ -1,3 +1,4 @@
+import { isProdHost } from "@/lib/newyear/season";
 import { NextResponse } from "next/server";
 import { createOrder, FlowError, InputError } from "@/lib/newyear/service";
 import { StoreError } from "@/lib/newyear/store/server";
@@ -19,7 +20,7 @@ export async function POST(req: Request) {
   try {
     /* 운영 도메인(aisajulab.com)이 아니면 미리보기로 보고 시즌 전 시험 신청을 허용한다 */
     const host = (req.headers.get("x-forwarded-host") || req.headers.get("host") || "").toLowerCase();
-    const preview = !/(^|\.)aisajulab\.com(:\d+)?$/.test(host) && !/^aisaju-landing\.netlify\.app$/.test(host);
+    const preview = !isProdHost(host);
     const o = await createOrder(String(body.product || ""), (body.input ?? {}) as never, { utm: body.utm, referrer: body.referrer, deviceCode: body.deviceCode, preview });
     return NextResponse.json({ ok: true, token: o.share_token, refNo: o.ref_no, order: toPublic(o) }, { headers: { "Cache-Control": "no-store" } });
   } catch (e) {
