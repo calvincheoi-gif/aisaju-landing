@@ -81,9 +81,9 @@ const CSS = `
 @keyframes nycBlink{50%{box-shadow:0 14px 34px rgba(10,16,40,.42),0 0 0 2.5px rgba(255,224,120,.95),0 0 26px rgba(255,214,100,.65)}}
 #nyc .glow{position:absolute;left:-20%;right:-20%;top:38%;height:42%;background:linear-gradient(100deg,rgba(130,165,255,0) 0%,rgba(130,165,255,.22) 45%,rgba(160,190,255,.32) 55%,rgba(130,165,255,0) 100%);filter:blur(14px);transform:rotate(-8deg);pointer-events:none}
 #nyc .top{position:relative;display:flex;align-items:center;gap:6px}
-#nyc .pill{display:inline-flex;align-items:center;gap:5px;height:21px;padding:0 9px;border-radius:99px;font-size:10.5px;font-weight:800;color:#F7DC8A;border:1px solid rgba(243,211,122,.7);white-space:nowrap}
-#nyc .pill i{width:5px;height:5px;border-radius:50%;background:#F3D37A;box-shadow:0 0 6px #F3D37A;animation:nycDot .85s ease-in-out .5s 4}
-#nyc .pill .pd{margin-left:2px;padding-left:6px;border-left:1px solid rgba(243,211,122,.45);font-weight:700;color:#E8D3A0}
+#nyc .pill{display:inline-flex;align-items:center;gap:5px;height:21px;padding:0 9px;border-radius:99px;font-size:10.5px;font-weight:900;color:#16234D;background:linear-gradient(180deg,#FFFBEA,#FBEFC4);border:1px solid #FFF6D6;box-shadow:0 2px 8px rgba(243,211,122,.35);white-space:nowrap}
+#nyc .pill i{width:5px;height:5px;border-radius:50%;background:#E0A92E;box-shadow:0 0 5px rgba(224,169,46,.8);animation:nycDot .85s ease-in-out .5s 4}
+#nyc .pill .pd{margin-left:2px;padding-left:6px;border-left:1px solid rgba(22,35,77,.25);font-weight:700;color:#4A5578}
 @keyframes nycDot{50%{opacity:.2}}
 #nyc .spk{margin-left:auto;position:relative;color:#FFE7A8;font-size:11px;line-height:1;text-shadow:0 0 6px rgba(255,220,140,.9)}
 #nyc .spk small{position:absolute;left:9px;top:-7px;font-size:8px}
