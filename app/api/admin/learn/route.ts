@@ -50,7 +50,9 @@ function normalizeSlug(raw: string) {
 
 /** 주소를 비워두면 만들어 준다. 한글 제목이면 날짜 기반으로 — 주소에 한글이 섞이면 링크가 지저분해진다 */
 function autoSlug(title: string) {
-  const fromTitle = normalizeSlug(title);
+  /* 영문 제목일 때만 제목으로 주소를 만든다. 한글 제목에서 영문·숫자만 뽑으면 "AI … 2027 …" 같은 제목이
+     모두 ai-2027 로 겹친다(2026-11-24 「이미 같은 주소」 오류의 원인) */
+  const fromTitle = /[가-힣]/.test(title) ? "" : normalizeSlug(title);
   if (fromTitle.length >= 3) return fromTitle.slice(0, 60);
   const d = new Date();
   const stamp = `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(
@@ -123,21 +125,25 @@ export async function POST(req: Request) {
   if (!title) return NextResponse.json({ error: "제목을 입력해 주세요." }, { status: 400 });
   if (!body) return NextResponse.json({ error: "본문을 입력해 주세요." }, { status: 400 });
 
-  const slug = normalizeSlug(str("slug")) || autoSlug(title);
+  const typed = normalizeSlug(str("slug"));
+  let slug = typed || autoSlug(title);
 
   const supabase = getSupabaseAdminClient();
   if (!supabase) return noAdmin();
 
-  const { data: dup } = await supabase
-    .from("learn_posts")
-    .select("id")
-    .eq("slug", slug)
-    .maybeSingle();
-  if (dup) {
-    return NextResponse.json(
-      { error: `이미 같은 주소(${slug})의 글이 있습니다. 다른 주소를 써 주세요.` },
-      { status: 409 }
-    );
+  const taken = async (s: string) =>
+    !!(await supabase.from("learn_posts").select("id").eq("slug", s).maybeSingle()).data;
+  if (await taken(slug)) {
+    /* 주소를 직접 적은 경우만 되묻는다. 자동으로 만든 주소가 겹치면 뒤에 짧은 글자를 붙여 새 주소로 바꾼다 */
+    if (typed) {
+      return NextResponse.json(
+        { error: `이미 같은 주소(${slug})의 글이 있습니다. 다른 주소를 써 주세요.` },
+        { status: 409 }
+      );
+    }
+    let next = slug;
+    for (let i = 0; i < 5 && (await taken(next)); i++) next = `${slug.slice(0, 54)}-${Math.random().toString(36).slice(2, 6)}`;
+    slug = next;
   }
 
   const id = crypto.randomUUID();
