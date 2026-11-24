@@ -1,4 +1,5 @@
 import HomeV6 from "@/components/HomeV6";
+import NySeasonPopup from "@/components/newyear/NySeasonPopup";
 import { getFeaturedLearnCard, getOhaengLearnLinks, learnImageUrl } from "@/lib/learn-posts";
 import { getPublishedReviews } from "@/lib/reviews";
 import { getTodayWords } from "@/lib/daily-words/server";
@@ -59,5 +60,11 @@ export default async function Home() {
       }
     : null;
 
-  return <HomeV6 learn={learn} reviews={reviews} ohaengLinks={ohaengLinks} words={words} topics={topics} talk={talk} />;
+  return (
+    <>
+      <HomeV6 learn={learn} reviews={reviews} ohaengLinks={ohaengLinks} words={words} topics={topics} talk={talk} />
+      {/* 시즌 팝업(2026-12-01 ~ 2027-02-09) — 기간 밖에서는 아무것도 그리지 않는다. 홈 구조는 그대로 */}
+      <NySeasonPopup />
+    </>
+  );
 }
