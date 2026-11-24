@@ -181,11 +181,15 @@ const NyPages = forwardRef<NyPagesHandle, Props>(function NyPages({ template, va
 
 export default NyPages;
 
-/** 만든 파일을 내려받는다. 인앱 브라우저처럼 내려받기가 막힌 곳에서는 공유 창을 연다. */
-export async function saveFiles(files: File[]): Promise<"saved" | "shared" | "failed"> {
+/**
+ * 만든 파일을 내려받는다 — 일반 브라우저용.
+ * 인앱 브라우저(카카오톡 등)는 화면에서 만든 파일을 받지 못하므로 부르는 쪽(NyOrderView)에서 먼저 걸러
+ * 기본 브라우저로 보내거나(openExternal) 그림을 띄워 길게 눌러 저장하게 한다(SaveSheet).
+ * 여기서는 공유 창(파일 공유를 지원하는 폰) → 내려받기 순으로 시도한다.
+ */
+export async function saveFiles(files: File[], preferShare = false): Promise<"saved" | "shared" | "failed"> {
   const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
-  const inApp = /KAKAOTALK|Instagram|NAVER\(inapp|FBAN|FBAV|Line\//i.test(navigator.userAgent);
-  if (inApp && nav.share && (!nav.canShare || nav.canShare({ files }))) {
+  if (preferShare && nav.share && nav.canShare?.({ files })) {
     try { await nav.share({ files, title: "AI사주랩 2027 새해운" }); return "shared"; } catch { /* 취소했거나 막힘 → 내려받기로 */ }
   }
   try {

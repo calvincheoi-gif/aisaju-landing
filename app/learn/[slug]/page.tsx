@@ -1,3 +1,4 @@
+import { OG_IMAGES } from "@/lib/og";
 import Link from "next/link";
 import { siteConfig } from "@/lib/site-config";
 import { notFound } from "next/navigation";
@@ -63,7 +64,7 @@ export async function generateMetadata({
       type: "article",
       publishedTime: post.published_at,
       modifiedTime: post.updated_at,
-      ...(ogImage ? { images: [ogImage] } : {}),
+      images: ogImage ? [ogImage] : OG_IMAGES,
     },
   };
 }

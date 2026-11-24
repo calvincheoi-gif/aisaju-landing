@@ -1,3 +1,4 @@
+import { OG_BRAND_CHOI } from "@/lib/og";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import PageIntro from "@/components/PageIntro";
@@ -15,6 +16,13 @@ export const metadata = {
   title: "상담 신청 | AI사주 Lab",
   alternates: { canonical: "/consult" },
   description: "고객 유형과 신청 방식을 선택해 나에게 맞는 상담을 신청하세요.",
+  openGraph: {
+    title: "상담 신청 | 사주보는 경영지도사 AI사주랩 최형철",
+    description: "고객 유형과 신청 방식을 선택해 나에게 맞는 상담을 신청하세요.",
+    url: "https://aisajulab.com/consult",
+    type: "website",
+    images: [OG_BRAND_CHOI],
+  },
 };
 
 export default function ConsultPage() {

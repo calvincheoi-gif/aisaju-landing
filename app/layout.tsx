@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import LanguageProvider from "@/components/LanguageProvider";
 import FloatNav from "@/components/FloatNav";
+import { OG_BRAND } from "@/lib/og";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://aisajulab.com"),
@@ -43,22 +44,14 @@ export const metadata: Metadata = {
     siteName: "AI사주 Lab",
     locale: "ko_KR",
     type: "website",
-    /* 정사각(1:1)을 주면 카톡이 큰 카드 대신 작은 썸네일로 보여준다 — 폰에서 아담하게.
-       가로판(/og-home.jpg)은 트위터·슬랙 등 큰 카드가 어울리는 곳에만 쓴다. */
-    images: [
-      {
-        url: "/og-home-sq.jpg",
-        width: 800,
-        height: 800,
-        alt: "AI사주랩.com — 나의 오행 성격, 1분이면 나옵니다",
-      },
-    ],
+    /* 정사각(1:1) 브랜드 그림 — 카톡에서 아담한 썸네일로 보인다. 관리: lib/og.ts */
+    images: [OG_BRAND],
   },
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "AI사주랩.com | 나의 오행 성격, 1분이면 나옵니다",
     description: "질문 14개로 보는 나의 오행 성격과 오늘의 기운. 가입 없이 바로",
-    images: ["/og-home.jpg"],
+    images: [OG_BRAND.url],
   },
 };
 

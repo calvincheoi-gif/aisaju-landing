@@ -1,3 +1,4 @@
+import { OG_IMAGES } from "@/lib/og";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import NyCatalog from "@/components/newyear/NyCatalog";
@@ -10,6 +11,13 @@ export const metadata = {
   title: "2027 정미년 새해운 | AI사주랩.com",
   description: "주역 새해 방향 카드는 무료, 토정비결·사주명리 한 장 요약은 990원. 폰 배경화면으로 쓰는 2027 丁未年 새해운 — 상세 리포트는 소장 감수 후 전달합니다.",
   alternates: { canonical: "/2027" },
+  openGraph: {
+    title: "2027 정미년, 내 새해운 1장 | AI사주랩.com",
+    description: "주역 새해 방향 카드 무료 · 토정비결·사주명리 한 장 990원 · 설 연휴(2/9)까지",
+    url: "https://aisajulab.com/2027",
+    type: "website",
+    images: OG_IMAGES,
+  },
 };
 
 export default function NewYearPage() {

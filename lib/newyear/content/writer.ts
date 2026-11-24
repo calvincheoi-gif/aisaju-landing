@@ -17,6 +17,8 @@ import { cleanText, fieldLabel } from "./validate";
 
 /** AI 호출 한 번의 제한 시간 — Netlify 함수 제한(26초)보다 짧게 잡는다 */
 const CALL_TIMEOUT_MS = 22_000;
+/** 함수 한 번(초안 + 줄여 쓰기)에 쓸 수 있는 전체 시간 */
+const TOTAL_BUDGET_MS = 23_500;
 
 const COMMON = `당신은 「최형철 사주명리 연구소 · AI사주랩」의 2027년(丁未年) 새해운 리포트 초안 작성자입니다.
 정해진 양식의 칸을 채웁니다. 반드시 지킬 것:
@@ -24,7 +26,7 @@ const COMMON = `당신은 「최형철 사주명리 연구소 · AI사주랩」�
 2. 확정형 예언을 쓰지 않습니다("반드시", "틀림없이" 금지). "~로 읽힙니다", "~가 유리해 보입니다"처럼 경향으로 씁니다.
 3. 건강·투자·법률은 단정하지 않고 생활 관리와 점검 수준으로만 씁니다.
 4. 생활 언어로 씁니다. 실천 항목은 당장 할 수 있는 작은 행동으로 구체적으로 씁니다("노력하세요" 같은 추상어 금지).
-5. 각 칸은 적힌 글자 수(공백 포함) 이내로, 칸의 성격에 맞는 한 덩어리 글로 씁니다. 대괄호·따옴표·이모지·줄바꿈을 쓰지 않습니다.
+5. 각 칸은 적힌 글자 수(공백 포함) 이내로 씁니다. 칸 크기가 정해진 양식이라 넘치면 글이 칸 밖으로 삐져나옵니다 — 글자 수는 꼭 지킵니다. 칸의 성격에 맞는 한 덩어리 글로, 칸의 성격에 맞는 한 덩어리 글로 씁니다. 대괄호·따옴표·이모지·줄바꿈을 쓰지 않습니다.
 6. 「단어 · 단어」 칸은 뜻이 서로 다른 두 낱말을 가운뎃점으로 잇습니다(예: 목표 · 분석). 한 구절을 둘로 쪼갠 것(목표 설정)은 안 됩니다. 달마다 낱말이 겹치지 않게 합니다. 「단어」 칸은 낱말 하나만 씁니다.
 7. 존댓말(~합니다, ~하세요)로 씁니다. 같은 문장을 여러 칸에 되풀이하지 않습니다.
 8. 설명·머리말 없이 JSON 객체 하나만 출력합니다: {"칸 열쇠": "글", …}. 요청한 열쇠를 하나도 빠뜨리지 않습니다.`;
@@ -52,7 +54,8 @@ export function draftFields(product: ProductKey, part: number): SpecField[] {
 function sizeNote(f: SpecField): string {
   if (/단어.*·.*단어/.test(f.hint)) return "낱말 2개를 가운뎃점으로(각 2~3자, 예: 정리 · 준비)";
   if (/^단어/.test(f.hint)) return "낱말 하나(2~4자)";
-  return `${Math.max(4, f.max)}자 이내`;
+  const lines = /한 줄/.test(f.hint) ? " · 꼭 한 줄" : /두 줄/.test(f.hint) ? " · 두 줄 이내" : "";
+  return `${Math.max(4, f.max)}자 이내${lines}`;
 }
 
 export function buildPrompt(ctx: DraftContext, fields: SpecField[]): { system: string; user: string } {
@@ -91,6 +94,7 @@ export async function runDraft(ctx: DraftContext, part: number): Promise<{ value
   if (!ai) throw new DraftError("AI 설정(ANTHROPIC_API_KEY)이 없어 초안을 만들 수 없습니다.");
   const { system, user } = buildPrompt(ctx, fields);
   const client = ai.client as Anthropic;
+  const t0 = Date.now();
   let res: Anthropic.Message;
   try {
     /* 다시 시도(maxRetries)는 끈다 — SDK 가 조용히 한 번 더 부르면 함수 제한 시간을 넘긴다. 다시 부르기는 화면이 맡는다. */
@@ -110,5 +114,35 @@ export async function runDraft(ctx: DraftContext, part: number): Promise<{ value
     const v = cleanText(json[f.key]);
     if (v) values[f.key] = v; else missing.push(f.key);
   }
-  return { values, missing, via: ai.via, usage: res.usage ? { input: res.usage.input_tokens, output: res.usage.output_tokens } : undefined };
+  const usage = res.usage ? { input: res.usage.input_tokens, output: res.usage.output_tokens } : undefined;
+  /* 글자 수를 크게 넘긴 칸만 골라 한 번 더 줄여 쓰게 한다(짧은 호출). 시간이 모자라면 건너뛰고 화면의 글자 줄이기에 맡긴다 */
+  const over = fields.filter((f) => values[f.key] && values[f.key].length > hardMax(f));
+  const left = TOTAL_BUDGET_MS - (Date.now() - t0);
+  if (over.length > 0 && left > 6_000) {
+    try {
+      const fixed = await tighten(client, ai.model, over, values, Math.min(9_000, left - 2_000));
+      for (const f of over) { const v = fixed.values[f.key]; if (v && v.length < values[f.key].length) values[f.key] = v; }
+      if (usage && fixed.usage) { usage.input += fixed.usage.input; usage.output += fixed.usage.output; }
+    } catch { /* 줄이기 실패 — 원래 글을 두고 화면 맞춤(fit)에 맡긴다 */ }
+  }
+  return { values, missing, via: ai.via, usage };
+}
+
+/** 이 길이를 넘기면 칸에 들어가지 않는다고 본다 — 화면 맞춤(글자 72%까지 줄이기)으로 버틸 수 있는 여유를 조금 둔다 */
+function hardMax(f: SpecField): number {
+  return Math.ceil(f.max * 1.15) + 1;
+}
+
+/** 넘친 칸만 「뜻은 그대로, 글자 수 안으로」 다시 쓰게 하는 짧은 호출 */
+async function tighten(client: Anthropic, model: string, fields: SpecField[], cur: FieldValues, timeout: number): Promise<{ values: FieldValues; usage?: { input: number; output: number } }> {
+  const list = fields.map((f) => `${f.key} | ${f.max}자 이내${/한 줄/.test(f.hint) ? "(한 줄)" : ""} | 지금 ${cur[f.key].length}자: ${cur[f.key]}`).join("\n");
+  const res = await client.messages.create({
+    model, max_tokens: 500,
+    system: "양식의 칸에 들어갈 문장을 줄입니다. 뜻과 말투(존댓말)는 그대로 두고, 적힌 글자 수(공백 포함) 이내로 다시 씁니다. 설명 없이 JSON 객체 하나만 출력합니다: {\"칸 열쇠\": \"글\"}.",
+    messages: [{ role: "user", content: `[줄일 칸] (열쇠 | 글자 수 | 지금 글)\n${list}` }],
+  }, { timeout, maxRetries: 0 });
+  const json = pickJson(res.content.map((c) => ("text" in c ? c.text : "")).join("")) ?? {};
+  const values: FieldValues = {};
+  for (const f of fields) { const v = cleanText(json[f.key]); if (v) values[f.key] = v; }
+  return { values, usage: res.usage ? { input: res.usage.input_tokens, output: res.usage.output_tokens } : undefined };
 }

@@ -7,6 +7,8 @@ import { statusView } from "@/lib/newyear/status";
 import type { PublicOrder } from "@/lib/newyear/types";
 import { siteConfig } from "@/lib/site-config";
 import NyPages, { saveFiles, type NyPagesHandle } from "./NyPages";
+import NySaveSheet from "./NySaveSheet";
+import { inAppKind, openExternal, withSaveHint, type InAppKind } from "@/lib/newyear/inapp";
 
 /**
  * 2027 새해운 — 주문 한 건의 화면 (상태 안내 → 결제 → 생성/감수 대기 → 결과 저장).
@@ -24,6 +26,15 @@ export default function NyOrderView({ token }: { token: string }) {
   const [over, setOver] = useState<string[]>([]);
   const pagesRef = useRef<NyPagesHandle>(null);
   const kicked = useRef(false);
+  /* 인앱 브라우저(카카오톡 등) 여부 · 기본 브라우저로 넘어온 뒤 강조할 저장 단추 · 그림 띄워 저장하기 */
+  const [inapp, setInapp] = useState<InAppKind>(null);
+  const [hint, setHint] = useState<"png" | "pdf" | null>(null);
+  const [sheet, setSheet] = useState<string[] | null>(null);
+  useEffect(() => {
+    setInapp(inAppKind());
+    const s = new URLSearchParams(window.location.search).get("save");
+    if (s === "png" || s === "pdf") setHint(s);
+  }, []);
 
   const load = useCallback(async (count = false) => {
     const r = await apiGet(token, count);
@@ -73,13 +84,49 @@ export default function NyOrderView({ token }: { token: string }) {
   }
   async function save(kind: "png" | "pdf") {
     if (!pagesRef.current) return;
-    setBusy(kind); setMsg(null);
+    setMsg(null); setHint(null);
+    /* 인앱 브라우저: 파일 내려받기가 막혀 있으니 기본 브라우저로 같은 주소를 연다 */
+    if (inapp && openExternal(withSaveHint(window.location.href, kind))) {
+      setMsg(`크롬·사파리 같은 기본 브라우저로 이 결과를 엽니다. 열린 화면에서 「${kind === "png" ? "이미지 저장" : "PDF 저장"}」을 한 번 더 눌러 주세요.`);
+      return;
+    }
+    if (inapp) {
+      /* 아이폰의 인스타·네이버 등: 기본 브라우저로 넘길 방법이 없다 → 공유 창, 안 되면 그림을 띄운다 */
+      if (kind === "pdf") { setMsg("이 앱 안에서는 PDF 저장이 막혀 있습니다. 오른쪽 위 ··· 메뉴에서 「Safari로 열기」를 고른 뒤 다시 눌러 주세요. 이미지는 「이미지 저장」으로 바로 받을 수 있습니다."); return; }
+      await showSheet(true);
+      return;
+    }
+    setBusy(kind);
     try {
       const files = kind === "png" ? await pagesRef.current.toPng() : [await pagesRef.current.toPdf()];
       const r = await saveFiles(files);
-      setMsg(r === "failed" ? "저장이 막혔습니다. 크롬·사파리 같은 기본 브라우저로 이 주소를 열어 다시 눌러 주세요." : r === "shared" ? "공유 창에서 「이미지 저장」 또는 보낼 곳을 고르세요." : kind === "png" ? "이미지를 저장했습니다. 사진첩·다운로드 폴더에서 확인하세요." : "PDF를 저장했습니다. 다운로드 폴더에서 확인하세요.");
+      setMsg(r === "failed" ? "저장이 막혔습니다. 아래 「그림으로 띄워 저장」을 눌러 그림을 길게 눌러 저장해 주세요." : r === "shared" ? "공유 창에서 「이미지 저장」 또는 보낼 곳을 고르세요." : kind === "png" ? "이미지를 저장했습니다. 사진첩·다운로드 폴더에서 확인하세요." : "PDF를 저장했습니다. 다운로드 폴더에서 확인하세요.");
     } catch { setMsg("파일을 만들지 못했습니다. 잠시 뒤 다시 눌러 주세요."); }
     setBusy(null);
+  }
+  /** 그림을 화면에 띄워 길게 눌러 저장하게 한다(내려받기가 막힌 곳의 마지막 길) */
+  async function showSheet(tryShare = false) {
+    if (!pagesRef.current) return;
+    setBusy("png"); setMsg(null);
+    try {
+      const files = await pagesRef.current.toPng();
+      if (tryShare) {
+        const nav = navigator as Navigator & { canShare?: (d: ShareData) => boolean };
+        if (nav.share && nav.canShare?.({ files })) {
+          try { await nav.share({ files, title: "AI사주랩 2027 새해운" }); setBusy(null); return; } catch { /* 그림 띄우기로 */ }
+        }
+      }
+      const urls = await Promise.all(files.map((f) => new Promise<string>((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result)); r.onerror = rej; r.readAsDataURL(f); })));
+      setSheet(urls);
+    } catch { setMsg("그림을 만들지 못했습니다. 잠시 뒤 다시 눌러 주세요."); }
+    setBusy(null);
+  }
+  function printPdf() {
+    if (inapp && openExternal(withSaveHint(window.location.href, "pdf"))) {
+      setMsg("기본 브라우저로 이 결과를 엽니다. 열린 화면에서 「글자 선명한 PDF」를 다시 눌러 주세요.");
+      return;
+    }
+    void pagesRef.current?.print();
   }
   /** 이벤트 주소 공유 — 공유 창(카카오톡 등)이 있으면 열고, 없으면 주소를 복사한다 */
   async function shareEvent() {
@@ -175,14 +222,20 @@ export default function NyOrderView({ token }: { token: string }) {
       {/* 결과 */}
       {o.status === "ready" && o.content && (
         <>
+          <style>{`@keyframes nyHint{0%,100%{box-shadow:0 0 0 0 rgba(255,224,102,.0)}50%{box-shadow:0 0 0 6px rgba(255,224,102,.75)}}.ny-hint{animation:nyHint 1.1s ease-in-out 5}`}</style>
+          {inapp === "kakao" && <p className="mt-4 break-keep rounded-xl bg-[#FFF8D6] px-3.5 py-2.5 text-[12.5px] leading-relaxed text-[#6B5200]">카카오톡 안에서는 파일 저장이 막혀 있어, 저장 단추를 누르면 <b>크롬·사파리로 열린 뒤</b> 저장됩니다.</p>}
+          {hint && !inapp && <p className="mt-4 break-keep rounded-xl bg-[#ECFDF5] px-3.5 py-2.5 text-[13px] font-bold leading-relaxed text-[#065F46]">기본 브라우저로 열렸습니다. 아래 「{hint === "png" ? "이미지 저장" : "PDF 저장"}」을 눌러 주세요.</p>}
           <div className="mt-4 grid grid-cols-2 gap-2">
-            <button onClick={() => save("png")} disabled={!!busy} className="rounded-full bg-[#12224A] px-4 py-3.5 text-[14.5px] font-extrabold text-white disabled:opacity-60">{busy === "png" ? "만드는 중…" : p.pages > 1 ? `이미지 ${p.pages}장 저장` : "이미지 저장"}</button>
-            <button onClick={() => save("pdf")} disabled={!!busy} className="rounded-full border-2 border-[#12224A] bg-white px-4 py-3.5 text-[14.5px] font-extrabold text-[#12224A] disabled:opacity-60">{busy === "pdf" ? "만드는 중…" : "PDF 저장"}</button>
+            <button onClick={() => save("png")} disabled={!!busy} className={`rounded-full bg-[#12224A]${hint === "png" ? " ny-hint" : ""} px-4 py-3.5 text-[14.5px] font-extrabold text-white disabled:opacity-60`}>{busy === "png" ? "만드는 중…" : p.pages > 1 ? `이미지 ${p.pages}장 저장` : "이미지 저장"}</button>
+            <button onClick={() => save("pdf")} disabled={!!busy} className={`rounded-full border-2 border-[#12224A] bg-white px-4 py-3.5 text-[14.5px] font-extrabold text-[#12224A] disabled:opacity-60${hint === "pdf" ? " ny-hint" : ""}`}>{busy === "pdf" ? "만드는 중…" : "PDF 저장"}</button>
           </div>
           <div className="mt-1.5 flex flex-wrap justify-center gap-x-4 gap-y-1 text-[12.5px] font-bold text-[#3B6CF5]">
-            <button type="button" onClick={() => void pagesRef.current?.print()}>글자 선명한 PDF(인쇄 창 · PC 권장)</button>
+            <button type="button" onClick={printPdf}>글자 선명한 PDF(인쇄 창 · PC 권장)</button>
+            <button type="button" onClick={() => void showSheet()}>그림으로 띄워 저장</button>
             <button type="button" onClick={() => copy(url, "주소를 복사했습니다. 이 주소로 언제든 다시 받을 수 있습니다.")}>이 결과 주소 복사</button>
           </div>
+          {/* 결과 화면에서는 안내 문구를 저장 단추 바로 밑에 — 폰에서 카드 아래까지 내려가야 보이던 문제(2026-11-24) */}
+          {msg && <p role="status" className="mt-2.5 break-keep rounded-xl bg-[#F1F5F9] px-3.5 py-3 text-[13px] leading-relaxed text-[#334155]">{msg}</p>}
           <div className={`mx-auto mt-4 ${p.kind === "card" ? "max-w-[420px]" : ""}`}>
             <NyPages ref={pagesRef} template={o.productKey} values={o.content} fileBase={`AI사주랩_2027_${p.name.replace(/\s+/g, "")}_${o.refNo}`} onFit={setOver} />
           </div>
@@ -214,7 +267,8 @@ export default function NyOrderView({ token }: { token: string }) {
         </>
       )}
 
-      {msg && <p className="mt-3 break-keep rounded-xl bg-[#F1F5F9] px-3.5 py-3 text-[13px] leading-relaxed text-[#334155]">{msg}</p>}
+      {sheet && <NySaveSheet images={sheet} onClose={() => setSheet(null)} />}
+      {msg && !(o.status === "ready" && o.content) && <p className="mt-3 break-keep rounded-xl bg-[#F1F5F9] px-3.5 py-3 text-[13px] leading-relaxed text-[#334155]">{msg}</p>}
       <p className="mt-6 text-center text-[12.5px]"><a href={NEWYEAR.path} className="font-bold text-[#64748B]">← 2027 새해운 전체 보기</a></p>
     </Shell>
   );

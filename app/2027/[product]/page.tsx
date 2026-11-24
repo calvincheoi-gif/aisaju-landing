@@ -1,3 +1,4 @@
+import { OG_IMAGES } from "@/lib/og";
 import { notFound } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -16,6 +17,13 @@ export function generateMetadata({ params }: { params: { product: string } }) {
     title: `${p.name} · ${won(p.price)} | AI사주랩.com`,
     description: `2027 정미년 새해운 — ${p.name}. ${p.tagline}. ${p.format}.`,
     alternates: { canonical: `/2027/${p.key}` },
+    openGraph: {
+      title: `2027 새해운 · ${p.name} ${won(p.price)}`,
+      description: `${p.tagline} · AI사주랩.com`,
+      url: `https://aisajulab.com/2027/${p.key}`,
+      type: "website",
+      images: OG_IMAGES,
+    },
   };
 }
 
