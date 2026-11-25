@@ -14,6 +14,8 @@ import { daysLeft, kstDay, SEASON, seasonVisible } from "@/lib/newyear/season";
  *  · 홈 화면 구조는 건드리지 않는다 — 이 부품 하나를 app/page.tsx 에 얹었다 뗐다 한다.
  */
 const HIDE_KEY = "ny_pop_hide_day";
+/** 팝업 바탕색 — "navy" | "red" | "green". 미리보기는 주소 끝 ?nypop=1&nytheme=red */
+const THEME_DEFAULT: "navy" | "red" | "green" = "navy";
 
 const OPTIONS = [
   { key: "iching-card", icon: "易", name: "주역 카드", price: "무료", hot: true },
@@ -24,10 +26,12 @@ const OPTIONS = [
 export default function NySeasonPopup() {
   const [open, setOpen] = useState(false);
   const [left, setLeft] = useState(0);
+  const [theme, setTheme] = useState<string>(THEME_DEFAULT);
 
   useEffect(() => {
     const q = new URLSearchParams(window.location.search);
     const preview = q.get("nypop") === "1";
+    const th = q.get("nytheme"); if (th === "red" || th === "green" || th === "navy") setTheme(th);
     if (!preview && !seasonVisible()) return;
     try { if (!preview && localStorage.getItem(HIDE_KEY) === kstDay()) return; } catch { /* 저장소 막힘 — 그냥 띄운다 */ }
     setLeft(daysLeft());
@@ -44,14 +48,15 @@ export default function NySeasonPopup() {
   };
 
   return (
-    <div id="nyc" role="dialog" aria-label="2027 새해운 이벤트">
+    <div id="nyc" className={theme} role="dialog" aria-label="2027 새해운 이벤트">
       <style>{CSS}</style>
       <div className="box">
         <span className="glow" aria-hidden />
+        {/* 붉은 양·별: 팝업 윗선과 세 선택 상자 윗선의 가운데 높이(2026-11-25 소장님 지시) */}
+        <span className="mark" aria-hidden><span className="spk">✦<small>✦</small></span><img className="sheep" src="/newyear/2027/sheep-mini.png" alt="" width={40} height={40} /></span>
         <div className="top">
           <span className="pill"><i />새해맞이 새해운 EVENT<span className="pd">{SEASON.endShort}{left > 0 && left <= 30 ? ` · D-${left}` : ""}</span></span>
-          <span className="spk" aria-hidden>✦<small>✦</small></span>
-          <img className="sheep" src="/newyear/2027/sheep-mini.png" alt="" width={40} height={40} />
+
           <button type="button" className="x" aria-label="닫기" onClick={() => close("x")}>✕</button>
         </div>
         <h3>2027 정미년, <span className="gd">내 새해운 1장</span></h3>
@@ -72,24 +77,33 @@ export default function NySeasonPopup() {
 }
 
 const CSS = `
+#nyc{--bg:var(--bg-navy);--sh:rgba(10,16,40,.42);
+  --bg-navy:radial-gradient(70% 55% at 62% 58%,rgba(86,122,220,.55) 0%,rgba(86,122,220,0) 70%),radial-gradient(60% 40% at 15% 95%,rgba(60,96,200,.45) 0%,rgba(60,96,200,0) 70%),linear-gradient(165deg,#13204A 0%,#18285E 45%,#0E1838 100%);}
+#nyc.red{--bg:radial-gradient(70% 55% at 62% 58%,rgba(255,120,100,.45) 0%,rgba(255,120,100,0) 70%),radial-gradient(60% 40% at 15% 95%,rgba(200,40,40,.5) 0%,rgba(200,40,40,0) 70%),linear-gradient(165deg,#9E1B1F 0%,#B8262A 45%,#6E0F14 100%);--sh:rgba(110,15,20,.45)}
+#nyc.green{--bg:radial-gradient(70% 55% at 62% 58%,rgba(90,200,140,.4) 0%,rgba(90,200,140,0) 70%),radial-gradient(60% 40% at 15% 95%,rgba(30,140,90,.5) 0%,rgba(30,140,90,0) 70%),linear-gradient(165deg,#0F5A3C 0%,#14704A 45%,#0A3D29 100%);--sh:rgba(10,60,40,.45)}
 #nyc{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(158px + env(safe-area-inset-bottom));width:calc(100% - 40px);max-width:350px;z-index:70;
   font-family:'Pretendard Variable',Pretendard,system-ui,sans-serif;word-break:keep-all;letter-spacing:-.02em;animation:nycUp .45s cubic-bezier(.2,.9,.3,1.15) both}
 @keyframes nycUp{from{opacity:0;transform:translate(-50%,16px) scale(.98)}to{opacity:1;transform:translate(-50%,0) scale(1)}}
 #nyc .box{position:relative;overflow:hidden;border-radius:20px;padding:10px 11px 8px;
-  background:radial-gradient(70% 55% at 62% 58%,rgba(86,122,220,.55) 0%,rgba(86,122,220,0) 70%),radial-gradient(60% 40% at 15% 95%,rgba(60,96,200,.45) 0%,rgba(60,96,200,0) 70%),linear-gradient(165deg,#13204A 0%,#18285E 45%,#0E1838 100%);
-  box-shadow:0 14px 34px rgba(10,16,40,.42),0 0 0 1px rgba(243,211,122,.22);
-  animation:nycBlink .85s ease-in-out .5s 4}
-@keyframes nycBlink{50%{box-shadow:0 14px 34px rgba(10,16,40,.42),0 0 0 2.5px rgba(255,224,120,.95),0 0 26px rgba(255,214,100,.65)}}
+  background:var(--bg);
+  box-shadow:0 14px 34px var(--sh),0 0 0 1px rgba(243,211,122,.3);
+  animation:nycBlink .7s ease-in-out .45s 4}
+/* 깜빡임(2026-11-25 강화): 금빛 테두리·후광 + 밝기 번쩍 — 처음 4번만. 눈에 확 띄게 */
+@keyframes nycBlink{0%,100%{filter:brightness(1);box-shadow:0 14px 34px var(--sh),0 0 0 1px rgba(243,211,122,.3)}
+  45%{filter:brightness(1.35);box-shadow:0 14px 34px var(--sh),0 0 0 3.5px #FFE17A,0 0 34px 8px rgba(255,214,100,.85)}}
+@keyframes nycFade{0%,100%{opacity:1}45%{opacity:.45}}
 #nyc .glow{position:absolute;left:-20%;right:-20%;top:38%;height:42%;background:linear-gradient(100deg,rgba(130,165,255,0) 0%,rgba(130,165,255,.22) 45%,rgba(160,190,255,.32) 55%,rgba(130,165,255,0) 100%);filter:blur(14px);transform:rotate(-8deg);pointer-events:none}
 #nyc .top{position:relative;display:flex;align-items:center;gap:6px}
 #nyc .pill{display:inline-flex;align-items:center;gap:5px;height:21px;padding:0 9px;border-radius:99px;font-size:10.5px;font-weight:900;color:#16234D;background:linear-gradient(180deg,#FFFBEA,#FBEFC4);border:1px solid #FFF6D6;box-shadow:0 2px 8px rgba(243,211,122,.35);white-space:nowrap}
 #nyc .pill i{width:5px;height:5px;border-radius:50%;background:#E0A92E;box-shadow:0 0 5px rgba(224,169,46,.8);animation:nycDot .85s ease-in-out .5s 4}
 #nyc .pill .pd{margin-left:2px;padding-left:6px;border-left:1px solid rgba(22,35,77,.25);font-weight:700;color:#4A5578}
 @keyframes nycDot{50%{opacity:.2}}
-#nyc .spk{margin-left:auto;position:relative;color:#FFE7A8;font-size:11px;line-height:1;text-shadow:0 0 6px rgba(255,220,140,.9)}
+#nyc .mark{position:absolute;right:46px;top:16px;display:flex;align-items:center;gap:2px;z-index:1;pointer-events:none}
+#nyc .spk{position:relative;color:#FFE7A8;font-size:11px;line-height:1;text-shadow:0 0 6px rgba(255,220,140,.9)}
 #nyc .spk small{position:absolute;left:9px;top:-7px;font-size:8px}
-#nyc .sheep{width:38px;height:38px;margin-top:-6px;margin-bottom:-8px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(255,120,120,.35))}
-#nyc .x{width:24px;height:24px;flex:none;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.12);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center;cursor:pointer}
+#nyc .sheep{width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(255,120,120,.35))}
+#nyc.red .sheep{border-radius:50%;background:radial-gradient(circle,rgba(255,246,230,.95) 0%,rgba(255,236,210,.75) 48%,rgba(255,236,210,0) 70%);filter:drop-shadow(0 0 6px rgba(255,230,200,.6))}
+#nyc .x{margin-left:auto;width:24px;height:24px;flex:none;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.12);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center;cursor:pointer}
 #nyc h3{position:relative;margin:6px 0 0;font-size:19px;line-height:1.2;font-weight:900;color:#fff;letter-spacing:-.045em;white-space:nowrap}
 #nyc h3 .gd{background:linear-gradient(180deg,#FFF1BE 0%,#F5D06A 55%,#E2B444 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
 #nyc .opts{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
@@ -103,5 +117,6 @@ const CSS = `
 #nyc .foot .chk{display:inline-flex;align-items:center;gap:5px;border:0;background:none;padding:2px 0;color:#DCE4F5;font:inherit;cursor:pointer}
 #nyc .foot .bx{width:11px;height:11px;border:1.3px solid #DCE4F5;border-radius:2px}
 #nyc .foot a{color:#DCE4F5;text-decoration:none}
-@media (prefers-reduced-motion:reduce){#nyc,#nyc .box,#nyc .pill i{animation:none}}
+/* 움직임 줄이기 설정에서는 올라오기·밝기 효과를 빼고, 은은한 깜빡임(투명도)만 남긴다 */
+@media (prefers-reduced-motion:reduce){#nyc{animation:none}#nyc .box{animation:nycFade .8s ease-in-out .45s 4}#nyc .pill i{animation:none}}
 `;
