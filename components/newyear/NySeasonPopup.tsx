@@ -52,10 +52,11 @@ export default function NySeasonPopup() {
       <style>{CSS}</style>
       <div className="box">
         <span className="glow" aria-hidden />
+        {/* 붉은 양·별: 팝업 윗선과 세 선택 상자 윗선의 가운데 높이(2026-11-25 소장님 지시) */}
+        <span className="mark" aria-hidden><span className="spk">✦<small>✦</small></span><img className="sheep" src="/newyear/2027/sheep-mini.png" alt="" width={40} height={40} /></span>
         <div className="top">
           <span className="pill"><i />새해맞이 새해운 EVENT<span className="pd">{SEASON.endShort}{left > 0 && left <= 30 ? ` · D-${left}` : ""}</span></span>
-          <span className="spk" aria-hidden>✦<small>✦</small></span>
-          <img className="sheep" src="/newyear/2027/sheep-mini.png" alt="" width={40} height={40} />
+
           <button type="button" className="x" aria-label="닫기" onClick={() => close("x")}>✕</button>
         </div>
         <h3>2027 정미년, <span className="gd">내 새해운 1장</span></h3>
@@ -97,11 +98,12 @@ const CSS = `
 #nyc .pill i{width:5px;height:5px;border-radius:50%;background:#E0A92E;box-shadow:0 0 5px rgba(224,169,46,.8);animation:nycDot .85s ease-in-out .5s 4}
 #nyc .pill .pd{margin-left:2px;padding-left:6px;border-left:1px solid rgba(22,35,77,.25);font-weight:700;color:#4A5578}
 @keyframes nycDot{50%{opacity:.2}}
-#nyc .spk{margin-left:auto;position:relative;color:#FFE7A8;font-size:11px;line-height:1;text-shadow:0 0 6px rgba(255,220,140,.9)}
+#nyc .mark{position:absolute;right:46px;top:16px;display:flex;align-items:center;gap:2px;z-index:1;pointer-events:none}
+#nyc .spk{position:relative;color:#FFE7A8;font-size:11px;line-height:1;text-shadow:0 0 6px rgba(255,220,140,.9)}
 #nyc .spk small{position:absolute;left:9px;top:-7px;font-size:8px}
-#nyc .sheep{width:38px;height:38px;margin-top:-6px;margin-bottom:-8px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(255,120,120,.35))}
+#nyc .sheep{width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 0 10px rgba(255,120,120,.35))}
 #nyc.red .sheep{border-radius:50%;background:radial-gradient(circle,rgba(255,246,230,.95) 0%,rgba(255,236,210,.75) 48%,rgba(255,236,210,0) 70%);filter:drop-shadow(0 0 6px rgba(255,230,200,.6))}
-#nyc .x{width:24px;height:24px;flex:none;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.12);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center;cursor:pointer}
+#nyc .x{margin-left:auto;width:24px;height:24px;flex:none;border-radius:50%;border:1px solid rgba(255,255,255,.18);background:rgba(255,255,255,.12);color:#fff;font-size:12px;font-weight:800;display:grid;place-items:center;cursor:pointer}
 #nyc h3{position:relative;margin:6px 0 0;font-size:19px;line-height:1.2;font-weight:900;color:#fff;letter-spacing:-.045em;white-space:nowrap}
 #nyc h3 .gd{background:linear-gradient(180deg,#FFF1BE 0%,#F5D06A 55%,#E2B444 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
 #nyc .opts{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
