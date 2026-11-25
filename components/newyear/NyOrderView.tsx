@@ -68,9 +68,11 @@ export default function NyOrderView({ token }: { token: string }) {
     return () => clearInterval(id);
   }, [view, load]);
 
-  async function claim() {
-    if (!payer.trim()) { setMsg("입금하신 분의 이름을 적어 주세요."); return; }
-    setBusy("claim"); setMsg(null);
+  /** 송금 단추를 누를 때 이름을 등록한다(「송금 확인 중」으로 넘어감). 확인은 실제 송금 알림으로만 된다 */
+  async function claim(fromPayLink = false) {
+    if (payer.trim().length < 2) { setMsg("송금하실 분의 이름을 적어 주세요."); return; }
+    if (!fromPayLink) setBusy("claim");
+    setMsg(null);
     const r = await apiClaim(token, payer.trim());
     setBusy(null);
     if (!r.ok || !r.order) { setMsg(r.error || "처리하지 못했습니다."); return; }
@@ -185,27 +187,31 @@ export default function NyOrderView({ token }: { token: string }) {
         </div>
       )}
 
-      {/* 결제 안내 */}
+      {/* 결제 안내 — 2026-11-26: 「입금 완료」 버튼 없음. 이름을 먼저 적고 송금 단추를 누르면 이름이 등록되고,
+          실제 송금 알림이 들어와 이름·금액이 맞을 때만 자동 확인된다(lib/newyear/paynotice.ts). */}
       {needPay && (
         <div className="mt-4 rounded-2xl border border-[#DCE7F8] bg-white px-4 py-4">
           <div className="flex items-baseline justify-between border-b border-[#EEF2F7] pb-3"><span className="text-[13px] text-[#64748B]">결제 금액 <span className="text-[11.5px]">(부가세 포함)</span></span><span className="text-[22px] font-black text-[#3B6CF5]">{won(o.price)}</span></div>
           <ol className="mt-3 space-y-1.5 text-[13.5px] leading-relaxed text-[#334155]">
-            <li className="break-keep">1. 아래 버튼으로 <b>{won(o.price)}</b>을 송금합니다.</li>
-            <li className="break-keep">2. 입금하신 분의 이름을 적고 <b className="whitespace-nowrap">「입금 완료」</b> 버튼을 누릅니다.</li>
-            <li className="break-keep">3. {p.review ? `입금을 확인한 뒤 초안·감수를 거쳐 영업일 ${siteConfig.payment.leadTimeDays}일 안에 전달합니다.` : "그 자리에서 결과가 만들어집니다."}</li>
+            <li className="break-keep">1. 송금하실 분의 <b>이름(실명)</b>을 적습니다.</li>
+            <li className="break-keep">2. 아래 버튼으로 <b>{won(o.price)}</b>을 송금합니다.</li>
+            <li className="break-keep">3. {p.review ? `송금이 확인되면 초안·감수를 거쳐 영업일 ${siteConfig.payment.leadTimeDays}일 안에 전달합니다.` : "송금이 확인되면 자동으로 바로 만들어집니다(보통 1~2분)."}</li>
           </ol>
-          <a href={o.price === 990 ? KAKAOPAY_990 : siteConfig.payment.kakaoPayUrl} target="_blank" rel="noopener noreferrer" className="mt-3 block rounded-xl bg-[#FEE500] px-4 py-3.5 text-center text-[15px] font-extrabold text-[#3C1E1E]">카카오페이로 송금하기{o.price === 990 ? " (990원)" : ""}</a>
+          <label className="mt-4 block text-[13px] font-bold text-[#334155]">송금하실 분 이름 <span className="font-medium text-[#94A3B8]">· 카카오페이·은행에 표시되는 실명과 같게</span></label>
+          <input value={payer} onChange={(e) => setPayer(e.target.value)} maxLength={20} placeholder="예: 홍길동" className="mt-1.5 w-full rounded-xl border border-[#DCE7F8] bg-white px-3.5 py-3 text-[15px] outline-none focus:border-[#3B6CF5]" />
+          {payer.trim().length >= 2 ? (
+            <a href={o.price === 990 ? KAKAOPAY_990 : siteConfig.payment.kakaoPayUrl} target="_blank" rel="noopener noreferrer" onClick={() => void claim(true)} className="mt-3 block rounded-xl bg-[#FEE500] px-4 py-3.5 text-center text-[15px] font-extrabold text-[#3C1E1E]">카카오페이로 송금하기{o.price === 990 ? " (990원)" : ""}</a>
+          ) : (
+            <button type="button" onClick={() => setMsg("송금하실 분의 이름을 먼저 적어 주세요. 송금 확인에 쓰입니다.")} className="mt-3 block w-full rounded-xl bg-[#FEE500]/50 px-4 py-3.5 text-center text-[15px] font-extrabold text-[#3C1E1E]/60">카카오페이로 송금하기{o.price === 990 ? " (990원)" : ""}</button>
+          )}
           {siteConfig.payment.account && (
             <div className="mt-2.5 rounded-xl bg-[#F7FAFF] px-3.5 py-3">
               <p className="text-[12px] font-bold text-[#334155]">계좌이체</p>
               <p className="mt-0.5 text-[14.5px] font-extrabold text-[#12224A]">{siteConfig.payment.bank} {siteConfig.payment.account}</p>
               <p className="text-[12px] text-[#64748B]">예금주 {siteConfig.payment.holder}</p>
-              <button type="button" onClick={() => copy(siteConfig.payment.account, "계좌번호를 복사했습니다.")} className="mt-1 text-[12.5px] font-bold text-[#3B6CF5]">계좌번호 복사</button>
+              <button type="button" onClick={() => { if (payer.trim().length < 2) { setMsg("송금하실 분의 이름을 먼저 적어 주세요. 송금 확인에 쓰입니다."); return; } copy(siteConfig.payment.account, "계좌번호를 복사했습니다. 이체하시면 자동으로 확인됩니다."); void claim(true); }} className="mt-1 text-[12.5px] font-bold text-[#3B6CF5]">계좌번호 복사</button>
             </div>
           )}
-          <label className="mt-4 block text-[13px] font-bold text-[#334155]">입금하신 분 이름</label>
-          <input value={payer} onChange={(e) => setPayer(e.target.value)} maxLength={20} placeholder="입금자명" className="mt-1.5 w-full rounded-xl border border-[#DCE7F8] bg-white px-3.5 py-3 text-[15px] outline-none focus:border-[#3B6CF5]" />
-          <button onClick={claim} disabled={!!busy} className="mt-2.5 block w-full rounded-full bg-gradient-to-b from-[#6896FF] to-[#3B6CF5] px-5 py-3.5 text-[15.5px] font-extrabold text-white disabled:opacity-60">{busy === "claim" ? "확인 중…" : "입금 완료"}</button>
           <p className="mt-2.5 break-keep text-[11.5px] leading-relaxed text-[#94A3B8]">개인 맞춤으로 제작하는 디지털 콘텐츠로, 제작이 시작된 뒤에는 청약철회가 제한될 수 있습니다. <a href="/legal/#t3" target="_blank" className="font-semibold text-[#3B6CF5] underline">환불 기준 보기</a></p>
         </div>
       )}

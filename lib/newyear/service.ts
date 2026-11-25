@@ -14,7 +14,8 @@ import { draftPartCount, priorDigest } from "./content/parts";
 import { DraftError, runDraft, type DraftContext } from "./content/writer";
 import { compute, InputError } from "./engines";
 import { TEMPLATE_VERSION, type FieldValues } from "./render/spec";
-import { beginGeneration, countByDevice, countUnconfirmedClaims, getById, getByToken, insertOrder, updateById } from "./store/server";
+import { beginGeneration, countByDevice, countUnconfirmedClaims, getById, getByToken, insertOrder, listOpenNotices, listUnconfirmedClaims, markNoticeMatched, saveNotice, updateById } from "./store/server";
+import { nameMatches, noticeKey, parseAmount, pickOrder } from "./paynotice";
 import type { OrderInput, OrderRow } from "./types";
 
 export class FlowError extends Error {
@@ -104,7 +105,37 @@ export async function claimPayment(token: string, payerName: string): Promise<Or
   /* 안전장치: 한 장 상품은 「입금 완료」만으로 바로 만들지만(AI 비용 발생), 입금 확인이 안 된 건이 하루 한도를 넘게 쌓이면
      자동 생성을 멈추고 「입금 확인 뒤 생성」으로 돌린다 — 입금 없이 버튼만 누르는 일이 몰려도 AI 비용이 한도 안에 머문다. */
   const auto = AUTO_ON_CLAIM && p.pay === "claim" && (await countUnconfirmedClaims(24, CLAIM_PRODUCTS)) < MAX_UNCONFIRMED_AUTO;
-  return updateById(o.id, { payment_status: "claimed", payer_name: payer, paid_claimed_at: new Date().toISOString(), status: auto ? "queued" : "awaiting_payment" });
+  const row = await updateById(o.id, { payment_status: "claimed", payer_name: payer, paid_claimed_at: new Date().toISOString(), status: auto ? "queued" : "awaiting_payment" });
+  /* 송금 알림이 「입금 완료」보다 먼저 와 있었다면 지금 맞춰 본다 */
+  if (!auto && p.pay === "claim") {
+    const hit = (await listOpenNotices(6)).find((n) => n.amount === row.price && nameMatches(payer, n.text));
+    if (hit) { await markNoticeMatched(hit.key, row.ref_no); return confirmAndQueue(row); }
+  }
+  return row;
+}
+
+/** 입금 확인 처리 — 한 장 상품은 생성 대기(queued)로. 실제 생성은 바로 이어서 하거나, 고객 화면이 열려 있으면 화면이 건다 */
+async function confirmAndQueue(o: OrderRow): Promise<OrderRow> {
+  const status = o.status === "awaiting_payment" || o.status === "cancelled" ? "queued" : o.status;
+  return updateById(o.id, { payment_status: "confirmed", paid_confirmed_at: new Date().toISOString(), status });
+}
+
+/**
+ * 폰에서 넘어온 송금 알림 처리(app/api/newyear/pay-notice).
+ * 맞는 주문이 있으면 입금 확인 → 한 장 상품은 바로 생성. 없으면 알림을 남겨 두고 「입금 완료」 때 다시 맞춘다.
+ */
+export async function handlePayNotice(text: string, at?: string): Promise<{ result: "matched" | "kept" | "duplicate" | "ignored"; ref?: string; amount?: number | null }> {
+  const clean = String(text ?? "").replace(/\s+/g, " ").trim().slice(0, 300);
+  const amount = parseAmount(clean);
+  if (!clean || !amount) return { result: "ignored", amount };
+  const key = noticeKey(clean, at);
+  const order = pickOrder(amount, clean, await listUnconfirmedClaims(24));
+  if (!(await saveNotice({ key, amount, text: clean, matched: order?.ref_no ?? null, at: new Date().toISOString() }))) return { result: "duplicate", amount };
+  if (!order) return { result: "kept", amount };
+  const row = await confirmAndQueue(order);
+  const p = getProduct(row.product_key)!;
+  if (!p.review && row.status === "queued") await generateCard(row.share_token).catch(() => undefined);
+  return { result: "matched", ref: row.ref_no, amount };
 }
 
 /** 한 장 상품 자동 생성. 누가 몇 번을 부르든 한 주문에 한 번만 돈다. */

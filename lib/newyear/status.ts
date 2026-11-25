@@ -26,8 +26,8 @@ export function statusView(p: Product, status: OrderStatus, pay: PaymentStatus):
     if (pay === "claimed")
       return p.review
         ? { step: 2, steps, tone: "wait", poll: 60, title: "입금을 확인하고 있습니다", desc: `입금이 확인되면 초안 작성과 감수를 시작합니다. 보통 영업일 ${lead}일 안에 전달드립니다.` }
-        /* 한 장 상품: 입금 확인 뒤 생성(2026-11-26~). 확인 즉시 서버가 만들어 두므로 이 주소로 다시 오면 된다 */
-        : { step: 2, steps, tone: "wait", poll: 30, title: "입금을 확인하고 있습니다", desc: "입금이 확인되면 바로 만들어 드립니다(보통 1~2시간, 밤에는 다음 날 아침). 이 화면을 닫아도 괜찮아요 — 이 주소로 다시 들어오시면 결과를 받을 수 있습니다." };
+        /* 한 장 상품: 송금 알림이 들어오면 자동 확인 → 바로 생성(2026-11-26~, lib/newyear/paynotice.ts) */
+        : { step: 2, steps, tone: "wait", poll: 15, title: "송금을 확인하고 있습니다", desc: "송금이 확인되면 자동으로 바로 만들어집니다(보통 1~2분). 이 화면을 닫아도 괜찮아요 — 이 주소로 다시 들어오시면 결과를 받을 수 있습니다. 10분이 지나도 그대로면 접수번호를 카카오톡 채널로 보내 주세요." };
     return { step: 2, steps, tone: "wait", poll: 0, title: "입금을 기다리고 있습니다", desc: "아래 안내대로 송금하신 뒤 「입금\u00A0완료」 버튼을 눌러 주세요." };
   }
   if (status === "queued" || status === "generating") {
@@ -45,5 +45,5 @@ export const ADMIN_STATUS_LABEL: Record<OrderStatus, string> = {
   awaiting_payment: "입금 대기", queued: "생성 대기", generating: "생성 중", failed: "생성 실패", review: "감수 대기", ready: "전달 가능", cancelled: "취소",
 };
 export const ADMIN_PAY_LABEL: Record<PaymentStatus, string> = {
-  none: "무료", pending: "미입금", claimed: "입금 신고", confirmed: "입금 확인", rejected: "미입금 처리", refunded: "환불",
+  none: "무료", pending: "미입금", claimed: "송금 확인 대기", confirmed: "입금 확인", rejected: "미입금 처리", refunded: "환불",
 };
