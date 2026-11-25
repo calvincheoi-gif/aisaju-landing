@@ -27,13 +27,12 @@ export const REVIEWER = "최형철";
 /** 「입금 완료」만으로 바로 만드는 상품(990원 한 장) */
 const CLAIM_PRODUCTS = PRODUCTS.filter((x) => x.pay === "claim").map((x) => x.key as string);
 /** 입금 확인 전 자동 생성 한도(최근 24시간, 미확인 건수). 넘으면 입금 확인 뒤에 만든다. 환경변수 NY_MAX_UNCONFIRMED 로 조정 */
-const MAX_UNCONFIRMED_AUTO = Math.max(0, Number(process.env.NY_MAX_UNCONFIRMED ?? 60) || 0);
+const MAX_UNCONFIRMED_AUTO = Math.max(0, Number(process.env.NY_MAX_UNCONFIRMED ?? 20) || 0);
 /**
- * 한 장 990원 상품을 「입금 완료」 버튼만으로 바로 만들지(옛 방식) 여부.
- * 2026-11-26 소장님 결정: 기본은 「입금 확인 뒤 생성」 — 실제 입금을 관리자 화면에서 확인하면 그때 서버가 바로 만든다.
- * 옛 방식으로 되돌리려면 환경변수 NY_AUTO_ON_CLAIM=1.
+ * 한 장 990원 상품: 고객이 송금 뒤 「송금 완료」를 누르면 바로 만든다(신뢰 방식, 2026-11-26 소장님 확정 — 실시간 수동 확인이 어려움).
+ * 입금 대조는 매일 저녁 보고로. 끄려면(입금 확인 뒤 생성) 환경변수 NY_AUTO_ON_CLAIM=0.
  */
-const AUTO_ON_CLAIM = process.env.NY_AUTO_ON_CLAIM === "1";
+const AUTO_ON_CLAIM = process.env.NY_AUTO_ON_CLAIM !== "0";
 const kstDate = (d = new Date()) => new Date(d.getTime() + 9 * 3600_000).toISOString().slice(0, 10).replace(/-/g, ".");
 const refNo = () => {
   const d = new Date(Date.now() + 9 * 3600_000).toISOString();
