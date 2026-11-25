@@ -65,6 +65,7 @@ export default function AdminNewYearPage() {
   }
   async function patch(body: Record<string, unknown>, okMsg: string): Promise<boolean> {
     if (!sel) return false;
+    setMsg("처리 중…");
     try {
       const res = await fetch("/api/admin/newyear", { method: "PATCH", headers: H(), body: JSON.stringify({ id: sel.id, ...body }) });
       const j = await res.json();
@@ -202,9 +203,9 @@ export default function AdminNewYearPage() {
             </details>
 
             <div className="mt-4 flex flex-wrap items-center gap-2">
-              {sel.payment_status === "claimed" && <button onClick={() => patch({ action: "payment", to: "confirmed" }, "입금을 확인했습니다.")} className="rounded-md bg-emerald-600 px-3 py-1.5 text-[12.5px] font-semibold text-white">입금 확인</button>}
+              {sel.payment_status === "claimed" && <button onClick={() => patch({ action: "payment", to: "confirmed" }, p.review ? "입금을 확인했습니다." : "입금을 확인하고 결과를 만들었습니다. 고객 화면에 바로 열립니다.")} className="rounded-md bg-emerald-600 px-3 py-1.5 text-[12.5px] font-semibold text-white">입금 확인</button>}
               {(sel.payment_status === "claimed" || sel.payment_status === "pending") && <button onClick={() => { if (confirm("미입금으로 처리합니다. 고객 화면에서 결과가 닫힙니다.")) void patch({ action: "payment", to: "rejected" }, "미입금으로 처리했습니다."); }} className="rounded-md border border-border px-3 py-1.5 text-[12.5px] text-body">미입금 처리</button>}
-              {sel.payment_status === "pending" && p.review && <button onClick={() => patch({ action: "payment", to: "confirmed" }, "입금을 확인했습니다.")} className="rounded-md border border-emerald-300 px-3 py-1.5 text-[12.5px] font-semibold text-emerald-700">입금 확인(신고 없이)</button>}
+              {sel.payment_status === "pending" && p.pay !== "free" && <button onClick={() => patch({ action: "payment", to: "confirmed" }, p.review ? "입금을 확인했습니다." : "입금을 확인하고 결과를 만들었습니다. 고객 화면에 바로 열립니다.")} className="rounded-md border border-emerald-300 px-3 py-1.5 text-[12.5px] font-semibold text-emerald-700">입금 확인(신고 없이)</button>}
               {partCount > 0 && <button onClick={draft} disabled={!!busy} className="rounded-md border border-indigo-300 bg-indigo-50 px-3 py-1.5 text-[12.5px] font-semibold text-indigo-700 disabled:opacity-50">{busy === "draft" ? "초안 만드는 중…" : resume && resume.id === sel.id ? `AI 초안 이어서 (${resume.at + 1}/${partCount}부터)` : `AI 초안 채우기 (${partCount}묶음)`}</button>}
               {sel.status === "failed" && !p.review && <button onClick={() => patch({ action: "status", to: "requeue" }, "다시 생성 대기로 돌렸습니다. 고객 화면에서 다시 만들어집니다.")} className="rounded-md border border-border px-3 py-1.5 text-[12.5px] text-ink-900">생성 대기로 되돌리기</button>}
             </div>

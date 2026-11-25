@@ -77,7 +77,7 @@ export default function NyOrderForm({ product: p }: { product: Product }) {
           <span className="mt-0.5 shrink-0 whitespace-nowrap rounded-full bg-[#FFE066] px-3.5 py-1.5 text-[15px] font-black text-[#12224A]">{won(p.price)}</span>
         </div>
         <ul className="mt-3 space-y-1 text-[13.5px] text-[#DCE7F8]">{p.points.map((t) => <li key={t} className="break-keep">· {t}</li>)}</ul>
-        <p className="mt-3 break-keep text-[12.5px] text-[#9DB8F5]">{p.format} · {p.review ? "초안 작성 후 최형철 소장이 감수해 전달합니다" : p.pay === "free" ? "신청 즉시 화면에서 받습니다" : "송금 후 「입금\u00A0완료」 버튼을 누르면 바로 만들어집니다"}</p>
+        <p className="mt-3 break-keep text-[12.5px] text-[#9DB8F5]">{p.format} · {p.review ? "초안 작성 후 최형철 소장이 감수해 전달합니다" : p.pay === "free" ? "신청 즉시 화면에서 받습니다" : "입금이 확인되면 바로 만들어 드립니다"}</p>
       </div>
 
       <details className="mt-3 rounded-2xl border border-[#DCE7F8] bg-white px-4 py-3">

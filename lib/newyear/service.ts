@@ -27,6 +27,12 @@ export const REVIEWER = "최형철";
 const CLAIM_PRODUCTS = PRODUCTS.filter((x) => x.pay === "claim").map((x) => x.key as string);
 /** 입금 확인 전 자동 생성 한도(최근 24시간, 미확인 건수). 넘으면 입금 확인 뒤에 만든다. 환경변수 NY_MAX_UNCONFIRMED 로 조정 */
 const MAX_UNCONFIRMED_AUTO = Math.max(0, Number(process.env.NY_MAX_UNCONFIRMED ?? 60) || 0);
+/**
+ * 한 장 990원 상품을 「입금 완료」 버튼만으로 바로 만들지(옛 방식) 여부.
+ * 2026-11-26 소장님 결정: 기본은 「입금 확인 뒤 생성」 — 실제 입금을 관리자 화면에서 확인하면 그때 서버가 바로 만든다.
+ * 옛 방식으로 되돌리려면 환경변수 NY_AUTO_ON_CLAIM=1.
+ */
+const AUTO_ON_CLAIM = process.env.NY_AUTO_ON_CLAIM === "1";
 const kstDate = (d = new Date()) => new Date(d.getTime() + 9 * 3600_000).toISOString().slice(0, 10).replace(/-/g, ".");
 const refNo = () => {
   const d = new Date(Date.now() + 9 * 3600_000).toISOString();
@@ -97,7 +103,7 @@ export async function claimPayment(token: string, payerName: string): Promise<Or
   if (p.pay === "claim" && (await countByDevice(o.device_code, 24)) > 12) throw new FlowError("오늘 신청이 많아 잠시 확인이 필요합니다. 카카오톡 채널로 접수번호를 보내 주세요.", 429);
   /* 안전장치: 한 장 상품은 「입금 완료」만으로 바로 만들지만(AI 비용 발생), 입금 확인이 안 된 건이 하루 한도를 넘게 쌓이면
      자동 생성을 멈추고 「입금 확인 뒤 생성」으로 돌린다 — 입금 없이 버튼만 누르는 일이 몰려도 AI 비용이 한도 안에 머문다. */
-  const auto = p.pay === "claim" && (await countUnconfirmedClaims(24, CLAIM_PRODUCTS)) < MAX_UNCONFIRMED_AUTO;
+  const auto = AUTO_ON_CLAIM && p.pay === "claim" && (await countUnconfirmedClaims(24, CLAIM_PRODUCTS)) < MAX_UNCONFIRMED_AUTO;
   return updateById(o.id, { payment_status: "claimed", payer_name: payer, paid_claimed_at: new Date().toISOString(), status: auto ? "queued" : "awaiting_payment" });
 }
 
@@ -134,7 +140,11 @@ export async function adminSetPayment(id: string, to: "confirmed" | "rejected" |
   const { o } = await need(id);
   if (to === "confirmed") {
     const status = o.status === "awaiting_payment" ? "queued" : o.status === "cancelled" ? "queued" : o.status;
-    return updateById(id, { payment_status: "confirmed", paid_confirmed_at: new Date().toISOString(), status });
+    const row = await updateById(id, { payment_status: "confirmed", paid_confirmed_at: new Date().toISOString(), status });
+    /* 한 장 상품: 입금 확인과 동시에 서버가 바로 만든다 — 고객이 화면을 닫아 두었어도 다시 들어오면 결과가 있다 */
+    const p = getProduct(o.product_key)!;
+    if (!p.review && p.pay === "claim" && row.status === "queued") return generateCard(row.share_token);
+    return row;
   }
   return updateById(id, { payment_status: to, status: "cancelled" });
 }

@@ -26,8 +26,8 @@ export function statusView(p: Product, status: OrderStatus, pay: PaymentStatus):
     if (pay === "claimed")
       return p.review
         ? { step: 2, steps, tone: "wait", poll: 60, title: "입금을 확인하고 있습니다", desc: `입금이 확인되면 초안 작성과 감수를 시작합니다. 보통 영업일 ${lead}일 안에 전달드립니다.` }
-        /* 한 장 상품인데 입금 확인을 기다리는 경우 — 미확인 신청이 몰려 자동 생성을 잠시 멈춘 때(service.ts 안전장치) */
-        : { step: 2, steps, tone: "wait", poll: 30, title: "입금을 확인하고 있습니다", desc: "지금은 신청이 많아 입금을 확인한 뒤에 만들어 드립니다. 확인되면 이 화면에서 바로 만들어집니다." };
+        /* 한 장 상품: 입금 확인 뒤 생성(2026-11-26~). 확인 즉시 서버가 만들어 두므로 이 주소로 다시 오면 된다 */
+        : { step: 2, steps, tone: "wait", poll: 30, title: "입금을 확인하고 있습니다", desc: "입금이 확인되면 바로 만들어 드립니다(보통 1~2시간, 밤에는 다음 날 아침). 이 화면을 닫아도 괜찮아요 — 이 주소로 다시 들어오시면 결과를 받을 수 있습니다." };
     return { step: 2, steps, tone: "wait", poll: 0, title: "입금을 기다리고 있습니다", desc: "아래 안내대로 송금하신 뒤 「입금\u00A0완료」 버튼을 눌러 주세요." };
   }
   if (status === "queued" || status === "generating") {
