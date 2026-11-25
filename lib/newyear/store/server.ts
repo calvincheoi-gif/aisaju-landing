@@ -129,3 +129,46 @@ export async function bumpView(id: string, viewCount: number): Promise<void> {
   if (!client) { const cur = mem().get(id); if (cur) mem().set(id, { ...cur, ...patch }); return; }
   await client.from(TABLE).update(patch).eq("id", id);
 }
+
+/* ───────────── 송금 알림 자동 대조 (2026-11-26) ───────────── */
+
+/** 최근 n시간 안에 「입금 완료」를 누르고 아직 확인되지 않은 주문 — 송금 알림과 맞춰 본다 */
+export async function listUnconfirmedClaims(hours: number): Promise<OrderRow[]> {
+  const since = new Date(Date.now() - hours * 3600_000).toISOString();
+  const client = db();
+  if (!client) return [...mem().values()].filter((o) => o.payment_status === "claimed" && (o.paid_claimed_at ?? "") >= since).sort((a, b) => (a.paid_claimed_at ?? "").localeCompare(b.paid_claimed_at ?? ""));
+  const { data, error } = await client.from(TABLE).select("*").eq("payment_status", "claimed").gte("paid_claimed_at", since).order("paid_claimed_at", { ascending: true });
+  if (error) throw new StoreError(error.message);
+  return (data ?? []) as OrderRow[];
+}
+
+/**
+ * 받은 송금 알림 기록 — 새 표를 만들지 않고 기존 events 표에 name='ny_pay_notice' 로 남긴다.
+ * 알림이 「입금 완료」보다 먼저 올 수도 있어서, 맞는 주문이 없으면 남겨 두었다가 「입금 완료」 때 다시 맞춰 본다.
+ */
+export interface PayNotice { id?: number | string; key: string; amount: number; text: string; matched: string | null; at: string }
+const memNotices: PayNotice[] = [];
+export async function saveNotice(n: PayNotice): Promise<boolean> {
+  const client = db();
+  if (!client) { if (memNotices.some((x) => x.key === n.key)) return false; memNotices.push(n); return true; }
+  const dup = await client.from("events").select("id").eq("name", "ny_pay_notice").eq("session_id", n.key).limit(1);
+  if ((dup.data ?? []).length) return false;          // 같은 알림이 두 번 오면 한 번만 처리
+  const { error } = await client.from("events").insert({ name: "ny_pay_notice", session_id: n.key, visitor_id: "server", app: "newyear", path: "/api/newyear/pay-notice", props: { amount: n.amount, text: n.text, matched: n.matched } });
+  if (error) throw new StoreError(error.message);
+  return true;
+}
+export async function markNoticeMatched(key: string, ref: string): Promise<void> {
+  const client = db();
+  if (!client) { const x = memNotices.find((m) => m.key === key); if (x) x.matched = ref; return; }
+  const { data } = await client.from("events").select("id,props").eq("name", "ny_pay_notice").eq("session_id", key).limit(1);
+  const row = (data ?? [])[0] as { id: number; props: Record<string, unknown> } | undefined;
+  if (row) await client.from("events").update({ props: { ...row.props, matched: ref } }).eq("id", row.id);
+}
+export async function listOpenNotices(hours: number): Promise<PayNotice[]> {
+  const since = new Date(Date.now() - hours * 3600_000).toISOString();
+  const client = db();
+  if (!client) return memNotices.filter((n) => !n.matched && n.at >= since);
+  const { data, error } = await client.from("events").select("session_id,props,created_at").eq("name", "ny_pay_notice").gte("created_at", since).order("created_at", { ascending: true });
+  if (error) throw new StoreError(error.message);
+  return (data ?? []).map((r: { session_id: string; props: { amount: number; text: string; matched: string | null }; created_at: string }) => ({ key: r.session_id, amount: r.props.amount, text: r.props.text, matched: r.props.matched, at: r.created_at })).filter((n) => !n.matched);
+}

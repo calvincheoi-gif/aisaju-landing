@@ -77,7 +77,7 @@ export default function NyCatalog() {
         <h2 className="text-[16px] font-black">받는 방법</h2>
         <ol className="mt-3 space-y-2.5 text-[13.5px] leading-relaxed text-[#DCE7F8]">
           <li className="break-keep"><b className="text-white">1. 고르고 입력</b> — 상품에 필요한 정보만 적습니다. 주역 카드는 질문만 있으면 됩니다.</li>
-          <li className="break-keep"><b className="text-white">2. 한 장은 바로</b> — 송금 뒤 <span className="whitespace-nowrap">「입금 완료」</span> 버튼을 누르면 바로 만들어집니다.</li>
+          <li className="break-keep"><b className="text-white">2. 한 장은 빠르게</b> — 송금하고 <span className="whitespace-nowrap">「송금 완료」</span>를 누르시면 바로 만들어집니다.</li>
           <li className="break-keep"><b className="text-white">3. 상세본은 감수 후</b> — 초안을 최형철 소장이 직접 확인하고 고친 뒤 전달합니다.</li>
         </ol>
       </section>

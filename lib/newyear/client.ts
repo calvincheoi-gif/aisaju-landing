@@ -32,7 +32,7 @@ export function rememberOrder(o: RecentOrder) {
 type Res = { ok: boolean; error?: string; order?: PublicOrder; token?: string; refNo?: string };
 async function call(url: string, init?: RequestInit): Promise<Res> {
   try {
-    const res = await fetch(url, { ...init, headers: { "Content-Type": "application/json" }, cache: "no-store" });
+    const res = await fetch(url, { keepalive: true, ...init, headers: { "Content-Type": "application/json" }, cache: "no-store" });
     const text = await res.text();
     try { return JSON.parse(text) as Res; } catch { return { ok: false, error: `서버가 제때 답하지 못했습니다(${res.status}). 잠시 뒤 다시 시도해 주세요.` }; }
   } catch {
